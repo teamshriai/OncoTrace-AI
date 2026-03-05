@@ -12,6 +12,7 @@ import CTASection from './components/CTASection'
 import Footer from './components/Footer'
 
 
+
 export default function App() {
   useEffect(() => {
     const obs = new IntersectionObserver(
