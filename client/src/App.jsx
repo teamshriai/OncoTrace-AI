@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import Navbar from './components/Navbar'
 import HeroSection from './components/HeroSection'
-import StatsSection from './components/StatsSection'
+import DNA3DSection from './components/DNA3DSection'
 import AboutSection from './components/AboutSection'
 import PipelineSection from './components/PipelineSection'
 import AIEngineSection from './components/AIEngineSection'
@@ -33,7 +33,7 @@ export default function App() {
       <Navbar />
       <main>
         <HeroSection />
-        <StatsSection />
+        <DNA3DSection />
         <AboutSection />
         <PipelineSection />
         <AIEngineSection />
