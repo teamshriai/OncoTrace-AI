@@ -27,7 +27,9 @@ export default function Navbar() {
             alt="ShriAI Logo" 
             className="w-20 h-20 object-contain"
           />
-          <span className="font-display font-700 text-lg text-slate-900 tracking-tight">
+          <span className={`font-display font-700 text-lg tracking-tight ${
+            scrolled ? 'text-slate-900' : 'text-white'
+          }`}>
             Shri<span className="text-gradient">-AI</span>
           </span>
         </div>
@@ -36,7 +38,9 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-7">
           {links.map(l => (
             <a key={l} href={`#${l.toLowerCase()}`}
-               className="font-sans text-sm text-slate-500 hover:text-blue-600 transition-colors duration-200 font-medium">
+               className={`font-sans text-sm hover:text-blue-600 transition-colors duration-200 font-medium ${
+                 scrolled ? 'text-slate-500' : 'text-white'
+               }`}>
               {l}
             </a>
           ))}
@@ -44,7 +48,9 @@ export default function Navbar() {
 
         {/* Actions */}
         <div className="hidden md:flex items-center gap-3">
-          <button className="font-sans text-sm text-slate-600 hover:text-blue-600 font-medium px-4 py-2 transition-colors">
+          <button className={`font-sans text-sm hover:text-blue-600 font-medium px-4 py-2 transition-colors ${
+            scrolled ? 'text-slate-600' : 'text-white'
+          }`}>
             Log in
           </button>
           <button className="btn-primary text-sm px-5 py-2.5">
@@ -57,9 +63,15 @@ export default function Navbar() {
 
         {/* Mobile toggle */}
         <button onClick={() => setOpen(!open)} className="md:hidden p-2 rounded-lg hover:bg-blue-50 transition-colors">
-          <div className={`w-5 h-0.5 bg-slate-600 transition-all duration-300 ${open ? 'rotate-45 translate-y-1.5' : ''}`} />
-          <div className={`w-5 h-0.5 bg-slate-600 mt-1 transition-all duration-300 ${open ? 'opacity-0' : ''}`} />
-          <div className={`w-5 h-0.5 bg-slate-600 mt-1 transition-all duration-300 ${open ? '-rotate-45 -translate-y-1.5' : ''}`} />
+          <div className={`w-5 h-0.5 transition-all duration-300 ${open ? 'rotate-45 translate-y-1.5' : ''} ${
+            scrolled ? 'bg-slate-600' : 'bg-white'
+          }`} />
+          <div className={`w-5 h-0.5 mt-1 transition-all duration-300 ${open ? 'opacity-0' : ''} ${
+            scrolled ? 'bg-slate-600' : 'bg-white'
+          }`} />
+          <div className={`w-5 h-0.5 mt-1 transition-all duration-300 ${open ? '-rotate-45 -translate-y-1.5' : ''} ${
+            scrolled ? 'bg-slate-600' : 'bg-white'
+          }`} />
         </button>
       </div>
 
