@@ -177,35 +177,11 @@ const css = `
     background: #070c18;
   }
 
-  /* Top Bar */
-  .sai-precision-topbar {
-    position: relative;
-    z-index: 10;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 20px 48px;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
-    animation: fadeIn 1s cubic-bezier(0.16,1,0.3,1) 0.1s both;
-  }
-
-  .sai-precision-topbar-left {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-
-  .sai-precision-topbar-right {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  /* Split content area */
+  /* Split content area — 60/40 */
   .sai-precision-content {
     flex: 1;
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 3fr 2fr;
     position: relative;
   }
 
@@ -252,23 +228,68 @@ const css = `
       linear-gradient(90deg, transparent 50%, rgba(7,12,24,0.85) 100%);
   }
 
+  /* ── Tags overlay — centered on image, below navbar ── */
+  .sai-precision-tags-overlay {
+    position: absolute;
+    top: 90px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 8;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    animation: floatUp 1s cubic-bezier(0.16,1,0.3,1) 0.1s both;
+    pointer-events: none;
+  }
+
+  .sai-precision-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.04);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 100px;
+    padding: 7px 18px;
+    font-size: 11px;
+    color: rgba(255,255,255,0.55);
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border: 1px solid rgba(255,255,255,0.06);
+    font-family: 'DM Sans', sans-serif;
+    white-space: nowrap;
+    pointer-events: auto;
+  }
+
+  .sai-precision-tag-secondary {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.04);
+    color: rgba(255,255,255,0.3);
+    font-weight: 400;
+    letter-spacing: 0.16em;
+    font-size: 10px;
+    padding: 6px 16px;
+  }
+
   /* Right Column */
   .sai-precision-right {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
-    padding: 80px 64px 80px 88px;
+    padding: 80px 64px 80px 72px;
     position: relative;
     z-index: 5;
   }
 
-  /* Vertical Separator */
+  /* Vertical Separator — at 60% */
   .sai-precision-separator {
     position: absolute;
     top: 8%;
     bottom: 8%;
-    left: 50%;
+    left: 60%;
     width: 1px;
     background: linear-gradient(180deg, transparent, rgba(59,130,246,0.1) 20%, rgba(59,130,246,0.18) 50%, rgba(59,130,246,0.1) 80%, transparent);
     z-index: 6;
@@ -583,7 +604,7 @@ const css = `
 
   @media (max-width: 1200px) {
     .sai-precision-right {
-      padding: 60px 40px 60px 64px;
+      padding: 60px 40px 60px 56px;
     }
     .sai-hero-grid {
       gap: 50px !important;
@@ -599,7 +620,10 @@ const css = `
       font-size: clamp(2.8rem, 5.5vw, 5.5rem);
     }
     .sai-precision-right {
-      padding: 60px 32px 60px 52px;
+      padding: 60px 32px 60px 48px;
+    }
+    .sai-precision-tags-overlay {
+      top: 80px;
     }
   }
 
@@ -641,16 +665,8 @@ const css = `
     .sai-hw {
       font-size: clamp(2.5rem, 9vw, 5rem);
     }
-    .sai-precision-topbar {
-      padding: 16px 24px;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .sai-left-overlay-stats {
-      bottom: 32px;
-      left: 24px;
-      right: 24px;
-      gap: 20px;
+    .sai-precision-tags-overlay {
+      top: 76px;
     }
     .sai-corner-accent { display: none !important; }
     .sai-marquee-strip { bottom: 40px; opacity: 0.03; }
@@ -709,8 +725,17 @@ const css = `
       padding: 6px 14px;
       font-size: 11px;
     }
-    .sai-precision-topbar {
-      padding: 14px 20px;
+    .sai-precision-tags-overlay {
+      top: 72px;
+      gap: 8px;
+    }
+    .sai-precision-tag {
+      font-size: 10px;
+      padding: 6px 14px;
+    }
+    .sai-precision-tag-secondary {
+      font-size: 9px;
+      padding: 5px 12px;
     }
     .sai-right-cta-btn {
       padding: 12px 26px;
@@ -786,9 +811,18 @@ const css = `
       width: 100%;
       justify-content: center;
     }
-    .sai-precision-topbar {
-      padding: 12px 16px;
-      gap: 8px;
+    .sai-precision-tags-overlay {
+      top: 68px;
+      gap: 6px;
+    }
+    .sai-precision-tag {
+      font-size: 9px;
+      padding: 5px 12px;
+      gap: 6px;
+    }
+    .sai-precision-tag-secondary {
+      font-size: 8px;
+      padding: 4px 10px;
     }
     .sai-scroll-indicator {
       bottom: 8px;
@@ -817,7 +851,7 @@ const css = `
       min-height: 100vh;
     }
     .sai-precision-content {
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 3fr 2fr;
     }
     .sai-precision-right {
       padding: 40px 32px;
@@ -845,54 +879,13 @@ export default function HeroSection() {
       <style>{css}</style>
       <div className="sai-grain" />
 
-      {/* ── PRECISION HERO — SPLIT LAYOUT ── */}
+      {/* ── PRECISION HERO — 60/40 SPLIT LAYOUT ── */}
       <section className="sai-precision-hero">
-
-        {/* ── TOP BAR — Badge + Subtitle ── */}
-        <div className="sai-precision-topbar">
-          <div className="sai-precision-topbar-left">
-            <span style={{
-              display: 'inline-flex', alignItems: 'center', gap: 8,
-              background: 'rgba(255,255,255,0.04)',
-              backdropFilter: 'blur(16px)',
-              WebkitBackdropFilter: 'blur(16px)',
-              borderRadius: 100,
-              padding: '7px 18px', fontSize: 11,
-              color: 'rgba(255,255,255,0.55)',
-              fontWeight: 500, letterSpacing: '0.08em',
-              textTransform: 'uppercase',
-              border: '1px solid rgba(255,255,255,0.06)',
-              fontFamily: "'DM Sans', sans-serif",
-            }}>
-              <span style={{
-                width: 6, height: 6, borderRadius: '50%',
-                background: '#3b82f6',
-                boxShadow: '0 0 10px rgba(59,130,246,0.8)',
-                animation: 'dotPulse 2s ease-in-out infinite',
-                flexShrink: 0,
-              }} />
-              Launching Soon — Open Source · Not for Profit
-            </span>
-          </div>
-
-          <div className="sai-precision-topbar-right">
-            <span style={{
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: 11,
-              color: 'rgba(255,255,255,0.25)',
-              letterSpacing: '0.16em',
-              textTransform: 'uppercase',
-              fontWeight: 400,
-            }}>
-              Next-Generation Healthcare Intelligence
-            </span>
-          </div>
-        </div>
 
         {/* ── SPLIT CONTENT ── */}
         <div className="sai-precision-content">
 
-          {/* ── LEFT: Image ── */}
+          {/* ── LEFT: Image (60%) ── */}
           <div className="sai-precision-left">
             <div className="sai-hero-image-wrap">
               <img
@@ -909,26 +902,25 @@ export default function HeroSection() {
               backgroundSize: '40px 40px', pointerEvents: 'none',
             }} />
 
-            {/* Stats overlay at bottom of image */}
-            <div className="sai-left-overlay-stats">
-              <div className="sai-left-stat">
-                <span className="sai-left-stat-value">98.2%</span>
-                <span className="sai-left-stat-label">Accuracy</span>
-              </div>
-              <div className="sai-left-stat-divider" />
-              <div className="sai-left-stat">
-                <span className="sai-left-stat-value">150+</span>
-                <span className="sai-left-stat-label">Communities</span>
-              </div>
-              <div className="sai-left-stat-divider" />
-              <div className="sai-left-stat">
-                <span className="sai-left-stat-value">100%</span>
-                <span className="sai-left-stat-label">Privacy</span>
-              </div>
+            {/* ── Tags — vertically stacked, centered on image, below navbar ── */}
+            <div className="sai-precision-tags-overlay">
+              <span className="sai-precision-tag">
+                <span style={{
+                  width: 6, height: 6, borderRadius: '50%',
+                  background: '#3b82f6',
+                  boxShadow: '0 0 10px rgba(59,130,246,0.8)',
+                  animation: 'dotPulse 2s ease-in-out infinite',
+                  flexShrink: 0,
+                }} />
+                Launching Soon — Open Source · Not for Profit
+              </span>
+              <span className="sai-precision-tag sai-precision-tag-secondary">
+                Next-Generation Healthcare Intelligence
+              </span>
             </div>
           </div>
 
-          {/* ── RIGHT: Clean Text ── */}
+          {/* ── RIGHT: Clean Text (40%) ── */}
           <div className="sai-precision-right">
             {/* Background glow */}
             <div className="sai-right-glow" />
@@ -954,7 +946,7 @@ export default function HeroSection() {
               Healthcare AI Platform
             </span>
 
-            {/* Main clean heading — NO grain */}
+            {/* Main clean heading */}
             <h1 className="sai-clean-heading">
               <span className="sai-hw sai-hw-light">Realtime</span>
               <span className="sai-hw sai-hw-bold">Precision</span>
@@ -1009,19 +1001,6 @@ export default function HeroSection() {
               </span>
             ))}
           </div>
-        </div>
-
-        {/* Scroll indicator */}
-        <div className="sai-scroll-indicator">
-          <span style={{
-            fontSize: 9, color: 'rgba(255,255,255,0.5)',
-            letterSpacing: '0.18em', textTransform: 'uppercase',
-            fontFamily: "'DM Sans', sans-serif", fontWeight: 500,
-          }}>Scroll</span>
-          <div style={{
-            width: 1, height: 42,
-            background: 'linear-gradient(to bottom, rgba(255,255,255,0.4), transparent)',
-          }} />
         </div>
       </section>
 
