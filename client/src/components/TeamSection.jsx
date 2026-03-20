@@ -2,28 +2,40 @@ import useInView from "../hooks/useInView";
 
 const team = [
   {
-    name: "Dr. Elena Vasquez",
-    role: "CEO & Co-Founder",
-    bio: "Former Chief of Digital Health at Johns Hopkins. 15+ years in clinical AI.",
-    initials: "EV",
+    name: "Senapathi Palanisamy",
+    role: "CEO & Founder",
+    bio: "Founder of ViSolve and founder of Senas.net Pvt. Ltd",
+    initials: "SP",
   },
   {
-    name: "Marcus Chen",
-    role: "CTO & Co-Founder",
-    bio: "Ex-Google Health ML lead. PhD in Biomedical Informatics, Stanford.",
-    initials: "MC",
+    name: "Vimal Prasath",
+    role: "Researcher & Developer",
+    bio: "Built realtime AI Oxidative stress prediction",
+    initials: "VP",
   },
   {
-    name: "Dr. Amara Osei",
-    role: "Chief Medical Officer",
-    bio: "Board-certified cardiologist specializing in preventive medicine.",
-    initials: "AO",
+    name: "Sri Vathsav",
+    role: "Researcher & Developer",
+    bio: "Built realtime AI Oxidative stress prediction",
+    initials: "SV",
   },
   {
-    name: "Liam Torres",
-    role: "VP of Engineering",
-    bio: "Previously built real-time data infrastructure at Stripe and Verily.",
-    initials: "LT",
+    name: "Anand Jyothis",
+    role: "Researcher & Developer Engineering",
+    bio: "Built realtime AI Oxidative stress prediction",
+    initials: "AJ",
+  },
+  {
+    name: "Thulasi",
+    role: "Researcher & Developer Engineering",
+    bio: "Built realtime AI Oxidative stress prediction",
+    initials: "T",
+  },
+    {
+    name: "Sri Minalini",
+    role: "Researcher & Developer Engineering",
+    bio: "Built realtime AI Oxidative stress prediction",
+    initials: "SM",
   },
 ];
 

@@ -27,9 +27,9 @@ function TypeWriter() {
   }, [char, del, idx])
 
   return (
-    <span style={{ color: '#3b82f6', fontFamily: 'inherit', fontSize: '13px', fontWeight: 500 }}>
+    <span className="text-blue-500 font-['DM_Sans'] text-sm font-medium">
       {TYPING[idx].slice(0, char)}
-      <span style={{ animation: 'blink 1s infinite' }}>|</span>
+      <span className="animate-blink text-blue-500">|</span>
     </span>
   )
 }
@@ -55,1244 +55,727 @@ function useInView(ref, threshold = 0.15) {
   return inView
 }
 
-const css = `
-  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=Cormorant+Garamond:wght@300;400;500;600&family=DM+Sans:wght@300;400;500;600;700&family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+function AnimatedCounter({ target, suffix = '', duration = 2000 }) {
+  const [count, setCount] = useState(0)
+  const ref = useRef(null)
+  const inView = useInView(ref, 0.3)
+  const hasAnimated = useRef(false)
 
-  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
-  @keyframes fadeUp { from{opacity:0;transform:translateY(48px) scale(0.97)} to{opacity:1;transform:translateY(0) scale(1)} }
-  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
-  @keyframes slideRight { from{opacity:0;transform:translateX(60px) scale(0.95)} to{opacity:1;transform:translateX(0) scale(1)} }
-  @keyframes shimmer { 0%{background-position:200% center} 100%{background-position:-200% center} }
-  @keyframes dotPulse { 0%,100%{box-shadow:0 0 7px rgba(59,130,246,0.9)} 50%{box-shadow:0 0 18px rgba(59,130,246,1)} }
-  @keyframes breathe { 0%,100%{transform:scale(1);opacity:0.6} 50%{transform:scale(1.15);opacity:0.9} }
-  @keyframes grainShift { 0%,100%{transform:translate(0,0)} 10%{transform:translate(-5%,-10%)} 30%{transform:translate(3%,5%)} 50%{transform:translate(-8%,2%)} 70%{transform:translate(6%,-6%)} 90%{transform:translate(-3%,8%)} }
-  @keyframes lineGrow { from{transform:scaleX(0)} to{transform:scaleX(1)} }
-  @keyframes slowZoom { 0%{transform:scale(1)} 100%{transform:scale(1.08)} }
-  @keyframes textReveal { from{opacity:0;transform:translateY(80px) rotateX(15deg)} to{opacity:1;transform:translateY(0) rotateX(0deg)} }
-  @keyframes pulseRing { 0%{transform:translate(-50%,-50%) scale(0.95);opacity:0.5} 50%{transform:translate(-50%,-50%) scale(1.05);opacity:0.8} 100%{transform:translate(-50%,-50%) scale(0.95);opacity:0.5} }
-  @keyframes gradientShift { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
-  @keyframes marqueeScroll { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
-  @keyframes floatUp { 0%{opacity:0;transform:translateY(30px)} 100%{opacity:1;transform:translateY(0)} }
-  @keyframes widthExpand { from{width:0} to{width:72px} }
-  @keyframes glowPulse { 0%,100%{opacity:0.4} 50%{opacity:0.8} }
+  useEffect(() => {
+    if (!inView || hasAnimated.current) return
+    hasAnimated.current = true
+    const numTarget = parseFloat(target)
+    const isDecimal = target.includes('.')
+    const startTime = Date.now()
 
-  .sai-hero * { box-sizing:border-box; }
-  .sai-hero { font-family:'Plus Jakarta Sans', sans-serif; }
-  .sai-display { font-family:'Outfit', sans-serif; }
+    const animate = () => {
+      const elapsed = Date.now() - startTime
+      const progress = Math.min(elapsed / duration, 1)
+      const eased = 1 - Math.pow(1 - progress, 3)
+      const current = eased * numTarget
+      setCount(isDecimal ? parseFloat(current.toFixed(1)) : Math.floor(current))
+      if (progress < 1) requestAnimationFrame(animate)
+    }
+    requestAnimationFrame(animate)
+  }, [inView, target, duration])
 
-  .sai-grain {
-    position: fixed;
-    top: -50%; left: -50%; right: -50%; bottom: -50%;
-    width: 200%; height: 200%;
-    pointer-events: none; z-index: 9999;
-    opacity: 0.022;
-    animation: grainShift 0.5s steps(1) infinite;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-  }
+  return <span ref={ref}>{count}{suffix}</span>
+}
 
-  .sai-shimmer {
-    background: linear-gradient(90deg,#1d4ed8 0%,#3b82f6 30%,#93c5fd 50%,#3b82f6 70%,#1d4ed8 100%);
-    background-size:200% auto;
-    -webkit-background-clip:text; background-clip:text;
-    -webkit-text-fill-color:transparent;
-    animation: shimmer 3.5s linear infinite;
-  }
+const minimalCSS = `
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=DM+Sans:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Merriweather:wght@400;700;900&family=Source+Sans+3:wght@300;400;500;600&display=swap');
 
-  .sai-glass-card {
-    background: rgba(255,255,255,0.55);
-    backdrop-filter: blur(20px) saturate(1.5);
-    -webkit-backdrop-filter: blur(20px) saturate(1.5);
-    border: 1px solid rgba(255,255,255,0.6);
-    box-shadow: 0 4px 24px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.03), inset 0 1px 0 rgba(255,255,255,0.8);
-  }
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+  @keyframes slowZoom{0%{transform:scale(1)}100%{transform:scale(1.08)}}
+  @keyframes textReveal{from{opacity:0;transform:translateY(60px) rotateX(12deg)}to{opacity:1;transform:translateY(0) rotateX(0deg)}}
+  @keyframes pulseRing{0%{transform:translate(-50%,-50%) scale(.95);opacity:.5}50%{transform:translate(-50%,-50%) scale(1.05);opacity:.8}100%{transform:translate(-50%,-50%) scale(.95);opacity:.5}}
+  @keyframes gradientShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+  @keyframes marqueeScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+  @keyframes floatUp{0%{opacity:0;transform:translateY(24px)}100%{opacity:1;transform:translateY(0)}}
+  @keyframes lineGrow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+  @keyframes dotPulse{0%,100%{box-shadow:0 0 6px rgba(59,130,246,.9)}50%{box-shadow:0 0 16px rgba(59,130,246,1)}}
+  @keyframes grainShift{0%,100%{transform:translate(0,0)}10%{transform:translate(-5%,-10%)}30%{transform:translate(3%,5%)}50%{transform:translate(-8%,2%)}70%{transform:translate(6%,-6%)}90%{transform:translate(-3%,8%)}}
 
-  .sai-a0 { animation: fadeUp 1s cubic-bezier(0.16,1,0.3,1) 0s both; }
-  .sai-a1 { animation: fadeUp 1s cubic-bezier(0.16,1,0.3,1) 0.15s both; }
-  .sai-a2 { animation: fadeUp 1s cubic-bezier(0.16,1,0.3,1) 0.3s both; }
-  .sai-a3 { animation: fadeUp 1s cubic-bezier(0.16,1,0.3,1) 0.45s both; }
-  .sai-a4 { animation: fadeUp 1s cubic-bezier(0.16,1,0.3,1) 0.6s both; }
-  .sai-img-anim { animation: slideRight 1.1s cubic-bezier(0.16,1,0.3,1) 0.35s both; }
+  @keyframes checkStroke{to{stroke-dashoffset:0}}
+  @keyframes circleGrow{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+  @keyframes pageExit{to{opacity:0;transform:translateY(-18px) scale(0.99)}}
+  @keyframes pageEnter{from{opacity:0;transform:translateY(22px) scale(0.99)}to{opacity:1;transform:translateY(0) scale(1)}}
+  @keyframes successRipple{0%{transform:scale(1);opacity:0.35}100%{transform:scale(2.8);opacity:0}}
+  @keyframes staggerIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes badgePulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+  @keyframes softBounce{0%{transform:scale(0.6);opacity:0}60%{transform:scale(1.08)}80%{transform:scale(0.96)}100%{transform:scale(1);opacity:1}}
+  @keyframes shimmerBar{0%{background-position:-200% 0}100%{background-position:200% 0}}
 
-  .sai-btn-primary {
-    display:inline-flex; align-items:center; gap:10px;
-    background:linear-gradient(135deg,#1d4ed8,#3b82f6);
-    color:#fff; border:none; border-radius:100px;
-    padding:16px 36px; font-family:'Cormorant Garamond',serif;
-    font-size:15px; font-weight:500; cursor:pointer; letter-spacing:0.02em;
-    box-shadow:0 8px 32px rgba(59,130,246,0.35), 0 2px 8px rgba(59,130,246,0.2);
-    transition:all 0.35s cubic-bezier(0.16,1,0.3,1);
-    position: relative; overflow: hidden;
-  }
-  .sai-btn-primary::before {
-    content: ''; position: absolute;
-    top: 0; left: -100%; width: 100%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
-    transition: left 0.5s;
-  }
-  .sai-btn-primary:hover::before { left: 100%; }
-  .sai-btn-primary:hover { transform:translateY(-3px); box-shadow:0 18px 48px rgba(59,130,246,0.45), 0 4px 12px rgba(59,130,246,0.25); }
-
-  .sai-btn-ghost {
-    display:inline-flex; align-items:center; gap:10px;
-    background:rgba(255,255,255,0.4);
-    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-    color:#2563eb;
-    border:1.5px solid rgba(59,130,246,0.2); border-radius:100px;
-    padding:15px 30px; font-family:'Cormorant Garamond',serif;
-    font-size:15px; font-weight:500; cursor:pointer; letter-spacing:0.02em;
-    transition:all 0.35s cubic-bezier(0.16,1,0.3,1);
-    box-shadow: 0 4px 16px rgba(0,0,0,0.04);
-  }
-  .sai-btn-ghost:hover { background:rgba(59,130,246,0.08); border-color:rgba(59,130,246,0.5); transform:translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
-
-  .sai-terminal {
-    border-radius:100px;
-    padding:12px 22px; display:inline-flex;
-    align-items:center; gap:12px;
-  }
-
-  .sai-badge {
-    display:inline-flex; align-items:center; gap:8px;
-    background:rgba(59,130,246,0.06);
-    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-    border-radius:100px;
-    padding:8px 18px; font-size:13px; color:#1d4ed8; font-weight:500;
-    border:1px solid rgba(59,130,246,0.12); letter-spacing:0.03em;
-  }
-
-  .sai-divider-line {
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(59,130,246,0.15), transparent);
-    transform-origin: left;
-    animation: lineGrow 1.2s ease-out 0.6s both;
-  }
-
-  /* ── PRECISION HERO — SPLIT LAYOUT ── */
-  .sai-precision-hero {
-    min-height: 100vh;
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    background: #070c18;
-  }
-
-  /* Split content area — 60/40 */
-  .sai-precision-content {
-    flex: 1;
-    display: grid;
-    grid-template-columns: 3fr 2fr;
-    position: relative;
-  }
-
-  /* Left Column — Image */
-  .sai-precision-left {
-    position: relative;
-    overflow: hidden;
-  }
-
-  .sai-precision-left .sai-hero-image-wrap {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-  }
-
-  .sai-precision-left .sai-hero-image-wrap img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center center;
-    animation: slowZoom 25s ease-in-out infinite alternate;
-  }
-
-  .sai-precision-left .sai-hero-image-overlay {
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    background:
-      linear-gradient(180deg,
-        rgba(7,12,24,0.5) 0%,
-        rgba(7,12,24,0.1) 30%,
-        rgba(7,12,24,0.15) 50%,
-        rgba(7,12,24,0.6) 75%,
-        rgba(7,12,24,0.95) 100%
-      );
-  }
-
-  .sai-precision-left .sai-hero-image-overlay::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background:
-      radial-gradient(ellipse at 50% 80%, rgba(29,78,216,0.08) 0%, transparent 60%),
-      linear-gradient(90deg, transparent 50%, rgba(7,12,24,0.85) 100%);
-  }
-
-  /* ── Tags overlay — centered on image, below navbar ── */
-  .sai-precision-tags-overlay {
-    position: absolute;
-    top: 90px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 8;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    animation: floatUp 1s cubic-bezier(0.16,1,0.3,1) 0.1s both;
-    pointer-events: none;
-  }
-
-  .sai-precision-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba(255,255,255,0.04);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border-radius: 100px;
-    padding: 7px 18px;
-    font-size: 11px;
-    color: rgba(255,255,255,0.55);
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    border: 1px solid rgba(255,255,255,0.06);
-    font-family: 'DM Sans', sans-serif;
-    white-space: nowrap;
-    pointer-events: auto;
-  }
-
-  .sai-precision-tag-secondary {
-    background: rgba(255,255,255,0.02);
-    border: 1px solid rgba(255,255,255,0.04);
-    color: rgba(255,255,255,0.3);
-    font-weight: 400;
-    letter-spacing: 0.16em;
-    font-size: 10px;
-    padding: 6px 16px;
-  }
-
-  /* Right Column */
-  .sai-precision-right {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-    padding: 80px 64px 80px 72px;
-    position: relative;
-    z-index: 5;
-  }
-
-  /* Vertical Separator — at 60% */
-  .sai-precision-separator {
-    position: absolute;
-    top: 8%;
-    bottom: 8%;
-    left: 60%;
-    width: 1px;
-    background: linear-gradient(180deg, transparent, rgba(59,130,246,0.1) 20%, rgba(59,130,246,0.18) 50%, rgba(59,130,246,0.1) 80%, transparent);
-    z-index: 6;
-    pointer-events: none;
-  }
-
-  /* Background glow for right side */
-  .sai-right-glow {
-    position: absolute;
-    width: 500px;
-    height: 500px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(59,130,246,0.05) 0%, transparent 70%);
-    top: 50%;
-    left: 50%;
-    transform: translate(-30%, -50%);
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .sai-right-ring {
-    position: absolute;
-    width: 320px;
-    height: 320px;
-    border-radius: 50%;
-    border: 1px solid rgba(59,130,246,0.04);
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    animation: pulseRing 7s ease-in-out infinite;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .sai-right-ring-2 {
-    width: 520px;
-    height: 520px;
-    border-color: rgba(59,130,246,0.025);
-    animation: pulseRing 9s ease-in-out 2s infinite;
-  }
-
-  /* Right label */
-  .sai-right-label {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 11px;
-    color: rgba(255,255,255,0.25);
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    font-weight: 500;
-    margin-bottom: 32px;
-    display: flex;
-    align-items: center;
-    animation: floatUp 1s cubic-bezier(0.16,1,0.3,1) 0.2s both;
-  }
-
-  /* Clean Heading — No Grain */
-  .sai-clean-heading {
-    position: relative;
-    margin: 0;
-    padding: 0;
-    perspective: 800px;
-  }
-
-  .sai-hw {
-    display: block;
-    font-family: 'Outfit', sans-serif;
-    font-size: clamp(3.2rem, 6.5vw, 7.5rem);
-    line-height: 0.92;
-    letter-spacing: -0.05em;
-    position: relative;
-    z-index: 2;
-  }
-
-  .sai-hw-light {
-    font-weight: 300;
-    color: rgba(148,163,184,0.5);
-    animation: textReveal 1.2s cubic-bezier(0.16,1,0.3,1) 0.3s both;
-  }
-
-  .sai-hw-bold {
-    font-weight: 800;
-    background: linear-gradient(
-      135deg,
-      #93c5fd 0%,
-      #60a5fa 20%,
-      #ffffff 45%,
-      #e2e8f0 55%,
-      #60a5fa 75%,
-      #3b82f6 100%
-    );
-    background-size: 200% 200%;
-    animation: textReveal 1.2s cubic-bezier(0.16,1,0.3,1) 0.5s both,
-               gradientShift 6s ease infinite;
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-
-  .sai-hw-accent {
-    font-weight: 600;
-    background: linear-gradient(
-      90deg,
-      #3b82f6 0%,
-      #60a5fa 30%,
-      #93c5fd 50%,
-      #60a5fa 70%,
-      #3b82f6 100%
-    );
-    background-size: 200% 200%;
-    animation: textReveal 1.2s cubic-bezier(0.16,1,0.3,1) 0.7s both,
-               gradientShift 5s ease infinite;
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-
-  /* Right accent line */
-  .sai-right-accent-line {
-    width: 72px;
-    height: 1px;
-    background: linear-gradient(90deg, rgba(59,130,246,0.5), rgba(59,130,246,0.02));
-    margin-top: 40px;
-    margin-bottom: 24px;
-    transform-origin: left;
-    animation: lineGrow 1.2s ease-out 0.9s both;
-  }
-
-  /* Right body text */
-  .sai-right-body {
-    font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 14.5px;
-    color: rgba(255,255,255,0.3);
-    line-height: 1.8;
-    max-width: 380px;
-    font-weight: 300;
-    letter-spacing: 0.01em;
-    animation: floatUp 1s cubic-bezier(0.16,1,0.3,1) 1s both;
-  }
-
-  /* Right CTA row */
-  .sai-right-cta-row {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    margin-top: 36px;
-    animation: floatUp 1s cubic-bezier(0.16,1,0.3,1) 1.1s both;
-  }
-
-  .sai-right-cta-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    padding: 14px 32px;
-    border-radius: 100px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    font-weight: 500;
-    letter-spacing: 0.04em;
-    cursor: pointer;
-    transition: all 0.35s cubic-bezier(0.16,1,0.3,1);
-    border: none;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .sai-right-cta-primary {
-    background: linear-gradient(135deg, #1d4ed8, #3b82f6);
-    color: white;
-    box-shadow: 0 8px 32px rgba(59,130,246,0.3), 0 2px 8px rgba(59,130,246,0.15);
-  }
-  .sai-right-cta-primary::before {
-    content: '';
-    position: absolute;
-    top: 0; left: -100%; width: 100%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
-    transition: left 0.5s;
-  }
-  .sai-right-cta-primary:hover::before { left: 100%; }
-  .sai-right-cta-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 16px 48px rgba(59,130,246,0.4);
-  }
-
-  .sai-right-cta-ghost {
-    background: rgba(255,255,255,0.04);
-    color: rgba(255,255,255,0.5);
-    border: 1px solid rgba(255,255,255,0.08);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-  }
-  .sai-right-cta-ghost:hover {
-    background: rgba(59,130,246,0.08);
-    color: rgba(255,255,255,0.7);
-    border-color: rgba(59,130,246,0.3);
-    transform: translateY(-2px);
-  }
-
-  /* Scroll indicator */
-  .sai-scroll-indicator {
-    position: absolute;
-    bottom: 28px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    opacity: 0.3;
-    z-index: 6;
-    animation: fadeIn 1s 1.5s both;
-  }
-
-  /* Corner accents */
-  .sai-corner-accent {
-    position: absolute;
-    z-index: 4;
-    pointer-events: none;
-  }
-  .sai-corner-accent.top-left {
-    top: 32px; left: 32px;
-    width: 48px; height: 48px;
-    border-left: 1px solid rgba(59,130,246,0.15);
-    border-top: 1px solid rgba(59,130,246,0.15);
-  }
-  .sai-corner-accent.top-right {
-    top: 32px; right: 32px;
-    width: 48px; height: 48px;
-    border-right: 1px solid rgba(59,130,246,0.15);
-    border-top: 1px solid rgba(59,130,246,0.15);
-  }
-  .sai-corner-accent.bottom-left {
-    bottom: 32px; left: 32px;
-    width: 48px; height: 48px;
-    border-left: 1px solid rgba(59,130,246,0.1);
-    border-bottom: 1px solid rgba(59,130,246,0.1);
-  }
-  .sai-corner-accent.bottom-right {
-    bottom: 32px; right: 32px;
-    width: 48px; height: 48px;
-    border-right: 1px solid rgba(59,130,246,0.1);
-    border-bottom: 1px solid rgba(59,130,246,0.1);
-  }
-
-  /* Marquee */
-  .sai-marquee-strip {
-    position: absolute;
-    bottom: 70px;
-    left: 0; right: 0;
-    z-index: 5;
-    overflow: hidden;
-    pointer-events: none;
-    opacity: 0.04;
-  }
-  .sai-marquee-track {
-    display: flex;
-    white-space: nowrap;
-    animation: marqueeScroll 30s linear infinite;
-  }
-  .sai-marquee-item {
-    font-family: 'Outfit', sans-serif;
-    font-size: clamp(40px, 5vw, 70px);
-    font-weight: 800;
-    color: white;
-    padding: 0 60px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  /* Left overlay stats */
-  .sai-left-overlay-stats {
-    position: absolute;
-    bottom: 48px;
-    left: 40px;
-    right: 40px;
-    z-index: 5;
-    display: flex;
-    align-items: center;
-    gap: 32px;
-    animation: floatUp 1s cubic-bezier(0.16,1,0.3,1) 0.6s both;
-  }
-
-  .sai-left-stat {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-
-  .sai-left-stat-value {
-    font-family: 'Outfit', sans-serif;
-    font-size: 22px;
-    font-weight: 700;
-    color: white;
-    letter-spacing: -0.02em;
-  }
-
-  .sai-left-stat-label {
-    font-family: 'DM Sans', sans-serif;
-    font-size: 10px;
-    color: rgba(255,255,255,0.35);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    font-weight: 400;
-  }
-
-  .sai-left-stat-divider {
-    width: 1px;
-    height: 32px;
-    background: rgba(255,255,255,0.08);
-  }
-
-  /* ── RESPONSIVE ── */
-
-  @media (max-width: 1200px) {
-    .sai-precision-right {
-      padding: 60px 40px 60px 56px;
-    }
-    .sai-hero-grid {
-      gap: 50px !important;
-      padding: 120px 40px 80px !important;
-    }
-    .sai-hero-right .sai-glass-card {
-      transform: scale(0.9);
-    }
-  }
-
-  @media (max-width: 1024px) {
-    .sai-hw {
-      font-size: clamp(2.8rem, 5.5vw, 5.5rem);
-    }
-    .sai-precision-right {
-      padding: 60px 32px 60px 48px;
-    }
-    .sai-precision-tags-overlay {
-      top: 80px;
-    }
-  }
-
-  @media (max-width: 900px) {
-    .sai-precision-content {
-      grid-template-columns: 1fr;
-    }
-    .sai-precision-left {
-      min-height: 50vh;
-    }
-    .sai-precision-right {
-      padding: 56px 32px;
-      align-items: center;
-      text-align: center;
-    }
-    .sai-clean-heading {
-      text-align: center;
-    }
-    .sai-right-label {
-      justify-content: center;
-      width: 100%;
-    }
-    .sai-right-accent-line {
-      margin-left: auto;
-      margin-right: auto;
-    }
-    .sai-right-body {
-      margin-left: auto;
-      margin-right: auto;
-      text-align: center;
-    }
-    .sai-right-cta-row {
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-    .sai-precision-separator {
-      display: none;
-    }
-    .sai-hw {
-      font-size: clamp(2.5rem, 9vw, 5rem);
-    }
-    .sai-precision-tags-overlay {
-      top: 76px;
-    }
-    .sai-corner-accent { display: none !important; }
-    .sai-marquee-strip { bottom: 40px; opacity: 0.03; }
-    .sai-hero-grid {
-      grid-template-columns: 1fr !important;
-      gap: 48px !important;
-      padding: 100px 24px 60px !important;
-    }
-    .sai-hero-right { display: none !important; }
-  }
-
-  @media (max-width: 768px) {
-    .sai-precision-left {
-      min-height: 42vh;
-    }
-    .sai-precision-right {
-      padding: 44px 24px;
-    }
-    .sai-hw {
-      font-size: clamp(2.2rem, 10vw, 4rem);
-    }
-    .sai-right-label {
-      font-size: 10px;
-      margin-bottom: 22px;
-    }
-    .sai-right-accent-line {
-      margin-top: 28px;
-      margin-bottom: 18px;
-    }
-    .sai-right-body {
-      font-size: 13px;
-    }
-    .sai-left-overlay-stats {
-      bottom: 24px;
-      left: 20px;
-      gap: 16px;
-    }
-    .sai-left-stat-value { font-size: 18px; }
-    .sai-left-stat-label { font-size: 9px; }
-    .sai-marquee-item {
-      font-size: 28px;
-      padding: 0 30px;
-    }
-    .sai-scroll-indicator {
-      bottom: 12px;
-    }
-    .sai-btn-primary, .sai-btn-ghost {
-      padding: 14px 28px;
-      font-size: 14px;
-    }
-    .sai-terminal {
-      padding: 10px 16px;
-      gap: 8px;
-    }
-    .sai-badge {
-      padding: 6px 14px;
-      font-size: 11px;
-    }
-    .sai-precision-tags-overlay {
-      top: 72px;
-      gap: 8px;
-    }
-    .sai-precision-tag {
-      font-size: 10px;
-      padding: 6px 14px;
-    }
-    .sai-precision-tag-secondary {
-      font-size: 9px;
-      padding: 5px 12px;
-    }
-    .sai-right-cta-btn {
-      padding: 12px 26px;
-      font-size: 12px;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .sai-precision-left {
-      min-height: 38vh;
-    }
-    .sai-precision-right {
-      padding: 36px 16px 50px;
-    }
-    .sai-hw {
-      font-size: clamp(2rem, 12vw, 3.5rem);
-    }
-    .sai-right-label {
-      font-size: 9px;
-      letter-spacing: 0.15em;
-      margin-bottom: 18px;
-    }
-    .sai-right-accent-line {
-      width: 48px;
-      margin-top: 22px;
-      margin-bottom: 14px;
-    }
-    .sai-right-body {
-      font-size: 12px;
-      line-height: 1.7;
-    }
-    .sai-left-overlay-stats {
-      bottom: 16px;
-      left: 16px;
-      gap: 12px;
-    }
-    .sai-left-stat-value { font-size: 16px; }
-    .sai-left-stat-divider { height: 24px; }
-    .sai-marquee-strip {
-      bottom: 30px;
-    }
-    .sai-marquee-item {
-      font-size: 22px;
-      padding: 0 20px;
-    }
-    .sai-hero-grid {
-      padding: 80px 16px 50px !important;
-    }
-    .sai-btn-primary, .sai-btn-ghost {
-      padding: 12px 24px;
-      font-size: 13px;
-      width: 100%;
-      justify-content: center;
-    }
-    .sai-a3 > div, .sai-a3 {
-      flex-direction: column !important;
-      width: 100%;
-    }
-    .sai-terminal {
-      width: 100%;
-      justify-content: flex-start;
-    }
-    .sai-a4 {
-      flex-wrap: wrap !important;
-      justify-content: center !important;
-      gap: 16px !important;
-    }
-    .sai-right-cta-row {
-      flex-direction: column;
-      width: 100%;
-    }
-    .sai-right-cta-btn {
-      width: 100%;
-      justify-content: center;
-    }
-    .sai-precision-tags-overlay {
-      top: 68px;
-      gap: 6px;
-    }
-    .sai-precision-tag {
-      font-size: 9px;
-      padding: 5px 12px;
-      gap: 6px;
-    }
-    .sai-precision-tag-secondary {
-      font-size: 8px;
-      padding: 4px 10px;
-    }
-    .sai-scroll-indicator {
-      bottom: 8px;
-      opacity: 0.2;
-    }
-    .sai-scroll-indicator div {
-      height: 30px !important;
-    }
-  }
-
-  @media (max-width: 360px) {
-    .sai-hero-grid {
-      padding: 70px 12px 40px !important;
-    }
-    .sai-badge {
-      padding: 5px 12px;
-      font-size: 10px;
-    }
-    .sai-hw {
-      font-size: clamp(1.8rem, 13vw, 3rem);
-    }
-  }
-
-  @media (max-height: 500px) and (orientation: landscape) {
-    .sai-precision-hero {
-      min-height: 100vh;
-    }
-    .sai-precision-content {
-      grid-template-columns: 3fr 2fr;
-    }
-    .sai-precision-right {
-      padding: 40px 32px;
-    }
-    .sai-hw {
-      font-size: clamp(1.8rem, 4vw, 3rem);
-    }
-  }
+  .bi{width:100%;padding:13px 16px;background:#fff;border:1.5px solid #e2e8f0;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:400;color:#1e293b;outline:none;transition:all .25s ease;box-sizing:border-box}
+  .bi:focus{border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.08)}
+  .bi::placeholder{color:#94a3b8;font-weight:300}
+  .bi:hover:not(:focus){border-color:#cbd5e1}
+  .bi[type="date"]{color-scheme:light}
+  .bl{display:block;font-family:'DM Sans',sans-serif;font-size:11.5px;font-weight:600;color:#475569;text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
+  .bt{width:100%;padding:13px 16px;background:#fff;border:1.5px solid #e2e8f0;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:400;color:#1e293b;outline:none;transition:all .25s ease;resize:vertical;min-height:100px;box-sizing:border-box}
+  .bt:focus{border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.08)}
+  .bt::placeholder{color:#94a3b8;font-weight:300}
 `
 
 export default function HeroSection() {
+  const [view, setView] = useState('hero')
+  const [transition, setTransition] = useState('')
   const mouse = useMousePosition()
-  const heroRef = useRef(null)
-  const heroVisible = useInView(heroRef)
-  const [scrollY, setScrollY] = useState(0)
+  const secondRef = useRef(null)
+  const secondVisible = useInView(secondRef, 0.1)
 
-  useEffect(() => {
-    const handler = () => setScrollY(window.scrollY)
-    window.addEventListener('scroll', handler, { passive: true })
-    return () => window.removeEventListener('scroll', handler)
-  }, [])
+  const [formData, setFormData] = useState({
+    firstName: '', lastName: '', email: '', organization: '',
+    role: '', phone: '', date: '', message: ''
+  })
 
-  return (
-    <>
-      <style>{css}</style>
-      <div className="sai-grain" />
+  const navigateTo = (target) => {
+    setTransition('exit')
+    setTimeout(() => {
+      setView(target)
+      if (target === 'hero') {
+        setFormData({ firstName: '', lastName: '', email: '', organization: '', role: '', phone: '', date: '', message: '' })
+      }
+      window.scrollTo(0, 0)
+      setTransition('enter')
+      setTimeout(() => setTransition(''), 700)
+    }, 480)
+  }
 
-      {/* ── PRECISION HERO — 60/40 SPLIT LAYOUT ── */}
-      <section className="sai-precision-hero">
+  const handleChange = (field) => (e) => {
+    setFormData(prev => ({ ...prev, [field]: e.target.value }))
+  }
 
-        {/* ── SPLIT CONTENT ── */}
-        <div className="sai-precision-content">
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    navigateTo('success')
+  }
 
-          {/* ── LEFT: Image (60%) ── */}
-          <div className="sai-precision-left">
-            <div className="sai-hero-image-wrap">
-              <img
-                src="/cover-image.png"
-                alt="Medical facility"
-              />
-              <div className="sai-hero-image-overlay" />
+  const wrapStyle = transition === 'exit'
+    ? { animation: 'pageExit 0.48s ease-in forwards' }
+    : transition === 'enter'
+    ? { animation: 'pageEnter 0.65s cubic-bezier(0.16,1,0.3,1) forwards' }
+    : {}
+
+  const filmGrain = (
+    <div
+      className="fixed -inset-1/2 w-[200%] h-[200%] pointer-events-none z-[9999] opacity-[0.022]"
+      style={{
+        animation: 'grainShift .5s steps(1) infinite',
+        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
+      }}
+    />
+  )
+
+  /* ═══════════════════════════════════════════
+     BOOKING VIEW
+     ═══════════════════════════════════════════ */
+  if (view === 'booking') {
+    return (
+      <>
+        <style>{minimalCSS}</style>
+        {filmGrain}
+
+        <div style={wrapStyle} className="min-h-screen bg-[#f8fafc]">
+          {/* Top accent bar */}
+          <div className="h-[3px]" style={{
+            background: 'linear-gradient(90deg, #2563eb, #60a5fa, #3b82f6, #2563eb)',
+            backgroundSize: '300% 100%',
+            animation: 'shimmerBar 3s linear infinite'
+          }} />
+
+          {/* Background dot pattern */}
+          <div className="fixed inset-0 pointer-events-none opacity-[0.025] z-0"
+            style={{
+              backgroundImage: 'radial-gradient(circle, #94a3b8 0.5px, transparent 0.5px)',
+              backgroundSize: '32px 32px'
+            }}
+          />
+
+          {/* Decorative blurs */}
+          <div className="fixed top-0 right-0 w-[500px] h-[500px] rounded-full pointer-events-none z-0"
+            style={{ background: 'radial-gradient(circle, rgba(59,130,246,0.04), transparent 65%)' }} />
+          <div className="fixed bottom-0 left-0 w-[400px] h-[400px] rounded-full pointer-events-none z-0"
+            style={{ background: 'radial-gradient(circle, rgba(99,102,241,0.03), transparent 65%)' }} />
+
+          {/* Navigation */}
+          <nav className="sticky top-0 z-50 bg-white/70 backdrop-blur-2xl border-b border-slate-200/50">
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 h-[60px] flex items-center justify-between">
+              <button
+                onClick={() => navigateTo('hero')}
+                className="inline-flex items-center gap-2 text-slate-400 hover:text-slate-700
+                           font-['DM_Sans'] text-[13px] font-medium tracking-wide
+                           transition-colors duration-200 cursor-pointer bg-transparent border-none p-0"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                Back
+              </button>
+
+              <span className="font-['Outfit'] text-[17px] font-bold tracking-[-0.01em] text-slate-800">
+                Shri<span className="text-blue-600">-AI</span>
+              </span>
+
+              <div className="w-14" />
             </div>
+          </nav>
 
-            {/* Dot grid */}
-            <div style={{
-              position: 'absolute', inset: 0, opacity: 0.03, zIndex: 3,
-              backgroundImage: 'radial-gradient(circle, rgba(147,197,253,0.8) 0.5px, transparent 0.5px)',
-              backgroundSize: '40px 40px', pointerEvents: 'none',
-            }} />
+          {/* Content */}
+          <main className="relative z-10 max-w-[640px] mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 md:py-16">
 
-            {/* ── Tags — vertically stacked, centered on image, below navbar ── */}
-            <div className="sai-precision-tags-overlay">
-              <span className="sai-precision-tag">
+            {/* Header */}
+            <div className="text-center mb-10 sm:mb-12"
+              style={{ animation: 'staggerIn 0.7s cubic-bezier(0.16,1,0.3,1) 0.08s both' }}
+            >
+              <div className="inline-flex items-center gap-2 bg-blue-50/80 text-blue-600
+                              font-['DM_Sans'] text-[11px] font-semibold tracking-[0.1em] uppercase
+                              px-4 py-1.5 rounded-full mb-5 border border-blue-100/60">
+                <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                Demo Request
+              </div>
+
+              <h1 className="font-['Outfit'] text-[1.85rem] sm:text-[2.2rem] md:text-[2.6rem]
+                             font-bold text-slate-900 leading-[1.12] tracking-[-0.035em] mb-3">
+                Schedule Your{' '}
                 <span style={{
-                  width: 6, height: 6, borderRadius: '50%',
-                  background: '#3b82f6',
-                  boxShadow: '0 0 10px rgba(59,130,246,0.8)',
-                  animation: 'dotPulse 2s ease-in-out infinite',
-                  flexShrink: 0,
-                }} />
-                Launching Soon — Open Source · Not for Profit
-              </span>
-              <span className="sai-precision-tag sai-precision-tag-secondary">
-                Next-Generation Healthcare Intelligence
-              </span>
+                  background: 'linear-gradient(135deg, #1d4ed8, #3b82f6, #60a5fa)',
+                  WebkitBackgroundClip: 'text', backgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent'
+                }}>
+                  Demo
+                </span>
+              </h1>
+
+              <p className="font-['Plus_Jakarta_Sans'] text-[13.5px] sm:text-[14.5px]
+                            text-slate-400 leading-[1.7] max-w-[420px] mx-auto font-light">
+                Experience next-generation AI-powered precision oncology monitoring.
+                Fill in your details and we'll arrange a personalized walkthrough.
+              </p>
             </div>
-          </div>
 
-          {/* ── RIGHT: Clean Text (40%) ── */}
-          <div className="sai-precision-right">
-            {/* Background glow */}
-            <div className="sai-right-glow" />
-            <div className="sai-right-ring" />
-            <div className="sai-right-ring sai-right-ring-2" />
+            {/* Form Card */}
+            <div
+              className="bg-white rounded-2xl
+                         shadow-[0_4px_40px_rgba(0,0,0,0.05),0_1px_3px_rgba(0,0,0,0.03)]
+                         border border-slate-100/80
+                         p-6 sm:p-8 md:p-10"
+              style={{ animation: 'staggerIn 0.7s cubic-bezier(0.16,1,0.3,1) 0.22s both' }}
+            >
+              <form onSubmit={handleSubmit} className="space-y-5">
+                {/* First + Last Name */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+                  <div>
+                    <label className="bl">First Name <span className="text-red-400/70">*</span></label>
+                    <input type="text" className="bi" placeholder="John"
+                      value={formData.firstName} onChange={handleChange('firstName')} required />
+                  </div>
+                  <div>
+                    <label className="bl">Last Name <span className="text-red-400/70">*</span></label>
+                    <input type="text" className="bi" placeholder="Doe"
+                      value={formData.lastName} onChange={handleChange('lastName')} required />
+                  </div>
+                </div>
 
-            {/* Subtle dot grid */}
-            <div style={{
-              position: 'absolute', inset: 0, opacity: 0.015, zIndex: 0,
-              backgroundImage: 'radial-gradient(circle, rgba(147,197,253,0.5) 0.5px, transparent 0.5px)',
-              backgroundSize: '48px 48px', pointerEvents: 'none',
-            }} />
+                {/* Email */}
+                <div>
+                  <label className="bl">Email Address <span className="text-red-400/70">*</span></label>
+                  <input type="email" className="bi" placeholder="john@example.com"
+                    value={formData.email} onChange={handleChange('email')} required />
+                </div>
 
-            {/* Label */}
-            <span className="sai-right-label">
-              <span style={{
-                display: 'inline-block',
-                width: 22, height: 1,
-                background: 'rgba(59,130,246,0.35)',
-                marginRight: 14,
-                flexShrink: 0,
-              }} />
-              Healthcare AI Platform
-            </span>
+                {/* Organization + Role */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+                  <div>
+                    <label className="bl">Organization</label>
+                    <input type="text" className="bi" placeholder="Company name"
+                      value={formData.organization} onChange={handleChange('organization')} />
+                  </div>
+                  <div>
+                    <label className="bl">Role / Title</label>
+                    <input type="text" className="bi" placeholder="e.g. Oncologist"
+                      value={formData.role} onChange={handleChange('role')} />
+                  </div>
+                </div>
 
-            {/* Main clean heading */}
-            <h1 className="sai-clean-heading">
-              <span className="sai-hw sai-hw-light">Realtime</span>
-              <span className="sai-hw sai-hw-bold">Precision</span>
-              <span className="sai-hw sai-hw-accent">Monitoring</span>
+                {/* Phone + Date */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+                  <div>
+                    <label className="bl">Phone Number</label>
+                    <input type="tel" className="bi" placeholder="+1 (555) 000-0000"
+                      value={formData.phone} onChange={handleChange('phone')} />
+                  </div>
+                  <div>
+                    <label className="bl">Preferred Date</label>
+                    <input type="date" className="bi"
+                      value={formData.date} onChange={handleChange('date')} />
+                  </div>
+                </div>
+
+                {/* Message */}
+                <div>
+                  <label className="bl">Additional Notes</label>
+                  <textarea className="bt" placeholder="Tell us about your use case or any questions..."
+                    value={formData.message} onChange={handleChange('message')} rows={4} />
+                </div>
+
+                {/* Divider */}
+                <div className="h-px bg-slate-100 my-2" />
+
+                {/* Submit */}
+                <div className="pt-1 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                  <button
+                    type="submit"
+                    className="group relative w-full sm:w-auto overflow-hidden
+                               inline-flex items-center justify-center gap-2.5
+                               px-9 py-[14px]
+                               rounded-xl
+                               font-['DM_Sans'] text-[13px] font-semibold tracking-[0.03em]
+                               bg-gradient-to-br from-blue-600 to-blue-500 text-white
+                               shadow-[0_4px_20px_rgba(59,130,246,0.25)]
+                               hover:shadow-[0_8px_36px_rgba(59,130,246,0.35)]
+                               hover:-translate-y-0.5 active:translate-y-0
+                               transition-all duration-300 ease-out
+                               border-none cursor-pointer"
+                  >
+                    <span className="absolute top-0 -left-full w-full h-full
+                                     bg-gradient-to-r from-transparent via-white/[0.1] to-transparent
+                                     group-hover:left-full transition-all duration-500" />
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="relative z-10">
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                      <line x1="16" y1="2" x2="16" y2="6"/>
+                      <line x1="8" y1="2" x2="8" y2="6"/>
+                      <line x1="3" y1="10" x2="21" y2="10"/>
+                    </svg>
+                    <span className="relative z-10">Schedule Demo</span>
+                  </button>
+
+                  <span className="font-['Plus_Jakarta_Sans'] text-[11.5px] text-slate-350 text-slate-400 text-center sm:text-right font-light leading-snug">
+                    We'll never share your data.<br className="hidden sm:block" /> Privacy is our priority.
+                  </span>
+                </div>
+              </form>
+            </div>
+
+            {/* Trust indicators */}
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-5 sm:gap-7"
+              style={{ animation: 'staggerIn 0.7s cubic-bezier(0.16,1,0.3,1) 0.38s both' }}
+            >
+              {[
+                { icon: '🔒', text: 'Secure & Private' },
+                { icon: '⚡', text: 'Response within 24h' },
+                { icon: '🌐', text: 'Open Source' },
+              ].map((item, i) => (
+                <span key={i} className="inline-flex items-center gap-1.5 font-['DM_Sans'] text-[11px] text-slate-400 tracking-[0.03em]">
+                  <span className="text-sm">{item.icon}</span>
+                  {item.text}
+                </span>
+              ))}
+            </div>
+          </main>
+        </div>
+      </>
+    )
+  }
+
+  /* ═══════════════════════════════════════════
+     SUCCESS VIEW
+     ═══════════════════════════════════════════ */
+  if (view === 'success') {
+    return (
+      <>
+        <style>{minimalCSS}</style>
+        {filmGrain}
+
+        <div style={wrapStyle} className="min-h-screen bg-[#f8fafc] flex items-center justify-center">
+          {/* Top accent bar */}
+          <div className="fixed top-0 left-0 right-0 h-[3px] z-50" style={{
+            background: 'linear-gradient(90deg, #10b981, #34d399, #10b981)',
+            backgroundSize: '300% 100%',
+            animation: 'shimmerBar 3s linear infinite'
+          }} />
+
+          {/* Background */}
+          <div className="fixed inset-0 pointer-events-none opacity-[0.02] z-0"
+            style={{
+              backgroundImage: 'radial-gradient(circle, #94a3b8 0.5px, transparent 0.5px)',
+              backgroundSize: '32px 32px'
+            }}
+          />
+
+          {/* Decorative blurs */}
+          <div className="fixed top-1/3 left-1/3 w-[500px] h-[500px] rounded-full pointer-events-none z-0"
+            style={{ background: 'radial-gradient(circle, rgba(59,130,246,0.05), transparent 65%)' }} />
+          <div className="fixed bottom-1/4 right-1/3 w-[400px] h-[400px] rounded-full pointer-events-none z-0"
+            style={{ background: 'radial-gradient(circle, rgba(16,185,129,0.04), transparent 65%)' }} />
+
+          <div className="relative z-10 text-center px-6 py-16 max-w-lg mx-auto">
+            {/* Animated checkmark */}
+            <div className="relative mx-auto mb-9 w-[100px] h-[100px]"
+              style={{ animation: 'softBounce 0.7s cubic-bezier(0.34,1.56,0.64,1) 0.1s both' }}
+            >
+              {/* Ripples */}
+              <div className="absolute inset-0 rounded-full bg-emerald-200/50"
+                style={{ animation: 'successRipple 1.6s ease-out 0.5s forwards' }} />
+              <div className="absolute inset-0 rounded-full bg-emerald-100/40"
+                style={{ animation: 'successRipple 1.6s ease-out 0.85s forwards' }} />
+
+              {/* Circle background */}
+              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-500
+                              shadow-[0_10px_40px_rgba(16,185,129,0.3)]" />
+
+              {/* Checkmark */}
+              <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" fill="none">
+                <path d="M30 52 L43 65 L70 38" stroke="white" strokeWidth="5.5"
+                  strokeLinecap="round" strokeLinejoin="round"
+                  style={{
+                    strokeDasharray: 65, strokeDashoffset: 65,
+                    animation: 'checkStroke 0.5s ease-out 0.65s forwards'
+                  }} />
+              </svg>
+            </div>
+
+            {/* Thank You */}
+            <h1 className="font-['Outfit'] text-[2rem] sm:text-[2.5rem] md:text-[3rem]
+                           font-bold text-slate-900 tracking-[-0.04em] leading-none mb-4"
+              style={{ animation: 'staggerIn 0.7s cubic-bezier(0.16,1,0.3,1) 0.45s both' }}
+            >
+              Thank You!
             </h1>
 
-            {/* Accent line */}
-            <div className="sai-right-accent-line" />
-
-            {/* Body text */}
-            <p className="sai-right-body">
-              AI-powered diagnostics delivering real-time precision insights
-              for next-generation healthcare monitoring — accessible, private,
-              and built for every community.
-            </p>
-
-            {/* CTA Buttons */}
-            <div className="sai-right-cta-row">
-              <button className="sai-right-cta-btn sai-right-cta-primary">
-                <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-                  <rect x="2" y="2" width="12" height="12" rx="2" stroke="white" strokeWidth="1.5" />
-                  <path d="M5 8h6M8 5v6" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
-                </svg>
-                Book a Demo
-              </button>
-              <button className="sai-right-cta-btn sai-right-cta-ghost">
-                <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-                  <circle cx="8" cy="8" r="6" stroke="rgba(255,255,255,0.4)" strokeWidth="1.5" />
-                  <path d="M6.5 5.5l4 2.5-4 2.5V5.5z" fill="rgba(255,255,255,0.5)" />
-                </svg>
-                Learn More
-              </button>
-            </div>
-          </div>
-
-          {/* Vertical separator */}
-          <div className="sai-precision-separator" />
-        </div>
-
-        {/* Corner accents */}
-        <div className="sai-corner-accent top-left" />
-        <div className="sai-corner-accent top-right" />
-        <div className="sai-corner-accent bottom-left" />
-        <div className="sai-corner-accent bottom-right" />
-
-        {/* Marquee strip */}
-        <div className="sai-marquee-strip">
-          <div className="sai-marquee-track">
-            {Array(4).fill(null).map((_, i) => (
-              <span key={i} className="sai-marquee-item">
-                AI Precision Monitoring — Diagnostics — Healthcare —
-              </span>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── MAIN HERO SECTION ── */}
-      <section
-        ref={heroRef}
-        id="home"
-        className="sai-hero"
-        style={{
-          minHeight: '100vh',
-          background: 'linear-gradient(160deg, #f0f5ff 0%, #fafcff 35%, #ffffff 55%, #f0f5ff 100%)',
-          position: 'relative', overflow: 'hidden',
-          display: 'flex', alignItems: 'center',
-        }}
-      >
-        {/* Reactive mouse glow */}
-        <div style={{
-          position: 'fixed',
-          width: '600px', height: '600px', borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(59,130,246,0.04) 0%, transparent 65%)',
-          left: mouse.x - 300, top: mouse.y - 300,
-          pointerEvents: 'none', zIndex: 0,
-          transition: 'left 0.3s ease-out, top 0.3s ease-out',
-        }} />
-
-        {/* BG blobs */}
-        <div style={{
-          position: 'absolute', top: '-260px', right: '-200px',
-          width: '700px', height: '700px', borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(59,130,246,0.1) 0%, transparent 65%)',
-          pointerEvents: 'none', animation: 'breathe 8s ease-in-out infinite',
-        }} />
-        <div style={{
-          position: 'absolute', bottom: '-200px', left: '-180px',
-          width: '580px', height: '580px', borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(29,78,216,0.07) 0%, transparent 65%)',
-          pointerEvents: 'none', animation: 'breathe 8s ease-in-out 2s infinite',
-        }} />
-        <div style={{
-          position: 'absolute', top: '40%', left: '50%',
-          width: '400px', height: '400px', borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(147,197,253,0.06) 0%, transparent 60%)',
-          pointerEvents: 'none', transform: 'translate(-50%,-50%)',
-          animation: 'breathe 10s ease-in-out 4s infinite',
-        }} />
-
-        <div className="sai-hero-grid" style={{
-          maxWidth: '1300px', margin: '0 auto',
-          padding: '130px 56px 90px', width: '100%',
-          display: 'grid', gridTemplateColumns: '1fr 1fr',
-          gap: '80px', alignItems: 'center',
-        }}>
-
-          {/* ── LEFT ── */}
-          <div>
-            <div className="sai-a0" style={{ marginBottom: '24px' }}>
-              <span className="sai-badge">
-                <span style={{
-                  width: '7px', height: '7px', borderRadius: '50%',
-                  background: '#3b82f6', display: 'inline-block',
-                  boxShadow: '0 0 7px rgba(59,130,246,0.8)',
-                  animation: 'dotPulse 2s ease-in-out infinite',
-                }} />
+            {/* Launching Soon badge */}
+            <div style={{ animation: 'staggerIn 0.7s cubic-bezier(0.16,1,0.3,1) 0.6s both' }}
+              className="mb-6"
+            >
+              <span className="inline-flex items-center gap-2.5
+                               bg-gradient-to-r from-blue-50 to-indigo-50
+                               border border-blue-100/70
+                               text-blue-700 font-['DM_Sans'] text-[12px] sm:text-[13px]
+                               font-semibold tracking-[0.06em] uppercase
+                               px-5 sm:px-6 py-2 sm:py-2.5 rounded-full"
+                style={{ animation: 'badgePulse 3s ease-in-out 1.5s infinite' }}
+              >
+                <span className="text-[15px]">🚀</span>
                 Launching Soon
               </span>
             </div>
 
-            <div className="sai-a1">
-              <h1 className="sai-display" style={{
-                fontSize: 'clamp(2.8rem,5vw,4.2rem)',
-                lineHeight: 1.04, fontWeight: 300,
-                color: '#0f172a', marginBottom: '6px',
-                letterSpacing: '-0.03em',
-              }}>
-                AI For Health.
-              </h1>
-              <h1 className="sai-display sai-shimmer" style={{
-                fontSize: 'clamp(2.8rem,5vw,4.2rem)',
-                lineHeight: 1.04, fontWeight: 400,
-                marginBottom: '6px', letterSpacing: '-0.03em',
-              }}>
-                Care For All!
-              </h1>
-              <p style={{
-                fontFamily: "'Cormorant Garamond',serif",
-                fontSize: '13px', color: '#2563eb',
-                fontWeight: 400, letterSpacing: '0.12em',
-                textTransform: 'uppercase', opacity: 0.65, marginBottom: '8px',
-              }}>
-                Open Source · Not for Profit
-              </p>
-            </div>
+            {/* Description */}
+            <p className="font-['Plus_Jakarta_Sans'] text-[13.5px] sm:text-[15px]
+                          text-slate-400 leading-[1.8] max-w-[400px] mx-auto mb-10 font-light"
+              style={{ animation: 'staggerIn 0.7s cubic-bezier(0.16,1,0.3,1) 0.75s both' }}
+            >
+              Your demo has been booked successfully. We're currently in pre-launch
+              and will reach out shortly with all the details. Thank you for your
+              interest in <span className="text-slate-600 font-medium">Shri-AI</span>'s
+              precision oncology platform.
+            </p>
 
-            <div className="sai-a1 sai-divider-line" style={{
-              maxWidth: '160px', marginBottom: '22px',
-            }} />
-
-            <div className="sai-a2">
-              <p style={{
-                fontSize: '15px', color: '#64748b', lineHeight: 1.78,
-                maxWidth: '440px', marginBottom: '30px', fontWeight: 300,
-              }}>
-                Shri-AI brings AI-powered breast cancer screening directly to your neighbourhood —
-                early detection, personalized insights, and complete privacy at every step.
-              </p>
-            </div>
-
-            <div className="sai-a2" style={{ marginBottom: '32px' }}>
-              <div className="sai-terminal sai-glass-card" style={{ borderRadius: '100px' }}>
-                <div style={{ display: 'flex', gap: '5px' }}>
-                  {['#fca5a5', '#fde68a', '#6ee7b7'].map((c, i) => (
-                    <span key={i} style={{ width: '8px', height: '8px', borderRadius: '50%', background: c }} />
-                  ))}
-                </div>
-                <span style={{ fontSize: '12px', color: '#94a3b8', fontFamily: 'monospace' }}>Shri AI ~</span>
-                <TypeWriter />
-              </div>
-            </div>
-
-            <div className="sai-a3" style={{ display: 'flex', flexWrap: 'wrap', gap: '14px', marginBottom: '40px' }}>
-              <button className="sai-btn-primary">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <rect x="2" y="2" width="12" height="12" rx="2" stroke="white" strokeWidth="1.5" />
-                  <path d="M5 8h6M8 5v6" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
-                </svg>
-                Book a Demo
-              </button>
-              <button className="sai-btn-ghost">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <circle cx="8" cy="8" r="6" stroke="#2563eb" strokeWidth="1.5" />
-                  <path d="M6.5 5.5l4 2.5-4 2.5V5.5z" fill="#2563eb" />
-                </svg>
-                Partner With Us
-              </button>
-            </div>
-
-            <div className="sai-a4" style={{
-              display: 'flex', gap: '24px', alignItems: 'center',
-            }}>
+            {/* What's next cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-11"
+              style={{ animation: 'staggerIn 0.7s cubic-bezier(0.16,1,0.3,1) 0.9s both' }}
+            >
               {[
-                { label: 'Accuracy', value: '98.2%' },
-                { label: 'Communities', value: '150+' },
-                { label: 'Privacy', value: '100%' },
-              ].map((item, i) => (
-                <div key={i} style={{
-                  display: 'flex', flexDirection: 'column', gap: '2px',
-                }}>
-                  <span className="sai-display" style={{
-                    fontSize: '18px', fontWeight: 600, color: '#1d4ed8',
-                    letterSpacing: '-0.01em',
-                  }}>{item.value}</span>
-                  <span style={{
-                    fontSize: '11px', color: '#94a3b8', fontWeight: 400,
-                    letterSpacing: '0.04em', textTransform: 'uppercase',
-                  }}>{item.label}</span>
+                { icon: '📧', title: 'Confirmation', desc: 'Email sent to your inbox' },
+                { icon: '📅', title: 'Scheduling', desc: "We'll confirm your slot" },
+                { icon: '🤝', title: 'Demo Day', desc: 'Personalized walkthrough' },
+              ].map((step, i) => (
+                <div key={i} className="bg-white rounded-xl border border-slate-100
+                                        shadow-[0_2px_16px_rgba(0,0,0,0.04)]
+                                        p-5 text-center
+                                        hover:shadow-[0_4px_24px_rgba(0,0,0,0.07)]
+                                        hover:-translate-y-0.5
+                                        transition-all duration-300">
+                  <span className="text-[1.6rem] mb-2.5 block">{step.icon}</span>
+                  <span className="font-['DM_Sans'] text-[10.5px] font-bold text-slate-700
+                                   uppercase tracking-[0.07em] block mb-1">
+                    {step.title}
+                  </span>
+                  <span className="font-['Plus_Jakarta_Sans'] text-[11.5px] text-slate-400 font-light">
+                    {step.desc}
+                  </span>
                 </div>
               ))}
             </div>
+
+            {/* Divider */}
+            <div className="w-12 h-px bg-slate-200 mx-auto mb-8"
+              style={{ animation: 'staggerIn 0.7s cubic-bezier(0.16,1,0.3,1) 1s both' }} />
+
+            {/* Back button */}
+            <button
+              onClick={() => navigateTo('hero')}
+              className="group inline-flex items-center gap-2.5
+                         px-8 py-[14px] rounded-xl
+                         font-['DM_Sans'] text-[13px] font-semibold tracking-[0.02em]
+                         bg-slate-900 text-white
+                         shadow-[0_4px_20px_rgba(15,23,42,0.18)]
+                         hover:shadow-[0_8px_36px_rgba(15,23,42,0.28)]
+                         hover:-translate-y-0.5
+                         transition-all duration-300 ease-out
+                         border-none cursor-pointer"
+              style={{ animation: 'staggerIn 0.7s cubic-bezier(0.16,1,0.3,1) 1.1s both' }}
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-70">
+                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+                <polyline points="9 22 9 12 15 12 15 22"/>
+              </svg>
+              Return to Home
+            </button>
           </div>
+        </div>
+      </>
+    )
+  }
 
-          {/* ── RIGHT — IMAGE ── */}
-          <div className="sai-img-anim sai-hero-right" style={{
-            position: 'relative',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-            <div style={{
-              position: 'relative',
-              width: '100%',
-              maxWidth: '560px',
-              aspectRatio: '1200 / 672',
-            }}>
-              <div style={{
-                position: 'relative',
-                zIndex: 2,
-                width: '100%',
-                height: '100%',
-                borderRadius: '20px',
-                overflow: 'hidden',
-                boxShadow: '0 24px 64px rgba(0,0,0,0.12), 0 8px 24px rgba(0,0,0,0.06)',
-              }}>
-                <img
-                  src="/gene.jpg"
-                  alt="Shri-AI Breast Cancer Screening"
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                    display: 'block',
-                  }}
-                />
-                <div style={{
-                  position: 'absolute',
-                  bottom: 0, left: 0, right: 0,
-                  height: '160px',
-                  background: 'linear-gradient(to top, rgba(15,23,42,0.7), transparent)',
-                  borderRadius: '0 0 20px 20px',
-                }} />
-              </div>
+  /* ═══════════════════════════════════════════
+     HERO VIEW (original)
+     ═══════════════════════════════════════════ */
+  return (
+    <>
+      <style>{minimalCSS}</style>
 
-              <div className="sai-glass-card" style={{
-                position: 'absolute',
-                top: '-55px', right: '-115px',
-                zIndex: 3, borderRadius: '20px',
-                padding: '16px 20px', minWidth: '155px',
-              }}>
-                <div style={{ fontSize: '11px', color: '#94a3b8', marginBottom: '4px', fontWeight: 400, letterSpacing: '0.04em' }}>
-                  Detection Accuracy
-                </div>
-                <div style={{ display: 'flex', alignItems: 'baseline', gap: '2px' }}>
-                  <span className="sai-display" style={{ fontSize: '32px', fontWeight: 700, color: '#2563eb', letterSpacing: '-0.02em' }}>
-                    98.2
-                  </span>
-                  <span style={{ fontSize: '15px', color: '#1d4ed8', fontWeight: 500 }}>%</span>
-                </div>
-                <div style={{
-                  marginTop: '8px', height: '3px',
-                  borderRadius: '3px',
-                  background: 'rgba(59,130,246,0.1)',
-                  overflow: 'hidden',
-                }}>
-                  <div style={{
-                    width: '98.2%', height: '100%',
-                    borderRadius: '3px',
-                    background: 'linear-gradient(90deg, #3b82f6, #60a5fa)',
+      <div style={wrapStyle}>
+        {filmGrain}
+
+        {/* SECTION 1 — PRECISION HERO */}
+        <section className="relative min-h-screen flex flex-col overflow-hidden bg-[#001953]">
+          <div className="flex-1 grid grid-cols-1 md:grid-cols-[3fr_2fr] relative">
+
+            {/* LEFT — image + tags */}
+            <div className="relative overflow-hidden min-h-[36vh] sm:min-h-[40vh] md:min-h-0">
+              <div className="absolute inset-0 z-[1]">
+                <img src="/cover-image.png" alt="Medical facility"
+                  className="w-full h-full object-cover object-center"
+                  style={{ animation: 'slowZoom 25s ease-in-out infinite alternate' }} />
+                <div className="absolute inset-0 z-[2]"
+                  style={{ background: 'linear-gradient(180deg, rgba(7,12,24,0.4) 0%, rgba(7,12,24,0.05) 25%, transparent 50%, transparent 100%)' }}>
+                  <div className="absolute inset-0" style={{
+                    background: 'radial-gradient(ellipse at 50% 80%, rgba(29,78,216,0.06) 0%, transparent 60%), linear-gradient(90deg, transparent 55%, rgba(7,12,24,0.8) 100%)'
                   }} />
                 </div>
               </div>
 
-              <div className="sai-glass-card" style={{
-                position: 'absolute',
-                top: '50%', left: '-120px',
-                transform: 'translateY(-50%)',
-                zIndex: 3, borderRadius: '20px',
-                padding: '14px 18px', minWidth: '160px',
-              }}>
-                <div style={{ fontSize: '11px', color: '#94a3b8', marginBottom: '8px', letterSpacing: '0.04em' }}>
-                  Privacy Status
-                </div>
-                <div>
-                  <div style={{ fontSize: '13px', color: '#10b981', fontWeight: 600 }}>Fully Secured</div>
-                  <div style={{ fontSize: '10px', color: '#94a3b8', marginTop: '2px' }}>End-to-end encrypted</div>
-                </div>
-              </div>
+              <div className="absolute inset-0 opacity-[0.03] z-[3] pointer-events-none"
+                style={{
+                  backgroundImage: 'radial-gradient(circle, rgba(147,197,253,0.8) 0.5px, transparent 0.5px)',
+                  backgroundSize: '40px 40px'
+                }} />
 
-              <div className="sai-glass-card" style={{
-                position: 'absolute',
-                bottom: '-50px', right: '-100px',
-                zIndex: 3, borderRadius: '20px',
-                padding: '14px 18px',
-              }}>
-                <div style={{ fontSize: '11px', color: '#94a3b8', marginBottom: '4px', letterSpacing: '0.04em' }}>
-                  Communities
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <div style={{ display: 'flex' }}>
-                    {[0, 1, 2, 3].map(i => (
-                      <div key={i} style={{
-                        width: '24px', height: '24px', borderRadius: '50%',
-                        background: ['#3b82f6', '#60a5fa', '#93c5fd', '#bfdbfe'][i],
-                        border: '2px solid white',
-                        marginLeft: i > 0 ? '-8px' : 0,
-                        display: 'flex', alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '8px', color: 'white', fontWeight: 700,
-                      }}>
-                        {i < 3 ? '' : '···'}
-                      </div>
-                    ))}
-                  </div>
-                  <span className="sai-display" style={{ fontSize: '16px', fontWeight: 600, color: '#1d4ed8' }}>
-                    150+
-                  </span>
-                </div>
+              <div className="absolute inset-0 z-[8] flex flex-col items-center pointer-events-none
+                              pt-24 sm:pt-28 md:pt-32 lg:pt-36 gap-3 sm:gap-3.5 md:gap-4"
+                style={{ animation: 'floatUp 1s cubic-bezier(0.16,1,0.3,1) 0.1s both' }}>
+                <span className="pointer-events-auto inline-flex items-center gap-2 sm:gap-2.5 md:gap-3
+                                 bg-white/[0.05] backdrop-blur-xl rounded-full
+                                 px-5 py-2 sm:px-7 sm:py-2.5 md:px-8 md:py-3 lg:px-9 lg:py-3
+                                 text-[14px] sm:text-[16px] md:text-[17px] lg:text-[19px]
+                                 text-white/55 font-medium tracking-[0.08em] uppercase
+                                 border border-white/[0.07] font-['DM_Sans'] whitespace-nowrap
+                                 shadow-[0_2px_24px_rgba(59,130,246,0.06)]">
+                  <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-blue-500 flex-shrink-0"
+                    style={{ boxShadow: '0 0 10px rgba(59,130,246,0.8)', animation: 'dotPulse 2s ease-in-out infinite' }} />
+                  Launching Soon — Open Source · Not for Profit
+                </span>
+                <span className="pointer-events-auto text-[13px] sm:text-[15px] md:text-[16px] lg:text-[18px]
+                                 text-white/30 font-normal tracking-[0.18em] uppercase font-['DM_Sans'] whitespace-nowrap">
+                  Next-Generation Healthcare Intelligence
+                </span>
               </div>
             </div>
-          </div>
-        </div>
 
-        {/* Scroll indicator */}
-        <div style={{
-          position: 'absolute', bottom: '32px', left: '50%', transform: 'translateX(-50%)',
-          display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', opacity: 0.35,
-        }}>
-          <span style={{
-            fontSize: '9px', color: '#94a3b8', letterSpacing: '0.18em',
-            textTransform: 'uppercase', fontFamily: "'Cormorant Garamond',serif", fontWeight: 500,
-          }}>Scroll</span>
-          <div style={{ width: '1px', height: '42px', background: 'linear-gradient(to bottom, #94a3b8, transparent)' }} />
-        </div>
-      </section>
+            {/* RIGHT — text content */}
+            <div className="relative z-[5] flex flex-col items-center md:items-start justify-center
+                            text-center md:text-left px-5 py-10 sm:px-8 sm:py-12
+                            md:pl-12 md:pr-8 md:py-14 lg:pl-[72px] lg:pr-14 lg:py-20 xl:pl-20 xl:pr-16">
+
+              <div className="absolute w-[420px] h-[420px] rounded-full top-1/2 left-1/2 -translate-x-[30%] -translate-y-1/2 pointer-events-none z-0"
+                style={{ background: 'radial-gradient(circle, rgba(59,130,246,0.05) 0%, transparent 70%)' }} />
+              <div className="absolute w-72 h-72 rounded-full border border-blue-500/[0.04] top-1/2 left-1/2 pointer-events-none z-0"
+                style={{ animation: 'pulseRing 7s ease-in-out infinite' }} />
+              <div className="absolute w-[460px] h-[460px] rounded-full border border-blue-500/[0.025] top-1/2 left-1/2 pointer-events-none z-0"
+                style={{ animation: 'pulseRing 9s ease-in-out 2s infinite' }} />
+
+              <div className="absolute inset-0 opacity-[0.015] z-0 pointer-events-none"
+                style={{
+                  backgroundImage: 'radial-gradient(circle, rgba(147,197,253,0.5) 0.5px, transparent 0.5px)',
+                  backgroundSize: '48px 48px'
+                }} />
+
+              <span className="relative z-10 font-['DM_Sans'] text-[9px] sm:text-[10px] md:text-[11px]
+                               text-white/25 tracking-[0.22em] uppercase font-medium
+                               mb-5 sm:mb-6 md:mb-8 flex items-center justify-center md:justify-start w-full"
+                style={{ animation: 'floatUp 1s cubic-bezier(0.16,1,0.3,1) 0.2s both' }}>
+                <span className="inline-block w-5 h-px bg-blue-500/35 mr-3 flex-shrink-0" />
+                Healthcare AI Platform
+              </span>
+
+              <h1 className="relative z-10 m-0 p-0" style={{ perspective: '800px' }}>
+                {[
+                  { text: 'Realtime', type: 'light' },
+                  { text: 'Precision', type: 'bold' },
+                  { text: 'Monitoring', type: 'bold' },
+                  { text: 'In Oncology', type: 'accent' },
+                ].map((line, i) => {
+                  const baseClasses = "block font-['Outfit'] leading-[0.92] tracking-[-0.05em] text-[clamp(2rem,6.5vw,7.5rem)]"
+                  let variant = ''
+                  let gradientStyle = {}
+
+                  if (line.type === 'light') {
+                    variant = 'font-light text-slate-400/50'
+                    gradientStyle = { animation: `textReveal 1.2s cubic-bezier(0.16,1,0.3,1) ${0.3 + i * 0.2}s both` }
+                  } else if (line.type === 'bold') {
+                    variant = 'font-extrabold'
+                    gradientStyle = {
+                      background: 'linear-gradient(135deg, #93c5fd 0%, #60a5fa 20%, #fff 45%, #e2e8f0 55%, #60a5fa 75%, #3b82f6 100%)',
+                      backgroundSize: '200% 200%',
+                      WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent',
+                      animation: `textReveal 1.2s cubic-bezier(0.16,1,0.3,1) ${0.3 + i * 0.2}s both, gradientShift 6s ease infinite`,
+                    }
+                  } else {
+                    variant = 'font-semibold'
+                    gradientStyle = {
+                      background: 'linear-gradient(90deg, #3b82f6 0%, #60a5fa 30%, #93c5fd 50%, #60a5fa 70%, #3b82f6 100%)',
+                      backgroundSize: '200% 200%',
+                      WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent',
+                      animation: `textReveal 1.2s cubic-bezier(0.16,1,0.3,1) ${0.3 + i * 0.2}s both, gradientShift 5s ease infinite`,
+                    }
+                  }
+                  return <span key={i} className={`${baseClasses} ${variant}`} style={gradientStyle}>{line.text}</span>
+                })}
+              </h1>
+
+              <div className="relative z-10 w-12 sm:w-16 md:w-[72px] h-px mt-6 sm:mt-8 md:mt-10 mb-4 sm:mb-5 md:mb-6 mx-auto md:mx-0"
+                style={{
+                  background: 'linear-gradient(90deg, rgba(59,130,246,0.5), rgba(59,130,246,0.02))',
+                  transformOrigin: 'left', animation: 'lineGrow 1.2s ease-out 0.9s both'
+                }} />
+
+              <p className="relative z-10 font-['Plus_Jakarta_Sans'] text-xs sm:text-[13px] md:text-[14.5px]
+                            text-white/30 leading-[1.7] sm:leading-[1.8] max-w-[380px] font-light tracking-[0.01em]
+                            mx-auto md:mx-0"
+                style={{ animation: 'floatUp 1s cubic-bezier(0.16,1,0.3,1) 1s both' }}>
+                AI-powered diagnostics delivering real-time precision insights
+                for next-generation healthcare monitoring — accessible, private,
+                and built for every community.
+              </p>
+
+              {/* CTA row */}
+              <div className="relative z-10 flex items-center gap-3 sm:gap-4 md:gap-5
+                              mt-7 sm:mt-8 md:mt-9 justify-center md:justify-start
+                              flex-col sm:flex-row w-full sm:w-auto"
+                style={{ animation: 'floatUp 1s cubic-bezier(0.16,1,0.3,1) 1.1s both' }}>
+
+                {/* ★ BOOK A DEMO — now wired up */}
+                <button
+                  onClick={() => navigateTo('booking')}
+                  className="group relative overflow-hidden inline-flex items-center justify-center gap-2.5
+                             px-7 py-3.5 sm:px-9 sm:py-4 rounded-[3px]
+                             font-['DM_Sans'] text-[12px] sm:text-[13px] font-medium tracking-[0.04em]
+                             bg-gradient-to-br from-blue-700 to-blue-500 text-white
+                             shadow-[0_8px_32px_rgba(59,130,246,0.3),0_2px_8px_rgba(59,130,246,0.15)]
+                             hover:-translate-y-0.5 hover:shadow-[0_16px_48px_rgba(59,130,246,0.4)]
+                             transition-all duration-300 ease-out border-none cursor-pointer
+                             w-full sm:w-auto"
+                >
+                  <span className="absolute top-0 -left-full w-full h-full
+                                   bg-gradient-to-r from-transparent via-white/[0.12] to-transparent
+                                   group-hover:left-full transition-all duration-500" />
+                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none" className="relative z-10">
+                    <rect x="2" y="2" width="12" height="12" rx="2" stroke="white" strokeWidth="1.5" />
+                    <path d="M5 8h6M8 5v6" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
+                  </svg>
+                  <span className="relative z-10">Book a Demo</span>
+                </button>
+
+                <button className="inline-flex items-center justify-center gap-2.5
+                                   px-7 py-3.5 sm:px-9 sm:py-4 rounded-[3px]
+                                   font-['DM_Sans'] text-[12px] sm:text-[13px] font-medium tracking-[0.04em]
+                                   bg-white/[0.04] text-white/50 border border-white/[0.08] backdrop-blur-lg
+                                   hover:bg-blue-500/[0.08] hover:text-white/70 hover:border-blue-500/30
+                                   hover:-translate-y-0.5 transition-all duration-300 ease-out cursor-pointer
+                                   w-full sm:w-auto">
+                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                    <circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.5" className="opacity-50" />
+                    <path d="M6.5 5.5l4 2.5-4 2.5V5.5z" fill="currentColor" className="opacity-60" />
+                  </svg>
+                  Learn More
+                </button>
+              </div>
+            </div>
+
+            {/* Separator */}
+            <div className="hidden md:block absolute top-[8%] bottom-[8%] left-[60%] w-px z-[6] pointer-events-none"
+              style={{ background: 'linear-gradient(180deg, transparent, rgba(59,130,246,0.1) 20%, rgba(59,130,246,0.18) 50%, rgba(59,130,246,0.1) 80%, transparent)' }} />
+          </div>
+
+          {/* Corner accents */}
+          <div className="hidden md:block absolute top-8 left-8 w-12 h-12 border-l border-t border-blue-500/[0.15] z-[4] pointer-events-none" />
+          <div className="hidden md:block absolute top-8 right-8 w-12 h-12 border-r border-t border-blue-500/[0.15] z-[4] pointer-events-none" />
+          <div className="hidden md:block absolute bottom-8 left-8 w-12 h-12 border-l border-b border-blue-500/10 z-[4] pointer-events-none" />
+          <div className="hidden md:block absolute bottom-8 right-8 w-12 h-12 border-r border-b border-blue-500/10 z-[4] pointer-events-none" />
+
+          {/* Marquee */}
+          <div className="absolute bottom-8 sm:bottom-10 md:bottom-[70px] left-0 right-0 z-[5] overflow-hidden pointer-events-none opacity-[0.03] md:opacity-[0.04]">
+            <div className="flex whitespace-nowrap" style={{ animation: 'marqueeScroll 30s linear infinite' }}>
+              {Array(4).fill(null).map((_, i) => (
+                <span key={i} className="font-['Outfit'] text-xl sm:text-3xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold text-white px-6 sm:px-8 md:px-14 uppercase tracking-[0.05em]">
+                  AI Precision Monitoring — Diagnostics — Healthcare —
+                </span>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* SECTION 2 — GUARDANT STYLE */}
+        <section ref={secondRef} id="home"
+          className="relative w-full h-screen min-h-[600px] overflow-hidden bg-[#f0f2f5] font-['Source_Sans_3']">
+          <div className="absolute inset-0 z-[1]">
+            <img src="/doctor.png" alt="AI-powered breast cancer screening"
+              className="w-full h-full object-cover block"
+              style={{ objectPosition: '70% center' }} />
+            <div className="absolute inset-0 z-[2]" style={{
+              background: 'linear-gradient(to right, rgba(240,242,245,0.92) 0%, rgba(240,242,245,0.55) 38%, rgba(240,242,245,0.05) 65%, transparent 100%)'
+            }} />
+          </div>
+
+          <div className="absolute top-1/2 -translate-y-1/2 left-4 right-4 sm:left-6 sm:right-6
+                          md:left-8 md:right-auto lg:left-12 z-10 bg-white
+                          w-auto md:w-full md:max-w-[460px] lg:max-w-[500px]
+                          p-6 sm:p-8 md:px-12 md:py-10 lg:px-12 lg:pt-10 lg:pb-12
+                          shadow-[0_8px_48px_rgba(0,0,0,0.10),0_2px_8px_rgba(0,0,0,0.04)]
+                          transition-all duration-[850ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
+            style={{ opacity: secondVisible ? 1 : 0, marginTop: secondVisible ? '0px' : '32px' }}>
+            <div className="w-16 h-[5px] bg-[#c0392b] mb-6 rounded-[1px]" />
+            <h2 className="font-['Merriweather'] text-[1.35rem] sm:text-2xl md:text-[clamp(1.55rem,2.8vw,2.2rem)]
+                           font-bold text-[#1565c0] leading-[1.22] tracking-[-0.01em] m-0 mb-5">
+              Together We Can Help<br />Conquer Cancer
+            </h2>
+            <p className="font-['Source_Sans_3'] text-sm sm:text-[14.5px] md:text-[15.5px]
+                          text-[#4a4a4a] leading-[1.75] font-normal m-0 mb-6 sm:mb-8">
+              At Shri-AI, every team member plays a vital role in a mission that
+              impacts countless lives: conquering cancer through intelligent data.
+              We are driven by a commitment to patients through the power of AI
+              and the life-changing information it provides. We're looking for
+              curious, talented minds across diverse fields to take on some of
+              the greatest challenges in human health.
+            </p>
+            <button className="inline-flex items-center gap-2 bg-[#c0392b] text-white
+                               font-['Source_Sans_3'] text-[13px] sm:text-sm font-semibold tracking-[0.04em]
+                               px-5 sm:px-7 py-3 sm:py-3.5 border-none rounded-[2px] cursor-pointer
+                               hover:bg-[#a93226] hover:-translate-y-px
+                               hover:shadow-[0_6px_20px_rgba(192,57,43,0.3)]
+                               transition-all duration-200 ease-in-out w-full sm:w-auto
+                               justify-center sm:justify-start">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                <path d="M4 8h8M8 4l4 4-4 4" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              Explore Opportunities
+            </button>
+          </div>
+          <div className="absolute bottom-0 left-0 right-0 h-px bg-[#d0d4da] z-20" />
+        </section>
+      </div>
     </>
   )
 }

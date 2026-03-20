@@ -18,7 +18,7 @@ export default function App() {
         <HeroSection />
 
         {/* Smooth dark → white transition bridge */}
-        <div className="h-32 bg-gradient-to-b from-slate-950 to-white" />
+        <div className="h-32 bg-white" />
 
         <DNA3DSection />
         <ProblemSection />

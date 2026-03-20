@@ -1,14 +1,10 @@
 import useInView from "../hooks/useInView";
 
 const partners = [
-  "MedCore",
-  "NeuroLink",
-  "BioSync",
-  "HealthGrid",
-  "OmniCare",
-  "PulseNet",
-  "CareOS",
-  "Genomix",
+  "KMCH",
+  "PSG",
+  "Ganga",
+  "Kupuswamy",
 ];
 
 export default function PartnersSection() {
