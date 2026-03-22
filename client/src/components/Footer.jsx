@@ -1,372 +1,155 @@
 import { useState } from "react";
 
-const cols = {
-  Product: ["Platform Overview", "AI Engine", "Pipeline", "Integrations", "Security", "Pricing"],
-  Company: ["About Us", "Careers", "Press", "Investors", "Partners"],
-  Resources: ["Documentation", "Publications", "White Papers", "Case Studies", "Blog"],
-  Legal: ["Privacy Policy", "Terms of Service", "HIPAA Notice", "Cookie Policy"],
-};
-
 const badges = ["FDA", "CE-IVD", "CAP", "HIPAA", "ISO 15189"];
+const MOUNTAIN_IMAGE_URL = "/footer_image.jpeg";
 
 export default function Footer() {
   const [email, setEmail] = useState("");
+  const [sent, setSent] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const handleSend = () => {
+    if (email) { setSent(true); setTimeout(() => setSent(false), 2500); setEmail(""); }
+  };
+  const handleCopy = () => {
+    navigator.clipboard.writeText("hello@shri-ai.org");
+    setCopied(true); setTimeout(() => setCopied(false), 2000);
+  };
 
   return (
-    <footer
-      style={{
-        position: "relative",
-        overflow: "hidden",
-        backgroundColor: "#f5f5f0",
-        color: "#1a1a1a",
-        fontFamily: "'Georgia', 'Times New Roman', serif",
-        minHeight: "500px",
-      }}
-    >
-      {/* ── Radial glow blobs matching screenshot ── */}
-      {/* Blue glow — bottom center */}
-      <div
-        style={{
-          pointerEvents: "none",
-          position: "absolute",
-          left: "55%",
-          bottom: "-80px",
-          transform: "translateX(-50%)",
-          width: "700px",
-          height: "500px",
-          borderRadius: "50%",
-          background:
-            "radial-gradient(ellipse at center, rgba(59,130,246,0.30) 0%, rgba(99,102,241,0.18) 35%, transparent 70%)",
-          filter: "blur(40px)",
-          zIndex: 0,
-        }}
-      />
-      {/* Purple/pink glow — bottom right */}
-      <div
-        style={{
-          pointerEvents: "none",
-          position: "absolute",
-          right: "5%",
-          bottom: "0px",
-          width: "420px",
-          height: "360px",
-          borderRadius: "50%",
-          background:
-            "radial-gradient(ellipse at center, rgba(168,85,247,0.22) 0%, rgba(236,72,153,0.12) 45%, transparent 70%)",
-          filter: "blur(50px)",
-          zIndex: 0,
-        }}
-      />
-      {/* Teal glow — bottom left */}
-      <div
-        style={{
-          pointerEvents: "none",
-          position: "absolute",
-          left: "10%",
-          bottom: "0px",
-          width: "350px",
-          height: "300px",
-          borderRadius: "50%",
-          background:
-            "radial-gradient(ellipse at center, rgba(20,184,166,0.18) 0%, rgba(59,130,246,0.10) 50%, transparent 70%)",
-          filter: "blur(45px)",
-          zIndex: 0,
-        }}
-      />
+    <footer style={{
+      position: "relative", overflow: "hidden",
+      padding: "32px 24px",
+      fontFamily: "'Inter','Helvetica Neue',Arial,sans-serif",
+      boxSizing: "border-box",
+    }}>
+      {/* Blurred bg */}
+      <div style={{ position: "absolute", inset: 0, backgroundImage: `url(${MOUNTAIN_IMAGE_URL})`, backgroundSize: "cover", backgroundPosition: "center 40%", filter: "blur(12px) brightness(0.68) saturate(1.3)", transform: "scale(1.08)", zIndex: 0 }} />
+      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(160deg,rgba(10,22,70,0.52) 0%,rgba(29,78,216,0.28) 50%,rgba(10,22,70,0.62) 100%)", zIndex: 1 }} />
 
-      {/* ── Main content ── */}
-      <div
-        style={{
-          position: "relative",
-          zIndex: 10,
-          maxWidth: "1200px",
-          margin: "0 auto",
-          padding: "72px 48px 0",
-        }}
-      >
-        {/* Top section: headline left, nav links right */}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "flex-start",
-            gap: "48px",
-            flexWrap: "wrap",
-          }}
-        >
-          {/* Left: eyebrow + headline */}
-          <div style={{ maxWidth: "520px" }}>
-            <p
-              style={{
-                fontSize: "11px",
-                fontWeight: "600",
-                letterSpacing: "0.12em",
-                textTransform: "uppercase",
-                color: "#3b82f6",
-                marginBottom: "16px",
-                marginTop: 0,
-                display: "flex",
-                alignItems: "center",
-                gap: "6px",
-                fontFamily: "'Georgia', serif",
-              }}
-            >
-              <span style={{ fontSize: "14px" }}>✦</span> Contact Us
-            </p>
-            <h2
-              style={{
-                fontSize: "clamp(28px, 4vw, 48px)",
-                fontWeight: "700",
-                lineHeight: "1.18",
-                color: "#111",
-                margin: 0,
-                fontFamily: "'Georgia', serif",
-                letterSpacing: "-0.5px",
-              }}
-            >
-              Interested in working{" "}
-              <span style={{ color: "#111" }}>together,</span>{" "}
-              <span style={{ color: "#9ca3af", fontStyle: "italic" }}>
-                trying our the platform or simply learning more?
+      <div style={{ position: "relative", zIndex: 10, maxWidth: "1200px", margin: "0 auto" }}>
+        <div style={{ background: "rgba(255,255,255,0.97)", borderRadius: "18px", boxShadow: "0 8px 48px rgba(29,78,216,0.18),0 2px 12px rgba(0,0,0,0.10)", border: "1px solid rgba(59,130,246,0.18)", overflow: "hidden" }}>
+
+          {/* ── UPPER: 3-column grid ── */}
+          <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1px 0.9fr 1px 0.9fr", minHeight: "360px" }}>
+
+            {/* COL 1 — Headline + CTA + Email */}
+            <div style={{ padding: "48px 44px 40px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+              <div>
+                <p style={{ fontSize: "10px", fontWeight: "700", letterSpacing: "0.15em", textTransform: "uppercase", color: "#3b82f6", marginBottom: "14px", marginTop: 0, display: "flex", alignItems: "center", gap: "5px" }}>
+                  <span>✦</span> Contact Us
+                </p>
+                <h2 style={{ fontSize: "clamp(22px, 2.6vw, 36px)", fontWeight: "700", lineHeight: "1.2", color: "#0f1e50", margin: "0 0 6px 0", letterSpacing: "-0.4px" }}>
+                  Interested in working together,
+                </h2>
+                <h2 style={{ fontSize: "clamp(22px, 2.6vw, 36px)", fontWeight: "700", lineHeight: "1.2", color: "#93c5fd", margin: "0 0 32px 0", letterSpacing: "-0.4px" }}>
+                  trying out the platform or simply learning more?
+                </h2>
+                <a href="#" style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: "transparent", color: "#0f1e50", borderRadius: "999px", padding: "12px 26px", fontSize: "14px", fontWeight: "600", textDecoration: "none", border: "1.5px solid rgba(15,30,80,0.22)", marginBottom: "24px", transition: "all 0.2s" }}
+                  onMouseEnter={e => { e.currentTarget.style.background = "linear-gradient(135deg,#1d4ed8,#3b82f6)"; e.currentTarget.style.color = "#fff"; e.currentTarget.style.borderColor = "transparent"; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#0f1e50"; e.currentTarget.style.borderColor = "rgba(15,30,80,0.22)"; }}>
+                  Schedule a call now →
+                </a>
+              </div>
+              <div>
+                <p style={{ fontSize: "10px", fontWeight: "700", letterSpacing: "0.14em", textTransform: "uppercase", color: "#9ca3af", marginBottom: "9px", marginTop: 0 }}>Or email us at</p>
+                <div style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: "#1e2a4a", borderRadius: "999px", padding: "10px 18px", cursor: "pointer" }} onClick={handleCopy}>
+                  <a href="mailto:hello@shri-ai.org" style={{ fontSize: "13px", fontWeight: "600", color: "#e8f0fe", textDecoration: "none" }} onClick={e => e.stopPropagation()}>hello@shri-ai.org</a>
+                  <span style={{ fontSize: "12px", color: "#93c5fd" }}>{copied ? "✓" : "⎘"}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Vertical divider */}
+            <div style={{ background: "rgba(59,130,246,0.15)", margin: "32px 0" }} />
+
+            {/* COL 2 — Nav links */}
+            <div style={{ padding: "48px 40px 40px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+              <div style={{ display: "flex", gap: "40px" }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                  <p style={{ fontSize: "10px", fontWeight: "700", letterSpacing: "0.13em", textTransform: "uppercase", color: "#9ca3af", margin: "0 0 4px 0" }}>Quick Links</p>
+                  {["How It Works", "Benefits", "Features", "Team"].map(item => (
+                    <a key={item} href="#" style={{ fontSize: "13px", color: "#4b5563", textDecoration: "none", transition: "color 0.2s" }}
+                      onMouseEnter={e => e.target.style.color = "#1d4ed8"} onMouseLeave={e => e.target.style.color = "#4b5563"}>{item}</a>
+                  ))}
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                  <p style={{ fontSize: "10px", fontWeight: "700", letterSpacing: "0.13em", textTransform: "uppercase", color: "#9ca3af", margin: "0 0 4px 0" }}>Information</p>
+                  {["Terms of Service", "Privacy Policy", "Cookies Settings"].map(item => (
+                    <a key={item} href="#" style={{ fontSize: "13px", color: "#4b5563", textDecoration: "none", transition: "color 0.2s" }}
+                      onMouseEnter={e => e.target.style.color = "#1d4ed8"} onMouseLeave={e => e.target.style.color = "#4b5563"}>{item}</a>
+                  ))}
+                </div>
+              </div>
+
+              {/* Brand tagline block */}
+              <div style={{ background: "#f0f6ff", borderRadius: "12px", border: "1.5px solid rgba(59,130,246,0.15)", padding: "20px 22px" }}>
+                <div style={{ fontSize: "28px", color: "#3b82f6", fontWeight: "700", lineHeight: "1", marginBottom: "10px" }}>"</div>
+                <p style={{ fontSize: "13px", color: "#0f1e50", lineHeight: "1.65", margin: "0 0 12px 0", fontWeight: "500" }}>
+                  Bringing the power of artificial intelligence to breast cancer prevention — earlier, faster, and more accurately than ever before.
+                </p>
+                <p style={{ fontSize: "11px", color: "#3b82f6", fontWeight: "600", margin: 0, letterSpacing: "0.02em" }}>— Shri-AI.org</p>
+              </div>
+            </div>
+
+            {/* Vertical divider */}
+            <div style={{ background: "rgba(59,130,246,0.15)", margin: "32px 0" }} />
+
+            {/* COL 3 — Newsletter + Social links */}
+            <div style={{ padding: "48px 40px 40px", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+              <div>
+                <p style={{ fontSize: "10px", fontWeight: "700", letterSpacing: "0.13em", textTransform: "uppercase", color: "#9ca3af", margin: "0 0 8px 0" }}>Newsletter</p>
+                <p style={{ fontSize: "13px", color: "#4b5563", lineHeight: "1.55", margin: "0 0 14px 0" }}>
+                  Get the latest updates on AI-driven cancer detection delivered to your inbox.
+                </p>
+                <div style={{ display: "flex", overflow: "hidden", borderRadius: "10px", border: "1.5px solid rgba(59,130,246,0.26)", background: "#f0f6ff", marginBottom: "0" }}>
+                  <input type="email" placeholder="you@example.com" value={email} onChange={e => setEmail(e.target.value)} onKeyDown={e => e.key === "Enter" && handleSend()}
+                    style={{ flex: 1, background: "transparent", border: "none", outline: "none", padding: "11px 14px", fontSize: "13px", color: "#1a1a1a", fontFamily: "inherit" }} />
+                  <button onClick={handleSend} style={{ background: sent ? "linear-gradient(135deg,#16a34a,#15803d)" : "linear-gradient(135deg,#3b82f6,#1d4ed8)", border: "none", padding: "11px 18px", fontSize: "13px", fontWeight: "600", color: "#fff", cursor: "pointer", fontFamily: "inherit", whiteSpace: "nowrap", transition: "background 0.3s" }}>
+                    {sent ? "✓ Sent!" : "Send"}
+                  </button>
+                </div>
+              </div>
+
+              {/* Social links as full rows */}
+              <div>
+                <p style={{ fontSize: "10px", fontWeight: "700", letterSpacing: "0.13em", textTransform: "uppercase", color: "#9ca3af", margin: "0 0 12px 0" }}>Follow Us</p>
+                <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                  {[
+                    { name: "LinkedIn", handle: "/shri-ai" },
+                    { name: "Twitter", handle: "@shri_ai" },
+                    { name: "GitHub", handle: "shri-ai-org" },
+                    { name: "Instagram", handle: "@shri.ai" },
+                  ].map(s => (
+                    <a key={s.name} href="#" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "8px 12px", borderRadius: "8px", background: "#f8faff", border: "1px solid rgba(59,130,246,0.12)", textDecoration: "none", transition: "background 0.2s" }}
+                      onMouseEnter={e => e.currentTarget.style.background = "#e8f0fe"}
+                      onMouseLeave={e => e.currentTarget.style.background = "#f8faff"}>
+                      <span style={{ fontSize: "12px", fontWeight: "600", color: "#0f1e50" }}>{s.name}</span>
+                      <span style={{ fontSize: "11px", color: "#3b82f6" }}>{s.handle}</span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* ── Divider ── */}
+          <div style={{ margin: "0 44px", height: "1px", background: "linear-gradient(90deg,transparent,rgba(59,130,246,0.26) 30%,rgba(59,130,246,0.26) 70%,transparent)" }} />
+
+          {/* ── BOTTOM BAR ── */}
+          <div style={{ padding: "16px 44px 22px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px", flexWrap: "wrap" }}>
+            <div style={{ background: "#f0f6ff", border: "1.5px solid rgba(59,130,246,0.2)", borderRadius: "8px", padding: "6px 22px", display: "inline-flex", alignItems: "center", flexShrink: 0 }}>
+              <span style={{ fontSize: "20px", fontWeight: "900", letterSpacing: "-0.5px", color: "#64748b", userSelect: "none", lineHeight: "1", fontFamily: "'Inter','Helvetica Neue',Arial,sans-serif", whiteSpace: "nowrap" }}>
+                Shri-<span style={{ color: "#3b82f6" }}>AI</span>
               </span>
-            </h2>
+            </div>
+            <p style={{ fontSize: "10px", color: "#9ca3af", margin: 0, flex: "1 1 180px" }}>
+              © 2025 Shri-AI.org – Bringing AI Breast Cancer Prevention to You. Committed to ethical AI and patient privacy.
+            </p>
           </div>
 
-          {/* Right: nav links */}
-          <div style={{ display: "flex", gap: "40px", paddingTop: "8px", flexWrap: "wrap" }}>
-            {["How It Works", "Benefits", "Features", "Team"].map((item) => (
-              <a
-                key={item}
-                href="#"
-                style={{
-                  fontSize: "14px",
-                  color: "#555",
-                  textDecoration: "none",
-                  fontFamily: "'Georgia', serif",
-                  transition: "color 0.2s",
-                  whiteSpace: "nowrap",
-                }}
-                onMouseEnter={(e) => (e.target.style.color = "#111")}
-                onMouseLeave={(e) => (e.target.style.color = "#555")}
-              >
-                {item}
-              </a>
-            ))}
-          </div>
-        </div>
-
-        {/* Middle section: contact info */}
-        <div style={{ marginTop: "48px" }}>
-          <p
-            style={{
-              fontSize: "12px",
-              color: "#9ca3af",
-              marginBottom: "6px",
-              marginTop: 0,
-              fontFamily: "'Georgia', serif",
-            }}
-          >
-            Contact Shri-AI at:
-          </p>
-          <a
-            href="mailto:hello@shri-ai.org"
-            style={{
-              fontSize: "18px",
-              fontWeight: "600",
-              color: "#111",
-              textDecoration: "none",
-              fontFamily: "'Georgia', serif",
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              transition: "color 0.2s",
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = "#3b82f6")}
-            onMouseLeave={(e) => (e.currentTarget.style.color = "#111")}
-          >
-            hello@shri-ai.org
-            <span style={{ fontSize: "16px", transform: "rotate(-45deg)", display: "inline-block" }}>↑</span>
-          </a>
-        </div>
-
-        {/* Newsletter row */}
-        <div style={{ marginTop: "32px", maxWidth: "360px" }}>
-          <p
-            style={{
-              fontSize: "10px",
-              fontWeight: "700",
-              letterSpacing: "0.14em",
-              textTransform: "uppercase",
-              color: "#aaa",
-              marginBottom: "10px",
-              fontFamily: "'Georgia', serif",
-            }}
-          >
-            Newsletter
-          </p>
-          <div
-            style={{
-              display: "flex",
-              overflow: "hidden",
-              borderRadius: "8px",
-              border: "1px solid rgba(0,0,0,0.12)",
-              backgroundColor: "rgba(255,255,255,0.85)",
-              backdropFilter: "blur(8px)",
-              boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
-            }}
-          >
-            <input
-              type="email"
-              placeholder="you@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              style={{
-                flex: 1,
-                background: "transparent",
-                border: "none",
-                outline: "none",
-                padding: "10px 14px",
-                fontSize: "13px",
-                color: "#1a1a1a",
-                fontFamily: "'Georgia', serif",
-              }}
-            />
-            <button
-              style={{
-                background: "linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)",
-                border: "none",
-                padding: "10px 18px",
-                fontSize: "13px",
-                fontWeight: "600",
-                color: "#fff",
-                cursor: "pointer",
-                fontFamily: "'Georgia', serif",
-                transition: "opacity 0.2s",
-              }}
-              onMouseEnter={(e) => (e.target.style.opacity = "0.85")}
-              onMouseLeave={(e) => (e.target.style.opacity = "1")}
-            >
-              Send
-            </button>
-          </div>
         </div>
       </div>
-
-      {/* ── Giant logo watermark ── */}
-      <div
-        style={{
-          position: "relative",
-          zIndex: 5,
-          textAlign: "center",
-          marginTop: "24px",
-          lineHeight: "1",
-          overflow: "hidden",
-          paddingBottom: "0",
-        }}
-      >
-        <span
-          style={{
-            fontSize: "clamp(80px, 16vw, 180px)",
-            fontWeight: "900",
-            fontFamily: "'Georgia', serif",
-            letterSpacing: "-4px",
-            color: "#111",
-            display: "block",
-            userSelect: "none",
-          }}
-        >
-          Shri-<span style={{ color: "#3b82f6", fontStyle: "italic" }}>AI</span>
-        </span>
-      </div>
-
-      {/* ── Bottom bar ── */}
-      <div
-        style={{
-          position: "relative",
-          zIndex: 10,
-          maxWidth: "1200px",
-          margin: "0 auto",
-          padding: "0 48px 28px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          flexWrap: "wrap",
-          gap: "16px",
-          marginTop: "-8px",
-        }}
-      >
-        <p
-          style={{
-            fontSize: "11.5px",
-            color: "#aaa",
-            margin: 0,
-            fontFamily: "'Georgia', serif",
-          }}
-        >
-          © 2025 Shri-AI.org – Bringing AI Breast Cancer Prevention to You. Committed to ethical AI and patient privacy.
-        </p>
-
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
-          {badges.map((b) => (
-            <span
-              key={b}
-              style={{
-                borderRadius: "999px",
-                border: "1px solid rgba(59,130,246,0.30)",
-                background: "rgba(59,130,246,0.07)",
-                padding: "4px 13px",
-                fontSize: "10.5px",
-                fontWeight: "600",
-                color: "#1d4ed8",
-                letterSpacing: "0.05em",
-                fontFamily: "'Georgia', serif",
-              }}
-            >
-              {b}
-            </span>
-          ))}
-        </div>
-      </div>
-
-      {/* Social links row */}
-      <div
-        style={{
-          position: "relative",
-          zIndex: 10,
-          maxWidth: "1200px",
-          margin: "0 auto",
-          padding: "0 48px 32px",
-          display: "flex",
-          justifyContent: "flex-end",
-          gap: "24px",
-        }}
-      >
-        {["LinkedIn", "Twitter", "GitHub"].map((s) => (
-          <a
-            key={s}
-            href="#"
-            style={{
-              fontSize: "12px",
-              color: "#aaa",
-              textDecoration: "none",
-              fontFamily: "'Georgia', serif",
-              transition: "color 0.2s",
-            }}
-            onMouseEnter={(e) => (e.target.style.color = "#111")}
-            onMouseLeave={(e) => (e.target.style.color = "#aaa")}
-          >
-            {s}
-          </a>
-        ))}
-      </div>
-
-      <style>{`
-        @media (max-width: 768px) {
-          .footer-top {
-            flex-direction: column !important;
-          }
-        }
-      `}</style>
     </footer>
   );
 }
