@@ -11,29 +11,29 @@ const scrollStore = { target: 0, current: 0 };
 /* ── Panel data ── */
 const PANELS = [
   {
-    tag: "01 — Discovery",
-    title: "Genome\nMapping",
-    body: "Decoding millions of genetic sequences to identify critical biomarkers for early disease detection.",
+    tag: "01 — Liquid Biopsy",
+    title: "Non-Invasive\nMonitoring",
+    body: "Leveraging Liquid Biopsy as a non-invasive method to capture real-time biological signals, enabling continuous cancer tracking without repeated invasive procedures.",
   },
   {
-    tag: "02 — Detection",
-    title: "Cancer\nScreening",
-    body: "Screening 47+ cancer types from simple blood tests with 99% clinical sensitivity.",
+    tag: "02 — AI Core",
+    title: "Intelligent\nAnalysis",
+    body: "Artificial Intelligence analyzes complex biological data, identifies patterns, and generates meaningful insights for precision monitoring in oncology.",
   },
   {
-    tag: "03 — Precision",
-    title: "Personalized\nCare",
-    body: "Treatment strategies shaped by each patient's unique genomic profile.",
+    tag: "03 — Real-Time",
+    title: "Precision\nTracking",
+    body: "Real-time precision monitoring of cancer progression, helping clinicians and patients understand how the disease evolves over time.",
   },
   {
-    tag: "04 — Scale",
-    title: "Global\nImpact",
-    body: "Transforming diagnostics for millions of patients across 60+ countries.",
+    tag: "04 — Open Source",
+    title: "Global\nCollaboration",
+    body: "Built as an open-source, not-for-profit platform, ensuring accessibility, transparency, and collaborative innovation across the global oncology ecosystem.",
   },
   {
-    tag: "05 — Future",
-    title: "Next-Gen\nOncology",
-    body: "Pioneering diagnostic intelligence where no cancer goes undetected.",
+    tag: "05 — Impact",
+    title: "Empowering\nDecisions",
+    body: "Empowering better decision-making through reliable, data-driven insights for clinicians, researchers, patients, and pharmaceutical companies.",
   },
 ];
 
@@ -50,11 +50,6 @@ function DNAModel() {
     const size = box.getSize(new THREE.Vector3());
     const center = box.getCenter(new THREE.Vector3());
 
-    /*
-     * Camera z=20, fov=50 → visible height ≈ 18.64 units.
-     * scale 13.5 → 13.5 / 18.64 = 72.4 % of viewport height.
-     * Group shifted down 0.8 u → top edge at ~18 % from top → clears heading.
-     */
     const s = 13.5 / Math.max(size.x, size.y, size.z);
 
     clone.position.set(-center.x, -center.y, -center.z);
@@ -129,7 +124,6 @@ export default function DNA3DSection() {
 
     let raf;
     const animate = () => {
-      /* ── smooth lerp ── */
       const diff = scrollStore.target - scrollStore.current;
       if (Math.abs(diff) > 0.00001) {
         scrollStore.current += diff * LERP_FACTOR;
@@ -139,21 +133,18 @@ export default function DNA3DSection() {
 
       const progress = scrollStore.current;
 
-      /* ── heading fade ── */
       if (headingRef.current) {
         headingRef.current.style.opacity = String(
           Math.max(0, 1 - progress * 5)
         );
       }
 
-      /* ── scroll-hint fade ── */
       if (scrollHintRef.current) {
         scrollHintRef.current.style.opacity = String(
           Math.max(0, 1 - progress * 8)
         );
       }
 
-      /* ── text track: right → left ── */
       if (textTrackRef.current) {
         const trackW = textTrackRef.current.scrollWidth;
         const vw = window.innerWidth;
@@ -177,10 +168,9 @@ export default function DNA3DSection() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="relative" style={{ height: "600vh" }}>
+    <section ref={sectionRef} className="relative h-[600vh]">
       {/* ─── sticky viewport ─── */}
       <div className="sticky top-0 h-screen overflow-hidden bg-white">
-
 
         {/* ── ambient glows ── */}
         <div className="pointer-events-none absolute inset-0">
@@ -202,8 +192,7 @@ export default function DNA3DSection() {
         </div>
 
         {/* ══════════════════════════════════════
-            HEADING — compact, no gradient backdrop
-            z-30 sits above everything visually
+            HEADING
             ══════════════════════════════════════ */}
         <div
           ref={headingRef}
@@ -215,14 +204,14 @@ export default function DNA3DSection() {
                        tracking-[0.35em] text-blue-400/80
                        sm:text-[11px]"
           >
-            Genomic Intelligence
+            Liquid Biopsy meets Artificial Intelligence
           </p>
           <h2
             className="mt-1.5 text-2xl font-bold tracking-tight
                        text-slate-900
                        sm:text-3xl md:text-4xl lg:text-5xl"
           >
-            Realtime{" "}
+            Real-Time{" "}
             <span
               className="bg-gradient-to-r from-blue-600 to-cyan-500
                          bg-clip-text text-transparent"
@@ -235,7 +224,8 @@ export default function DNA3DSection() {
             className="mx-auto mt-1 max-w-md text-xs text-slate-400
                        sm:mt-2 sm:text-sm"
           >
-            Scroll to explore how our AI decodes health data in real time
+            Transforming cancer care through Liquid Biopsy and AI — enabling
+            continuous, real-time precision monitoring of cancer progression
           </p>
         </div>
 
@@ -280,56 +270,47 @@ export default function DNA3DSection() {
 
         {/* ══════════════════════════════════════
             TEXT TRACK — z-[5] (behind canvas)
-            Plain right → left scroll, edge-masked
-            Vertically centered, offset down to
-            match model center
             ══════════════════════════════════════ */}
         <div
           className="pointer-events-none absolute inset-0 z-[5]
-                     flex select-none items-center overflow-hidden"
-          style={{
-            paddingTop: "4vh",
-            maskImage:
-              "linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%)",
-            WebkitMaskImage:
-              "linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%)",
-          }}
+                     flex select-none items-center overflow-hidden
+                     pt-[4vh]
+                     [mask-image:linear-gradient(to_right,transparent_0%,black_6%,black_94%,transparent_100%)]
+                     [-webkit-mask-image:linear-gradient(to_right,transparent_0%,black_6%,black_94%,transparent_100%)]"
         >
           <div
             ref={textTrackRef}
-            className="flex items-center will-change-transform"
-            style={{
-              gap: "clamp(3rem, 8vw, 12rem)",
-            }}
+            className="flex items-center gap-[clamp(3rem,8vw,12rem)]
+                       will-change-transform"
           >
             {PANELS.map((panel, i) => (
               <div
                 key={i}
-                className="flex-shrink-0 px-4 sm:px-6"
-                style={{ width: "clamp(260px, 80vw, 580px)" }}
+                className="w-[clamp(260px,80vw,580px)] flex-shrink-0
+                           px-4 sm:px-6"
               >
                 <span
                   className="mb-2 block text-[9px] font-bold uppercase
-                             tracking-[0.3em] text-blue-500/70
+                             tracking-[0.3em] text-blue-600/70
                              sm:mb-3 sm:text-[10px] md:text-xs"
                 >
                   {panel.tag}
                 </span>
                 <h3
                   className="whitespace-pre-line text-4xl font-black
-                             leading-[1.05] text-blue-200/40
+                             leading-[1.05] text-blue-400/50
                              sm:text-5xl md:text-6xl lg:text-[5.5rem]"
                 >
                   {panel.title}
                 </h3>
                 <span
                   className="mb-3 mt-3 block h-[2px] w-8 rounded-full
-                             bg-gradient-to-r from-blue-400/60 to-cyan-400/30
+                             bg-gradient-to-r from-blue-500/60 to-cyan-400/40
                              sm:mb-4 sm:mt-5 sm:w-10"
                 />
                 <p
                   className="max-w-[300px] text-xs leading-relaxed
-                             text-slate-400
+                             text-slate-500
                              sm:max-w-[340px] sm:text-sm md:text-[15px]"
                 >
                   {panel.body}
@@ -341,26 +322,16 @@ export default function DNA3DSection() {
 
         {/* ══════════════════════════════════════
             3-D CANVAS — z-[10] (above text track)
-            Fills entire viewport, model is shifted
-            down 0.8 units so top edge clears heading
             ══════════════════════════════════════ */}
         <div
           className="pointer-events-none absolute inset-0 z-[10]
                      flex items-center justify-center"
         >
-          {/* Soft glow behind model */}
-          <div
-            className="absolute h-[50vh] w-[50vh] rounded-full
-                       bg-blue-100/60 blur-[80px]"
-            style={{ marginTop: "4vh" }}
-            aria-hidden="true"
-          />
-
           <div className="relative h-full w-full">
             <Canvas
               camera={{ position: [0, 0, 20], fov: 50 }}
               dpr={[1, 2]}
-              style={{ background: "transparent" }}
+              className="!bg-transparent"
               gl={{
                 antialias: true,
                 alpha: true,
