@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 const badges = ["FDA", "CE-IVD", "CAP", "HIPAA", "ISO 15189"];
-const MOUNTAIN_IMAGE_URL = "/footer_image.jpeg";
+const MOUNTAIN_IMAGE_URL = "/footer_image.jpg";
 
 export default function Footer() {
   const [email, setEmail] = useState("");
@@ -23,8 +23,8 @@ export default function Footer() {
       fontFamily: "'Inter','Helvetica Neue',Arial,sans-serif",
       boxSizing: "border-box",
     }}>
-      {/* Blurred bg */}
-      <div style={{ position: "absolute", inset: 0, backgroundImage: `url(${MOUNTAIN_IMAGE_URL})`, backgroundSize: "cover", backgroundPosition: "center 40%", filter: "blur(12px) brightness(0.68) saturate(1.3)", transform: "scale(1.08)", zIndex: 0 }} />
+      {/* Background image without blur */}
+      <div style={{ position: "absolute", inset: 0, backgroundImage: `url(${MOUNTAIN_IMAGE_URL})`, backgroundSize: "cover", backgroundPosition: "center 40%", filter: "brightness(0.68) saturate(1.3)", transform: "scale(1.08)", zIndex: 0 }} />
       <div style={{ position: "absolute", inset: 0, background: "linear-gradient(160deg,rgba(10,22,70,0.52) 0%,rgba(29,78,216,0.28) 50%,rgba(10,22,70,0.62) 100%)", zIndex: 1 }} />
 
       <div style={{ position: "relative", zIndex: 10, maxWidth: "1200px", margin: "0 auto" }}>
