@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from 'react'
 
 const TYPING = [
-  'Monitoring the treatment',
-  'Analyzing AI-powered progress',
-  'Delivering personalized insights',
-  'Bringing care to your community',
+  'Tracking cancer via liquid biopsy',
+  'AI-driven real-time tumor insights',
+  'Non-invasive. Continuous. Precise.',
+  'Open source — built for every community',
 ]
 
 function TypeWriter() {
@@ -177,14 +177,12 @@ export default function HeroSection() {
         {filmGrain}
 
         <div style={wrapStyle} className="min-h-screen bg-[#f8fafc]">
-          {/* Top accent bar */}
           <div className="h-[3px]" style={{
             background: 'linear-gradient(90deg, #2563eb, #60a5fa, #3b82f6, #2563eb)',
             backgroundSize: '300% 100%',
             animation: 'shimmerBar 3s linear infinite'
           }} />
 
-          {/* Background dot pattern */}
           <div className="fixed inset-0 pointer-events-none opacity-[0.025] z-0"
             style={{
               backgroundImage: 'radial-gradient(circle, #94a3b8 0.5px, transparent 0.5px)',
@@ -192,13 +190,11 @@ export default function HeroSection() {
             }}
           />
 
-          {/* Decorative blurs */}
           <div className="fixed top-0 right-0 w-[500px] h-[500px] rounded-full pointer-events-none z-0"
             style={{ background: 'radial-gradient(circle, rgba(59,130,246,0.04), transparent 65%)' }} />
           <div className="fixed bottom-0 left-0 w-[400px] h-[400px] rounded-full pointer-events-none z-0"
             style={{ background: 'radial-gradient(circle, rgba(99,102,241,0.03), transparent 65%)' }} />
 
-          {/* Navigation */}
           <nav className="sticky top-0 z-50 bg-white/70 backdrop-blur-2xl border-b border-slate-200/50">
             <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 h-[60px] flex items-center justify-between">
               <button
@@ -221,10 +217,8 @@ export default function HeroSection() {
             </div>
           </nav>
 
-          {/* Content */}
           <main className="relative z-10 max-w-[640px] mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 md:py-16">
 
-            {/* Header */}
             <div className="text-center mb-10 sm:mb-12"
               style={{ animation: 'staggerIn 0.7s cubic-bezier(0.16,1,0.3,1) 0.08s both' }}
             >
@@ -237,24 +231,24 @@ export default function HeroSection() {
 
               <h1 className="font-['Outfit'] text-[1.85rem] sm:text-[2.2rem] md:text-[2.6rem]
                              font-bold text-slate-900 leading-[1.12] tracking-[-0.035em] mb-3">
-                Schedule Your{' '}
+                See Shri-AI{' '}
                 <span style={{
                   background: 'linear-gradient(135deg, #1d4ed8, #3b82f6, #60a5fa)',
                   WebkitBackgroundClip: 'text', backgroundClip: 'text',
                   WebkitTextFillColor: 'transparent'
                 }}>
-                  Demo
+                  In Action
                 </span>
               </h1>
 
               <p className="font-['Plus_Jakarta_Sans'] text-[13.5px] sm:text-[14.5px]
                             text-slate-400 leading-[1.7] max-w-[420px] mx-auto font-light">
-                Experience next-generation AI-powered precision oncology monitoring.
-                Fill in your details and we'll arrange a personalized walkthrough.
+                Discover how liquid biopsy meets AI for real-time, non-invasive
+                cancer monitoring. Share your details and we'll arrange a
+                personalized walkthrough.
               </p>
             </div>
 
-            {/* Form Card */}
             <div
               className="bg-white rounded-2xl
                          shadow-[0_4px_40px_rgba(0,0,0,0.05),0_1px_3px_rgba(0,0,0,0.03)]
@@ -263,7 +257,6 @@ export default function HeroSection() {
               style={{ animation: 'staggerIn 0.7s cubic-bezier(0.16,1,0.3,1) 0.22s both' }}
             >
               <form onSubmit={handleSubmit} className="space-y-5">
-                {/* First + Last Name */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
                   <div>
                     <label className="bl">First Name <span className="text-red-400/70">*</span></label>
@@ -277,28 +270,25 @@ export default function HeroSection() {
                   </div>
                 </div>
 
-                {/* Email */}
                 <div>
                   <label className="bl">Email Address <span className="text-red-400/70">*</span></label>
                   <input type="email" className="bi" placeholder="john@example.com"
                     value={formData.email} onChange={handleChange('email')} required />
                 </div>
 
-                {/* Organization + Role */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
                   <div>
                     <label className="bl">Organization</label>
-                    <input type="text" className="bi" placeholder="Company name"
+                    <input type="text" className="bi" placeholder="Hospital or institution"
                       value={formData.organization} onChange={handleChange('organization')} />
                   </div>
                   <div>
                     <label className="bl">Role / Title</label>
-                    <input type="text" className="bi" placeholder="e.g. Oncologist"
+                    <input type="text" className="bi" placeholder="e.g. Oncologist, Researcher"
                       value={formData.role} onChange={handleChange('role')} />
                   </div>
                 </div>
 
-                {/* Phone + Date */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
                   <div>
                     <label className="bl">Phone Number</label>
@@ -312,17 +302,14 @@ export default function HeroSection() {
                   </div>
                 </div>
 
-                {/* Message */}
                 <div>
                   <label className="bl">Additional Notes</label>
-                  <textarea className="bt" placeholder="Tell us about your use case or any questions..."
+                  <textarea className="bt" placeholder="Tell us about your use case, research focus, or questions..."
                     value={formData.message} onChange={handleChange('message')} rows={4} />
                 </div>
 
-                {/* Divider */}
                 <div className="h-px bg-slate-100 my-2" />
 
-                {/* Submit */}
                 <div className="pt-1 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                   <button
                     type="submit"
@@ -347,7 +334,7 @@ export default function HeroSection() {
                       <line x1="8" y1="2" x2="8" y2="6"/>
                       <line x1="3" y1="10" x2="21" y2="10"/>
                     </svg>
-                    <span className="relative z-10">Schedule Demo</span>
+                    <span className="relative z-10">Request Demo</span>
                   </button>
 
                   <span className="font-['Plus_Jakarta_Sans'] text-[11.5px] text-slate-350 text-slate-400 text-center sm:text-right font-light leading-snug">
@@ -357,7 +344,6 @@ export default function HeroSection() {
               </form>
             </div>
 
-            {/* Trust indicators */}
             <div className="mt-8 flex flex-wrap items-center justify-center gap-5 sm:gap-7"
               style={{ animation: 'staggerIn 0.7s cubic-bezier(0.16,1,0.3,1) 0.38s both' }}
             >
@@ -388,14 +374,12 @@ export default function HeroSection() {
         {filmGrain}
 
         <div style={wrapStyle} className="min-h-screen bg-[#f8fafc] flex items-center justify-center">
-          {/* Top accent bar */}
           <div className="fixed top-0 left-0 right-0 h-[3px] z-50" style={{
             background: 'linear-gradient(90deg, #10b981, #34d399, #10b981)',
             backgroundSize: '300% 100%',
             animation: 'shimmerBar 3s linear infinite'
           }} />
 
-          {/* Background */}
           <div className="fixed inset-0 pointer-events-none opacity-[0.02] z-0"
             style={{
               backgroundImage: 'radial-gradient(circle, #94a3b8 0.5px, transparent 0.5px)',
@@ -403,28 +387,23 @@ export default function HeroSection() {
             }}
           />
 
-          {/* Decorative blurs */}
           <div className="fixed top-1/3 left-1/3 w-[500px] h-[500px] rounded-full pointer-events-none z-0"
             style={{ background: 'radial-gradient(circle, rgba(59,130,246,0.05), transparent 65%)' }} />
           <div className="fixed bottom-1/4 right-1/3 w-[400px] h-[400px] rounded-full pointer-events-none z-0"
             style={{ background: 'radial-gradient(circle, rgba(16,185,129,0.04), transparent 65%)' }} />
 
           <div className="relative z-10 text-center px-6 py-16 max-w-lg mx-auto">
-            {/* Animated checkmark */}
             <div className="relative mx-auto mb-9 w-[100px] h-[100px]"
               style={{ animation: 'softBounce 0.7s cubic-bezier(0.34,1.56,0.64,1) 0.1s both' }}
             >
-              {/* Ripples */}
               <div className="absolute inset-0 rounded-full bg-emerald-200/50"
                 style={{ animation: 'successRipple 1.6s ease-out 0.5s forwards' }} />
               <div className="absolute inset-0 rounded-full bg-emerald-100/40"
                 style={{ animation: 'successRipple 1.6s ease-out 0.85s forwards' }} />
 
-              {/* Circle background */}
               <div className="absolute inset-0 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-500
                               shadow-[0_10px_40px_rgba(16,185,129,0.3)]" />
 
-              {/* Checkmark */}
               <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" fill="none">
                 <path d="M30 52 L43 65 L70 38" stroke="white" strokeWidth="5.5"
                   strokeLinecap="round" strokeLinejoin="round"
@@ -435,7 +414,6 @@ export default function HeroSection() {
               </svg>
             </div>
 
-            {/* Thank You */}
             <h1 className="font-['Outfit'] text-[2rem] sm:text-[2.5rem] md:text-[3rem]
                            font-bold text-slate-900 tracking-[-0.04em] leading-none mb-4"
               style={{ animation: 'staggerIn 0.7s cubic-bezier(0.16,1,0.3,1) 0.45s both' }}
@@ -443,7 +421,6 @@ export default function HeroSection() {
               Thank You!
             </h1>
 
-            {/* Launching Soon badge */}
             <div style={{ animation: 'staggerIn 0.7s cubic-bezier(0.16,1,0.3,1) 0.6s both' }}
               className="mb-6"
             >
@@ -460,18 +437,17 @@ export default function HeroSection() {
               </span>
             </div>
 
-            {/* Description */}
             <p className="font-['Plus_Jakarta_Sans'] text-[13.5px] sm:text-[15px]
                           text-slate-400 leading-[1.8] max-w-[400px] mx-auto mb-10 font-light"
               style={{ animation: 'staggerIn 0.7s cubic-bezier(0.16,1,0.3,1) 0.75s both' }}
             >
-              Your demo has been booked successfully. We're currently in pre-launch
-              and will reach out shortly with all the details. Thank you for your
-              interest in <span className="text-slate-600 font-medium">Shri-AI</span>'s
-              precision oncology platform.
+              Your demo has been booked successfully. We're currently in the
+              R&D phase and will reach out shortly with all the details.
+              Thank you for your interest in{' '}
+              <span className="text-slate-600 font-medium">Shri-AI</span>'s
+              liquid biopsy-powered precision oncology platform.
             </p>
 
-            {/* What's next cards */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-11"
               style={{ animation: 'staggerIn 0.7s cubic-bezier(0.16,1,0.3,1) 0.9s both' }}
             >
@@ -498,11 +474,9 @@ export default function HeroSection() {
               ))}
             </div>
 
-            {/* Divider */}
             <div className="w-12 h-px bg-slate-200 mx-auto mb-8"
               style={{ animation: 'staggerIn 0.7s cubic-bezier(0.16,1,0.3,1) 1s both' }} />
 
-            {/* Back button */}
             <button
               onClick={() => navigateTo('hero')}
               className="group inline-flex items-center gap-2.5
@@ -530,7 +504,7 @@ export default function HeroSection() {
   }
 
   /* ═══════════════════════════════════════════
-     HERO VIEW (original)
+     HERO VIEW
      ═══════════════════════════════════════════ */
   return (
     <>
@@ -546,7 +520,7 @@ export default function HeroSection() {
             {/* LEFT — image + tags */}
             <div className="relative overflow-hidden min-h-[36vh] sm:min-h-[40vh] md:min-h-0">
               <div className="absolute inset-0 z-[1]">
-                <img src="/cover-image.png" alt="Medical facility"
+                <img src="/cover-image.png" alt="Liquid biopsy cancer monitoring"
                   className="w-full h-full object-cover object-center"
                   style={{ animation: 'slowZoom 25s ease-in-out infinite alternate' }} />
                 <div className="absolute inset-0 z-[2]"
@@ -579,7 +553,7 @@ export default function HeroSection() {
                 </span>
                 <span className="pointer-events-auto text-[13px] sm:text-[15px] md:text-[16px] lg:text-[18px]
                                  text-white/30 font-normal tracking-[0.18em] uppercase font-['DM_Sans'] whitespace-nowrap">
-                  Next-Generation Healthcare Intelligence
+                  Liquid Biopsy × AI Cancer Intelligence
                 </span>
               </div>
             </div>
@@ -607,15 +581,15 @@ export default function HeroSection() {
                                mb-5 sm:mb-6 md:mb-8 flex items-center justify-center md:justify-start w-full"
                 style={{ animation: 'floatUp 1s cubic-bezier(0.16,1,0.3,1) 0.2s both' }}>
                 <span className="inline-block w-5 h-px bg-blue-500/35 mr-3 flex-shrink-0" />
-                Healthcare AI Platform
+                Liquid Biopsy + AI Platform
               </span>
 
               <h1 className="relative z-10 m-0 p-0" style={{ perspective: '800px' }}>
                 {[
-                  { text: 'Realtime', type: 'light' },
+                  { text: 'Real-Time', type: 'light' },
                   { text: 'Precision', type: 'bold' },
-                  { text: 'Monitoring', type: 'bold' },
-                  { text: 'In Oncology', type: 'accent' },
+                  { text: 'Cancer', type: 'bold' },
+                  { text: 'Monitoring', type: 'accent' },
                 ].map((line, i) => {
                   const baseClasses = "block font-['Outfit'] leading-[0.92] tracking-[-0.05em] text-[clamp(2rem,6.5vw,7.5rem)]"
                   let variant = ''
@@ -655,9 +629,10 @@ export default function HeroSection() {
                             text-white/30 leading-[1.7] sm:leading-[1.8] max-w-[380px] font-light tracking-[0.01em]
                             mx-auto md:mx-0"
                 style={{ animation: 'floatUp 1s cubic-bezier(0.16,1,0.3,1) 1s both' }}>
-                AI-powered diagnostics delivering real-time precision insights
-                for next-generation healthcare monitoring — accessible, private,
-                and built for every community.
+                Liquid biopsy meets AI — non-invasive, continuous cancer
+                progression tracking for patients, clinicians, and pharma.
+                No treatment prescriptions. Pure precision intelligence —
+                open source and built for every community.
               </p>
 
               {/* CTA row */}
@@ -666,7 +641,6 @@ export default function HeroSection() {
                               flex-col sm:flex-row w-full sm:w-auto"
                 style={{ animation: 'floatUp 1s cubic-bezier(0.16,1,0.3,1) 1.1s both' }}>
 
-                {/* ★ BOOK A DEMO — now wired up */}
                 <button
                   onClick={() => navigateTo('booking')}
                   className="group relative overflow-hidden inline-flex items-center justify-center gap-2.5
@@ -720,18 +694,18 @@ export default function HeroSection() {
             <div className="flex whitespace-nowrap" style={{ animation: 'marqueeScroll 30s linear infinite' }}>
               {Array(4).fill(null).map((_, i) => (
                 <span key={i} className="font-['Outfit'] text-xl sm:text-3xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold text-white px-6 sm:px-8 md:px-14 uppercase tracking-[0.05em]">
-                  AI Precision Monitoring — Diagnostics — Healthcare —
+                  Liquid Biopsy — AI Monitoring — Precision Oncology — Breast Cancer —
                 </span>
               ))}
             </div>
           </div>
         </section>
 
-        {/* SECTION 2 — GUARDANT STYLE */}
+        {/* SECTION 2 — MISSION */}
         <section ref={secondRef} id="home"
           className="relative w-full h-screen min-h-[600px] overflow-hidden bg-[#f0f2f5] font-['Source_Sans_3']">
           <div className="absolute inset-0 z-[1]">
-            <img src="/doctor.png" alt="AI-powered breast cancer screening"
+            <img src="/doctor.png" alt="AI-powered breast cancer monitoring"
               className="w-full h-full object-cover block"
               style={{ objectPosition: '70% center' }} />
             <div className="absolute inset-0 z-[2]" style={{
@@ -749,16 +723,18 @@ export default function HeroSection() {
             <div className="w-16 h-[5px] bg-[#c0392b] mb-6 rounded-[1px]" />
             <h2 className="font-['Merriweather'] text-[1.35rem] sm:text-2xl md:text-[clamp(1.55rem,2.8vw,2.2rem)]
                            font-bold text-[#1565c0] leading-[1.22] tracking-[-0.01em] m-0 mb-5">
-              Together We Can Help<br />Conquer Cancer
+              Decode Cancer Progression<br />One Drop at a Time
             </h2>
             <p className="font-['Source_Sans_3'] text-sm sm:text-[14.5px] md:text-[15.5px]
                           text-[#4a4a4a] leading-[1.75] font-normal m-0 mb-6 sm:mb-8">
-              At Shri-AI, every team member plays a vital role in a mission that
-              impacts countless lives: conquering cancer through intelligent data.
-              We are driven by a commitment to patients through the power of AI
-              and the life-changing information it provides. We're looking for
-              curious, talented minds across diverse fields to take on some of
-              the greatest challenges in human health.
+              Shri-AI fuses liquid biopsy with AI-driven algorithms to track
+              cancer progression non-invasively and in real time — starting
+              with breast cancer. We don't prescribe treatments. We deliver
+              precision intelligence that empowers patients, clinicians, and
+              pharmaceutical teams to make smarter decisions. Built open source
+              by a multidisciplinary team of engineers, clinicians, and
+              oncologists — open to every collaborator ready to reshape
+              cancer monitoring.
             </p>
             <button className="inline-flex items-center gap-2 bg-[#c0392b] text-white
                                font-['Source_Sans_3'] text-[13px] sm:text-sm font-semibold tracking-[0.04em]
@@ -770,7 +746,7 @@ export default function HeroSection() {
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
                 <path d="M4 8h8M8 4l4 4-4 4" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-              Explore Opportunities
+              Collaborate With Us
             </button>
           </div>
           <div className="absolute bottom-0 left-0 right-0 h-px bg-[#d0d4da] z-20" />
