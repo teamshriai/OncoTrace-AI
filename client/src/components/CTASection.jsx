@@ -119,7 +119,7 @@ export default function CTASection() {
 
             {submitted && (
               <p className="mt-1 text-center text-[12px] text-emerald-300">
-                Thanks! We&apos;ll be in touch.
+                Thanks! We&apos;ll be in the touch.
               </p>
             )}
           </form>
