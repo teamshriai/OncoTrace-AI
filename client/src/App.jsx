@@ -29,7 +29,7 @@ export default function App() {
         </div>
 
         <ProblemSection />
-<<<<<<< HEAD
+
 
         <div className="relative">
           <span id="solution" className="absolute -top-24 block" aria-hidden="true" />
@@ -60,7 +60,7 @@ export default function App() {
           <span id="cta" className="absolute -top-24 block" aria-hidden="true" />
           <CTASection />
         </div>
-=======
+
         <SolutionSection />
         <LiquidBiopsySection /> 
         <ImpactSection />
@@ -68,7 +68,7 @@ export default function App() {
         <PartnersSection />
         <TeamSection />
         <CTASection />
->>>>>>> minalini-v
+
       </main>
       <Footer />
     </div>
