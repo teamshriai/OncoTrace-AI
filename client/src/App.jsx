@@ -1,3 +1,4 @@
+// App.tsx
 import Navbar from "./components/Navbar";
 import HeroSection from "./components/HeroSection";
 import DNA3DSection from "./components/DNA3DSection";
@@ -12,22 +13,46 @@ import Footer from "./components/Footer";
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-white antialiased">
+    <div className="min-h-screen bg-white antialiased scroll-smooth">
       <Navbar />
       <main>
         <HeroSection />
 
-        {/* Smooth dark → white transition bridge */}
         <div className="h-32 bg-white" />
 
         <DNA3DSection />
         <ProblemSection />
-        <SolutionSection />
-        <ImpactSection />
-        <CaseStudySection />
-        <PartnersSection />
-        <TeamSection />
-        <CTASection />
+
+        {/* Anchor spans sit INSIDE the wrapper, with the id on the span */}
+        <div className="relative">
+          <span id="solution" className="absolute -top-24 block" aria-hidden="true" />
+          <SolutionSection />
+        </div>
+
+        <div className="relative">
+          <span id="impact" className="absolute -top-24 block" aria-hidden="true" />
+          <ImpactSection />
+        </div>
+
+        <div className="relative">
+          <span id="case-study" className="absolute -top-24 block" aria-hidden="true" />
+          <CaseStudySection />
+        </div>
+
+        <div className="relative">
+          <span id="partners" className="absolute -top-24 block" aria-hidden="true" />
+          <PartnersSection />
+        </div>
+
+        <div className="relative">
+          <span id="team" className="absolute -top-24 block" aria-hidden="true" />
+          <TeamSection />
+        </div>
+
+        <div className="relative">
+          <span id="cta" className="absolute -top-24 block" aria-hidden="true" />
+          <CTASection />
+        </div>
       </main>
       <Footer />
     </div>

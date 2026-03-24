@@ -1,8 +1,32 @@
-import useInView from "../hooks/useInView";
-import { useEffect, useState, useRef } from "react";
+// components/SolutionSection.tsx
+import { useState, useEffect, useRef } from "react";
 
 const SPRING = "cubic-bezier(0.16, 1, 0.3, 1)";
 const SMOOTH = "cubic-bezier(0.25, 0.46, 0.45, 0.94)";
+
+/* ═══ useInView hook (self-contained) ═══ */
+function useInView(threshold = 0.15) {
+  const ref = useRef(null);
+  const [inView, setInView] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true);
+          observer.unobserve(el);
+        }
+      },
+      { threshold, rootMargin: "0px 0px -50px 0px" }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [threshold]);
+
+  return [ref, inView];
+}
 
 /* ═══ Data ═══ */
 const capabilities = [
@@ -138,7 +162,10 @@ function FloatingParticles({ count = 6, color = "blue" }) {
             height: p.size,
             left: `${p.x}%`,
             top: `${p.y}%`,
-            background: color === "blue" ? `rgba(59, 130, 246, ${0.1 + Math.random() * 0.15})` : `rgba(255,255,255,${0.05 + Math.random() * 0.1})`,
+            background:
+              color === "blue"
+                ? `rgba(59, 130, 246, ${0.1 + Math.random() * 0.15})`
+                : `rgba(255,255,255,${0.05 + Math.random() * 0.1})`,
             animation: `floatParticle${p.id % 3} ${p.duration}s ease-in-out ${p.delay}s infinite`,
           }}
         />
@@ -155,42 +182,50 @@ function BentoHero({ inView }) {
   });
 
   return (
-    <div className="grid grid-cols-12 grid-rows-[auto] gap-3 sm:gap-4 lg:gap-5 auto-rows-min perspective-[2000px]">
+    <div className="grid grid-cols-12 grid-rows-[auto] gap-3 sm:gap-4 lg:gap-5 auto-rows-min">
 
-      {/* ── Cell 1: Main Headline — comes from LEFT ── */}
+      {/* Cell 1: Main Headline */}
       <div
         className={`col-span-12 lg:col-span-8 row-span-2 relative rounded-3xl overflow-hidden transition-all duration-[1800ms] ${
-          inView ? "opacity-100 translate-x-0 translate-y-0 rotate-0 scale-100" : "opacity-0 -translate-x-[120px] translate-y-8 rotate-[-2deg] scale-[0.92]"
+          inView
+            ? "opacity-100 translate-x-0 translate-y-0 scale-100"
+            : "opacity-0 -translate-x-[120px] translate-y-8 scale-[0.92]"
         }`}
         style={{
           ...t(0),
           background: "linear-gradient(155deg, #eff6ff 0%, #dbeafe 40%, #bfdbfe 100%)",
-          transformStyle: "preserve-3d",
         }}
       >
         <FloatingParticles count={8} />
-        {/* Mesh overlays */}
-        <div className="pointer-events-none absolute inset-0"
+        <div
+          className="pointer-events-none absolute inset-0"
           style={{
-            background: "radial-gradient(ellipse 60% 50% at 80% 20%, rgba(37,99,235,0.08) 0%, transparent 60%), radial-gradient(ellipse 40% 60% at 10% 90%, rgba(147,197,253,0.15) 0%, transparent 60%)",
+            background:
+              "radial-gradient(ellipse 60% 50% at 80% 20%, rgba(37,99,235,0.08) 0%, transparent 60%), radial-gradient(ellipse 40% 60% at 10% 90%, rgba(147,197,253,0.15) 0%, transparent 60%)",
           }}
         />
-        <div className="pointer-events-none absolute inset-0 opacity-[0.03]"
+        <div
+          className="pointer-events-none absolute inset-0 opacity-[0.03]"
           style={{
-            backgroundImage: "linear-gradient(rgba(37,99,235,1) 1px, transparent 1px), linear-gradient(90deg, rgba(37,99,235,1) 1px, transparent 1px)",
+            backgroundImage:
+              "linear-gradient(rgba(37,99,235,1) 1px, transparent 1px), linear-gradient(90deg, rgba(37,99,235,1) 1px, transparent 1px)",
             backgroundSize: "40px 40px",
           }}
         />
 
         <div className="relative p-8 sm:p-10 lg:p-12 xl:p-14 flex flex-col justify-between min-h-[380px] lg:min-h-[440px]">
-          {/* Badge */}
           <div
-            className={`transition-all duration-[1200ms] ${inView ? "opacity-100 translate-y-0 blur-0" : "opacity-0 -translate-y-8 blur-sm"}`}
+            className={`transition-all duration-[1200ms] ${
+              inView ? "opacity-100 translate-y-0 blur-0" : "opacity-0 -translate-y-8 blur-sm"
+            }`}
             style={t(300)}
           >
             <span
               className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[10.5px] font-bold tracking-[0.14em] uppercase text-blue-700"
-              style={{ background: "rgba(37,99,235,0.08)", border: "1px solid rgba(37,99,235,0.18)" }}
+              style={{
+                background: "rgba(37,99,235,0.08)",
+                border: "1px solid rgba(37,99,235,0.18)",
+              }}
             >
               <span className="h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse" />
               Open-Source &middot; Not-for-Profit
@@ -198,13 +233,15 @@ function BentoHero({ inView }) {
           </div>
 
           <div className="mt-auto">
-            <h1
+            <h2
               className={`text-[2.2rem] sm:text-5xl md:text-[3.2rem] lg:text-[3.6rem] xl:text-[4rem] font-extrabold leading-[1.05] tracking-[-0.04em] transition-all duration-[1800ms] ${
-                inView ? "opacity-100 translate-y-0 blur-0" : "opacity-0 translate-y-16 blur-[3px]"
+                inView
+                  ? "opacity-100 translate-y-0 blur-0"
+                  : "opacity-0 translate-y-16 blur-[3px]"
               }`}
               style={t(400)}
             >
-              <span className="text-neutral-900 inline-block" style={{ transitionDelay: inView ? "450ms" : "0ms" }}>Real-Time Precision</span>
+              <span className="text-neutral-900 inline-block">Real-Time Precision</span>
               <br />
               <span
                 className="inline-block"
@@ -213,13 +250,12 @@ function BentoHero({ inView }) {
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
                   backgroundClip: "text",
-                  transitionDelay: inView ? "550ms" : "0ms",
                 }}
               >
                 Monitoring
               </span>
-              <span className="text-neutral-900 inline-block" style={{ transitionDelay: inView ? "600ms" : "0ms" }}> in Oncology</span>
-            </h1>
+              <span className="text-neutral-900 inline-block"> in Oncology</span>
+            </h2>
 
             <p
               className={`mt-4 text-[15px] sm:text-base text-neutral-500 leading-[1.75] max-w-[32rem] transition-all duration-[1600ms] ${
@@ -234,15 +270,14 @@ function BentoHero({ inView }) {
         </div>
       </div>
 
-      {/* ── Cell 2: Image card — comes from TOP RIGHT ── */}
+      {/* Cell 2: Image card */}
       <div
         className={`col-span-6 lg:col-span-4 relative rounded-3xl overflow-hidden transition-all duration-[1600ms] ${
-          inView ? "opacity-100 translate-x-0 translate-y-0 rotate-0 scale-100" : "opacity-0 translate-x-[100px] -translate-y-[80px] rotate-[3deg] scale-[0.88]"
+          inView
+            ? "opacity-100 translate-x-0 translate-y-0 scale-100"
+            : "opacity-0 translate-x-[100px] -translate-y-[80px] scale-[0.88]"
         }`}
-        style={{
-          ...t(200),
-          minHeight: "200px",
-        }}
+        style={{ ...t(200), minHeight: "200px" }}
       >
         <img
           src="/solution-bg.png"
@@ -251,6 +286,11 @@ function BentoHero({ inView }) {
             inView ? "scale-100" : "scale-110"
           }`}
           style={{ transitionTimingFunction: SMOOTH }}
+          onError={(e) => {
+            e.currentTarget.style.display = "none";
+            e.currentTarget.parentElement.style.background =
+              "linear-gradient(135deg, #1e3a5f 0%, #172554 100%)";
+          }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-blue-950/60 via-blue-900/20 to-transparent" />
         <div className="absolute bottom-4 left-4 right-4">
@@ -266,15 +306,19 @@ function BentoHero({ inView }) {
             }}
           >
             <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-[11px] font-semibold text-white/90 tracking-wide">Live Monitoring Active</span>
+            <span className="text-[11px] font-semibold text-white/90 tracking-wide">
+              Live Monitoring Active
+            </span>
           </div>
         </div>
       </div>
 
-      {/* ── Cell 3: Orbital animation — comes from BOTTOM RIGHT ── */}
+      {/* Cell 3: Orbital animation */}
       <div
         className={`col-span-6 lg:col-span-4 relative rounded-3xl overflow-hidden transition-all duration-[1600ms] ${
-          inView ? "opacity-100 translate-x-0 translate-y-0 rotate-0 scale-100" : "opacity-0 translate-x-[80px] translate-y-[80px] rotate-[-2deg] scale-[0.85]"
+          inView
+            ? "opacity-100 translate-x-0 translate-y-0 scale-100"
+            : "opacity-0 translate-x-[80px] translate-y-[80px] scale-[0.85]"
         }`}
         style={{
           ...t(350),
@@ -282,48 +326,89 @@ function BentoHero({ inView }) {
           minHeight: "200px",
         }}
       >
-        {/* Orbital rings */}
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className={`relative w-[140px] h-[140px] sm:w-[160px] sm:h-[160px] transition-all duration-[2000ms] ${inView ? "scale-100 opacity-100" : "scale-50 opacity-0"}`} style={t(600)}>
-            <div className="absolute inset-0 rounded-full" style={{ border: "1px solid rgba(96,165,250,0.2)" }}>
-              <div className="absolute inset-0 rounded-full animate-spin" style={{ animationDuration: "18s" }}>
+          <div
+            className={`relative w-[140px] h-[140px] sm:w-[160px] sm:h-[160px] transition-all duration-[2000ms] ${
+              inView ? "scale-100 opacity-100" : "scale-50 opacity-0"
+            }`}
+            style={t(600)}
+          >
+            <div
+              className="absolute inset-0 rounded-full"
+              style={{ border: "1px solid rgba(96,165,250,0.2)" }}
+            >
+              <div
+                className="absolute inset-0 rounded-full animate-spin"
+                style={{ animationDuration: "18s" }}
+              >
                 <div className="absolute -top-[4px] left-1/2 -translate-x-1/2 h-2 w-2 rounded-full bg-blue-400 shadow-[0_0_14px_3px_rgba(96,165,250,0.5)]" />
               </div>
             </div>
-            <div className="absolute inset-[18%] rounded-full" style={{ border: "1px solid rgba(96,165,250,0.15)" }}>
-              <div className="absolute inset-0 rounded-full animate-spin" style={{ animationDuration: "12s", animationDirection: "reverse" }}>
+            <div
+              className="absolute inset-[18%] rounded-full"
+              style={{ border: "1px solid rgba(96,165,250,0.15)" }}
+            >
+              <div
+                className="absolute inset-0 rounded-full animate-spin"
+                style={{ animationDuration: "12s", animationDirection: "reverse" }}
+              >
                 <div className="absolute -bottom-[3px] left-1/2 -translate-x-1/2 h-1.5 w-1.5 rounded-full bg-sky-300 shadow-md shadow-sky-400/30" />
               </div>
             </div>
-            <div className="absolute inset-[38%] rounded-full" style={{ border: "1px solid rgba(96,165,250,0.25)" }}>
-              <div className="absolute inset-0 rounded-full animate-spin" style={{ animationDuration: "7s" }}>
+            <div
+              className="absolute inset-[38%] rounded-full"
+              style={{ border: "1px solid rgba(96,165,250,0.25)" }}
+            >
+              <div
+                className="absolute inset-0 rounded-full animate-spin"
+                style={{ animationDuration: "7s" }}
+              >
                 <div className="absolute -right-[2px] top-1/2 -translate-y-1/2 h-1 w-1 rounded-full bg-blue-300/80" />
               </div>
             </div>
-            {/* Center */}
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="relative">
-                <div className="absolute -inset-5 rounded-full bg-blue-500/15 blur-xl animate-pulse" style={{ animationDuration: "3s" }} />
+                <div
+                  className="absolute -inset-5 rounded-full bg-blue-500/15 blur-xl animate-pulse"
+                  style={{ animationDuration: "3s" }}
+                />
                 <div className="h-4 w-4 rounded-full bg-blue-500 shadow-[0_0_24px_6px_rgba(59,130,246,0.4)]" />
-                <div className="absolute inset-0 h-4 w-4 animate-ping rounded-full bg-blue-400/20" style={{ animationDuration: "2.5s" }} />
+                <div
+                  className="absolute inset-0 h-4 w-4 animate-ping rounded-full bg-blue-400/20"
+                  style={{ animationDuration: "2.5s" }}
+                />
               </div>
             </div>
           </div>
         </div>
-
-        {/* Labels */}
-        <div className={`absolute bottom-4 left-4 transition-all duration-[1200ms] ${inView ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4"}`} style={t(800)}>
-          <span className="text-[10px] font-bold tracking-[0.18em] uppercase text-blue-300/70">AI Engine</span>
+        <div
+          className={`absolute bottom-4 left-4 transition-all duration-[1200ms] ${
+            inView ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4"
+          }`}
+          style={t(800)}
+        >
+          <span className="text-[10px] font-bold tracking-[0.18em] uppercase text-blue-300/70">
+            AI Engine
+          </span>
         </div>
-        <div className={`absolute top-4 right-4 transition-all duration-[1200ms] ${inView ? "opacity-100 translate-x-0" : "opacity-0 translate-x-4"}`} style={t(850)}>
-          <span className="text-[10px] font-bold tracking-[0.18em] uppercase text-blue-400/50">Neural</span>
+        <div
+          className={`absolute top-4 right-4 transition-all duration-[1200ms] ${
+            inView ? "opacity-100 translate-x-0" : "opacity-0 translate-x-4"
+          }`}
+          style={t(850)}
+        >
+          <span className="text-[10px] font-bold tracking-[0.18em] uppercase text-blue-400/50">
+            Neural
+          </span>
         </div>
       </div>
 
-      {/* ── Cell 4: CTA buttons — comes from BOTTOM LEFT ── */}
+      {/* Cell 4: CTA buttons */}
       <div
         className={`col-span-12 sm:col-span-6 lg:col-span-4 rounded-3xl overflow-hidden transition-all duration-[1500ms] ${
-          inView ? "opacity-100 translate-x-0 translate-y-0 rotate-0 scale-100" : "opacity-0 -translate-x-[100px] translate-y-[60px] rotate-[2deg] scale-[0.9]"
+          inView
+            ? "opacity-100 translate-x-0 translate-y-0 scale-100"
+            : "opacity-0 -translate-x-[100px] translate-y-[60px] scale-[0.9]"
         }`}
         style={{
           ...t(450),
@@ -340,9 +425,14 @@ function BentoHero({ inView }) {
           >
             Join the open oncology ecosystem shaping the future of precision monitoring.
           </p>
-          <div className={`flex flex-wrap gap-2.5 transition-all duration-[1200ms] ${inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`} style={t(750)}>
+          <div
+            className={`flex flex-wrap gap-2.5 transition-all duration-[1200ms] ${
+              inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+            }`}
+            style={t(750)}
+          >
             <a
-              href="#demo"
+              href="#cta"
               className="group relative inline-flex items-center gap-2 px-6 py-3 rounded-xl text-white text-[12.5px] font-bold overflow-hidden shadow-lg active:scale-[0.97] transition-all duration-300 hover:shadow-xl hover:shadow-blue-600/30 hover:-translate-y-0.5"
               style={{
                 background: "linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%)",
@@ -352,18 +442,27 @@ function BentoHero({ inView }) {
               <span
                 className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700"
                 style={{
-                  background: "linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.15) 50%, transparent 70%)",
+                  background:
+                    "linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.15) 50%, transparent 70%)",
                   backgroundSize: "200% 100%",
                   animation: "shimmer 1.5s infinite",
                 }}
               />
               <span className="relative z-10">Book a Demo</span>
-              <svg className="w-3 h-3 transition-transform duration-300 group-hover:translate-x-1 relative z-10" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <svg
+                className="w-3 h-3 transition-transform duration-300 group-hover:translate-x-1 relative z-10"
+                viewBox="0 0 16 16"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
                 <path d="M3.5 8h9M8.5 3.5 13 8l-4.5 4.5" />
               </svg>
             </a>
             <a
-              href="#platform"
+              href="#solution-platform"
               className="group inline-flex items-center gap-2 px-5 py-3 rounded-xl text-[12.5px] font-bold text-neutral-600 hover:text-blue-600 active:scale-[0.97] transition-all duration-300 hover:-translate-y-0.5"
               style={{
                 background: "rgba(255,255,255,0.9)",
@@ -371,7 +470,15 @@ function BentoHero({ inView }) {
               }}
             >
               Explore Platform
-              <svg className="w-3 h-3 opacity-40 group-hover:opacity-100 transition-all duration-300 group-hover:translate-x-0.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg
+                className="w-3 h-3 opacity-40 group-hover:opacity-100 transition-all duration-300 group-hover:translate-x-0.5"
+                viewBox="0 0 16 16"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
                 <path d="M5 11 11 5M11 11V5H5" />
               </svg>
             </a>
@@ -379,10 +486,12 @@ function BentoHero({ inView }) {
         </div>
       </div>
 
-      {/* ── Cell 5: Stats strip — comes from BOTTOM ── */}
+      {/* Cell 5: Stats strip */}
       <div
         className={`col-span-12 sm:col-span-6 lg:col-span-5 rounded-3xl overflow-hidden transition-all duration-[1500ms] ${
-          inView ? "opacity-100 translate-y-0 rotate-0 scale-100" : "opacity-0 translate-y-[100px] rotate-[1deg] scale-[0.88]"
+          inView
+            ? "opacity-100 translate-y-0 scale-100"
+            : "opacity-0 translate-y-[100px] scale-[0.88]"
         }`}
         style={{
           ...t(400),
@@ -391,7 +500,14 @@ function BentoHero({ inView }) {
       >
         <FloatingParticles count={4} color="white" />
         <div className="relative p-7 sm:p-8 min-h-[180px] flex flex-col justify-between">
-          <p className={`text-[10.5px] font-bold tracking-[0.2em] uppercase text-blue-200/70 mb-4 transition-all duration-1000 ${inView ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4"}`} style={t(600)}>Key Metrics</p>
+          <p
+            className={`text-[10.5px] font-bold tracking-[0.2em] uppercase text-blue-200/70 mb-4 transition-all duration-1000 ${
+              inView ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4"
+            }`}
+            style={t(600)}
+          >
+            Key Metrics
+          </p>
           <div className="grid grid-cols-2 gap-4">
             {[
               { value: "200+", label: "Biomarkers Tracked" },
@@ -401,21 +517,31 @@ function BentoHero({ inView }) {
             ].map((m, i) => (
               <div
                 key={m.label}
-                className={`transition-all duration-[1000ms] ${inView ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-8 scale-90"}`}
+                className={`transition-all duration-[1000ms] ${
+                  inView
+                    ? "opacity-100 translate-y-0 scale-100"
+                    : "opacity-0 translate-y-8 scale-90"
+                }`}
                 style={t(700 + i * 120)}
               >
-                <div className="text-xl sm:text-2xl font-black text-white leading-none tracking-tight">{m.value}</div>
-                <div className="text-[10.5px] text-blue-200/60 mt-1 font-medium tracking-wide">{m.label}</div>
+                <div className="text-xl sm:text-2xl font-black text-white leading-none tracking-tight">
+                  {m.value}
+                </div>
+                <div className="text-[10.5px] text-blue-200/60 mt-1 font-medium tracking-wide">
+                  {m.label}
+                </div>
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      {/* ── Cell 6: Biomarker tags — comes from RIGHT ── */}
+      {/* Cell 6: Biomarker tags */}
       <div
         className={`col-span-12 lg:col-span-3 rounded-3xl overflow-hidden transition-all duration-[1500ms] ${
-          inView ? "opacity-100 translate-x-0 translate-y-0 rotate-0 scale-100" : "opacity-0 translate-x-[120px] translate-y-[40px] rotate-[-3deg] scale-[0.85]"
+          inView
+            ? "opacity-100 translate-x-0 translate-y-0 scale-100"
+            : "opacity-0 translate-x-[120px] translate-y-[40px] scale-[0.85]"
         }`}
         style={{
           ...t(500),
@@ -424,29 +550,40 @@ function BentoHero({ inView }) {
         }}
       >
         <div className="p-6 sm:p-7 min-h-[180px] flex flex-col justify-between">
-          <p className={`text-[10.5px] font-bold tracking-[0.2em] uppercase text-blue-600/60 mb-4 transition-all duration-1000 ${inView ? "opacity-100" : "opacity-0"}`} style={t(700)}>Tracking</p>
+          <p
+            className={`text-[10.5px] font-bold tracking-[0.2em] uppercase text-blue-600/60 mb-4 transition-all duration-1000 ${
+              inView ? "opacity-100" : "opacity-0"
+            }`}
+            style={t(700)}
+          >
+            Tracking
+          </p>
           <div className="flex flex-wrap gap-2">
-            {["ctDNA", "Proteins", "Exosomes", "cfRNA", "Methylation", "CTC", "Metabolites"].map((tag, i) => (
-              <span
-                key={tag}
-                className={`px-3 py-1.5 rounded-lg text-[10.5px] font-bold tracking-wider transition-all duration-[900ms] hover:scale-105 hover:-translate-y-0.5 cursor-default ${
-                  inView ? "opacity-100 scale-100 translate-y-0 blur-0" : "opacity-0 scale-75 translate-y-4 blur-[2px]"
-                }`}
-                style={{
-                  ...t(800 + i * 80),
-                  background: i === 0 ? "rgba(37,99,235,0.12)" : "rgba(255,255,255,0.8)",
-                  color: i === 0 ? "#1d4ed8" : "#64748b",
-                  border: `1px solid ${i === 0 ? "rgba(37,99,235,0.2)" : "rgba(0,0,0,0.05)"}`,
-                }}
-              >
-                {tag}
-              </span>
-            ))}
+            {["ctDNA", "Proteins", "Exosomes", "cfRNA", "Methylation", "CTC", "Metabolites"].map(
+              (tag, i) => (
+                <span
+                  key={tag}
+                  className={`px-3 py-1.5 rounded-lg text-[10.5px] font-bold tracking-wider transition-all duration-[900ms] hover:scale-105 hover:-translate-y-0.5 cursor-default ${
+                    inView
+                      ? "opacity-100 scale-100 translate-y-0 blur-0"
+                      : "opacity-0 scale-75 translate-y-4 blur-[2px]"
+                  }`}
+                  style={{
+                    ...t(800 + i * 80),
+                    background: i === 0 ? "rgba(37,99,235,0.12)" : "rgba(255,255,255,0.8)",
+                    color: i === 0 ? "#1d4ed8" : "#64748b",
+                    border: `1px solid ${i === 0 ? "rgba(37,99,235,0.2)" : "rgba(0,0,0,0.05)"}`,
+                  }}
+                >
+                  {tag}
+                </span>
+              )
+            )}
           </div>
         </div>
       </div>
 
-      {/* ── Cell 7: Bottom wide tagline — rises from BOTTOM ── */}
+      {/* Cell 7: Bottom tagline */}
       <div
         className={`col-span-12 rounded-2xl overflow-hidden transition-all duration-[1400ms] ${
           inView ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-[60px] scale-[0.95]"
@@ -458,7 +595,12 @@ function BentoHero({ inView }) {
         }}
       >
         <div className="px-7 py-5 flex flex-wrap items-center justify-between gap-4">
-          <p className={`text-[11.5px] text-neutral-400 leading-[1.7] max-w-[34rem] transition-all duration-[1200ms] ${inView ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-6"}`} style={t(800)}>
+          <p
+            className={`text-[11.5px] text-neutral-400 leading-[1.7] max-w-[34rem] transition-all duration-[1200ms] ${
+              inView ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-6"
+            }`}
+            style={t(800)}
+          >
             An open-source platform built to make advanced oncology monitoring accessible,
             transparent, and collaborative for clinicians and researchers worldwide.
           </p>
@@ -485,12 +627,12 @@ function BentoHero({ inView }) {
    MAIN COMPONENT
    ═══════════════════════════════════════════════════════ */
 export default function SolutionSection() {
-  const [heroRef, heroIn] = useInView();
-  const [aboutRef, aboutIn] = useInView();
-  const [capRef, capIn] = useInView();
-  const [audRef, audIn] = useInView();
-  const [mvRef, mvIn] = useInView();
-  const [ctaRef, ctaIn] = useInView();
+  const [heroRef, heroIn] = useInView(0.08);
+  const [aboutRef, aboutIn] = useInView(0.12);
+  const [capRef, capIn] = useInView(0.1);
+  const [audRef, audIn] = useInView(0.1);
+  const [mvRef, mvIn] = useInView(0.1);
+  const [ctaRef, ctaIn] = useInView(0.1);
 
   const [parallaxAbout, aboutOffset] = useParallax(0.04);
   const [parallaxCap, capOffset] = useParallax(0.03);
@@ -503,14 +645,11 @@ export default function SolutionSection() {
     transitionDelay: inView ? `${delay}ms` : "0ms",
   });
 
-  /* Direction-based entrance helpers */
-  const fromLeft = (inView, delay = 0, dist = 80) => ({
-    className: `transition-all duration-[1500ms] ${inView ? "opacity-100 translate-x-0 blur-0" : `opacity-0 -translate-x-[${dist}px] blur-[2px]`}`,
-    style: t(inView, delay),
-  });
-
   return (
-    <main className="bg-white text-neutral-900 antialiased selection:bg-blue-600 selection:text-white overflow-x-hidden">
+    <div
+      className="bg-white text-neutral-900 antialiased selection:bg-blue-600 selection:text-white overflow-x-hidden"
+      style={{ fontFamily: "'DM Sans', sans-serif" }}
+    >
       {/* Global keyframes */}
       <style>{`
         @keyframes shimmer {
@@ -532,14 +671,6 @@ export default function SolutionSection() {
           0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.4; }
           50% { transform: translate(25px, -30px) scale(1.4); opacity: 0.6; }
         }
-        @keyframes revealLine {
-          from { transform: scaleX(0); }
-          to { transform: scaleX(1); }
-        }
-        @keyframes gentleFloat {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-8px); }
-        }
         @keyframes pulseGlow {
           0%, 100% { box-shadow: 0 0 20px rgba(59,130,246,0.15); }
           50% { box-shadow: 0 0 40px rgba(59,130,246,0.3); }
@@ -550,7 +681,6 @@ export default function SolutionSection() {
           HERO — Bento Grid
           ════════════════════════════════════════ */}
       <section className="relative overflow-hidden min-h-[100dvh] flex items-center">
-        {/* Layered background */}
         <div className="pointer-events-none absolute inset-0">
           <div
             className="absolute inset-0"
@@ -559,9 +689,18 @@ export default function SolutionSection() {
                 "radial-gradient(ellipse 80% 60% at 70% 30%, rgba(219,234,254,0.50) 0%, transparent 65%), radial-gradient(ellipse 55% 50% at 20% 70%, rgba(191,219,254,0.30) 0%, transparent 60%)",
             }}
           />
-          <div className="absolute -top-32 right-[-5%] w-[600px] h-[600px] rounded-full bg-blue-200/20 blur-[140px] animate-pulse" style={{ animationDuration: "8s" }} />
-          <div className="absolute bottom-[-15%] left-[-8%] w-[500px] h-[500px] rounded-full bg-blue-100/25 blur-[120px] animate-pulse" style={{ animationDuration: "10s" }} />
-          <div className="absolute top-[50%] left-[50%] w-[300px] h-[300px] rounded-full bg-sky-200/15 blur-[100px] animate-pulse" style={{ animationDuration: "6s" }} />
+          <div
+            className="absolute -top-32 right-[-5%] w-[600px] h-[600px] rounded-full bg-blue-200/20 blur-[140px] animate-pulse"
+            style={{ animationDuration: "8s" }}
+          />
+          <div
+            className="absolute bottom-[-15%] left-[-8%] w-[500px] h-[500px] rounded-full bg-blue-100/25 blur-[120px] animate-pulse"
+            style={{ animationDuration: "10s" }}
+          />
+          <div
+            className="absolute top-[50%] left-[50%] w-[300px] h-[300px] rounded-full bg-sky-200/15 blur-[100px] animate-pulse"
+            style={{ animationDuration: "6s" }}
+          />
         </div>
 
         <div
@@ -575,63 +714,108 @@ export default function SolutionSection() {
       {/* ════════════════════════════════════════
           ABOUT
           ════════════════════════════════════════ */}
-      <section id="about" className="relative overflow-hidden">
+      <section className="relative overflow-hidden">
         <div className="pointer-events-none absolute inset-0">
           <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-blue-50/30 blur-[100px] rounded-full" />
         </div>
 
-        <div ref={aboutRef} className="max-w-[1400px] mx-auto px-8 sm:px-12 lg:px-20 xl:px-28 py-20 lg:py-28">
+        <div
+          ref={aboutRef}
+          className="max-w-[1400px] mx-auto px-8 sm:px-12 lg:px-20 xl:px-28 py-20 lg:py-28"
+        >
           <div ref={parallaxAbout} className="grid lg:grid-cols-12 gap-8 lg:gap-14">
-            {/* Left label — slides in from LEFT */}
+            {/* Left label */}
             <div
               className={`lg:col-span-4 transition-all duration-[1600ms] ${
-                aboutIn ? "opacity-100 translate-x-0 rotate-0" : "opacity-0 -translate-x-[100px] rotate-[-1deg]"
+                aboutIn
+                  ? "opacity-100 translate-x-0"
+                  : "opacity-0 -translate-x-[100px]"
               }`}
-              style={{ ...t(aboutIn), transform: aboutIn ? `translateY(${aboutOffset}px)` : undefined }}
+              style={{
+                ...t(aboutIn),
+                transform: aboutIn ? `translateY(${aboutOffset}px)` : undefined,
+              }}
             >
-              <p className={`text-[11px] font-bold tracking-[0.25em] uppercase text-blue-600 mb-3 transition-all duration-[1000ms] ${aboutIn ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-6"}`} style={t(aboutIn, 100)}>
+              <p
+                className={`text-[11px] font-bold tracking-[0.25em] uppercase text-blue-600 mb-3 transition-all duration-[1000ms] ${
+                  aboutIn ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-6"
+                }`}
+                style={t(aboutIn, 100)}
+              >
                 About Shri-AI
               </p>
-              <h2 className={`text-[1.7rem] sm:text-3xl lg:text-[2.1rem] font-bold tracking-[-0.025em] leading-[1.15] transition-all duration-[1400ms] ${aboutIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`} style={t(aboutIn, 200)}>
+              <h2
+                className={`text-[1.7rem] sm:text-3xl lg:text-[2.1rem] font-bold tracking-[-0.025em] leading-[1.15] transition-all duration-[1400ms] ${
+                  aboutIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+                }`}
+                style={t(aboutIn, 200)}
+              >
                 Redefining how cancer
                 <br className="hidden lg:block" /> is monitored
               </h2>
               <div
-                className={`mt-5 h-[3px] w-10 rounded-full bg-blue-600 origin-left transition-transform duration-[1200ms] ${aboutIn ? "scale-x-100" : "scale-x-0"}`}
+                className={`mt-5 h-[3px] w-10 rounded-full bg-blue-600 origin-left transition-transform duration-[1200ms] ${
+                  aboutIn ? "scale-x-100" : "scale-x-0"
+                }`}
                 style={t(aboutIn, 400)}
               />
             </div>
 
-            {/* Right content — slides in from RIGHT */}
+            {/* Right content */}
             <div
               className={`lg:col-span-7 lg:col-start-6 transition-all duration-[1600ms] ${
-                aboutIn ? "opacity-100 translate-x-0 rotate-0" : "opacity-0 translate-x-[100px] rotate-[1deg]"
+                aboutIn
+                  ? "opacity-100 translate-x-0"
+                  : "opacity-0 translate-x-[100px]"
               }`}
               style={t(aboutIn, 150)}
             >
-              <p className={`text-neutral-600 text-[15px] sm:text-base leading-[1.9] transition-all duration-[1400ms] ${aboutIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`} style={t(aboutIn, 250)}>
+              <p
+                className={`text-neutral-600 text-[15px] sm:text-base leading-[1.9] transition-all duration-[1400ms] ${
+                  aboutIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+                }`}
+                style={t(aboutIn, 250)}
+              >
                 Shri-AI combines Liquid Biopsy with advanced Artificial Intelligence to deliver
                 real-time precision monitoring in oncology. Our platform continuously tracks cancer
                 progression through non-invasive data, allowing clinicians, researchers, and patients
                 to understand the disease with greater clarity and accuracy.
               </p>
 
-              {/* Pull quote — slides from right with border animation */}
+              {/* Pull quote */}
               <div
                 className={`relative my-7 pl-6 py-3 rounded-r-lg transition-all duration-[1600ms] ${
                   aboutIn ? "opacity-100 translate-x-0" : "opacity-0 translate-x-[60px]"
                 }`}
                 style={t(aboutIn, 350)}
               >
-                <div className={`absolute left-0 top-0 bottom-0 w-[3px] bg-blue-600 origin-top transition-transform duration-[1200ms] ${aboutIn ? "scale-y-100" : "scale-y-0"}`} style={t(aboutIn, 500)} />
-                <div className={`absolute inset-0 rounded-r-lg transition-opacity duration-[1000ms] ${aboutIn ? "opacity-100" : "opacity-0"}`} style={{ ...t(aboutIn, 450), background: "rgba(239,246,255,0.4)" }} />
+                <div
+                  className={`absolute left-0 top-0 bottom-0 w-[3px] bg-blue-600 origin-top transition-transform duration-[1200ms] ${
+                    aboutIn ? "scale-y-100" : "scale-y-0"
+                  }`}
+                  style={t(aboutIn, 500)}
+                />
+                <div
+                  className={`absolute inset-0 rounded-r-lg transition-opacity duration-[1000ms] ${
+                    aboutIn ? "opacity-100" : "opacity-0"
+                  }`}
+                  style={{
+                    ...t(aboutIn, 450),
+                    background: "rgba(239,246,255,0.4)",
+                  }}
+                />
                 <p className="relative text-[1.05rem] sm:text-lg font-semibold text-neutral-800 leading-[1.55] tracking-[-0.01em]">
                   We specialize in monitoring and analyzing cancer dynamics in real time —
                   empowering better decision-making through reliable, data-driven insights.
                 </p>
               </div>
 
-              <p className={`text-neutral-500 text-[15px] sm:text-base leading-[1.9] transition-all duration-[1400ms] ${aboutIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`} style={t(aboutIn, 450)}>
+              <p
+                className={`text-neutral-500 text-[15px] sm:text-base leading-[1.9] transition-all duration-[1400ms] ${
+                  aboutIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+                }`}
+                style={t(aboutIn, 450)}
+              >
                 Unlike traditional systems, we do not focus on treatment or medication. Built as an
                 open-source, not-for-profit initiative, Shri-AI encourages global collaboration across
                 research institutions, healthcare providers, and technology communities.
@@ -644,8 +828,10 @@ export default function SolutionSection() {
       {/* ════════════════════════════════════════
           CAPABILITIES
           ════════════════════════════════════════ */}
-      <section id="capabilities" className="bg-neutral-950 text-white relative overflow-hidden" ref={glowRef}>
-        {/* Mouse-following glow */}
+      <section
+        className="bg-neutral-950 text-white relative overflow-hidden"
+        ref={glowRef}
+      >
         {glowActive && (
           <div
             className="pointer-events-none absolute w-[500px] h-[500px] rounded-full transition-opacity duration-500"
@@ -658,11 +844,13 @@ export default function SolutionSection() {
           />
         )}
 
-        {/* Subtle radial glow */}
         <div className="pointer-events-none absolute top-0 left-1/3 w-[700px] h-[500px] bg-blue-600/[0.04] blur-[120px] rounded-full" />
         <div className="pointer-events-none absolute bottom-0 right-1/4 w-[500px] h-[400px] bg-indigo-600/[0.03] blur-[100px] rounded-full" />
 
-        <div ref={capRef} className="relative max-w-[1400px] mx-auto px-8 sm:px-12 lg:px-20 xl:px-28 py-20 lg:py-28">
+        <div
+          ref={capRef}
+          className="relative max-w-[1400px] mx-auto px-8 sm:px-12 lg:px-20 xl:px-28 py-20 lg:py-28"
+        >
           <div ref={parallaxCap}>
             <div
               className={`mb-12 lg:mb-16 transition-all duration-[1500ms] ${
@@ -670,10 +858,20 @@ export default function SolutionSection() {
               }`}
               style={t(capIn)}
             >
-              <p className={`text-[11px] font-bold tracking-[0.25em] uppercase text-blue-400 mb-3 transition-all duration-[1200ms] ${capIn ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-8"}`} style={t(capIn, 100)}>
+              <p
+                className={`text-[11px] font-bold tracking-[0.25em] uppercase text-blue-400 mb-3 transition-all duration-[1200ms] ${
+                  capIn ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-8"
+                }`}
+                style={t(capIn, 100)}
+              >
                 Core Capabilities
               </p>
-              <h2 className={`text-[1.7rem] sm:text-3xl lg:text-[2.1rem] font-bold tracking-[-0.025em] leading-[1.15] max-w-md transition-all duration-[1400ms] ${capIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`} style={t(capIn, 200)}>
+              <h2
+                className={`text-[1.7rem] sm:text-3xl lg:text-[2.1rem] font-bold tracking-[-0.025em] leading-[1.15] max-w-md transition-all duration-[1400ms] ${
+                  capIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+                }`}
+                style={t(capIn, 200)}
+              >
                 Four foundational pillars
               </h2>
             </div>
@@ -681,12 +879,11 @@ export default function SolutionSection() {
             <div className="grid sm:grid-cols-2 gap-4 lg:gap-5">
               {capabilities.map((item, i) => {
                 const Icon = capIcons[i];
-                // Each card comes from a different direction
                 const directions = [
-                  { x: -120, y: -60, rot: -3 },   // top-left
-                  { x: 120, y: -60, rot: 3 },     // top-right
-                  { x: -120, y: 60, rot: 2 },     // bottom-left
-                  { x: 120, y: 60, rot: -2 },     // bottom-right
+                  { x: -120, y: -60, rot: -3 },
+                  { x: 120, y: -60, rot: 3 },
+                  { x: -120, y: 60, rot: 2 },
+                  { x: 120, y: 60, rot: -2 },
                 ];
                 const dir = directions[i];
 
@@ -703,25 +900,42 @@ export default function SolutionSection() {
                         : `translateX(${dir.x}px) translateY(${dir.y}px) rotate(${dir.rot}deg) scale(0.85)`,
                     }}
                   >
-                    {/* Top accent */}
                     <div className="absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-blue-500/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-                    {/* Corner glow on hover */}
                     <div className="absolute -top-20 -right-20 w-40 h-40 bg-blue-500/[0.03] rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
 
                     <div className="flex items-start justify-between mb-7">
-                      <div className={`flex h-12 w-12 items-center justify-center rounded-xl bg-neutral-800 text-blue-400 transition-all duration-500 group-hover:bg-blue-600 group-hover:text-white group-hover:shadow-lg group-hover:shadow-blue-600/25 group-hover:scale-110 ${capIn ? "scale-100 rotate-0" : "scale-0 rotate-[-45deg]"}`} style={t(capIn, 400 + i * 150)}>
+                      <div
+                        className={`flex h-12 w-12 items-center justify-center rounded-xl bg-neutral-800 text-blue-400 transition-all duration-500 group-hover:bg-blue-600 group-hover:text-white group-hover:shadow-lg group-hover:shadow-blue-600/25 group-hover:scale-110 ${
+                          capIn ? "scale-100 rotate-0" : "scale-0 -rotate-45"
+                        }`}
+                        style={t(capIn, 400 + i * 150)}
+                      >
                         <Icon />
                       </div>
-                      <span className={`text-[2.5rem] font-bold text-neutral-800/60 group-hover:text-neutral-700/40 transition-all duration-[1200ms] leading-none tracking-tighter font-mono select-none ${capIn ? "opacity-100 translate-x-0" : "opacity-0 translate-x-6"}`} style={t(capIn, 500 + i * 150)}>
+                      <span
+                        className={`text-[2.5rem] font-bold text-neutral-800/60 group-hover:text-neutral-700/40 transition-all duration-[1200ms] leading-none tracking-tighter font-mono select-none ${
+                          capIn ? "opacity-100 translate-x-0" : "opacity-0 translate-x-6"
+                        }`}
+                        style={t(capIn, 500 + i * 150)}
+                      >
                         {item.num}
                       </span>
                     </div>
 
-                    <h3 className={`text-[1.05rem] font-bold tracking-[-0.01em] mb-2.5 group-hover:text-blue-400 transition-all duration-[1200ms] ${capIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`} style={t(capIn, 500 + i * 150)}>
+                    <h3
+                      className={`text-[1.05rem] font-bold tracking-[-0.01em] mb-2.5 group-hover:text-blue-400 transition-all duration-[1200ms] ${
+                        capIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+                      }`}
+                      style={t(capIn, 500 + i * 150)}
+                    >
                       {item.title}
                     </h3>
-                    <p className={`text-[13.5px] leading-[1.8] text-neutral-400 font-light transition-all duration-[1200ms] ${capIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`} style={t(capIn, 600 + i * 150)}>
+                    <p
+                      className={`text-[13.5px] leading-[1.8] text-neutral-400 font-light transition-all duration-[1200ms] ${
+                        capIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+                      }`}
+                      style={t(capIn, 600 + i * 150)}
+                    >
                       {item.desc}
                     </p>
                   </div>
@@ -735,34 +949,46 @@ export default function SolutionSection() {
       {/* ════════════════════════════════════════
           WHO IT'S FOR
           ════════════════════════════════════════ */}
-      <section id="audience" className="relative overflow-hidden">
+      <section className="relative overflow-hidden">
         <div className="pointer-events-none absolute inset-0">
           <div className="absolute bottom-0 left-1/4 w-[500px] h-[400px] bg-blue-50/20 blur-[120px] rounded-full" />
         </div>
 
-        <div ref={audRef} className="relative max-w-[1400px] mx-auto px-8 sm:px-12 lg:px-20 xl:px-28 py-20 lg:py-28">
+        <div
+          ref={audRef}
+          className="relative max-w-[1400px] mx-auto px-8 sm:px-12 lg:px-20 xl:px-28 py-20 lg:py-28"
+        >
           <div
             className={`mb-12 lg:mb-14 transition-all duration-[1500ms] ${
               audIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-[50px]"
             }`}
             style={t(audIn)}
           >
-            <p className={`text-[11px] font-bold tracking-[0.25em] uppercase text-blue-600 mb-3 transition-all duration-[1200ms] ${audIn ? "opacity-100 translate-x-0" : "opacity-0 translate-x-[-20px]"}`} style={t(audIn, 100)}>
+            <p
+              className={`text-[11px] font-bold tracking-[0.25em] uppercase text-blue-600 mb-3 transition-all duration-[1200ms] ${
+                audIn ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-5"
+              }`}
+              style={t(audIn, 100)}
+            >
               Who It&apos;s For
             </p>
-            <h2 className={`text-[1.7rem] sm:text-3xl lg:text-[2.1rem] font-bold tracking-[-0.025em] leading-[1.15] max-w-lg transition-all duration-[1400ms] ${audIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`} style={t(audIn, 200)}>
+            <h2
+              className={`text-[1.7rem] sm:text-3xl lg:text-[2.1rem] font-bold tracking-[-0.025em] leading-[1.15] max-w-lg transition-all duration-[1400ms] ${
+                audIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+              }`}
+              style={t(audIn, 200)}
+            >
               Built for the entire oncology ecosystem
             </h2>
           </div>
 
           <div className="grid sm:grid-cols-2 gap-4">
             {audiences.map((a, i) => {
-              // Cards converge from all four corners
               const directions = [
-                { x: -140, y: -80, rot: -4 },   // top-left
-                { x: 140, y: -80, rot: 4 },     // top-right
-                { x: -140, y: 80, rot: 3 },     // bottom-left
-                { x: 140, y: 80, rot: -3 },     // bottom-right
+                { x: -140, y: -80, rot: -4 },
+                { x: 140, y: -80, rot: 4 },
+                { x: -140, y: 80, rot: 3 },
+                { x: 140, y: 80, rot: -3 },
               ];
               const dir = directions[i];
 
@@ -779,19 +1005,21 @@ export default function SolutionSection() {
                       : `translateX(${dir.x}px) translateY(${dir.y}px) rotate(${dir.rot}deg) scale(0.82)`,
                   }}
                 >
-                  {/* Left accent bar */}
                   <div className="absolute left-0 top-8 bottom-8 w-[3px] rounded-full bg-blue-600 scale-y-0 group-hover:scale-y-100 transition-transform duration-500 origin-top" />
-
-                  {/* Hover gradient overlay */}
                   <div className="absolute inset-0 bg-gradient-to-br from-blue-50/0 to-blue-50/0 group-hover:from-blue-50/30 group-hover:to-transparent transition-all duration-700 rounded-2xl" />
 
                   <div className="relative flex items-start justify-between mb-3">
-                    <h3 className={`text-lg font-bold tracking-[-0.01em] group-hover:text-blue-600 transition-all duration-[1200ms] ${audIn ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4"}`} style={t(audIn, 350 + i * 130)}>
+                    <h3
+                      className={`text-lg font-bold tracking-[-0.01em] group-hover:text-blue-600 transition-all duration-[1200ms] ${
+                        audIn ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4"
+                      }`}
+                      style={t(audIn, 350 + i * 130)}
+                    >
                       {a.role}
                     </h3>
                     <div className="flex h-8 w-8 items-center justify-center rounded-full bg-neutral-50 group-hover:bg-blue-50 transition-all duration-300 group-hover:scale-110">
                       <svg
-                        className="w-4 h-4 text-neutral-300 group-hover:text-blue-500 translate-x-0 group-hover:translate-x-0.5 transition-all duration-300"
+                        className="w-4 h-4 text-neutral-300 group-hover:text-blue-500 group-hover:translate-x-0.5 transition-all duration-300"
                         viewBox="0 0 20 20"
                         fill="none"
                         stroke="currentColor"
@@ -803,7 +1031,12 @@ export default function SolutionSection() {
                       </svg>
                     </div>
                   </div>
-                  <p className={`relative text-[14px] text-neutral-500 leading-[1.75] font-light pr-4 transition-all duration-[1400ms] ${audIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`} style={t(audIn, 450 + i * 130)}>
+                  <p
+                    className={`relative text-[14px] text-neutral-500 leading-[1.75] font-light pr-4 transition-all duration-[1400ms] ${
+                      audIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+                    }`}
+                    style={t(audIn, 450 + i * 130)}
+                  >
                     {a.desc}
                   </p>
                 </div>
@@ -816,69 +1049,150 @@ export default function SolutionSection() {
       {/* ════════════════════════════════════════
           MISSION & VISION
           ════════════════════════════════════════ */}
-      <section id="mission" className="bg-neutral-50 relative overflow-hidden">
+      <section className="bg-neutral-50 relative overflow-hidden">
         <div className="pointer-events-none absolute inset-0">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-blue-100/20 blur-[100px] rounded-full" />
           <div className="absolute top-0 left-0 w-[300px] h-[300px] bg-blue-50/30 blur-[80px] rounded-full" />
           <div className="absolute bottom-0 right-0 w-[350px] h-[350px] bg-indigo-50/20 blur-[90px] rounded-full" />
         </div>
 
-        <div ref={mvRef} className="relative max-w-[1400px] mx-auto px-8 sm:px-12 lg:px-20 xl:px-28 py-20 lg:py-28">
+        <div
+          ref={mvRef}
+          className="relative max-w-[1400px] mx-auto px-8 sm:px-12 lg:px-20 xl:px-28 py-20 lg:py-28"
+        >
           <div ref={parallaxMv} className="grid lg:grid-cols-2 gap-12 lg:gap-16">
-            {/* Mission — slides from LEFT */}
+            {/* Mission */}
             <div
               className={`transition-all duration-[1700ms] ${
-                mvIn ? "opacity-100 translate-x-0 rotate-0 blur-0" : "opacity-0 -translate-x-[120px] rotate-[-2deg] blur-[3px]"
+                mvIn
+                  ? "opacity-100 translate-x-0 blur-0"
+                  : "opacity-0 -translate-x-[120px] blur-[3px]"
               }`}
-              style={{ ...t(mvIn, 0), transform: mvIn ? `translateX(0) translateY(${mvOffset}px) rotate(0deg)` : undefined }}
+              style={{
+                ...t(mvIn, 0),
+                transform: mvIn ? `translateX(0) translateY(${mvOffset}px)` : undefined,
+              }}
             >
-              <div className={`flex items-center gap-3 mb-5 transition-all duration-[1200ms] ${mvIn ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4"}`} style={t(mvIn, 100)}>
-                <div className="h-8 w-8 rounded-lg bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-600/20" style={{ animation: mvIn ? "pulseGlow 3s ease-in-out infinite" : "none" }}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="12" cy="12" r="10" /><path d="M12 16v-4M12 8h.01" />
+              <div
+                className={`flex items-center gap-3 mb-5 transition-all duration-[1200ms] ${
+                  mvIn ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4"
+                }`}
+                style={t(mvIn, 100)}
+              >
+                <div
+                  className="h-8 w-8 rounded-lg bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-600/20"
+                  style={{
+                    animation: mvIn ? "pulseGlow 3s ease-in-out infinite" : "none",
+                  }}
+                >
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="white"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M12 16v-4M12 8h.01" />
                   </svg>
                 </div>
-                <p className="text-[11px] font-bold tracking-[0.25em] uppercase text-blue-600">Mission</p>
+                <p className="text-[11px] font-bold tracking-[0.25em] uppercase text-blue-600">
+                  Mission
+                </p>
               </div>
-              <p className={`text-xl sm:text-2xl lg:text-[1.55rem] leading-[1.55] tracking-[-0.01em] text-neutral-700 transition-all duration-[1500ms] ${mvIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`} style={t(mvIn, 200)}>
+              <p
+                className={`text-xl sm:text-2xl lg:text-[1.55rem] leading-[1.55] tracking-[-0.01em] text-neutral-700 transition-all duration-[1500ms] ${
+                  mvIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+                }`}
+                style={t(mvIn, 200)}
+              >
                 To democratize real-time precision monitoring in oncology by combining Liquid Biopsy
                 and Artificial Intelligence into an{" "}
-                <span className="text-blue-600 font-semibold">open, accessible, and collaborative platform</span>.
+                <span className="text-blue-600 font-semibold">
+                  open, accessible, and collaborative platform
+                </span>
+                .
               </p>
             </div>
 
-            {/* Vision — slides from RIGHT */}
+            {/* Vision */}
             <div
               className={`transition-all duration-[1700ms] ${
-                mvIn ? "opacity-100 translate-x-0 rotate-0 blur-0" : "opacity-0 translate-x-[120px] rotate-[2deg] blur-[3px]"
+                mvIn
+                  ? "opacity-100 translate-x-0 blur-0"
+                  : "opacity-0 translate-x-[120px] blur-[3px]"
               }`}
-              style={{ ...t(mvIn, 200), transform: mvIn ? `translateX(0) translateY(${mvOffset * 0.7}px) rotate(0deg)` : undefined }}
+              style={{
+                ...t(mvIn, 200),
+                transform: mvIn
+                  ? `translateX(0) translateY(${mvOffset * 0.7}px)`
+                  : undefined,
+              }}
             >
-              <div className={`flex items-center gap-3 mb-5 transition-all duration-[1200ms] ${mvIn ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4"}`} style={t(mvIn, 300)}>
-                <div className="h-8 w-8 rounded-lg bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-600/20" style={{ animation: mvIn ? "pulseGlow 3s ease-in-out 1.5s infinite" : "none" }}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z" /><circle cx="12" cy="12" r="3" />
+              <div
+                className={`flex items-center gap-3 mb-5 transition-all duration-[1200ms] ${
+                  mvIn ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4"
+                }`}
+                style={t(mvIn, 300)}
+              >
+                <div
+                  className="h-8 w-8 rounded-lg bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-600/20"
+                  style={{
+                    animation: mvIn ? "pulseGlow 3s ease-in-out 1.5s infinite" : "none",
+                  }}
+                >
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="white"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z" />
+                    <circle cx="12" cy="12" r="3" />
                   </svg>
                 </div>
-                <p className="text-[11px] font-bold tracking-[0.25em] uppercase text-blue-600">Vision</p>
+                <p className="text-[11px] font-bold tracking-[0.25em] uppercase text-blue-600">
+                  Vision
+                </p>
               </div>
-              <p className={`text-xl sm:text-2xl lg:text-[1.55rem] leading-[1.55] tracking-[-0.01em] text-neutral-700 transition-all duration-[1500ms] ${mvIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`} style={t(mvIn, 400)}>
+              <p
+                className={`text-xl sm:text-2xl lg:text-[1.55rem] leading-[1.55] tracking-[-0.01em] text-neutral-700 transition-all duration-[1500ms] ${
+                  mvIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+                }`}
+                style={t(mvIn, 400)}
+              >
                 To build a future where every cancer patient can be monitored continuously through{" "}
                 <span className="text-blue-600 font-semibold">real-time precision systems</span> —
-                powered by AI, driven by Liquid Biopsy, and supported by a global open-source ecosystem.
+                powered by AI, driven by Liquid Biopsy, and supported by a global open-source
+                ecosystem.
               </p>
             </div>
           </div>
 
-          {/* Tagline strip — rises from bottom with stagger */}
+          {/* Tagline strip */}
           <div
             className={`mt-14 pt-7 border-t transition-all duration-[1400ms] ${
               mvIn ? "opacity-100 border-neutral-200" : "opacity-0 border-transparent"
             }`}
             style={t(mvIn, 500)}
           >
-            {/* Animated border reveal */}
-            <div className={`absolute left-8 right-8 lg:left-20 lg:right-20 xl:left-28 xl:right-28 h-px origin-left transition-transform duration-[1800ms] ${mvIn ? "scale-x-100" : "scale-x-0"}`} style={{ ...t(mvIn, 500), background: "linear-gradient(90deg, transparent, rgba(37,99,235,0.15), transparent)" }} />
+            <div
+              className={`absolute left-8 right-8 lg:left-20 lg:right-20 xl:left-28 xl:right-28 h-px origin-left transition-transform duration-[1800ms] ${
+                mvIn ? "scale-x-100" : "scale-x-0"
+              }`}
+              style={{
+                ...t(mvIn, 500),
+                background:
+                  "linear-gradient(90deg, transparent, rgba(37,99,235,0.15), transparent)",
+              }}
+            />
 
             <div className="flex flex-wrap gap-x-8 gap-y-2.5">
               {[
@@ -890,7 +1204,9 @@ export default function SolutionSection() {
                 <span
                   key={tag}
                   className={`text-[11px] tracking-[0.1em] uppercase text-neutral-400 font-semibold transition-all duration-[1000ms] ${
-                    mvIn ? "opacity-100 translate-y-0 blur-0" : "opacity-0 translate-y-6 blur-[2px]"
+                    mvIn
+                      ? "opacity-100 translate-y-0 blur-0"
+                      : "opacity-0 translate-y-6 blur-[2px]"
                   }`}
                   style={t(mvIn, 600 + i * 120)}
                 >
@@ -903,59 +1219,100 @@ export default function SolutionSection() {
       </section>
 
       {/* ════════════════════════════════════════
-          CTA
+          SOLUTION CTA
           ════════════════════════════════════════ */}
-      <section id="cta" className="relative overflow-hidden">
+      <section className="relative overflow-hidden">
         <div className="pointer-events-none absolute inset-0">
           <div className="absolute bottom-0 left-0 w-[50%] h-[60%] bg-gradient-to-tr from-blue-50/50 to-transparent" />
-          <div className="absolute -bottom-32 -left-20 w-[500px] h-[500px] rounded-full bg-blue-100/25 blur-[100px] animate-pulse" style={{ animationDuration: "7s" }} />
+          <div
+            className="absolute -bottom-32 -left-20 w-[500px] h-[500px] rounded-full bg-blue-100/25 blur-[100px] animate-pulse"
+            style={{ animationDuration: "7s" }}
+          />
           <div className="absolute top-20 right-10 w-[300px] h-[300px] rounded-full bg-blue-50/20 blur-[80px]" />
         </div>
 
-        <div ref={ctaRef} className="relative max-w-[1400px] mx-auto px-8 sm:px-12 lg:px-20 xl:px-28 py-24 lg:py-32">
+        <div
+          ref={ctaRef}
+          className="relative max-w-[1400px] mx-auto px-8 sm:px-12 lg:px-20 xl:px-28 py-24 lg:py-32"
+        >
           <div className="grid lg:grid-cols-12 gap-10 items-end">
-            {/* Text — swoops in from LEFT with rotation */}
+            {/* Text */}
             <div
               className={`lg:col-span-7 transition-all duration-[1800ms] ${
-                ctaIn ? "opacity-100 translate-x-0 translate-y-0 rotate-0 blur-0" : "opacity-0 -translate-x-[100px] translate-y-[40px] rotate-[-2deg] blur-[3px]"
+                ctaIn
+                  ? "opacity-100 translate-x-0 translate-y-0 blur-0"
+                  : "opacity-0 -translate-x-[100px] translate-y-[40px] blur-[3px]"
               }`}
               style={t(ctaIn)}
             >
               <h2 className="text-[1.8rem] sm:text-4xl lg:text-5xl font-bold tracking-[-0.03em] leading-[1.1]">
-                <span className={`inline-block transition-all duration-[1400ms] ${ctaIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`} style={t(ctaIn, 100)}>
+                <span
+                  className={`inline-block transition-all duration-[1400ms] ${
+                    ctaIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+                  }`}
+                  style={t(ctaIn, 100)}
+                >
                   Ready to explore
                 </span>
                 <br className="hidden sm:block" />{" "}
-                <span className={`inline-block transition-all duration-[1400ms] ${ctaIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`} style={t(ctaIn, 250)}>
+                <span
+                  className={`inline-block transition-all duration-[1400ms] ${
+                    ctaIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+                  }`}
+                  style={t(ctaIn, 250)}
+                >
                   <span className="text-blue-600">real-time</span> cancer monitoring?
                 </span>
               </h2>
-              <p className={`mt-5 text-neutral-500 text-base sm:text-lg leading-[1.65] max-w-lg transition-all duration-[1500ms] ${ctaIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`} style={t(ctaIn, 350)}>
-                Join the open oncology ecosystem. Collaborate with researchers, clinicians,
-                and institutions shaping the future of precision monitoring.
+              <p
+                className={`mt-5 text-neutral-500 text-base sm:text-lg leading-[1.65] max-w-lg transition-all duration-[1500ms] ${
+                  ctaIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+                }`}
+                style={t(ctaIn, 350)}
+              >
+                Join the open oncology ecosystem. Collaborate with researchers, clinicians, and
+                institutions shaping the future of precision monitoring.
               </p>
             </div>
 
-            {/* Buttons — fly in from RIGHT with stagger */}
+            {/* Buttons */}
             <div
               className={`lg:col-span-5 flex flex-col sm:flex-row lg:flex-col xl:flex-row items-start gap-3.5 transition-all duration-[1600ms] ${
-                ctaIn ? "opacity-100 translate-x-0 translate-y-0 rotate-0" : "opacity-0 translate-x-[100px] translate-y-[30px] rotate-[2deg]"
+                ctaIn
+                  ? "opacity-100 translate-x-0 translate-y-0"
+                  : "opacity-0 translate-x-[100px] translate-y-[30px]"
               }`}
               style={t(ctaIn, 300)}
             >
               <a
-                href="#demo"
-                className={`group inline-flex items-center gap-2.5 px-8 py-4 rounded-full bg-blue-600 text-white text-[13px] font-semibold shadow-lg shadow-blue-600/20 hover:bg-blue-700 hover:shadow-xl hover:shadow-blue-700/25 active:scale-[0.97] transition-all duration-300 whitespace-nowrap hover:-translate-y-1 ${ctaIn ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-6 scale-90"}`}
+                href="#cta"
+                className={`group inline-flex items-center gap-2.5 px-8 py-4 rounded-full bg-blue-600 text-white text-[13px] font-semibold shadow-lg shadow-blue-600/20 hover:bg-blue-700 hover:shadow-xl hover:shadow-blue-700/25 active:scale-[0.97] transition-all duration-300 whitespace-nowrap hover:-translate-y-1 ${
+                  ctaIn
+                    ? "opacity-100 translate-y-0 scale-100"
+                    : "opacity-0 translate-y-6 scale-90"
+                }`}
                 style={t(ctaIn, 450)}
               >
                 Experience Real-Time Monitoring
-                <svg className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                <svg
+                  className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
                   <path d="M3.5 8h9M8.5 3.5 13 8l-4.5 4.5" />
                 </svg>
               </a>
               <a
-                href="#collaborate"
-                className={`inline-flex items-center px-7 py-4 rounded-full border border-neutral-200 text-[13px] font-semibold text-neutral-600 hover:border-blue-200 hover:text-blue-600 active:scale-[0.97] transition-all duration-300 whitespace-nowrap hover:-translate-y-1 ${ctaIn ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-6 scale-90"}`}
+                href="#team"
+                className={`inline-flex items-center px-7 py-4 rounded-full border border-neutral-200 text-[13px] font-semibold text-neutral-600 hover:border-blue-200 hover:text-blue-600 active:scale-[0.97] transition-all duration-300 whitespace-nowrap hover:-translate-y-1 ${
+                  ctaIn
+                    ? "opacity-100 translate-y-0 scale-100"
+                    : "opacity-0 translate-y-6 scale-90"
+                }`}
                 style={t(ctaIn, 550)}
               >
                 Collaborate with Us
@@ -964,6 +1321,6 @@ export default function SolutionSection() {
           </div>
         </div>
       </section>
-    </main>
+    </div>
   );
 }
