@@ -28,6 +28,11 @@ export default function App() {
           <Mammogram />
         </div>
 
+        <div className="relative">
+          <span id="LiquidBiopsySection" className="absolute -top-24 block" aria-hidden="true" />
+          <LiquidBiopsySection />
+        </div>
+
         <ProblemSection />
 
 
@@ -60,15 +65,6 @@ export default function App() {
           <span id="cta" className="absolute -top-24 block" aria-hidden="true" />
           <CTASection />
         </div>
-
-        <SolutionSection />
-        <LiquidBiopsySection /> 
-        <ImpactSection />
-        <CaseStudySection />
-        <PartnersSection />
-        <TeamSection />
-        <CTASection />
-
       </main>
       <Footer />
     </div>
