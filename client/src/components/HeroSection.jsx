@@ -588,8 +588,9 @@ export default function HeroSection() {
                 {[
                   { text: 'Real-Time', type: 'light' },
                   { text: 'Precision', type: 'bold' },
-                  { text: 'Cancer', type: 'bold' },
+                  { text: 'Oncology', type: 'bold' },
                   { text: 'Monitoring', type: 'accent' },
+                  { text: 'Using AI', type: 'accent' },
                 ].map((line, i) => {
                   const baseClasses = "block font-['Outfit'] leading-[0.92] tracking-[-0.05em] text-[clamp(2rem,6.5vw,7.5rem)]"
                   let variant = ''
