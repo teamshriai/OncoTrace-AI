@@ -3,15 +3,22 @@ import { useState, useEffect, useRef, useCallback } from "react";
 /* ── NAV_LINKS: href must match the wrapper id in App.jsx ── */
 const NAV_LINKS = [
   { label: "Home",     href: "#"           },
-  { label: "Products", href: "#solution"   },
-  { label: "Impact",   href: "#impact"     },
+  {
+    label: "Products",
+    href: "#mammogram",
+    dropdown: [
+      { label: "Mammogram",     href: "#mammogram",    icon: "🩺", desc: "AI-powered breast imaging analysis" },
+      { label: "Liquid Biopsy", href: "#liquidbiopsy", icon: "🔬", desc: "Non-invasive cancer detection" },
+    ],
+  },
+  { label: "About us", href: "#solution"   },
   { label: "Research", href: "#case-study" },
   { label: "Team",     href: "#team"       },
   { label: "Contact",  href: "#cta"        },
 ];
 
 /* ── all section ids for scroll-spy (skip "#") ── */
-const SECTION_IDS = NAV_LINKS.filter((l) => l.href !== "#").map((l) => l.href);
+const SECTION_IDS = ["#mammogram", "#liquidbiopsy", "#solution", "#case-study", "#team", "#cta"];
 
 /* ── smooth scroll helper ── */
 function scrollToId(href) {
@@ -46,35 +53,48 @@ function CloseIcon() {
     </svg>
   );
 }
+function ChevronDown({ open }) {
+  return (
+    <svg
+      width="12" height="12" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+      style={{
+        marginLeft: "4px",
+        transition: "transform 0.25s ease",
+        transform: open ? "rotate(180deg)" : "rotate(0deg)",
+        flexShrink: 0,
+      }}
+    >
+      <polyline points="6 9 12 15 18 9" />
+    </svg>
+  );
+}
 
 /* ═══════════════════════════════════════════════════════════════════════ */
 export default function Navbar() {
-  const [active, setActive]     = useState("#");
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [visible, setVisible]   = useState(true);
-  const [atTop, setAtTop]       = useState(true);
+  const [active, setActive]           = useState("#");
+  const [menuOpen, setMenuOpen]       = useState(false);
+  const [visible, setVisible]         = useState(true);
+  const [atTop, setAtTop]             = useState(true);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [mobileProductsOpen, setMobileProductsOpen] = useState(false);
 
-  const lastScrollY  = useRef(0);
-  const hideTimer    = useRef(null);
-  const ticking      = useRef(false);
-  const clickLock    = useRef(false);   // blocks scroll-spy briefly after click
-  const mobileRef    = useRef(null);
+  const lastScrollY      = useRef(0);
+  const hideTimer        = useRef(null);
+  const ticking          = useRef(false);
+  const clickLock        = useRef(false);
+  const mobileRef        = useRef(null);
+  const dropdownRef      = useRef(null);
+  const dropdownTimer    = useRef(null);
 
   /* ─────────────────────────────────────────────
-     1. SCROLL-SPY — highlights the visible section
+     1. SCROLL-SPY
      ───────────────────────────────────────────── */
   useEffect(() => {
     const onScroll = () => {
       if (clickLock.current) return;
-
       const scrollY = window.scrollY;
-
-      // at the very top → Home
-      if (scrollY < 200) {
-        setActive("#");
-        return;
-      }
-
+      if (scrollY < 200) { setActive("#"); return; }
       let current = "#";
       for (const id of SECTION_IDS) {
         const el = document.querySelector(id);
@@ -84,9 +104,8 @@ export default function Navbar() {
       }
       setActive(current);
     };
-
     window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll(); // initial check
+    onScroll();
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
@@ -95,14 +114,12 @@ export default function Navbar() {
      ───────────────────────────────────────────── */
   useEffect(() => {
     const HIDE_DELAY = 2500;
-
     const scheduleHide = () => {
       clearTimeout(hideTimer.current);
       hideTimer.current = setTimeout(() => {
         if (window.scrollY > 80) setVisible(false);
       }, HIDE_DELAY);
     };
-
     const onScroll = () => {
       if (ticking.current) return;
       ticking.current = true;
@@ -116,14 +133,12 @@ export default function Navbar() {
         ticking.current = false;
       });
     };
-
     const onMouse = (e) => {
       if (e.clientY < 100) {
         setVisible(true);
         clearTimeout(hideTimer.current);
       }
     };
-
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("mousemove", onMouse, { passive: true });
     return () => {
@@ -137,7 +152,12 @@ export default function Navbar() {
      3. AUTO-CLOSE mobile menu on resize / outside
      ───────────────────────────────────────────── */
   useEffect(() => {
-    const onResize = () => { if (window.innerWidth >= 1024) setMenuOpen(false); };
+    const onResize = () => {
+      if (window.innerWidth >= 1024) {
+        setMenuOpen(false);
+        setMobileProductsOpen(false);
+      }
+    };
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, []);
@@ -147,6 +167,7 @@ export default function Navbar() {
     const onClick = (e) => {
       if (mobileRef.current && !mobileRef.current.contains(e.target)) {
         setMenuOpen(false);
+        setMobileProductsOpen(false);
       }
     };
     document.addEventListener("mousedown", onClick);
@@ -154,20 +175,36 @@ export default function Navbar() {
   }, [menuOpen]);
 
   /* ─────────────────────────────────────────────
-     4. CLICK HANDLER
+     4. Close desktop dropdown on outside click
+     ───────────────────────────────────────────── */
+  useEffect(() => {
+    if (!dropdownOpen) return;
+    const onClick = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", onClick);
+    return () => document.removeEventListener("mousedown", onClick);
+  }, [dropdownOpen]);
+
+  /* ─────────────────────────────────────────────
+     5. CLICK HANDLER
      ───────────────────────────────────────────── */
   const handleNav = useCallback((e, href) => {
     e.preventDefault();
     setMenuOpen(false);
+    setMobileProductsOpen(false);
+    setDropdownOpen(false);
     setActive(href);
-
-    // lock scroll-spy so it doesn't fight the animated scroll
     clickLock.current = true;
     setTimeout(() => { clickLock.current = false; }, 1400);
-
-    // small delay so mobile menu closes visually first
     requestAnimationFrame(() => scrollToId(href));
   }, []);
+
+  /* ── helpers to determine "Products" active state ── */
+  const productHrefs = ["#mammogram", "#liquidbiopsy"];
+  const isProductsActive = productHrefs.includes(active);
 
   /* ─────────────────────────────────────────────
      STYLES
@@ -183,6 +220,20 @@ export default function Navbar() {
 
   const innerGlow = {
     background: "linear-gradient(180deg, rgba(37,99,235,0.09) 0%, transparent 55%)",
+  };
+
+  const activeStyle = {
+    background: "rgba(37,99,235,0.22)",
+    border: "1px solid rgba(37,99,235,0.40)",
+    color: "#ffffff",
+    fontWeight: 500,
+    boxShadow: "0 2px 12px rgba(37,99,235,0.28), inset 0 1px 0 rgba(255,255,255,0.06)",
+  };
+
+  const inactiveStyle = {
+    border: "1px solid transparent",
+    color: "rgba(160,190,255,0.58)",
+    fontWeight: 400,
   };
 
   /* ═════════════════════════════════════════════
@@ -240,7 +291,156 @@ export default function Navbar() {
           <div className="absolute inset-0 rounded-full pointer-events-none" style={innerGlow} />
 
           {NAV_LINKS.map((link) => {
-            const isActive = active === link.href;
+            const isActive = link.dropdown ? isProductsActive : active === link.href;
+
+            /* ── PRODUCTS with dropdown ── */
+            if (link.dropdown) {
+              return (
+                <li key={link.label} className="relative z-10" ref={dropdownRef}>
+                  <button
+                    onClick={() => setDropdownOpen((o) => !o)}
+                    onMouseEnter={() => {
+                      clearTimeout(dropdownTimer.current);
+                      setDropdownOpen(true);
+                    }}
+                    onMouseLeave={() => {
+                      dropdownTimer.current = setTimeout(() => setDropdownOpen(false), 180);
+                    }}
+                    className="
+                      inline-flex items-center
+                      px-4 xl:px-5 py-[7px] rounded-full
+                      text-[13px] xl:text-[13.5px] leading-none whitespace-nowrap
+                      cursor-pointer transition-all duration-200
+                      bg-transparent outline-none
+                    "
+                    style={isActive ? activeStyle : inactiveStyle}
+                    onMouseEnterCapture={(e) => {
+                      if (!isActive) e.currentTarget.style.color = "rgba(210,225,255,0.88)";
+                    }}
+                    onMouseLeaveCapture={(e) => {
+                      if (!isActive) e.currentTarget.style.color = "rgba(160,190,255,0.58)";
+                    }}
+                  >
+                    {link.label}
+                    <ChevronDown open={dropdownOpen} />
+                  </button>
+
+                  {/* ── Desktop Dropdown Panel ── */}
+                  <div
+                    onMouseEnter={() => {
+                      clearTimeout(dropdownTimer.current);
+                      setDropdownOpen(true);
+                    }}
+                    onMouseLeave={() => {
+                      dropdownTimer.current = setTimeout(() => setDropdownOpen(false), 180);
+                    }}
+                    className="absolute top-[calc(100%+10px)] left-1/2 -translate-x-1/2"
+                    style={{
+                      width: "260px",
+                      pointerEvents: dropdownOpen ? "auto" : "none",
+                      opacity: dropdownOpen ? 1 : 0,
+                      transform: `translateX(-50%) translateY(${dropdownOpen ? "0px" : "-8px"})`,
+                      transition: "opacity 0.22s ease, transform 0.22s ease",
+                    }}
+                  >
+                    {/* Arrow */}
+                    <div
+                      className="absolute left-1/2 -translate-x-1/2"
+                      style={{
+                        top: "-6px",
+                        width: 0,
+                        height: 0,
+                        borderLeft: "7px solid transparent",
+                        borderRight: "7px solid transparent",
+                        borderBottom: "7px solid rgba(37,99,235,0.28)",
+                        zIndex: 1,
+                      }}
+                    />
+                    <div
+                      className="absolute left-1/2 -translate-x-1/2"
+                      style={{
+                        top: "-5px",
+                        width: 0,
+                        height: 0,
+                        borderLeft: "6px solid transparent",
+                        borderRight: "6px solid transparent",
+                        borderBottom: "6px solid rgba(4,10,28,0.97)",
+                        zIndex: 2,
+                      }}
+                    />
+
+                    {/* Panel */}
+                    <div
+                      className="relative rounded-[18px] overflow-hidden p-1.5"
+                      style={{
+                        background: "rgba(4,10,28,0.97)",
+                        backdropFilter: "blur(28px) saturate(180%)",
+                        WebkitBackdropFilter: "blur(28px) saturate(180%)",
+                        border: "1px solid rgba(37,99,235,0.28)",
+                        boxShadow:
+                          "0 0 40px rgba(37,99,235,0.14), 0 20px 50px rgba(0,0,0,0.65), inset 0 1px 0 rgba(255,255,255,0.04)",
+                      }}
+                    >
+                      {link.dropdown.map((item) => {
+                        const isItemActive = active === item.href;
+                        return (
+                          <a
+                            key={item.href}
+                            href={item.href}
+                            onClick={(e) => handleNav(e, item.href)}
+                            className="
+                              flex items-start gap-3
+                              px-4 py-3 rounded-[13px]
+                              no-underline cursor-pointer
+                              transition-all duration-200 group
+                            "
+                            style={{
+                              background: isItemActive ? "rgba(37,99,235,0.16)" : "transparent",
+                              border: isItemActive ? "1px solid rgba(37,99,235,0.30)" : "1px solid transparent",
+                            }}
+                            onMouseEnter={(e) => {
+                              if (!isItemActive) {
+                                e.currentTarget.style.background = "rgba(37,99,235,0.10)";
+                                e.currentTarget.style.border = "1px solid rgba(37,99,235,0.18)";
+                              }
+                            }}
+                            onMouseLeave={(e) => {
+                              if (!isItemActive) {
+                                e.currentTarget.style.background = "transparent";
+                                e.currentTarget.style.border = "1px solid transparent";
+                              }
+                            }}
+                          >
+                            <span
+                              className="text-[18px] leading-none mt-0.5 shrink-0"
+                              style={{ filter: "drop-shadow(0 0 6px rgba(37,99,235,0.5))" }}
+                            >
+                              {item.icon}
+                            </span>
+                            <div>
+                              <div
+                                className="text-[13px] font-medium leading-none mb-1"
+                                style={{ color: isItemActive ? "#fff" : "rgba(210,225,255,0.90)" }}
+                              >
+                                {item.label}
+                              </div>
+                              <div
+                                className="text-[11.5px] leading-snug"
+                                style={{ color: "rgba(140,170,220,0.55)" }}
+                              >
+                                {item.desc}
+                              </div>
+                            </div>
+                          </a>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </li>
+              );
+            }
+
+            /* ── Regular links ── */
             return (
               <li key={link.label} className="relative z-10">
                 <a
@@ -253,22 +453,7 @@ export default function Navbar() {
                     no-underline cursor-pointer
                     transition-all duration-200
                   "
-                  style={
-                    isActive
-                      ? {
-                          background: "rgba(37,99,235,0.22)",
-                          border: "1px solid rgba(37,99,235,0.40)",
-                          color: "#ffffff",
-                          fontWeight: 500,
-                          boxShadow:
-                            "0 2px 12px rgba(37,99,235,0.28), inset 0 1px 0 rgba(255,255,255,0.06)",
-                        }
-                      : {
-                          border: "1px solid transparent",
-                          color: "rgba(160,190,255,0.58)",
-                          fontWeight: 400,
-                        }
-                  }
+                  style={isActive ? activeStyle : inactiveStyle}
                   onMouseEnter={(e) => {
                     if (!isActive) e.currentTarget.style.color = "rgba(210,225,255,0.88)";
                   }}
@@ -353,7 +538,7 @@ export default function Navbar() {
           rounded-[22px] overflow-hidden
           transition-all duration-300 ease-in-out
           ${menuOpen
-            ? "opacity-100 max-h-[520px] translate-y-0 scale-100"
+            ? "opacity-100 max-h-[600px] translate-y-0 scale-100"
             : "opacity-0 max-h-0 -translate-y-3 scale-[0.98] pointer-events-none"
           }
         `}
@@ -370,7 +555,101 @@ export default function Navbar() {
         }}
       >
         {NAV_LINKS.map((link, i) => {
-          const isActive = active === link.href;
+          const isActive = link.dropdown ? isProductsActive : active === link.href;
+          const isLast = i === NAV_LINKS.length - 1;
+
+          /* ── Mobile Products accordion ── */
+          if (link.dropdown) {
+            return (
+              <div key={link.label}>
+                {/* Products toggle row */}
+                <button
+                  onClick={() => setMobileProductsOpen((o) => !o)}
+                  className="
+                    w-full flex items-center justify-between
+                    px-6 py-4 text-[14px] leading-none
+                    cursor-pointer transition-all duration-200
+                    bg-transparent outline-none
+                  "
+                  style={{
+                    borderBottom: "1px solid rgba(37,99,235,0.09)",
+                    color: isActive ? "#ffffff" : "rgba(160,190,255,0.62)",
+                    fontWeight: isActive ? 500 : 400,
+                    background: isActive ? "rgba(37,99,235,0.08)" : "transparent",
+                  }}
+                >
+                  <span>{link.label}</span>
+                  <ChevronDown open={mobileProductsOpen} />
+                </button>
+
+                {/* Accordion sub-items */}
+                <div
+                  style={{
+                    maxHeight: mobileProductsOpen ? "200px" : "0px",
+                    overflow: "hidden",
+                    transition: "max-height 0.3s ease",
+                  }}
+                >
+                  {link.dropdown.map((item, idx) => {
+                    const isItemActive = active === item.href;
+                    return (
+                      <a
+                        key={item.href}
+                        href={item.href}
+                        onClick={(e) => handleNav(e, item.href)}
+                        className="
+                          flex items-center gap-3
+                          pl-10 pr-6 py-3.5 text-[13.5px]
+                          no-underline cursor-pointer
+                          transition-all duration-200
+                        "
+                        style={{
+                          borderBottom:
+                            idx < link.dropdown.length - 1
+                              ? "1px solid rgba(37,99,235,0.06)"
+                              : "1px solid rgba(37,99,235,0.09)",
+                          color: isItemActive ? "#ffffff" : "rgba(140,170,220,0.70)",
+                          fontWeight: isItemActive ? 500 : 400,
+                          background: isItemActive ? "rgba(37,99,235,0.10)" : "rgba(255,255,255,0.015)",
+                        }}
+                        onMouseEnter={(e) => {
+                          if (!isItemActive) {
+                            e.currentTarget.style.color = "#fff";
+                            e.currentTarget.style.background = "rgba(37,99,235,0.08)";
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          if (!isItemActive) {
+                            e.currentTarget.style.color = "rgba(140,170,220,0.70)";
+                            e.currentTarget.style.background = "rgba(255,255,255,0.015)";
+                          }
+                        }}
+                      >
+                        <span className="text-[16px] shrink-0">{item.icon}</span>
+                        <div>
+                          <div className="leading-none mb-0.5">{item.label}</div>
+                          <div
+                            className="text-[11px] leading-snug"
+                            style={{ color: "rgba(120,150,200,0.50)" }}
+                          >
+                            {item.desc}
+                          </div>
+                        </div>
+                        {isItemActive && (
+                          <span
+                            className="ml-auto w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0"
+                            style={{ boxShadow: "0 0 8px rgba(37,99,235,0.6)" }}
+                          />
+                        )}
+                      </a>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          }
+
+          /* ── Regular mobile links ── */
           return (
             <a
               key={link.label}
@@ -383,10 +662,7 @@ export default function Navbar() {
                 transition-all duration-200
               "
               style={{
-                borderBottom:
-                  i < NAV_LINKS.length - 1
-                    ? "1px solid rgba(37,99,235,0.09)"
-                    : "none",
+                borderBottom: !isLast ? "1px solid rgba(37,99,235,0.09)" : "none",
                 color: isActive ? "#ffffff" : "rgba(160,190,255,0.62)",
                 fontWeight: isActive ? 500 : 400,
                 background: isActive ? "rgba(37,99,235,0.08)" : "transparent",
