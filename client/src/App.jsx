@@ -4,7 +4,6 @@ import DNA3DSection from "./components/DNA3DSection";
 import Mammogram from "./components/Mammogram";
 import ProblemSection from "./components/ProblemSection";
 import SolutionSection from "./components/SolutionSection";
-import ImpactSection from "./components/ImpactSection";
 import CaseStudySection from "./components/CaseStudySection";
 import PartnersSection from "./components/PartnersSection";
 import TeamSection from "./components/TeamSection";
@@ -28,6 +27,11 @@ export default function App() {
           <Mammogram />
         </div>
 
+        <div className="relative">
+          <span id="LiquidBiopsySection" className="absolute -top-24 block" aria-hidden="true" />
+          <LiquidBiopsySection />
+        </div>
+
         <ProblemSection />
 
         <div className="relative">
@@ -38,11 +42,6 @@ export default function App() {
         <div className="relative">
           <span id="liquid-biopsy" className="absolute -top-24 block" aria-hidden="true" />
           <LiquidBiopsySection />
-        </div>
-
-        <div className="relative">
-          <span id="impact" className="absolute -top-24 block" aria-hidden="true" />
-          <ImpactSection />
         </div>
 
         <div className="relative">
