@@ -47,12 +47,6 @@ export default function App() {
         </div>
 
         <div className="relative">
-          <span id="impact" className="absolute -top-24 block" aria-hidden="true" />
-          <ImpactSection />
-        </div>
-
-        <div className="relative">
-
           <span id="case-study" className="absolute -top-24 block" aria-hidden="true" />
           <CaseStudySection />
         </div>
