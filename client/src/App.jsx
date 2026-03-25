@@ -1,7 +1,7 @@
-// App.tsx
 import Navbar from "./components/Navbar";
 import HeroSection from "./components/HeroSection";
 import DNA3DSection from "./components/DNA3DSection";
+import Mammogram from "./components/Mammogram";
 import ProblemSection from "./components/ProblemSection";
 import SolutionSection from "./components/SolutionSection";
 import ImpactSection from "./components/ImpactSection";
@@ -21,9 +21,14 @@ export default function App() {
         <div className="h-32 bg-white" />
 
         <DNA3DSection />
+
+        <div className="relative">
+          <span id="mammogram" className="absolute -top-24 block" aria-hidden="true" />
+          <Mammogram />
+        </div>
+
         <ProblemSection />
 
-        {/* Anchor spans sit INSIDE the wrapper, with the id on the span */}
         <div className="relative">
           <span id="solution" className="absolute -top-24 block" aria-hidden="true" />
           <SolutionSection />
