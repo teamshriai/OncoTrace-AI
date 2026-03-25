@@ -177,11 +177,6 @@ export default function HeroSection() {
         {filmGrain}
 
         <div style={wrapStyle} className="min-h-screen bg-[#f8fafc]">
-          <div className="h-[3px]" style={{
-            background: 'linear-gradient(90deg, #2563eb, #60a5fa, #3b82f6, #2563eb)',
-            backgroundSize: '300% 100%',
-            animation: 'shimmerBar 3s linear infinite'
-          }} />
 
           <div className="fixed inset-0 pointer-events-none opacity-[0.025] z-0"
             style={{
@@ -195,32 +190,40 @@ export default function HeroSection() {
           <div className="fixed bottom-0 left-0 w-[400px] h-[400px] rounded-full pointer-events-none z-0"
             style={{ background: 'radial-gradient(circle, rgba(99,102,241,0.03), transparent 65%)' }} />
 
-          <nav className="sticky top-0 z-50 bg-white/70 backdrop-blur-2xl border-b border-slate-200/50">
-            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 h-[60px] flex items-center justify-between">
+          <main className="relative z-10 max-w-[640px] mx-auto px-4 sm:px-6 lg:px-8
+                           pt-28 sm:pt-32 md:pt-36 pb-10 sm:pb-14 md:pb-16">
+
+            {/* Back button row */}
+            <div className="flex items-center justify-between mb-8 sm:mb-10"
+              style={{ animation: 'staggerIn 0.7s cubic-bezier(0.16,1,0.3,1) 0.05s both' }}
+            >
               <button
                 onClick={() => navigateTo('hero')}
-                className="inline-flex items-center gap-2 text-slate-400 hover:text-slate-700
-                           font-['DM_Sans'] text-[13px] font-medium tracking-wide
-                           transition-colors duration-200 cursor-pointer bg-transparent border-none p-0"
+                className="inline-flex items-center gap-2.5
+                           bg-white rounded-xl border border-slate-200/80
+                           shadow-[0_2px_12px_rgba(0,0,0,0.06)]
+                           px-5 py-2.5 sm:px-6 sm:py-3
+                           text-slate-600 hover:text-slate-900
+                           font-['DM_Sans'] text-[13px] sm:text-[14px] font-semibold tracking-wide
+                           transition-all duration-200 cursor-pointer
+                           hover:shadow-[0_4px_20px_rgba(0,0,0,0.1)]
+                           hover:-translate-y-0.5 hover:border-slate-300"
               >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M19 12H5M12 19l-7-7 7-7"/>
                 </svg>
-                Back
+                Back to Home
               </button>
 
-              <span className="font-['Outfit'] text-[17px] font-bold tracking-[-0.01em] text-slate-800">
+              <span className="font-['Outfit'] text-[17px] sm:text-[19px] font-bold tracking-[-0.01em] text-slate-800">
                 Shri<span className="text-blue-600">-AI</span>
               </span>
-
-              <div className="w-14" />
             </div>
-          </nav>
 
-          <main className="relative z-10 max-w-[640px] mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 md:py-16">
-
+            {/* Header */}
             <div className="text-center mb-10 sm:mb-12"
-              style={{ animation: 'staggerIn 0.7s cubic-bezier(0.16,1,0.3,1) 0.08s both' }}
+              style={{ animation: 'staggerIn 0.7s cubic-bezier(0.16,1,0.3,1) 0.12s both' }}
             >
               <div className="inline-flex items-center gap-2 bg-blue-50/80 text-blue-600
                               font-['DM_Sans'] text-[11px] font-semibold tracking-[0.1em] uppercase
@@ -249,6 +252,7 @@ export default function HeroSection() {
               </p>
             </div>
 
+            {/* Form card */}
             <div
               className="bg-white rounded-2xl
                          shadow-[0_4px_40px_rgba(0,0,0,0.05),0_1px_3px_rgba(0,0,0,0.03)]
@@ -337,20 +341,21 @@ export default function HeroSection() {
                     <span className="relative z-10">Request Demo</span>
                   </button>
 
-                  <span className="font-['Plus_Jakarta_Sans'] text-[11.5px] text-slate-350 text-slate-400 text-center sm:text-right font-light leading-snug">
+                  <span className="font-['Plus_Jakarta_Sans'] text-[11.5px] text-slate-400 text-center sm:text-right font-light leading-snug">
                     We'll never share your data.<br className="hidden sm:block" /> Privacy is our priority.
                   </span>
                 </div>
               </form>
             </div>
 
+            {/* Trust badges */}
             <div className="mt-8 flex flex-wrap items-center justify-center gap-5 sm:gap-7"
               style={{ animation: 'staggerIn 0.7s cubic-bezier(0.16,1,0.3,1) 0.38s both' }}
             >
               {[
-                { icon: '🔒', text: 'Secure & Private' },
-                { icon: '⚡', text: 'Response within 24h' },
-                { icon: '🌐', text: 'Open Source' },
+                { icon: '', text: 'Secure & Private' },
+                { icon: '', text: 'Response within 24h' },
+                { icon: '', text: 'Open Source' },
               ].map((item, i) => (
                 <span key={i} className="inline-flex items-center gap-1.5 font-['DM_Sans'] text-[11px] text-slate-400 tracking-[0.03em]">
                   <span className="text-sm">{item.icon}</span>
@@ -517,8 +522,8 @@ export default function HeroSection() {
         <section className="relative min-h-screen flex flex-col overflow-hidden bg-[#001953]">
           <div className="flex-1 grid grid-cols-1 md:grid-cols-[3fr_2fr] relative">
 
-            {/* LEFT — image + tags */}
-            <div className="relative overflow-hidden min-h-[36vh] sm:min-h-[40vh] md:min-h-0">
+            {/* LEFT — image */}
+            <div className="relative overflow-hidden min-h-[28vh] sm:min-h-[32vh] md:min-h-0">
               <div className="absolute inset-0 z-[1]">
                 <img src="/cover-image.png" alt="Liquid biopsy cancer monitoring"
                   className="w-full h-full object-cover object-center"
@@ -537,21 +542,22 @@ export default function HeroSection() {
                   backgroundSize: '40px 40px'
                 }} />
 
-              <div className="absolute inset-0 z-[8] flex flex-col items-center pointer-events-none
-                              pt-24 sm:pt-28 md:pt-32 lg:pt-36 gap-3 sm:gap-3.5 md:gap-4"
+              {/* Desktop-only tags on image */}
+              <div className="absolute inset-0 z-[8] hidden md:flex flex-col items-center pointer-events-none
+                              pt-28 md:pt-32 lg:pt-36 gap-3 md:gap-4"
                 style={{ animation: 'floatUp 1s cubic-bezier(0.16,1,0.3,1) 0.1s both' }}>
-                <span className="pointer-events-auto inline-flex items-center gap-2 sm:gap-2.5 md:gap-3
+                <span className="pointer-events-auto inline-flex items-center gap-2.5 md:gap-3
                                  bg-white/[0.05] backdrop-blur-xl rounded-full
-                                 px-5 py-2 sm:px-7 sm:py-2.5 md:px-8 md:py-3 lg:px-9 lg:py-3
-                                 text-[14px] sm:text-[16px] md:text-[17px] lg:text-[19px]
+                                 px-7 py-2.5 md:px-8 md:py-3 lg:px-9 lg:py-3
+                                 text-[15px] md:text-[17px] lg:text-[19px]
                                  text-white/55 font-medium tracking-[0.08em] uppercase
                                  border border-white/[0.07] font-['DM_Sans'] whitespace-nowrap
                                  shadow-[0_2px_24px_rgba(59,130,246,0.06)]">
-                  <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-blue-500 flex-shrink-0"
+                  <span className="w-3 h-3 rounded-full bg-blue-500 flex-shrink-0"
                     style={{ boxShadow: '0 0 10px rgba(59,130,246,0.8)', animation: 'dotPulse 2s ease-in-out infinite' }} />
                   Launching Soon — Open Source · Not for Profit
                 </span>
-                <span className="pointer-events-auto text-[13px] sm:text-[15px] md:text-[16px] lg:text-[18px]
+                <span className="pointer-events-auto text-[14px] md:text-[16px] lg:text-[18px]
                                  text-white/30 font-normal tracking-[0.18em] uppercase font-['DM_Sans'] whitespace-nowrap">
                   Liquid Biopsy × AI Cancer Intelligence
                 </span>
@@ -560,8 +566,9 @@ export default function HeroSection() {
 
             {/* RIGHT — text content */}
             <div className="relative z-[5] flex flex-col items-center md:items-start justify-center
-                            text-center md:text-left px-5 py-10 sm:px-8 sm:py-12
-                            md:pl-12 md:pr-8 md:py-14 lg:pl-[72px] lg:pr-14 lg:py-20 xl:pl-20 xl:pr-16">
+                            text-center md:text-left px-5 py-8 sm:px-8 sm:py-10
+                            md:pl-12 md:pr-8 md:py-14 lg:pl-[72px] lg:pr-14 lg:py-20 xl:pl-20 xl:pr-16
+                            pb-20 sm:pb-24 md:pb-14 lg:pb-20">
 
               <div className="absolute w-[420px] h-[420px] rounded-full top-1/2 left-1/2 -translate-x-[30%] -translate-y-1/2 pointer-events-none z-0"
                 style={{ background: 'radial-gradient(circle, rgba(59,130,246,0.05) 0%, transparent 70%)' }} />
@@ -576,9 +583,29 @@ export default function HeroSection() {
                   backgroundSize: '48px 48px'
                 }} />
 
+              {/* Mobile-only tags — placed in text content area */}
+              <div className="flex md:hidden flex-col items-center gap-2 mb-6 relative z-10 w-full"
+                style={{ animation: 'floatUp 1s cubic-bezier(0.16,1,0.3,1) 0.1s both' }}>
+                <span className="inline-flex items-center gap-2
+                                 bg-white/[0.05] backdrop-blur-xl rounded-full
+                                 px-4 py-1.5 sm:px-5 sm:py-2
+                                 text-[10px] sm:text-[12px]
+                                 text-white/55 font-medium tracking-[0.06em] uppercase
+                                 border border-white/[0.07] font-['DM_Sans']
+                                 shadow-[0_2px_16px_rgba(59,130,246,0.06)]">
+                  <span className="w-2 h-2 rounded-full bg-blue-500 flex-shrink-0"
+                    style={{ boxShadow: '0 0 8px rgba(59,130,246,0.8)', animation: 'dotPulse 2s ease-in-out infinite' }} />
+                  Launching Soon · Open Source
+                </span>
+                <span className="text-[9px] sm:text-[11px]
+                                 text-white/25 font-normal tracking-[0.15em] uppercase font-['DM_Sans']">
+                  Liquid Biopsy × AI Cancer Intelligence
+                </span>
+              </div>
+
               <span className="relative z-10 font-['DM_Sans'] text-[9px] sm:text-[10px] md:text-[11px]
                                text-white/25 tracking-[0.22em] uppercase font-medium
-                               mb-5 sm:mb-6 md:mb-8 flex items-center justify-center md:justify-start w-full"
+                               mb-4 sm:mb-5 md:mb-8 flex items-center justify-center md:justify-start w-full"
                 style={{ animation: 'floatUp 1s cubic-bezier(0.16,1,0.3,1) 0.2s both' }}>
                 <span className="inline-block w-5 h-px bg-blue-500/35 mr-3 flex-shrink-0" />
                 Liquid Biopsy + AI Platform
@@ -586,13 +613,13 @@ export default function HeroSection() {
 
               <h1 className="relative z-10 m-0 p-0" style={{ perspective: '800px' }}>
                 {[
-                  { text: 'Real-Time', type: 'light' },
+                  { text: 'AI-powered', type: 'light' },
+                  { text: 'Real-time', type: 'bold' },
                   { text: 'Precision', type: 'bold' },
-                  { text: 'Oncology', type: 'bold' },
                   { text: 'Monitoring', type: 'accent' },
-                  { text: 'Using AI', type: 'accent' },
+                  { text: 'of Oncology', type: 'accent' },
                 ].map((line, i) => {
-                  const baseClasses = "block font-['Outfit'] leading-[0.92] tracking-[-0.05em] text-[clamp(2rem,6.5vw,7.5rem)]"
+                  const baseClasses = "block font-['Outfit'] leading-[0.92] tracking-[-0.05em] text-[clamp(1.7rem,5.5vw,6.2rem)]"
                   let variant = ''
                   let gradientStyle = {}
 
@@ -620,7 +647,7 @@ export default function HeroSection() {
                 })}
               </h1>
 
-              <div className="relative z-10 w-12 sm:w-16 md:w-[72px] h-px mt-6 sm:mt-8 md:mt-10 mb-4 sm:mb-5 md:mb-6 mx-auto md:mx-0"
+              <div className="relative z-10 w-12 sm:w-16 md:w-[72px] h-px mt-5 sm:mt-7 md:mt-10 mb-3 sm:mb-4 md:mb-6 mx-auto md:mx-0"
                 style={{
                   background: 'linear-gradient(90deg, rgba(59,130,246,0.5), rgba(59,130,246,0.02))',
                   transformOrigin: 'left', animation: 'lineGrow 1.2s ease-out 0.9s both'
@@ -638,7 +665,7 @@ export default function HeroSection() {
 
               {/* CTA row */}
               <div className="relative z-10 flex items-center gap-3 sm:gap-4 md:gap-5
-                              mt-7 sm:mt-8 md:mt-9 justify-center md:justify-start
+                              mt-6 sm:mt-7 md:mt-9 justify-center md:justify-start
                               flex-col sm:flex-row w-full sm:w-auto"
                 style={{ animation: 'floatUp 1s cubic-bezier(0.16,1,0.3,1) 1.1s both' }}>
 
@@ -678,10 +705,6 @@ export default function HeroSection() {
                 </button>
               </div>
             </div>
-
-            {/* Separator */}
-            <div className="hidden md:block absolute top-[8%] bottom-[8%] left-[60%] w-px z-[6] pointer-events-none"
-              style={{ background: 'linear-gradient(180deg, transparent, rgba(59,130,246,0.1) 20%, rgba(59,130,246,0.18) 50%, rgba(59,130,246,0.1) 80%, transparent)' }} />
           </div>
 
           {/* Corner accents */}
@@ -690,11 +713,12 @@ export default function HeroSection() {
           <div className="hidden md:block absolute bottom-8 left-8 w-12 h-12 border-l border-b border-blue-500/10 z-[4] pointer-events-none" />
           <div className="hidden md:block absolute bottom-8 right-8 w-12 h-12 border-r border-b border-blue-500/10 z-[4] pointer-events-none" />
 
-          {/* Marquee */}
-          <div className="absolute bottom-8 sm:bottom-10 md:bottom-[70px] left-0 right-0 z-[5] overflow-hidden pointer-events-none opacity-[0.03] md:opacity-[0.04]">
+          {/* Marquee — pinned to very bottom */}
+          <div className="absolute bottom-0 left-0 right-0 z-[5] overflow-hidden pointer-events-none opacity-[0.03] md:opacity-[0.04]
+                          py-2 sm:py-3">
             <div className="flex whitespace-nowrap" style={{ animation: 'marqueeScroll 30s linear infinite' }}>
               {Array(4).fill(null).map((_, i) => (
-                <span key={i} className="font-['Outfit'] text-xl sm:text-3xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold text-white px-6 sm:px-8 md:px-14 uppercase tracking-[0.05em]">
+                <span key={i} className="font-['Outfit'] text-lg sm:text-2xl md:text-4xl lg:text-5xl xl:text-6xl font-extrabold text-white px-4 sm:px-6 md:px-10 uppercase tracking-[0.05em]">
                   Liquid Biopsy — AI Monitoring — Precision Oncology — Breast Cancer —
                 </span>
               ))}
@@ -704,7 +728,7 @@ export default function HeroSection() {
 
         {/* SECTION 2 — MISSION */}
         <section ref={secondRef} id="home"
-          className="relative w-full h-screen min-h-[600px] overflow-hidden bg-[#f0f2f5] font-['Source_Sans_3']">
+          className="relative w-full min-h-[100vh] sm:min-h-[100vh] md:h-screen md:min-h-[600px] overflow-hidden bg-[#f0f2f5] font-['Source_Sans_3']">
           <div className="absolute inset-0 z-[1]">
             <img src="/doctor.png" alt="AI-powered breast cancer monitoring"
               className="w-full h-full object-cover block"
