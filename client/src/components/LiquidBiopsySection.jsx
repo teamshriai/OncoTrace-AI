@@ -273,7 +273,7 @@ export default function AICancerMonitoring(){
       <section style={{padding:"96px 0 80px"}}>
         <div className="pr-wrap">
           <div style={{display:"flex",gap:24,alignItems:"flex-start"}}>
-            <div className="pr-slab" style={{paddingTop:8}}>Shri-AI · Clinical Intelligence · 2025</div>
+            <div className="pr-slab" style={{paddingTop:8}}>Shri-AI · Clinical Intelligence · 2026</div>
             <div style={{flex:1}}>
               <div className="pr-over-a" style={{marginBottom:20}}>
                 AI-Powered Precision Cancer Monitoring
