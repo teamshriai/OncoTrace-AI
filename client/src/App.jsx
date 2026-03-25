@@ -34,13 +34,25 @@ export default function App() {
 
         <ProblemSection />
 
-
         <div className="relative">
           <span id="solution" className="absolute -top-24 block" aria-hidden="true" />
           <SolutionSection />
         </div>
 
         <div className="relative">
+<<<<<<< HEAD
+=======
+          <span id="liquid-biopsy" className="absolute -top-24 block" aria-hidden="true" />
+          <LiquidBiopsySection />
+        </div>
+
+        <div className="relative">
+          <span id="impact" className="absolute -top-24 block" aria-hidden="true" />
+          <ImpactSection />
+        </div>
+
+        <div className="relative">
+>>>>>>> minalini-v
           <span id="case-study" className="absolute -top-24 block" aria-hidden="true" />
           <CaseStudySection />
         </div>

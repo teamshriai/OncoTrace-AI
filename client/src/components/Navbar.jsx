@@ -8,7 +8,7 @@ const NAV_LINKS = [
     href: "#mammogram",
     dropdown: [
       { label: "Mammogram",     href: "#mammogram",    icon: "🩺", desc: "AI-powered breast imaging analysis" },
-      { label: "Liquid Biopsy", href: "#liquidbiopsy", icon: "🔬", desc: "Non-invasive cancer detection" },
+     { label: "Liquid Biopsy", href: "#liquid-biopsy", icon: "🔬", desc: "Non-invasive cancer detection" },
     ],
   },
   { label: "About us", href: "#solution"   },
