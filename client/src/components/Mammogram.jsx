@@ -49,9 +49,9 @@ const Mammogram = () => {
         {/* ── Row 1 — Image left, Text right ── */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-14 items-center mb-16 sm:mb-20 lg:mb-32">
 
-          {/* Image */}
+          {/* Image — larger, sharp corners */}
           <div className="reveal opacity-0 transition-all duration-700 ease-out delay-100 lg:-translate-x-12">
-            <div className="w-full aspect-video sm:aspect-[16/10] overflow-hidden bg-gray-100 rounded-lg sm:rounded-xl shadow-md">
+            <div className="w-full aspect-[4/3] sm:aspect-[16/11] overflow-hidden bg-gray-100 shadow-lg">
               <img
                 src="/mammogram_1.png"
                 alt="AI mammogram risk analysis process"
@@ -163,7 +163,7 @@ const Mammogram = () => {
                 ].map((s, i) => (
                   <div
                     key={i}
-                    className="relative bg-slate-50 p-4 sm:p-5 border border-gray-200 hover:border-gray-300 transition-colors duration-300 rounded-md"
+                    className="relative bg-slate-50 p-4 sm:p-5 border border-gray-200 hover:border-gray-300 transition-colors duration-300"
                   >
                     <span
                       className={`inline-block text-xs font-bold text-white px-2 py-0.5 sm:px-2.5 sm:py-1 ${s.color} mb-2 sm:mb-3 rounded-sm`}
@@ -182,9 +182,9 @@ const Mammogram = () => {
             </div>
           </div>
 
-          {/* Image — below text on mobile, right on desktop */}
+          {/* Image — larger, sharp corners, below text on mobile, right on desktop */}
           <div className="order-2 lg:order-2 reveal opacity-0 transition-all duration-700 ease-out delay-200 lg:translate-x-12">
-            <div className="w-full aspect-video sm:aspect-[16/10] overflow-hidden bg-gray-100 rounded-lg sm:rounded-xl shadow-md">
+            <div className="w-full aspect-[4/3] sm:aspect-[16/11] overflow-hidden bg-gray-100 shadow-lg">
               <img
                 src="/mammogram_3.png"
                 alt="AI mammogram 5-year risk prediction output"
@@ -197,7 +197,7 @@ const Mammogram = () => {
 
         {/* ── Bottom CTA Banner ── */}
         <div className="reveal opacity-0 translate-y-8 transition-all duration-700 ease-out delay-300 mt-16 sm:mt-20 lg:mt-28">
-          <div className="relative bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 rounded-2xl sm:rounded-3xl p-6 sm:p-10 md:p-12 text-center overflow-hidden shadow-2xl shadow-indigo-500/20">
+          <div className="relative bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 p-6 sm:p-10 md:p-12 text-center overflow-hidden shadow-2xl shadow-indigo-500/20">
             {/* Dot pattern overlay */}
             <div className="absolute inset-0 opacity-10 pointer-events-none">
               <div
