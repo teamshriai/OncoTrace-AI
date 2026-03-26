@@ -4,7 +4,6 @@ import DNA3DSection from "./components/DNA3DSection";
 import Mammogram from "./components/Mammogram";
 import ProblemSection from "./components/ProblemSection";
 import SolutionSection from "./components/SolutionSection";
-import ImpactSection from "./components/ImpactSection";
 import CaseStudySection from "./components/CaseStudySection";
 import PartnersSection from "./components/PartnersSection";
 import TeamSection from "./components/TeamSection";
