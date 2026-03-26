@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from 'react'
 
 const TYPING = [
-  'Tracking cancer via liquid biopsy',
-  'AI-driven real-time tumor insights',
-  'Non-invasive. Continuous. Precise.',
+  'Predict. Monitor. Understand.',
+  'AI-driven real-time cancer intelligence',
+  'From risk prediction to real-time tracking',
   'Open source — built for every community',
 ]
 
@@ -234,20 +234,20 @@ export default function HeroSection() {
 
               <h1 className="font-['Outfit'] text-[1.85rem] sm:text-[2.2rem] md:text-[2.6rem]
                              font-bold text-slate-900 leading-[1.12] tracking-[-0.035em] mb-3">
-                See Shri-AI{' '}
-                <span style={{
+                Explore OncoTrace<span style={{
                   background: 'linear-gradient(135deg, #1d4ed8, #3b82f6, #60a5fa)',
                   WebkitBackgroundClip: 'text', backgroundClip: 'text',
                   WebkitTextFillColor: 'transparent'
                 }}>
-                  In Action
+                  -AI
                 </span>
               </h1>
 
               <p className="font-['Plus_Jakarta_Sans'] text-[13.5px] sm:text-[14.5px]
                             text-slate-400 leading-[1.7] max-w-[420px] mx-auto font-light">
-                Discover how liquid biopsy meets AI for real-time, non-invasive
-                cancer monitoring. Share your details and we'll arrange a
+                Discover how AI-based cancer risk prediction and liquid
+                biopsy-powered real-time monitoring come together for
+                precision oncology. Share your details and we'll arrange a
                 personalized walkthrough.
               </p>
             </div>
@@ -438,7 +438,7 @@ export default function HeroSection() {
                 style={{ animation: 'badgePulse 3s ease-in-out 1.5s infinite' }}
               >
                 <span className="text-[15px]">🚀</span>
-                Launching Soon
+                AI Prediction Live · Liquid Biopsy in R&D
               </span>
             </div>
 
@@ -446,11 +446,13 @@ export default function HeroSection() {
                           text-slate-400 leading-[1.8] max-w-[400px] mx-auto mb-10 font-light"
               style={{ animation: 'staggerIn 0.7s cubic-bezier(0.16,1,0.3,1) 0.75s both' }}
             >
-              Your demo has been booked successfully. We're currently in the
-              R&D phase and will reach out shortly with all the details.
-              Thank you for your interest in{' '}
+              Your demo has been booked successfully. Our AI-based cancer
+              risk prediction is live, and liquid biopsy-powered real-time
+              monitoring is in active R&D. We'll reach out shortly with
+              all the details. Thank you for your interest in{' '}
+              <span className="text-slate-600 font-medium">OncoTrace-AI</span> —{' '}
               <span className="text-slate-600 font-medium">Shri-AI</span>'s
-              liquid biopsy-powered precision oncology platform.
+              precision oncology platform.
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-11"
@@ -525,7 +527,7 @@ export default function HeroSection() {
             {/* LEFT — image */}
             <div className="relative overflow-hidden min-h-[28vh] sm:min-h-[32vh] md:min-h-0">
               <div className="absolute inset-0 z-[1]">
-                <img src="/cover-image.png" alt="Liquid biopsy cancer monitoring"
+                <img src="/cover-image.png" alt="AI-powered precision oncology monitoring"
                   className="w-full h-full object-cover object-center"
                   style={{ animation: 'slowZoom 25s ease-in-out infinite alternate' }} />
                 <div className="absolute inset-0 z-[2]"
@@ -559,7 +561,7 @@ export default function HeroSection() {
                 </span>
                 <span className="pointer-events-auto text-[14px] md:text-[16px] lg:text-[18px]
                                  text-white/30 font-normal tracking-[0.18em] uppercase font-['DM_Sans'] whitespace-nowrap">
-                  Liquid Biopsy × AI Cancer Intelligence
+                  AI Prediction × Liquid Biopsy × Real-Time Monitoring
                 </span>
               </div>
             </div>
@@ -599,7 +601,7 @@ export default function HeroSection() {
                 </span>
                 <span className="text-[9px] sm:text-[11px]
                                  text-white/25 font-normal tracking-[0.15em] uppercase font-['DM_Sans']">
-                  Liquid Biopsy × AI Cancer Intelligence
+                  AI Prediction × Liquid Biopsy × Monitoring
                 </span>
               </div>
 
@@ -608,7 +610,7 @@ export default function HeroSection() {
                                mb-4 sm:mb-5 md:mb-8 flex items-center justify-center md:justify-start w-full"
                 style={{ animation: 'floatUp 1s cubic-bezier(0.16,1,0.3,1) 0.2s both' }}>
                 <span className="inline-block w-5 h-px bg-blue-500/35 mr-3 flex-shrink-0" />
-                Liquid Biopsy + AI Platform
+                OncoTrace-AI Platform
               </span>
 
               <h1 className="relative z-10 m-0 p-0" style={{ perspective: '800px' }}>
@@ -657,8 +659,9 @@ export default function HeroSection() {
                             text-white/30 leading-[1.7] sm:leading-[1.8] max-w-[380px] font-light tracking-[0.01em]
                             mx-auto md:mx-0"
                 style={{ animation: 'floatUp 1s cubic-bezier(0.16,1,0.3,1) 1s both' }}>
-                Liquid biopsy meets AI — non-invasive, continuous cancer
-                progression tracking for patients, clinicians, and pharma.
+                AI-based risk prediction meets liquid biopsy — from
+                forecasting cancer risk using imaging data to non-invasive,
+                continuous progression tracking for diagnosed patients.
                 No treatment prescriptions. Pure precision intelligence —
                 open source and built for every community.
               </p>
@@ -719,7 +722,7 @@ export default function HeroSection() {
             <div className="flex whitespace-nowrap" style={{ animation: 'marqueeScroll 30s linear infinite' }}>
               {Array(4).fill(null).map((_, i) => (
                 <span key={i} className="font-['Outfit'] text-lg sm:text-2xl md:text-4xl lg:text-5xl xl:text-6xl font-extrabold text-white px-4 sm:px-6 md:px-10 uppercase tracking-[0.05em]">
-                  Liquid Biopsy — AI Monitoring — Precision Oncology — Breast Cancer —
+                  AI Prediction — Liquid Biopsy — Real-Time Monitoring — Precision Oncology — Breast Cancer —
                 </span>
               ))}
             </div>
@@ -730,7 +733,7 @@ export default function HeroSection() {
         <section ref={secondRef} id="home"
           className="relative w-full min-h-[100vh] sm:min-h-[100vh] md:h-screen md:min-h-[600px] overflow-hidden bg-[#f0f2f5] font-['Source_Sans_3']">
           <div className="absolute inset-0 z-[1]">
-            <img src="/doctor.png" alt="AI-powered breast cancer monitoring"
+            <img src="/doctor.png" alt="AI-powered precision oncology platform"
               className="w-full h-full object-cover block"
               style={{ objectPosition: '70% center' }} />
             <div className="absolute inset-0 z-[2]" style={{
@@ -748,18 +751,22 @@ export default function HeroSection() {
             <div className="w-16 h-[5px] bg-[#c0392b] mb-6 rounded-[1px]" />
             <h2 className="font-['Merriweather'] text-[1.35rem] sm:text-2xl md:text-[clamp(1.55rem,2.8vw,2.2rem)]
                            font-bold text-[#1565c0] leading-[1.22] tracking-[-0.01em] m-0 mb-5">
-              Decode Cancer Progression<br />One Drop at a Time
+              From Risk Prediction to<br />Real-Time Cancer Tracking
             </h2>
             <p className="font-['Source_Sans_3'] text-sm sm:text-[14.5px] md:text-[15.5px]
                           text-[#4a4a4a] leading-[1.75] font-normal m-0 mb-6 sm:mb-8">
-              Shri-AI fuses liquid biopsy with AI-driven algorithms to track
-              cancer progression non-invasively and in real time — starting
-              with breast cancer. We don't prescribe treatments. We deliver
-              precision intelligence that empowers patients, clinicians, and
-              pharmaceutical teams to make smarter decisions. Built open source
-              by a multidisciplinary team of engineers, clinicians, and
-              oncologists — open to every collaborator ready to reshape
-              cancer monitoring.
+              OncoTrace-AI, built under Shri-AI, brings together two
+              complementary approaches into a unified precision oncology
+              platform. Our AI-based cancer risk prediction uses X-ray
+              imaging data to forecast breast cancer risk over the next
+              5 years — and is currently live. Our liquid biopsy-powered
+              real-time monitoring, now in R&D, tracks cancer progression
+              non-invasively and continuously for diagnosed patients. We
+              don't prescribe treatments. We deliver precision intelligence
+              that empowers patients, clinicians, and pharmaceutical teams
+              to make smarter decisions — open source and built by a
+              multidisciplinary team of engineers, clinicians, and
+              oncologists.
             </p>
             <button className="inline-flex items-center gap-2 bg-[#c0392b] text-white
                                font-['Source_Sans_3'] text-[13px] sm:text-sm font-semibold tracking-[0.04em]

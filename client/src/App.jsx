@@ -9,6 +9,7 @@ import PartnersSection from "./components/PartnersSection";
 import TeamSection from "./components/TeamSection";
 import CTASection from "./components/CTASection";
 import Footer from "./components/Footer";
+import LiquidBiopsySection from "./components/LiquidBiopsySection";
 
 export default function App() {
   return (
@@ -26,7 +27,13 @@ export default function App() {
           <Mammogram />
         </div>
 
+        <div className="relative">
+          <span id="LiquidBiopsySection" className="absolute -top-24 block" aria-hidden="true" />
+          <LiquidBiopsySection />
+        </div>
+
         <ProblemSection />
+
 
         <div className="relative">
           <span id="solution" className="absolute -top-24 block" aria-hidden="true" />

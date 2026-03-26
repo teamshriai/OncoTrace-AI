@@ -26,11 +26,11 @@ const PROBLEMS = [
   },
   {
     id: "03",
-    keyword: "INTELLIGENCE",
-    title: "Limited Use of Artificial Intelligence",
-    body: "Existing monitoring systems fail to fully leverage AI for deep data analysis. Complex biological patterns that machine learning could decode in seconds are routinely discarded — the infrastructure to exploit them simply does not exist.",
-    stat: "95%",
-    statLabel: "of signal data is lost",
+    keyword: "PREDICTION",
+    title: "Limited Early Risk Prediction",
+    body: "Most cancer detection happens after symptoms appear. AI-based risk prediction using imaging data like X-rays could forecast cancer risk years in advance — yet these capabilities remain largely untapped in standard clinical workflows.",
+    stat: "70%",
+    statLabel: "detected after symptom onset",
     color: "#2563eb",
     lightColor: "#eff6ff",
   },
@@ -38,7 +38,7 @@ const PROBLEMS = [
     id: "04",
     keyword: "ISOLATION",
     title: "Fragmented and Closed Systems",
-    body: "Advanced monitoring technologies are proprietary, expensive, and not openly accessible. The lack of open-source collaboration and interoperability slows innovation across the global oncology community — every institution rebuilds from zero.",
+    body: "Prediction tools and monitoring systems operate independently. Risk assessment, imaging analysis, and progression tracking exist in silos — preventing a unified view of the patient's cancer trajectory from pre-diagnosis through treatment.",
     stat: "60+",
     statLabel: "siloed data systems",
     color: "#1e3a8a",
@@ -48,7 +48,7 @@ const PROBLEMS = [
     id: "05",
     keyword: "DYNAMICS",
     title: "Incomplete Understanding of Cancer Dynamics",
-    body: "Without continuous longitudinal data, tracking how disease evolves over time remains a fundamental challenge. Mutations accumulate, resistance builds, and metastasis begins — all invisible between appointments.",
+    body: "Without connecting prediction data to continuous monitoring, tracking how disease evolves over time remains a fundamental challenge. Mutations accumulate, resistance builds, and metastasis begins — all invisible between appointments.",
     stat: "80%",
     statLabel: "caught at advanced stage",
     color: "#172554",
@@ -740,11 +740,11 @@ export default function ProblemSection() {
             }}
           >
             <p className="ps3-lead">
-              Cancer care lacks continuous, real-time visibility — limiting precision
-              and delaying critical insights. Despite major advances in oncology,
-              monitoring still relies on intermittent scans, invasive procedures,
-              and delayed data, creating significant gaps in understanding how cancer
-              evolves over time.
+              Cancer care today is fragmented. Systems for predicting cancer risk
+              and monitoring cancer progression operate independently, creating gaps
+              in understanding the full trajectory of the disease. From limited
+              early risk prediction to intermittent monitoring and closed
+              ecosystems, critical intelligence is lost at every stage.
             </p>
             <p className="ps3-caption">Hover each panel to explore · 5 critical gaps</p>
           </div>
@@ -796,14 +796,15 @@ export default function ProblemSection() {
             <div>
               <div className="ps3-foot-label">The Path Forward</div>
               <p className="ps3-foot-text">
-                The future of oncology requires a shift to{" "}
-                <em>real-time,<br />AI-driven,</em> non-invasive monitoring —<br />
+                The future of oncology requires connecting{" "}
+                <em>AI-driven risk<br />prediction</em> with <em>real-time, non-invasive</em>{" "}
+                monitoring —<br />
                 built on <em>openness, accessibility,</em> and precision.
               </p>
             </div>
             <div className="ps3-foot-badge">
-              <span className="ps3-foot-badge-line1">Liquid</span>
-              <span className="ps3-foot-badge-line2">Biopsy</span>
+              <span className="ps3-foot-badge-line1">OncoTrace</span>
+              <span className="ps3-foot-badge-line2">AI</span>
             </div>
           </div>
         </div>
