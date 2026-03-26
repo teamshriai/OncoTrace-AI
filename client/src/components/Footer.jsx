@@ -12,7 +12,7 @@ export default function Footer() {
     if (email) { setSent(true); setTimeout(() => setSent(false), 2500); setEmail(""); }
   };
   const handleCopy = () => {
-    navigator.clipboard.writeText("hello@shri-ai.org");
+    navigator.clipboard.writeText("dev-team@oncotraceai.org");
     setCopied(true); setTimeout(() => setCopied(false), 2000);
   };
 
@@ -40,10 +40,10 @@ export default function Footer() {
                   <span>✦</span> Contact Us
                 </p>
                 <h2 style={{ fontSize: "clamp(22px, 2.6vw, 36px)", fontWeight: "700", lineHeight: "1.2", color: "#0f1e50", margin: "0 0 6px 0", letterSpacing: "-0.4px" }}>
-                  Interested in working together,
+                  Interested in exploring OncoTrace-AI,
                 </h2>
                 <h2 style={{ fontSize: "clamp(22px, 2.6vw, 36px)", fontWeight: "700", lineHeight: "1.2", color: "#93c5fd", margin: "0 0 32px 0", letterSpacing: "-0.4px" }}>
-                  trying out the platform or simply learning more?
+                  collaborating on research or joining the open ecosystem?
                 </h2>
                 <a href="#" style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: "transparent", color: "#0f1e50", borderRadius: "999px", padding: "12px 26px", fontSize: "14px", fontWeight: "600", textDecoration: "none", border: "1.5px solid rgba(15,30,80,0.22)", marginBottom: "24px", transition: "all 0.2s" }}
                   onMouseEnter={e => { e.currentTarget.style.background = "linear-gradient(135deg,#1d4ed8,#3b82f6)"; e.currentTarget.style.color = "#fff"; e.currentTarget.style.borderColor = "transparent"; }}
@@ -54,7 +54,7 @@ export default function Footer() {
               <div>
                 <p style={{ fontSize: "10px", fontWeight: "700", letterSpacing: "0.14em", textTransform: "uppercase", color: "#9ca3af", marginBottom: "9px", marginTop: 0 }}>Or email us at</p>
                 <div style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: "#1e2a4a", borderRadius: "999px", padding: "10px 18px", cursor: "pointer" }} onClick={handleCopy}>
-                  <a href="mailto:hello@shri-ai.org" style={{ fontSize: "13px", fontWeight: "600", color: "#e8f0fe", textDecoration: "none" }} onClick={e => e.stopPropagation()}>hello@shri-ai.org</a>
+                  <a href="mailto:dev-team@oncotraceai.org" style={{ fontSize: "13px", fontWeight: "600", color: "#e8f0fe", textDecoration: "none" }} onClick={e => e.stopPropagation()}>dev-team@oncotraceai.org</a>
                   <span style={{ fontSize: "12px", color: "#93c5fd" }}>{copied ? "✓" : "⎘"}</span>
                 </div>
               </div>
@@ -86,9 +86,9 @@ export default function Footer() {
               <div style={{ background: "#f0f6ff", borderRadius: "12px", border: "1.5px solid rgba(59,130,246,0.15)", padding: "20px 22px" }}>
                 <div style={{ fontSize: "28px", color: "#3b82f6", fontWeight: "700", lineHeight: "1", marginBottom: "10px" }}>"</div>
                 <p style={{ fontSize: "13px", color: "#0f1e50", lineHeight: "1.65", margin: "0 0 12px 0", fontWeight: "500" }}>
-                  Bringing the power of artificial intelligence to breast cancer prevention — earlier, faster, and more accurately than ever before.
+                  From AI-based risk prediction to liquid biopsy-powered real-time monitoring — precision oncology intelligence that is open, accessible, and built for every community.
                 </p>
-                <p style={{ fontSize: "11px", color: "#3b82f6", fontWeight: "600", margin: 0, letterSpacing: "0.02em" }}>— Shri-AI.org</p>
+                <p style={{ fontSize: "11px", color: "#3b82f6", fontWeight: "600", margin: 0, letterSpacing: "0.02em" }}>— OncoTrace-AI</p>
               </div>
             </div>
 
@@ -100,7 +100,7 @@ export default function Footer() {
               <div>
                 <p style={{ fontSize: "10px", fontWeight: "700", letterSpacing: "0.13em", textTransform: "uppercase", color: "#9ca3af", margin: "0 0 8px 0" }}>Newsletter</p>
                 <p style={{ fontSize: "13px", color: "#4b5563", lineHeight: "1.55", margin: "0 0 14px 0" }}>
-                  Get the latest updates on AI-driven cancer detection delivered to your inbox.
+                  Get the latest updates on AI-driven cancer prediction, real-time monitoring, and open-source oncology.
                 </p>
                 <div style={{ display: "flex", overflow: "hidden", borderRadius: "10px", border: "1.5px solid rgba(59,130,246,0.26)", background: "#f0f6ff", marginBottom: "0" }}>
                   <input type="email" placeholder="you@example.com" value={email} onChange={e => setEmail(e.target.value)} onKeyDown={e => e.key === "Enter" && handleSend()}
@@ -116,10 +116,10 @@ export default function Footer() {
                 <p style={{ fontSize: "10px", fontWeight: "700", letterSpacing: "0.13em", textTransform: "uppercase", color: "#9ca3af", margin: "0 0 12px 0" }}>Follow Us</p>
                 <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                   {[
-                    { name: "LinkedIn", handle: "/shri-ai" },
-                    { name: "Twitter", handle: "@shri_ai" },
-                    { name: "GitHub", handle: "shri-ai-org" },
-                    { name: "Instagram", handle: "@shri.ai" },
+                    { name: "LinkedIn", handle: "/oncotraceai" },
+                    { name: "Twitter", handle: "@oncotraceai" },
+                    { name: "GitHub", handle: "oncotraceai" },
+                    { name: "Instagram", handle: "@oncotraceai" },
                   ].map(s => (
                     <a key={s.name} href="#" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "8px 12px", borderRadius: "8px", background: "#f8faff", border: "1px solid rgba(59,130,246,0.12)", textDecoration: "none", transition: "background 0.2s" }}
                       onMouseEnter={e => e.currentTarget.style.background = "#e8f0fe"}
@@ -140,11 +140,11 @@ export default function Footer() {
           <div style={{ padding: "16px 44px 22px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "16px", flexWrap: "wrap" }}>
             <div style={{ background: "#f0f6ff", border: "1.5px solid rgba(59,130,246,0.2)", borderRadius: "8px", padding: "6px 22px", display: "inline-flex", alignItems: "center", flexShrink: 0 }}>
               <span style={{ fontSize: "20px", fontWeight: "900", letterSpacing: "-0.5px", color: "#64748b", userSelect: "none", lineHeight: "1", fontFamily: "'Inter','Helvetica Neue',Arial,sans-serif", whiteSpace: "nowrap" }}>
-                Shri-<span style={{ color: "#3b82f6" }}>AI</span>
+                OncoTrace-<span style={{ color: "#3b82f6" }}>AI</span>
               </span>
             </div>
             <p style={{ fontSize: "10px", color: "#9ca3af", margin: 0, flex: "1 1 180px" }}>
-              © 2025 Shri-AI.org – Bringing AI Breast Cancer Prevention to You. Committed to ethical AI and patient privacy.
+              © 2025 OncoTrace-AI – AI-Powered Precision Oncology Intelligence. From risk prediction to real-time monitoring. Open source · Not for profit.
             </p>
           </div>
 

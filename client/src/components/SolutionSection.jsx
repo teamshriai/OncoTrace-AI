@@ -32,31 +32,33 @@ function useInView(threshold = 0.15) {
 const capabilities = [
   {
     num: "01",
-    title: "Liquid Biopsy Driven",
-    desc: "Non-invasive capture of real-time biological signals — circulating tumor DNA, proteins, and critical biomarkers — enabling continuous cancer tracking.",
+    title: "AI-Based Risk Prediction",
+    desc: "X-ray imaging data combined with Artificial Intelligence to predict the risk of developing breast cancer over the next 5 years — fully developed and currently live.",
+    badge: "LIVE",
   },
   {
     num: "02",
-    title: "AI-Powered Analysis",
-    desc: "Artificial Intelligence processes complex biological data simultaneously, surfacing patterns invisible to traditional analysis methods.",
+    title: "Liquid Biopsy Monitoring",
+    desc: "Non-invasive capture of real-time biological signals — circulating tumor DNA, proteins, and critical biomarkers — enabling continuous cancer progression tracking for diagnosed patients.",
+    badge: "R&D",
   },
   {
     num: "03",
-    title: "Real-Time Monitoring",
-    desc: "Continuous precision monitoring delivers actionable insights, tracking how cancer evolves and responds in real time.",
+    title: "Real-Time Precision Monitoring",
+    desc: "Continuous tracking across the entire disease lifecycle — from early risk assessment to progression monitoring — delivering actionable insights as cancer evolves and responds.",
   },
   {
     num: "04",
     title: "Open Source Platform",
-    desc: "Built as an open-source, not-for-profit platform ensuring accessibility, transparency, and global collaborative innovation.",
+    desc: "Built as an open-source, not-for-profit platform ensuring accessibility, transparency, and global collaborative innovation across the oncology ecosystem.",
   },
 ];
 
 const audiences = [
-  { role: "Clinicians", desc: "Monitor cancer progression with real-time, AI-driven insights for faster clinical decisions." },
-  { role: "Patients", desc: "Gain clarity and confidence through continuous, transparent precision monitoring." },
-  { role: "Researchers", desc: "Access open-source tools and datasets for advancing oncology research globally." },
-  { role: "Pharma Companies", desc: "Track treatment impact through precision monitoring and longitudinal data." },
+  { role: "Clinicians", desc: "Access predictive risk insights and real-time monitoring data for faster, more informed clinical decisions." },
+  { role: "Patients", desc: "Gain clarity from early risk prediction through continuous, transparent precision monitoring of cancer progression." },
+  { role: "Researchers", desc: "Build, test, and collaborate using open-source oncology tools spanning prediction and real-time monitoring." },
+  { role: "Pharma Companies", desc: "Track treatment effectiveness through continuous monitoring and longitudinal data across the disease lifecycle." },
 ];
 
 /* ═══ Parallax Hook ═══ */
@@ -109,18 +111,19 @@ function useMouseGlow() {
 }
 
 /* ═══ Icons ═══ */
+function ScanIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="3" width="18" height="18" rx="2" />
+      <path d="M3 12h18M12 3v18" />
+      <circle cx="12" cy="12" r="3" />
+    </svg>
+  );
+}
 function DropletIcon() {
   return (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
       <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" />
-    </svg>
-  );
-}
-function BrainIcon() {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 2a4 4 0 014 4v1a3 3 0 012.5 5.1A3.5 3.5 0 0117 19H7a3.5 3.5 0 01-1.5-6.9A3 3 0 018 7V6a4 4 0 014-4z" />
-      <path d="M12 2v20" /><path d="M8 10h2M14 14h2M8 14h1M15 10h1" />
     </svg>
   );
 }
@@ -138,7 +141,7 @@ function GlobeIcon() {
     </svg>
   );
 }
-const capIcons = [DropletIcon, BrainIcon, PulseIcon, GlobeIcon];
+const capIcons = [ScanIcon, DropletIcon, PulseIcon, GlobeIcon];
 
 /* ═══ Floating Particle Component ═══ */
 function FloatingParticles({ count = 6, color = "blue" }) {
@@ -228,7 +231,7 @@ function BentoHero({ inView }) {
               }}
             >
               <span className="h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse" />
-              Open-Source &middot; Not-for-Profit
+              OncoTrace-AI &middot; Open-Source &middot; Not-for-Profit
             </span>
           </div>
 
@@ -258,13 +261,14 @@ function BentoHero({ inView }) {
             </h2>
 
             <p
-              className={`mt-4 text-[15px] sm:text-base text-neutral-500 leading-[1.75] max-w-[32rem] transition-all duration-[1600ms] ${
+              className={`mt-4 text-[15px] sm:text-base text-neutral-500 leading-[1.75] max-w-[34rem] transition-all duration-[1600ms] ${
                 inView ? "opacity-100 translate-y-0 blur-0" : "opacity-0 translate-y-10 blur-[2px]"
               }`}
               style={t(600)}
             >
-              Transforming cancer care through Liquid Biopsy and Artificial Intelligence —
-              enabling continuous, real-time precision monitoring of cancer progression.
+              AI-driven cancer intelligence across the entire disease lifecycle — from
+              predicting breast cancer risk using imaging data to real-time progression
+              monitoring powered by Liquid Biopsy.
             </p>
           </div>
         </div>
@@ -281,7 +285,7 @@ function BentoHero({ inView }) {
       >
         <img
           src="/solution-bg.png"
-          alt="Precision monitoring visualization"
+          alt="OncoTrace-AI precision oncology platform"
           className={`absolute inset-0 w-full h-full object-cover transition-transform duration-[2500ms] ${
             inView ? "scale-100" : "scale-110"
           }`}
@@ -307,7 +311,7 @@ function BentoHero({ inView }) {
           >
             <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
             <span className="text-[11px] font-semibold text-white/90 tracking-wide">
-              Live Monitoring Active
+              Risk Prediction Live
             </span>
           </div>
         </div>
@@ -423,7 +427,8 @@ function BentoHero({ inView }) {
             }`}
             style={t(650)}
           >
-            Join the open oncology ecosystem shaping the future of precision monitoring.
+            Join the open oncology ecosystem — from AI-based risk prediction to
+            real-time cancer monitoring.
           </p>
           <div
             className={`flex flex-wrap gap-2.5 transition-all duration-[1200ms] ${
@@ -506,11 +511,11 @@ function BentoHero({ inView }) {
             }`}
             style={t(600)}
           >
-            Key Metrics
+            Platform at a Glance
           </p>
           <div className="grid grid-cols-2 gap-4">
             {[
-              { value: "200+", label: "Biomarkers Tracked" },
+              { value: "5yr", label: "Risk Prediction Window" },
               { value: "24/7", label: "Continuous Monitoring" },
               { value: "100%", label: "Open Source" },
               { value: "Zero", label: "Invasive Procedures" },
@@ -536,7 +541,7 @@ function BentoHero({ inView }) {
         </div>
       </div>
 
-      {/* Cell 6: Biomarker tags */}
+      {/* Cell 6: Technology tags */}
       <div
         className={`col-span-12 lg:col-span-3 rounded-3xl overflow-hidden transition-all duration-[1500ms] ${
           inView
@@ -559,7 +564,7 @@ function BentoHero({ inView }) {
             Tracking
           </p>
           <div className="flex flex-wrap gap-2">
-            {["ctDNA", "Proteins", "Exosomes", "cfRNA", "Methylation", "CTC", "Metabolites"].map(
+            {["X-ray AI", "ctDNA", "Proteins", "Exosomes", "cfRNA", "Methylation", "CTC"].map(
               (tag, i) => (
                 <span
                   key={tag}
@@ -601,11 +606,12 @@ function BentoHero({ inView }) {
             }`}
             style={t(800)}
           >
-            An open-source platform built to make advanced oncology monitoring accessible,
-            transparent, and collaborative for clinicians and researchers worldwide.
+            An open-source platform connecting AI-based risk prediction with liquid
+            biopsy-powered monitoring — making precision oncology accessible, transparent,
+            and collaborative worldwide.
           </p>
           <div className="flex items-center gap-5">
-            {["Liquid Biopsy", "AI Engine", "Precision Oncology"].map((tag, i) => (
+            {["AI Prediction", "Liquid Biopsy", "Precision Oncology"].map((tag, i) => (
               <span
                 key={tag}
                 className={`hidden sm:inline text-[10px] tracking-[0.12em] uppercase text-neutral-300 font-semibold transition-all duration-[1000ms] ${
@@ -742,7 +748,7 @@ export default function SolutionSection() {
                 }`}
                 style={t(aboutIn, 100)}
               >
-                About Shri-AI
+                About OncoTrace-AI
               </p>
               <h2
                 className={`text-[1.7rem] sm:text-3xl lg:text-[2.1rem] font-bold tracking-[-0.025em] leading-[1.15] transition-all duration-[1400ms] ${
@@ -750,8 +756,8 @@ export default function SolutionSection() {
                 }`}
                 style={t(aboutIn, 200)}
               >
-                Redefining how cancer
-                <br className="hidden lg:block" /> is monitored
+                From risk prediction
+                <br className="hidden lg:block" /> to real-time tracking
               </h2>
               <div
                 className={`mt-5 h-[3px] w-10 rounded-full bg-blue-600 origin-left transition-transform duration-[1200ms] ${
@@ -776,10 +782,11 @@ export default function SolutionSection() {
                 }`}
                 style={t(aboutIn, 250)}
               >
-                Shri-AI combines Liquid Biopsy with advanced Artificial Intelligence to deliver
-                real-time precision monitoring in oncology. Our platform continuously tracks cancer
-                progression through non-invasive data, allowing clinicians, researchers, and patients
-                to understand the disease with greater clarity and accuracy.
+                OncoTrace-AI is a platform designed to enable AI-driven cancer intelligence
+                across the entire disease lifecycle. It brings together two complementary
+                approaches — AI-based cancer risk prediction using imaging data, and liquid
+                biopsy-powered real-time monitoring — into a unified system for continuous,
+                data-driven insights in oncology.
               </p>
 
               {/* Pull quote */}
@@ -805,8 +812,9 @@ export default function SolutionSection() {
                   }}
                 />
                 <p className="relative text-[1.05rem] sm:text-lg font-semibold text-neutral-800 leading-[1.55] tracking-[-0.01em]">
-                  We specialize in monitoring and analyzing cancer dynamics in real time —
-                  empowering better decision-making through reliable, data-driven insights.
+                  We focus on data, monitoring, and intelligence — connecting prediction
+                  with progression tracking to empower better decision-making through
+                  accurate, real-time insights.
                 </p>
               </div>
 
@@ -816,9 +824,10 @@ export default function SolutionSection() {
                 }`}
                 style={t(aboutIn, 450)}
               >
-                Unlike traditional systems, we do not focus on treatment or medication. Built as an
-                open-source, not-for-profit initiative, Shri-AI encourages global collaboration across
-                research institutions, healthcare providers, and technology communities.
+                We do not provide treatments or prescribe medications. Built as an open-source,
+                not-for-profit initiative, OncoTrace-AI encourages global collaboration across
+                research institutions, healthcare providers, and technology communities — ensuring
+                innovation in oncology is accessible, transparent, and collaborative.
               </p>
             </div>
           </div>
@@ -864,7 +873,7 @@ export default function SolutionSection() {
                 }`}
                 style={t(capIn, 100)}
               >
-                Core Capabilities
+                Our Approach
               </p>
               <h2
                 className={`text-[1.7rem] sm:text-3xl lg:text-[2.1rem] font-bold tracking-[-0.025em] leading-[1.15] max-w-md transition-all duration-[1400ms] ${
@@ -904,13 +913,29 @@ export default function SolutionSection() {
                     <div className="absolute -top-20 -right-20 w-40 h-40 bg-blue-500/[0.03] rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
 
                     <div className="flex items-start justify-between mb-7">
-                      <div
-                        className={`flex h-12 w-12 items-center justify-center rounded-xl bg-neutral-800 text-blue-400 transition-all duration-500 group-hover:bg-blue-600 group-hover:text-white group-hover:shadow-lg group-hover:shadow-blue-600/25 group-hover:scale-110 ${
-                          capIn ? "scale-100 rotate-0" : "scale-0 -rotate-45"
-                        }`}
-                        style={t(capIn, 400 + i * 150)}
-                      >
-                        <Icon />
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`flex h-12 w-12 items-center justify-center rounded-xl bg-neutral-800 text-blue-400 transition-all duration-500 group-hover:bg-blue-600 group-hover:text-white group-hover:shadow-lg group-hover:shadow-blue-600/25 group-hover:scale-110 ${
+                            capIn ? "scale-100 rotate-0" : "scale-0 -rotate-45"
+                          }`}
+                          style={t(capIn, 400 + i * 150)}
+                        >
+                          <Icon />
+                        </div>
+                        {item.badge && (
+                          <span
+                            className={`px-2.5 py-1 rounded-md text-[9px] font-bold tracking-[0.12em] uppercase transition-all duration-[1000ms] ${
+                              capIn ? "opacity-100 scale-100" : "opacity-0 scale-75"
+                            } ${
+                              item.badge === "LIVE"
+                                ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                                : "bg-amber-500/15 text-amber-400 border border-amber-500/25"
+                            }`}
+                            style={t(capIn, 500 + i * 150)}
+                          >
+                            {item.badge}
+                          </span>
+                        )}
                       </div>
                       <span
                         className={`text-[2.5rem] font-bold text-neutral-800/60 group-hover:text-neutral-700/40 transition-all duration-[1200ms] leading-none tracking-tighter font-mono select-none ${
@@ -1109,10 +1134,10 @@ export default function SolutionSection() {
                 }`}
                 style={t(mvIn, 200)}
               >
-                To democratize real-time precision monitoring in oncology by combining Liquid Biopsy
-                and Artificial Intelligence into an{" "}
+                To democratize real-time precision monitoring in oncology by combining
+                Artificial Intelligence, Liquid Biopsy, and predictive modeling within an{" "}
                 <span className="text-blue-600 font-semibold">
-                  open, accessible, and collaborative platform
+                  open and collaborative framework
                 </span>
                 .
               </p>
@@ -1168,10 +1193,11 @@ export default function SolutionSection() {
                 }`}
                 style={t(mvIn, 400)}
               >
-                To build a future where every cancer patient can be monitored continuously through{" "}
-                <span className="text-blue-600 font-semibold">real-time precision systems</span> —
-                powered by AI, driven by Liquid Biopsy, and supported by a global open-source
-                ecosystem.
+                To create a future where cancer is continuously understood through{" "}
+                <span className="text-blue-600 font-semibold">
+                  AI-driven prediction and real-time monitoring
+                </span>{" "}
+                — supported by a global open-source ecosystem.
               </p>
             </div>
           </div>
@@ -1196,8 +1222,8 @@ export default function SolutionSection() {
 
             <div className="flex flex-wrap gap-x-8 gap-y-2.5">
               {[
-                "Liquid Biopsy meets AI",
-                "Track Cancer. Don't Guess.",
+                "Predict. Monitor. Understand.",
+                "From Risk Prediction to Real-Time Tracking",
                 "Precision Oncology, In Real Time",
                 "Open Source Intelligence",
               ].map((tag, i) => (
@@ -1261,7 +1287,7 @@ export default function SolutionSection() {
                   }`}
                   style={t(ctaIn, 250)}
                 >
-                  <span className="text-blue-600">real-time</span> cancer monitoring?
+                  <span className="text-blue-600">precision</span> cancer intelligence?
                 </span>
               </h2>
               <p
@@ -1270,8 +1296,9 @@ export default function SolutionSection() {
                 }`}
                 style={t(ctaIn, 350)}
               >
-                Join the open oncology ecosystem. Collaborate with researchers, clinicians, and
-                institutions shaping the future of precision monitoring.
+                Join the open oncology ecosystem. From AI-based risk prediction to
+                real-time monitoring — collaborate with researchers, clinicians, and
+                institutions shaping the future of precision oncology.
               </p>
             </div>
 
@@ -1293,7 +1320,7 @@ export default function SolutionSection() {
                 }`}
                 style={t(ctaIn, 450)}
               >
-                Experience Real-Time Monitoring
+                Explore OncoTrace-AI
                 <svg
                   className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1"
                   viewBox="0 0 16 16"
