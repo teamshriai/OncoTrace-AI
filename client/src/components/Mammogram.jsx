@@ -127,8 +127,8 @@ const Mammogram = () => {
               </p>
 
               <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 leading-snug">
-                From Mammogram to{" "}
-                <span className="text-indigo-600">5-Year Forecast</span>
+                From a Mammogram report to{" "}
+                <span className="text-indigo-600">5-Year Prediction</span>
               </h3>
 
               <p className="text-gray-600 text-sm sm:text-base md:text-lg leading-relaxed">

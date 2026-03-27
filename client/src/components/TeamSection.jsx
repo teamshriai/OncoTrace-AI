@@ -50,7 +50,7 @@ export default function TeamSection() {
             Our Team
           </p>
           <h2 className="mt-4 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-            Built by clinicians &amp; engineers
+            Built by clinicians &amp; Developers
           </h2>
           <p className="mt-4 text-base text-slate-500">
             A multidisciplinary team united by the belief that smarter data

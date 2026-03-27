@@ -52,7 +52,7 @@ export default function LiquidBiopsyMonitoring() {
   const scroll = (id) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
 
   const TECH = [
-    { title: "Liquid Biopsy", body: "Non-invasive real-time biological signals from a simple blood draw, enabling continuous cancer monitoring." },
+    { title: "Liquid Biopsy", body: "Non-invasive real-time biological signals from a simple blood draw, enabling Real-time cancer monitoring." },
     { title: "Artificial Intelligence", body: "Analyzes complex datasets, identifies subtle patterns, and generates actionable clinical insights at scale." },
     { title: "Real-Time Monitoring", body: "Continuous longitudinal tracking of cancer progression and treatment response over time." },
   ];
@@ -117,7 +117,7 @@ export default function LiquidBiopsyMonitoring() {
             <div>
               <p className="text-[10px] font-semibold tracking-[.2em] uppercase text-blue-600 mb-3">Overview</p>
               <h2 className="text-[clamp(1.4rem,3vw,2.2rem)] font-bold leading-tight tracking-tight text-gray-900 mb-4">
-                Continuous, Non-Invasive Monitoring
+                Real-Time, Non-Invasive Monitoring
               </h2>
               <div className="w-12 h-[2px] bg-blue-600" />
             </div>

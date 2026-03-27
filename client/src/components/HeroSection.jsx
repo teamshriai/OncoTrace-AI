@@ -93,8 +93,10 @@ const minimalCSS = `
   @keyframes marqueeScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
   @keyframes floatUp{0%{opacity:0;transform:translateY(24px)}100%{opacity:1;transform:translateY(0)}}
   @keyframes lineGrow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
-  @keyframes dotPulse{0%,100%{box-shadow:0 0 6px rgba(59,130,246,.9)}50%{box-shadow:0 0 16px rgba(59,130,246,1)}}
+  @keyframes dotPulse{0%,100%{box-shadow:0 0 6px rgba(255,140,50,.9)}50%{box-shadow:0 0 18px rgba(255,140,50,1)}}
+  @keyframes neonFlicker{0%,100%{opacity:1}92%{opacity:1}93%{opacity:.8}94%{opacity:1}96%{opacity:.9}97%{opacity:1}}
   @keyframes grainShift{0%,100%{transform:translate(0,0)}10%{transform:translate(-5%,-10%)}30%{transform:translate(3%,5%)}50%{transform:translate(-8%,2%)}70%{transform:translate(6%,-6%)}90%{transform:translate(-3%,8%)}}
+  @keyframes subtleFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 
   @keyframes checkStroke{to{stroke-dashoffset:0}}
   @keyframes circleGrow{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
@@ -105,6 +107,8 @@ const minimalCSS = `
   @keyframes badgePulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
   @keyframes softBounce{0%{transform:scale(0.6);opacity:0}60%{transform:scale(1.08)}80%{transform:scale(0.96)}100%{transform:scale(1);opacity:1}}
   @keyframes shimmerBar{0%{background-position:-200% 0}100%{background-position:200% 0}}
+  @keyframes shimmerSweep{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+  @keyframes borderGlow{0%,100%{border-color:rgba(255,140,50,0.15)}50%{border-color:rgba(255,140,50,0.35)}}
 
   .bi{width:100%;padding:13px 16px;background:#fff;border:1.5px solid #e2e8f0;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:400;color:#1e293b;outline:none;transition:all .25s ease;box-sizing:border-box}
   .bi:focus{border-color:#3b82f6;box-shadow:0 0 0 3px rgba(59,130,246,.08)}
@@ -159,7 +163,7 @@ export default function HeroSection() {
 
   const filmGrain = (
     <div
-      className="fixed -inset-1/2 w-[200%] h-[200%] pointer-events-none z-[9999] opacity-[0.022]"
+      className="fixed -inset-1/2 w-[200%] h-[200%] pointer-events-none z-[9999] opacity-[0.018]"
       style={{
         animation: 'grainShift .5s steps(1) infinite',
         backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
@@ -193,7 +197,6 @@ export default function HeroSection() {
           <main className="relative z-10 max-w-[640px] mx-auto px-4 sm:px-6 lg:px-8
                            pt-28 sm:pt-32 md:pt-36 pb-10 sm:pb-14 md:pb-16">
 
-            {/* Back button row */}
             <div className="flex items-center justify-between mb-8 sm:mb-10"
               style={{ animation: 'staggerIn 0.7s cubic-bezier(0.16,1,0.3,1) 0.05s both' }}
             >
@@ -221,7 +224,6 @@ export default function HeroSection() {
               </span>
             </div>
 
-            {/* Header */}
             <div className="text-center mb-10 sm:mb-12"
               style={{ animation: 'staggerIn 0.7s cubic-bezier(0.16,1,0.3,1) 0.12s both' }}
             >
@@ -252,7 +254,6 @@ export default function HeroSection() {
               </p>
             </div>
 
-            {/* Form card */}
             <div
               className="bg-white rounded-2xl
                          shadow-[0_4px_40px_rgba(0,0,0,0.05),0_1px_3px_rgba(0,0,0,0.03)]
@@ -348,7 +349,6 @@ export default function HeroSection() {
               </form>
             </div>
 
-            {/* Trust badges */}
             <div className="mt-8 flex flex-wrap items-center justify-center gap-5 sm:gap-7"
               style={{ animation: 'staggerIn 0.7s cubic-bezier(0.16,1,0.3,1) 0.38s both' }}
             >
@@ -511,7 +511,7 @@ export default function HeroSection() {
   }
 
   /* ═══════════════════════════════════════════
-     HERO VIEW
+     HERO VIEW — Refined & Polished
      ═══════════════════════════════════════════ */
   return (
     <>
@@ -521,8 +521,15 @@ export default function HeroSection() {
         {filmGrain}
 
         {/* SECTION 1 — PRECISION HERO */}
-        <section className="relative min-h-screen flex flex-col overflow-hidden bg-[#001953]">
-          <div className="flex-1 grid grid-cols-1 md:grid-cols-[3fr_2fr] relative">
+        <section className="relative min-h-screen flex flex-col overflow-hidden bg-[#001030]">
+
+          {/* Ambient background orbs */}
+          <div className="absolute top-[-20%] right-[-10%] w-[700px] h-[700px] rounded-full pointer-events-none z-[0] opacity-[0.07]"
+            style={{ background: 'radial-gradient(circle, rgba(255,140,50,0.4), transparent 65%)', animation: 'subtleFloat 12s ease-in-out infinite' }} />
+          <div className="absolute bottom-[-15%] left-[-8%] w-[500px] h-[500px] rounded-full pointer-events-none z-[0] opacity-[0.05]"
+            style={{ background: 'radial-gradient(circle, rgba(59,130,246,0.5), transparent 65%)', animation: 'subtleFloat 15s ease-in-out 3s infinite' }} />
+
+          <div className="flex-1 grid grid-cols-1 md:grid-cols-[3.2fr_1.8fr] relative">
 
             {/* LEFT — image */}
             <div className="relative overflow-hidden min-h-[28vh] sm:min-h-[32vh] md:min-h-0">
@@ -531,88 +538,126 @@ export default function HeroSection() {
                   className="w-full h-full object-cover object-center"
                   style={{ animation: 'slowZoom 25s ease-in-out infinite alternate' }} />
                 <div className="absolute inset-0 z-[2]"
-                  style={{ background: 'linear-gradient(180deg, rgba(7,12,24,0.4) 0%, rgba(7,12,24,0.05) 25%, transparent 50%, transparent 100%)' }}>
+                  style={{ background: 'linear-gradient(180deg, rgba(0,16,48,0.5) 0%, rgba(0,16,48,0.08) 25%, transparent 50%, transparent 100%)' }}>
                   <div className="absolute inset-0" style={{
-                    background: 'radial-gradient(ellipse at 50% 80%, rgba(29,78,216,0.06) 0%, transparent 60%), linear-gradient(90deg, transparent 55%, rgba(7,12,24,0.8) 100%)'
+                    background: 'radial-gradient(ellipse at 50% 80%, rgba(29,78,216,0.06) 0%, transparent 60%), linear-gradient(90deg, transparent 50%, rgba(0,16,48,0.85) 100%)'
                   }} />
                 </div>
               </div>
 
-              <div className="absolute inset-0 opacity-[0.03] z-[3] pointer-events-none"
+              <div className="absolute inset-0 opacity-[0.025] z-[3] pointer-events-none"
                 style={{
                   backgroundImage: 'radial-gradient(circle, rgba(147,197,253,0.8) 0.5px, transparent 0.5px)',
                   backgroundSize: '40px 40px'
                 }} />
 
-              {/* Desktop-only tags on image */}
+              {/* Desktop-only neon orange tags on image — moved upper */}
               <div className="absolute inset-0 z-[8] hidden md:flex flex-col items-center pointer-events-none
-                              pt-28 md:pt-32 lg:pt-36 gap-3 md:gap-4"
+                              pt-20 md:pt-22 lg:pt-24 gap-2.5 md:gap-3"
                 style={{ animation: 'floatUp 1s cubic-bezier(0.16,1,0.3,1) 0.1s both' }}>
                 <span className="pointer-events-auto inline-flex items-center gap-2.5 md:gap-3
-                                 bg-white/[0.05] backdrop-blur-xl rounded-full
+                                 rounded-full
                                  px-7 py-2.5 md:px-8 md:py-3 lg:px-9 lg:py-3
-                                 text-[15px] md:text-[17px] lg:text-[19px]
-                                 text-white/55 font-medium tracking-[0.08em] uppercase
-                                 border border-white/[0.07] font-['DM_Sans'] whitespace-nowrap
-                                 shadow-[0_2px_24px_rgba(59,130,246,0.06)]">
-                  <span className="w-3 h-3 rounded-full bg-blue-500 flex-shrink-0"
-                    style={{ boxShadow: '0 0 10px rgba(59,130,246,0.8)', animation: 'dotPulse 2s ease-in-out infinite' }} />
-                  Launching Soon — Open Source · Not for Profit
+                                 text-[14px] md:text-[16px] lg:text-[18px]
+                                 font-semibold tracking-[0.08em] uppercase
+                                 font-['DM_Sans'] whitespace-nowrap"
+                  style={{
+                    background: 'rgba(255,140,50,0.08)',
+                    border: '1px solid rgba(255,140,50,0.25)',
+                    color: '#ff8c32',
+                    textShadow: '0 0 20px rgba(255,140,50,0.4)',
+                    animation: 'neonFlicker 4s ease-in-out infinite, borderGlow 3s ease-in-out infinite',
+                    boxShadow: '0 0 30px rgba(255,140,50,0.08), inset 0 0 20px rgba(255,140,50,0.03)',
+                  }}>
+                  <span className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+                    style={{
+                      background: '#ff8c32',
+                      boxShadow: '0 0 8px rgba(255,140,50,0.9), 0 0 20px rgba(255,140,50,0.4)',
+                      animation: 'dotPulse 2s ease-in-out infinite'
+                    }} />
+                  Open Source · Not for Profit
                 </span>
-                <span className="pointer-events-auto text-[14px] md:text-[16px] lg:text-[18px]
-                                 text-white/30 font-normal tracking-[0.18em] uppercase font-['DM_Sans'] whitespace-nowrap">
+                <span className="pointer-events-auto text-[13px] md:text-[15px] lg:text-[17px]
+                                 font-medium tracking-[0.2em] uppercase font-['DM_Sans'] whitespace-nowrap"
+                  style={{
+                    color: '#ff8c32',
+                    opacity: 0.6,
+                    textShadow: '0 0 12px rgba(255,140,50,0.25)',
+                  }}>
                   AI Prediction × Liquid Biopsy × Real-Time Monitoring
                 </span>
               </div>
+
+              {/* Subtle vignette on image edges */}
+              <div className="absolute inset-0 z-[4] pointer-events-none"
+                style={{ boxShadow: 'inset 0 0 120px rgba(0,16,48,0.3)' }} />
             </div>
 
             {/* RIGHT — text content */}
             <div className="relative z-[5] flex flex-col items-center md:items-start justify-center
                             text-center md:text-left px-5 py-8 sm:px-8 sm:py-10
-                            md:pl-12 md:pr-8 md:py-14 lg:pl-[72px] lg:pr-14 lg:py-20 xl:pl-20 xl:pr-16
+                            md:pl-10 md:pr-8 md:py-14 lg:pl-14 lg:pr-14 lg:py-20 xl:pl-16 xl:pr-16
                             pb-20 sm:pb-24 md:pb-14 lg:pb-20">
 
               <div className="absolute w-[420px] h-[420px] rounded-full top-1/2 left-1/2 -translate-x-[30%] -translate-y-1/2 pointer-events-none z-0"
-                style={{ background: 'radial-gradient(circle, rgba(59,130,246,0.05) 0%, transparent 70%)' }} />
-              <div className="absolute w-72 h-72 rounded-full border border-blue-500/[0.04] top-1/2 left-1/2 pointer-events-none z-0"
+                style={{ background: 'radial-gradient(circle, rgba(59,130,246,0.04) 0%, transparent 70%)' }} />
+              <div className="absolute w-72 h-72 rounded-full border border-blue-500/[0.03] top-1/2 left-1/2 pointer-events-none z-0"
                 style={{ animation: 'pulseRing 7s ease-in-out infinite' }} />
-              <div className="absolute w-[460px] h-[460px] rounded-full border border-blue-500/[0.025] top-1/2 left-1/2 pointer-events-none z-0"
+              <div className="absolute w-[460px] h-[460px] rounded-full border border-blue-500/[0.02] top-1/2 left-1/2 pointer-events-none z-0"
                 style={{ animation: 'pulseRing 9s ease-in-out 2s infinite' }} />
 
-              <div className="absolute inset-0 opacity-[0.015] z-0 pointer-events-none"
+              <div className="absolute inset-0 opacity-[0.012] z-0 pointer-events-none"
                 style={{
                   backgroundImage: 'radial-gradient(circle, rgba(147,197,253,0.5) 0.5px, transparent 0.5px)',
                   backgroundSize: '48px 48px'
                 }} />
 
-              {/* Mobile-only tags — placed in text content area */}
-              <div className="flex md:hidden flex-col items-center gap-2 mb-6 relative z-10 w-full"
+              {/* Mobile-only neon orange tags */}
+              <div className="flex md:hidden flex-col items-center gap-1.5 mb-5 relative z-10 w-full"
                 style={{ animation: 'floatUp 1s cubic-bezier(0.16,1,0.3,1) 0.1s both' }}>
                 <span className="inline-flex items-center gap-2
-                                 bg-white/[0.05] backdrop-blur-xl rounded-full
+                                 rounded-full
                                  px-4 py-1.5 sm:px-5 sm:py-2
                                  text-[10px] sm:text-[12px]
-                                 text-white/55 font-medium tracking-[0.06em] uppercase
-                                 border border-white/[0.07] font-['DM_Sans']
-                                 shadow-[0_2px_16px_rgba(59,130,246,0.06)]">
-                  <span className="w-2 h-2 rounded-full bg-blue-500 flex-shrink-0"
-                    style={{ boxShadow: '0 0 8px rgba(59,130,246,0.8)', animation: 'dotPulse 2s ease-in-out infinite' }} />
-                  Launching Soon · Open Source
+                                 font-semibold tracking-[0.06em] uppercase
+                                 font-['DM_Sans']"
+                  style={{
+                    background: 'rgba(255,140,50,0.08)',
+                    border: '1px solid rgba(255,140,50,0.25)',
+                    color: '#ff8c32',
+                    textShadow: '0 0 16px rgba(255,140,50,0.3)',
+                    boxShadow: '0 0 20px rgba(255,140,50,0.06)',
+                  }}>
+                  <span className="w-2 h-2 rounded-full flex-shrink-0"
+                    style={{
+                      background: '#ff8c32',
+                      boxShadow: '0 0 6px rgba(255,140,50,0.8)',
+                      animation: 'dotPulse 2s ease-in-out infinite'
+                    }} />
+                  Open Source · Not for Profit
                 </span>
                 <span className="text-[9px] sm:text-[11px]
-                                 text-white/25 font-normal tracking-[0.15em] uppercase font-['DM_Sans']">
+                                 font-medium tracking-[0.15em] uppercase font-['DM_Sans']"
+                  style={{
+                    color: '#ff8c32',
+                    opacity: 0.55,
+                    textShadow: '0 0 10px rgba(255,140,50,0.2)',
+                  }}>
                   AI Prediction × Liquid Biopsy × Monitoring
                 </span>
               </div>
 
+              {/* Platform label with refined styling */}
               <span className="relative z-10 font-['DM_Sans'] text-[9px] sm:text-[10px] md:text-[11px]
-                               text-white/25 tracking-[0.22em] uppercase font-medium
-                               mb-4 sm:mb-5 md:mb-8 flex items-center justify-center md:justify-start w-full"
+                               text-white/20 tracking-[0.25em] uppercase font-medium
+                               mb-4 sm:mb-5 md:mb-7 flex items-center justify-center md:justify-start w-full"
                 style={{ animation: 'floatUp 1s cubic-bezier(0.16,1,0.3,1) 0.2s both' }}>
-                <span className="inline-block w-5 h-px bg-blue-500/35 mr-3 flex-shrink-0" />
+                <span className="inline-block w-6 h-px mr-3 flex-shrink-0"
+                  style={{ background: 'linear-gradient(90deg, rgba(255,140,50,0.5), rgba(255,140,50,0.05))' }} />
                 OncoTrace-AI Platform
               </span>
 
+              {/* Title with refined gradient palette */}
               <h1 className="relative z-10 m-0 p-0" style={{ perspective: '800px' }}>
                 {[
                   { text: 'AI-powered', type: 'light' },
@@ -621,42 +666,47 @@ export default function HeroSection() {
                   { text: 'Monitoring', type: 'accent' },
                   { text: 'of Oncology', type: 'accent' },
                 ].map((line, i) => {
-                  const baseClasses = "block font-['Outfit'] leading-[0.92] tracking-[-0.05em] text-[clamp(1.7rem,5.5vw,6.2rem)]"
+                  const baseClasses = "block font-['Outfit'] leading-[0.92] tracking-[-0.05em] text-[clamp(1.7rem,5.5vw,5.8rem)]"
                   let variant = ''
                   let gradientStyle = {}
 
                   if (line.type === 'light') {
-                    variant = 'font-light text-slate-400/50'
-                    gradientStyle = { animation: `textReveal 1.2s cubic-bezier(0.16,1,0.3,1) ${0.3 + i * 0.2}s both` }
+                    variant = 'font-extralight'
+                    gradientStyle = {
+                      color: 'rgba(148,163,184,0.4)',
+                      animation: `textReveal 1.2s cubic-bezier(0.16,1,0.3,1) ${0.3 + i * 0.18}s both`
+                    }
                   } else if (line.type === 'bold') {
                     variant = 'font-extrabold'
                     gradientStyle = {
-                      background: 'linear-gradient(135deg, #93c5fd 0%, #60a5fa 20%, #fff 45%, #e2e8f0 55%, #60a5fa 75%, #3b82f6 100%)',
+                      background: 'linear-gradient(135deg, #bfdbfe 0%, #93c5fd 15%, #ffffff 40%, #e2e8f0 55%, #93c5fd 70%, #60a5fa 100%)',
                       backgroundSize: '200% 200%',
                       WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent',
-                      animation: `textReveal 1.2s cubic-bezier(0.16,1,0.3,1) ${0.3 + i * 0.2}s both, gradientShift 6s ease infinite`,
+                      animation: `textReveal 1.2s cubic-bezier(0.16,1,0.3,1) ${0.3 + i * 0.18}s both, gradientShift 8s ease infinite`,
                     }
                   } else {
                     variant = 'font-semibold'
                     gradientStyle = {
-                      background: 'linear-gradient(90deg, #3b82f6 0%, #60a5fa 30%, #93c5fd 50%, #60a5fa 70%, #3b82f6 100%)',
+                      background: 'linear-gradient(90deg, #3b82f6 0%, #60a5fa 25%, #93c5fd 50%, #60a5fa 75%, #3b82f6 100%)',
                       backgroundSize: '200% 200%',
                       WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent',
-                      animation: `textReveal 1.2s cubic-bezier(0.16,1,0.3,1) ${0.3 + i * 0.2}s both, gradientShift 5s ease infinite`,
+                      animation: `textReveal 1.2s cubic-bezier(0.16,1,0.3,1) ${0.3 + i * 0.18}s both, gradientShift 6s ease infinite`,
                     }
                   }
                   return <span key={i} className={`${baseClasses} ${variant}`} style={gradientStyle}>{line.text}</span>
                 })}
               </h1>
 
-              <div className="relative z-10 w-12 sm:w-16 md:w-[72px] h-px mt-5 sm:mt-7 md:mt-10 mb-3 sm:mb-4 md:mb-6 mx-auto md:mx-0"
+              {/* Divider line with orange accent */}
+              <div className="relative z-10 w-14 sm:w-18 md:w-20 h-px mt-6 sm:mt-8 md:mt-10 mb-4 sm:mb-5 md:mb-7 mx-auto md:mx-0"
                 style={{
-                  background: 'linear-gradient(90deg, rgba(59,130,246,0.5), rgba(59,130,246,0.02))',
+                  background: 'linear-gradient(90deg, rgba(255,140,50,0.6), rgba(59,130,246,0.3), rgba(59,130,246,0.02))',
                   transformOrigin: 'left', animation: 'lineGrow 1.2s ease-out 0.9s both'
                 }} />
 
-              <p className="relative z-10 font-['Plus_Jakarta_Sans'] text-xs sm:text-[13px] md:text-[14.5px]
-                            text-white/30 leading-[1.7] sm:leading-[1.8] max-w-[380px] font-light tracking-[0.01em]
+              {/* Description text — full white with refined line height */}
+              <p className="relative z-10 font-['Plus_Jakarta_Sans'] text-[12px] sm:text-[13px] md:text-[14px]
+                            text-white leading-[1.75] sm:leading-[1.85] max-w-[370px] font-light tracking-[0.015em]
                             mx-auto md:mx-0"
                 style={{ animation: 'floatUp 1s cubic-bezier(0.16,1,0.3,1) 1s both' }}>
                 AI-based risk prediction meets liquid biopsy — from
@@ -666,26 +716,36 @@ export default function HeroSection() {
                 open source and built for every community.
               </p>
 
-              {/* CTA row */}
+              {/* CTA row — refined with orange accent on primary */}
               <div className="relative z-10 flex items-center gap-3 sm:gap-4 md:gap-5
-                              mt-6 sm:mt-7 md:mt-9 justify-center md:justify-start
+                              mt-7 sm:mt-8 md:mt-10 justify-center md:justify-start
                               flex-col sm:flex-row w-full sm:w-auto"
                 style={{ animation: 'floatUp 1s cubic-bezier(0.16,1,0.3,1) 1.1s both' }}>
 
                 <button
                   onClick={() => navigateTo('booking')}
                   className="group relative overflow-hidden inline-flex items-center justify-center gap-2.5
-                             px-7 py-3.5 sm:px-9 sm:py-4 rounded-[3px]
-                             font-['DM_Sans'] text-[12px] sm:text-[13px] font-medium tracking-[0.04em]
-                             bg-gradient-to-br from-blue-700 to-blue-500 text-white
-                             shadow-[0_8px_32px_rgba(59,130,246,0.3),0_2px_8px_rgba(59,130,246,0.15)]
-                             hover:-translate-y-0.5 hover:shadow-[0_16px_48px_rgba(59,130,246,0.4)]
+                             px-7 py-3.5 sm:px-9 sm:py-4 rounded-[4px]
+                             font-['DM_Sans'] text-[12px] sm:text-[13px] font-semibold tracking-[0.05em] uppercase
+                             text-white
                              transition-all duration-300 ease-out border-none cursor-pointer
                              w-full sm:w-auto"
+                  style={{
+                    background: 'linear-gradient(135deg, #1d4ed8, #2563eb)',
+                    boxShadow: '0 8px 32px rgba(37,99,235,0.3), 0 2px 8px rgba(37,99,235,0.15)',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-2px)'
+                    e.currentTarget.style.boxShadow = '0 16px 48px rgba(37,99,235,0.4), 0 4px 12px rgba(37,99,235,0.2)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)'
+                    e.currentTarget.style.boxShadow = '0 8px 32px rgba(37,99,235,0.3), 0 2px 8px rgba(37,99,235,0.15)'
+                  }}
                 >
                   <span className="absolute top-0 -left-full w-full h-full
-                                   bg-gradient-to-r from-transparent via-white/[0.12] to-transparent
-                                   group-hover:left-full transition-all duration-500" />
+                                   bg-gradient-to-r from-transparent via-white/[0.1] to-transparent
+                                   group-hover:left-full transition-all duration-600" />
                   <svg width="14" height="14" viewBox="0 0 16 16" fill="none" className="relative z-10">
                     <rect x="2" y="2" width="12" height="12" rx="2" stroke="white" strokeWidth="1.5" />
                     <path d="M5 8h6M8 5v6" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
@@ -694,12 +754,25 @@ export default function HeroSection() {
                 </button>
 
                 <button className="inline-flex items-center justify-center gap-2.5
-                                   px-7 py-3.5 sm:px-9 sm:py-4 rounded-[3px]
-                                   font-['DM_Sans'] text-[12px] sm:text-[13px] font-medium tracking-[0.04em]
-                                   bg-white/[0.04] text-white/50 border border-white/[0.08] backdrop-blur-lg
-                                   hover:bg-blue-500/[0.08] hover:text-white/70 hover:border-blue-500/30
+                                   px-7 py-3.5 sm:px-9 sm:py-4 rounded-[4px]
+                                   font-['DM_Sans'] text-[12px] sm:text-[13px] font-semibold tracking-[0.05em] uppercase
+                                   text-white/45 backdrop-blur-lg
+                                   hover:text-white/70
                                    hover:-translate-y-0.5 transition-all duration-300 ease-out cursor-pointer
-                                   w-full sm:w-auto">
+                                   w-full sm:w-auto"
+                  style={{
+                    background: 'rgba(255,255,255,0.04)',
+                    border: '1px solid rgba(255,255,255,0.08)',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = 'rgba(255,140,50,0.06)'
+                    e.currentTarget.style.borderColor = 'rgba(255,140,50,0.2)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = 'rgba(255,255,255,0.04)'
+                    e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'
+                  }}
+                >
                   <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
                     <circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="1.5" className="opacity-50" />
                     <path d="M6.5 5.5l4 2.5-4 2.5V5.5z" fill="currentColor" className="opacity-60" />
@@ -707,19 +780,35 @@ export default function HeroSection() {
                   Learn More
                 </button>
               </div>
+
+              {/* Subtle bottom accent — small stat or trust line */}
+              <div className="relative z-10 mt-10 sm:mt-12 md:mt-14 flex items-center gap-6 justify-center md:justify-start"
+                style={{ animation: 'floatUp 1s cubic-bezier(0.16,1,0.3,1) 1.3s both' }}>
+                <div className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full" style={{ background: '#ff8c32', boxShadow: '0 0 6px rgba(255,140,50,0.6)' }} />
+                  <span className="font-['DM_Sans'] text-[10px] text-white/25 tracking-[0.1em] uppercase">AI Prediction Live</span>
+                </div>
+                <div className="w-px h-3 bg-white/10" />
+                <div className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-blue-500/60" />
+                  <span className="font-['DM_Sans'] text-[10px] text-white/25 tracking-[0.1em] uppercase">Liquid Biopsy R&D</span>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Corner accents */}
-          <div className="hidden md:block absolute top-8 left-8 w-12 h-12 border-l border-t border-blue-500/[0.15] z-[4] pointer-events-none" />
-          <div className="hidden md:block absolute top-8 right-8 w-12 h-12 border-r border-t border-blue-500/[0.15] z-[4] pointer-events-none" />
-          <div className="hidden md:block absolute bottom-8 left-8 w-12 h-12 border-l border-b border-blue-500/10 z-[4] pointer-events-none" />
-          <div className="hidden md:block absolute bottom-8 right-8 w-12 h-12 border-r border-b border-blue-500/10 z-[4] pointer-events-none" />
+          {/* Corner accents — refined with orange tint */}
+          <div className="hidden md:block absolute top-8 left-8 w-14 h-14 z-[4] pointer-events-none"
+            style={{ borderLeft: '1px solid rgba(255,140,50,0.12)', borderTop: '1px solid rgba(255,140,50,0.12)' }} />
+          <div className="hidden md:block absolute top-8 right-8 w-14 h-14 z-[4] pointer-events-none"
+            style={{ borderRight: '1px solid rgba(255,140,50,0.12)', borderTop: '1px solid rgba(255,140,50,0.12)' }} />
+          <div className="hidden md:block absolute bottom-8 left-8 w-14 h-14 border-l border-b border-blue-500/[0.08] z-[4] pointer-events-none" />
+          <div className="hidden md:block absolute bottom-8 right-8 w-14 h-14 border-r border-b border-blue-500/[0.08] z-[4] pointer-events-none" />
 
           {/* Marquee — pinned to very bottom */}
-          <div className="absolute bottom-0 left-0 right-0 z-[5] overflow-hidden pointer-events-none opacity-[0.03] md:opacity-[0.04]
+          <div className="absolute bottom-0 left-0 right-0 z-[5] overflow-hidden pointer-events-none opacity-[0.025] md:opacity-[0.035]
                           py-2 sm:py-3">
-            <div className="flex whitespace-nowrap" style={{ animation: 'marqueeScroll 30s linear infinite' }}>
+            <div className="flex whitespace-nowrap" style={{ animation: 'marqueeScroll 35s linear infinite' }}>
               {Array(4).fill(null).map((_, i) => (
                 <span key={i} className="font-['Outfit'] text-lg sm:text-2xl md:text-4xl lg:text-5xl xl:text-6xl font-extrabold text-white px-4 sm:px-6 md:px-10 uppercase tracking-[0.05em]">
                   AI Prediction — Liquid Biopsy — Real-Time Monitoring — Precision Oncology — Breast Cancer —
@@ -733,11 +822,11 @@ export default function HeroSection() {
         <section ref={secondRef} id="home"
           className="relative w-full min-h-[100vh] sm:min-h-[100vh] md:h-screen md:min-h-[600px] overflow-hidden bg-[#f0f2f5] font-['Source_Sans_3']">
           <div className="absolute inset-0 z-[1]">
-            <img src="/doctor.png" alt="AI-powered precision oncology platform"
+            <img src="/test.png" alt="AI-powered precision oncology platform"
               className="w-full h-full object-cover block"
               style={{ objectPosition: '70% center' }} />
             <div className="absolute inset-0 z-[2]" style={{
-              background: 'linear-gradient(to right, rgba(240,242,245,0.92) 0%, rgba(240,242,245,0.55) 38%, rgba(240,242,245,0.05) 65%, transparent 100%)'
+              background: 'linear-gradient(to right, rgba(240,242,245,0.94) 0%, rgba(240,242,245,0.6) 35%, rgba(240,242,245,0.08) 62%, transparent 100%)'
             }} />
           </div>
 

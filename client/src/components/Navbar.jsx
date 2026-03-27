@@ -1,26 +1,23 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 
-/* ── NAV_LINKS: href must match the wrapper id in App.jsx ── */
 const NAV_LINKS = [
-  { label: "Home",     href: "#"           },
+  { label: "Home", href: "#" },
   {
     label: "Products",
     href: "#mammogram",
     dropdown: [
-      { label: "Mammogram",     href: "#mammogram",    icon: "🩺", desc: "AI-powered breast imaging analysis" },
-     { label: "Liquid Biopsy", href: "#liquid-biopsy", icon: "🔬", desc: "Non-invasive cancer detection" },
+      { label: "Mammogram", href: "#mammogram", icon: "🩺", desc: "AI-powered breast imaging analysis" },
+      { label: "Liquid Biopsy", href: "#liquid-biopsy", icon: "🔬", desc: "Non-invasive cancer detection" },
     ],
   },
-  { label: "About us", href: "#solution"   },
+  { label: "About us", href: "#solution" },
   { label: "Research", href: "#case-study" },
-  { label: "Team",     href: "#team"       },
-  { label: "Contact",  href: "#cta"        },
+  { label: "Team", href: "#team" },
+  { label: "Contact", href: "#cta" },
 ];
 
-/* ── all section ids for scroll-spy (skip "#") ── */
 const SECTION_IDS = ["#mammogram", "#liquidbiopsy", "#solution", "#case-study", "#team", "#cta"];
 
-/* ── smooth scroll helper ── */
 function scrollToId(href) {
   if (href === "#") {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -33,26 +30,27 @@ function scrollToId(href) {
   }
 }
 
-/* ── icons ── */
 function MenuIcon() {
   return (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
       stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="4" y1="6"  x2="20" y2="6"  />
+      <line x1="4" y1="6" x2="20" y2="6" />
       <line x1="4" y1="12" x2="20" y2="12" />
       <line x1="4" y1="18" x2="20" y2="18" />
     </svg>
   );
 }
+
 function CloseIcon() {
   return (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
       stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="18" y1="6"  x2="6"  y2="18" />
-      <line x1="6"  y1="6"  x2="18" y2="18" />
+      <line x1="18" y1="6" x2="6" y2="18" />
+      <line x1="6" y1="6" x2="18" y2="18" />
     </svg>
   );
 }
+
 function ChevronDown({ open }) {
   return (
     <svg
@@ -70,26 +68,22 @@ function ChevronDown({ open }) {
   );
 }
 
-/* ═══════════════════════════════════════════════════════════════════════ */
 export default function Navbar() {
-  const [active, setActive]           = useState("#");
-  const [menuOpen, setMenuOpen]       = useState(false);
-  const [visible, setVisible]         = useState(true);
-  const [atTop, setAtTop]             = useState(true);
+  const [active, setActive] = useState("#");
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [visible, setVisible] = useState(true);
+  const [atTop, setAtTop] = useState(true);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileProductsOpen, setMobileProductsOpen] = useState(false);
 
-  const lastScrollY      = useRef(0);
-  const hideTimer        = useRef(null);
-  const ticking          = useRef(false);
-  const clickLock        = useRef(false);
-  const mobileRef        = useRef(null);
-  const dropdownRef      = useRef(null);
-  const dropdownTimer    = useRef(null);
+  const lastScrollY = useRef(0);
+  const hideTimer = useRef(null);
+  const ticking = useRef(false);
+  const clickLock = useRef(false);
+  const mobileRef = useRef(null);
+  const dropdownRef = useRef(null);
+  const dropdownTimer = useRef(null);
 
-  /* ─────────────────────────────────────────────
-     1. SCROLL-SPY
-     ───────────────────────────────────────────── */
   useEffect(() => {
     const onScroll = () => {
       if (clickLock.current) return;
@@ -109,9 +103,6 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  /* ─────────────────────────────────────────────
-     2. SHOW / HIDE navbar on scroll + mouse
-     ───────────────────────────────────────────── */
   useEffect(() => {
     const HIDE_DELAY = 2500;
     const scheduleHide = () => {
@@ -148,9 +139,6 @@ export default function Navbar() {
     };
   }, []);
 
-  /* ─────────────────────────────────────────────
-     3. AUTO-CLOSE mobile menu on resize / outside
-     ───────────────────────────────────────────── */
   useEffect(() => {
     const onResize = () => {
       if (window.innerWidth >= 1024) {
@@ -174,9 +162,6 @@ export default function Navbar() {
     return () => document.removeEventListener("mousedown", onClick);
   }, [menuOpen]);
 
-  /* ─────────────────────────────────────────────
-     4. Close desktop dropdown on outside click
-     ───────────────────────────────────────────── */
   useEffect(() => {
     if (!dropdownOpen) return;
     const onClick = (e) => {
@@ -188,9 +173,6 @@ export default function Navbar() {
     return () => document.removeEventListener("mousedown", onClick);
   }, [dropdownOpen]);
 
-  /* ─────────────────────────────────────────────
-     5. CLICK HANDLER
-     ───────────────────────────────────────────── */
   const handleNav = useCallback((e, href) => {
     e.preventDefault();
     setMenuOpen(false);
@@ -202,13 +184,9 @@ export default function Navbar() {
     requestAnimationFrame(() => scrollToId(href));
   }, []);
 
-  /* ── helpers to determine "Products" active state ── */
   const productHrefs = ["#mammogram", "#liquidbiopsy"];
   const isProductsActive = productHrefs.includes(active);
 
-  /* ─────────────────────────────────────────────
-     STYLES
-     ───────────────────────────────────────────── */
   const glassStyle = {
     background: "rgba(4, 12, 32, 0.85)",
     backdropFilter: "blur(28px) saturate(180%)",
@@ -236,9 +214,53 @@ export default function Navbar() {
     fontWeight: 400,
   };
 
-  /* ═════════════════════════════════════════════
-     RENDER
-     ═════════════════════════════════════════════ */
+  const LogoBlock = () => (
+    <a
+      href="#"
+      onClick={(e) => handleNav(e, "#")}
+      className="pointer-events-auto shrink-0 no-underline flex items-center"
+      style={{ gap: "clamp(10px, 1.8vw, 14px)" }}
+    >
+      <img
+        src="/onco-logo.png"
+        alt="OncoTraceAI logo"
+        style={{
+          width: "clamp(60px, 8.25vw, 84px)",
+          height: "clamp(60px, 8.25vw, 84px)",
+          objectFit: "contain",
+          flexShrink: 0,
+          filter:
+            "drop-shadow(0 4px 14px rgba(37,99,235,0.35)) drop-shadow(0 2px 6px rgba(0,0,0,0.5))",
+        }}
+        onError={(e) => {
+          e.currentTarget.style.display = "none";
+        }}
+      />
+
+      <div
+        className="relative flex items-center"
+        style={{
+          ...glassStyle,
+          padding: "clamp(8px, 1.2vw, 10px) clamp(14px, 2vw, 22px)",
+          borderRadius: "999px",
+        }}
+      >
+        <div
+          className="absolute inset-0 rounded-full pointer-events-none"
+          style={innerGlow}
+        />
+        <span
+          className="relative z-10 whitespace-nowrap leading-none font-bold tracking-tight"
+          style={{ fontSize: "clamp(13px, 1.8vw, 16px)" }}
+        >
+          <span style={{ color: "#e8185a" }}>Onco</span>
+          <span style={{ color: "#4c82f7" }}>Trace</span>
+          <span style={{ color: "#e8185a" }}>AI</span>
+        </span>
+      </div>
+    </a>
+  );
+
   return (
     <header
       className={`
@@ -250,53 +272,39 @@ export default function Navbar() {
       `}
       style={{ fontFamily: "'DM Sans', sans-serif" }}
     >
-      <div className="relative flex items-center justify-between w-full max-w-[1280px] mx-auto h-[56px] sm:h-[60px]">
+      <div className="relative flex items-center justify-between w-full max-w-[1280px] mx-auto">
+        <LogoBlock />
 
-        {/* ════════ LOGO ════════ */}
-        <a
-          href="#"
-          onClick={(e) => handleNav(e, "#")}
-          className="
-            pointer-events-auto relative z-10
-            flex items-center gap-2 sm:gap-2.5 shrink-0 no-underline
-            h-[44px] sm:h-[48px] px-4 sm:px-5 rounded-full
-          "
-          style={glassStyle}
-        >
-          <div className="absolute inset-0 rounded-full pointer-events-none" style={innerGlow} />
-          <img
-            src="/onco-logo.png"
-            alt="OncoTraceAI"
-            className="relative z-10 w-7 h-7 sm:w-8 sm:h-8 object-contain rounded-md shrink-0"
-            onError={(e) => { e.currentTarget.style.display = "none"; }}
-          />
-          <span
-            className="relative z-10 text-[14px] sm:text-[15.5px] font-bold tracking-tight whitespace-nowrap leading-none"
-            style={{ color: "rgba(255,255,255,0.94)" }}
-          >
-            Onco<span style={{ color: "#2563EB" }}>TraceAI</span>
-          </span>
-        </a>
-
-        {/* ════════ DESKTOP CENTER LINKS ════════ */}
         <ul
           className="
             pointer-events-auto
             hidden lg:flex items-center gap-0.5 list-none m-0 shrink-0
             absolute left-1/2 -translate-x-1/2
-            px-1.5 py-1.5 rounded-full h-[48px]
+            px-1.5 py-1.5 rounded-full
           "
-          style={{ ...glassStyle, background: "rgba(4,12,32,0.85)" }}
+          style={{
+            ...glassStyle,
+            background: "rgba(4,12,32,0.85)",
+            height: "clamp(44px, 6vw, 52px)",
+          }}
         >
-          <div className="absolute inset-0 rounded-full pointer-events-none" style={innerGlow} />
+          <div
+            className="absolute inset-0 rounded-full pointer-events-none"
+            style={innerGlow}
+          />
 
           {NAV_LINKS.map((link) => {
-            const isActive = link.dropdown ? isProductsActive : active === link.href;
+            const isActive = link.dropdown
+              ? isProductsActive
+              : active === link.href;
 
-            /* ── PRODUCTS with dropdown ── */
             if (link.dropdown) {
               return (
-                <li key={link.label} className="relative z-10" ref={dropdownRef}>
+                <li
+                  key={link.label}
+                  className="relative z-10"
+                  ref={dropdownRef}
+                >
                   <button
                     onClick={() => setDropdownOpen((o) => !o)}
                     onMouseEnter={() => {
@@ -304,7 +312,10 @@ export default function Navbar() {
                       setDropdownOpen(true);
                     }}
                     onMouseLeave={() => {
-                      dropdownTimer.current = setTimeout(() => setDropdownOpen(false), 180);
+                      dropdownTimer.current = setTimeout(
+                        () => setDropdownOpen(false),
+                        180
+                      );
                     }}
                     className="
                       inline-flex items-center
@@ -314,25 +325,21 @@ export default function Navbar() {
                       bg-transparent outline-none
                     "
                     style={isActive ? activeStyle : inactiveStyle}
-                    onMouseEnterCapture={(e) => {
-                      if (!isActive) e.currentTarget.style.color = "rgba(210,225,255,0.88)";
-                    }}
-                    onMouseLeaveCapture={(e) => {
-                      if (!isActive) e.currentTarget.style.color = "rgba(160,190,255,0.58)";
-                    }}
                   >
                     {link.label}
                     <ChevronDown open={dropdownOpen} />
                   </button>
 
-                  {/* ── Desktop Dropdown Panel ── */}
                   <div
                     onMouseEnter={() => {
                       clearTimeout(dropdownTimer.current);
                       setDropdownOpen(true);
                     }}
                     onMouseLeave={() => {
-                      dropdownTimer.current = setTimeout(() => setDropdownOpen(false), 180);
+                      dropdownTimer.current = setTimeout(
+                        () => setDropdownOpen(false),
+                        180
+                      );
                     }}
                     className="absolute top-[calc(100%+10px)] left-1/2 -translate-x-1/2"
                     style={{
@@ -343,7 +350,6 @@ export default function Navbar() {
                       transition: "opacity 0.22s ease, transform 0.22s ease",
                     }}
                   >
-                    {/* Arrow */}
                     <div
                       className="absolute left-1/2 -translate-x-1/2"
                       style={{
@@ -369,7 +375,6 @@ export default function Navbar() {
                       }}
                     />
 
-                    {/* Panel */}
                     <div
                       className="relative rounded-[18px] overflow-hidden p-1.5"
                       style={{
@@ -388,45 +393,57 @@ export default function Navbar() {
                             key={item.href}
                             href={item.href}
                             onClick={(e) => handleNav(e, item.href)}
-                            className="
-                              flex items-start gap-3
-                              px-4 py-3 rounded-[13px]
-                              no-underline cursor-pointer
-                              transition-all duration-200 group
-                            "
+                            className="flex items-start gap-3 px-4 py-3 rounded-[13px] no-underline cursor-pointer transition-all duration-200 group"
                             style={{
-                              background: isItemActive ? "rgba(37,99,235,0.16)" : "transparent",
-                              border: isItemActive ? "1px solid rgba(37,99,235,0.30)" : "1px solid transparent",
+                              background: isItemActive
+                                ? "rgba(37,99,235,0.16)"
+                                : "transparent",
+                              border: isItemActive
+                                ? "1px solid rgba(37,99,235,0.30)"
+                                : "1px solid transparent",
                             }}
                             onMouseEnter={(e) => {
                               if (!isItemActive) {
-                                e.currentTarget.style.background = "rgba(37,99,235,0.10)";
-                                e.currentTarget.style.border = "1px solid rgba(37,99,235,0.18)";
+                                e.currentTarget.style.background =
+                                  "rgba(37,99,235,0.10)";
+                                e.currentTarget.style.border =
+                                  "1px solid rgba(37,99,235,0.18)";
                               }
                             }}
                             onMouseLeave={(e) => {
                               if (!isItemActive) {
-                                e.currentTarget.style.background = "transparent";
-                                e.currentTarget.style.border = "1px solid transparent";
+                                e.currentTarget.style.background =
+                                  "transparent";
+                                e.currentTarget.style.border =
+                                  "1px solid transparent";
                               }
                             }}
                           >
                             <span
                               className="text-[18px] leading-none mt-0.5 shrink-0"
-                              style={{ filter: "drop-shadow(0 0 6px rgba(37,99,235,0.5))" }}
+                              style={{
+                                filter:
+                                  "drop-shadow(0 0 6px rgba(37,99,235,0.5))",
+                              }}
                             >
                               {item.icon}
                             </span>
                             <div>
                               <div
                                 className="text-[13px] font-medium leading-none mb-1"
-                                style={{ color: isItemActive ? "#fff" : "rgba(210,225,255,0.90)" }}
+                                style={{
+                                  color: isItemActive
+                                    ? "#fff"
+                                    : "rgba(210,225,255,0.90)",
+                                }}
                               >
                                 {item.label}
                               </div>
                               <div
                                 className="text-[11.5px] leading-snug"
-                                style={{ color: "rgba(140,170,220,0.55)" }}
+                                style={{
+                                  color: "rgba(140,170,220,0.55)",
+                                }}
                               >
                                 {item.desc}
                               </div>
@@ -440,25 +457,22 @@ export default function Navbar() {
               );
             }
 
-            /* ── Regular links ── */
             return (
               <li key={link.label} className="relative z-10">
                 <a
                   href={link.href}
                   onClick={(e) => handleNav(e, link.href)}
-                  className="
-                    inline-flex items-center
-                    px-4 xl:px-5 py-[7px] rounded-full
-                    text-[13px] xl:text-[13.5px] leading-none whitespace-nowrap
-                    no-underline cursor-pointer
-                    transition-all duration-200
-                  "
+                  className="inline-flex items-center px-4 xl:px-5 py-[7px] rounded-full text-[13px] xl:text-[13.5px] leading-none whitespace-nowrap no-underline cursor-pointer transition-all duration-200"
                   style={isActive ? activeStyle : inactiveStyle}
                   onMouseEnter={(e) => {
-                    if (!isActive) e.currentTarget.style.color = "rgba(210,225,255,0.88)";
+                    if (!isActive)
+                      e.currentTarget.style.color =
+                        "rgba(210,225,255,0.88)";
                   }}
                   onMouseLeave={(e) => {
-                    if (!isActive) e.currentTarget.style.color = "rgba(160,190,255,0.58)";
+                    if (!isActive)
+                      e.currentTarget.style.color =
+                        "rgba(160,190,255,0.58)";
                   }}
                 >
                   {link.label}
@@ -468,60 +482,65 @@ export default function Navbar() {
           })}
         </ul>
 
-        {/* ════════ RIGHT SIDE ════════ */}
         <div className="relative flex items-center gap-2 sm:gap-2.5 shrink-0 z-10">
-          {/* Desktop CTA */}
           <a
             href="#cta"
             onClick={(e) => handleNav(e, "#cta")}
             className="
               pointer-events-auto
               hidden lg:inline-flex items-center
-              px-6 xl:px-7 py-2.5 rounded-full
+              px-6 xl:px-7 rounded-full
               text-[13px] xl:text-[13.5px] font-medium tracking-wide text-white
               no-underline cursor-pointer whitespace-nowrap
               transition-all duration-200
               hover:-translate-y-px active:translate-y-0
             "
             style={{
-              background: "linear-gradient(135deg, #2563EB 0%, #1d4ed8 100%)",
+              height: "clamp(44px, 6vw, 52px)",
+              background:
+                "linear-gradient(135deg, #2563EB 0%, #1d4ed8 100%)",
               border: "1px solid rgba(59,130,246,0.48)",
               boxShadow:
                 "0 0 22px rgba(37,99,235,0.38), 0 3px 10px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.12)",
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = "linear-gradient(135deg, #3b82f6 0%, #2563EB 100%)";
+              e.currentTarget.style.background =
+                "linear-gradient(135deg, #3b82f6 0%, #2563EB 100%)";
               e.currentTarget.style.boxShadow =
                 "0 0 32px rgba(37,99,235,0.55), 0 5px 18px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.15)";
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.background = "linear-gradient(135deg, #2563EB 0%, #1d4ed8 100%)";
+              e.currentTarget.style.background =
+                "linear-gradient(135deg, #2563EB 0%, #1d4ed8 100%)";
               e.currentTarget.style.boxShadow =
                 "0 0 22px rgba(37,99,235,0.38), 0 3px 10px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.12)";
             }}
           >
-            Get in Touch
+            Partner with us
           </a>
 
-          {/* Hamburger */}
           <button
             onClick={() => setMenuOpen((o) => !o)}
             aria-label="Toggle menu"
             className="
               pointer-events-auto
               lg:hidden flex items-center justify-center
-              w-[38px] h-[38px] rounded-full cursor-pointer
+              w-[42px] h-[42px] rounded-full cursor-pointer
               transition-all duration-200 active:scale-90
             "
             style={{
               border: "1px solid rgba(37,99,235,0.30)",
-              background: menuOpen ? "rgba(37,99,235,0.20)" : "rgba(37,99,235,0.10)",
+              background: menuOpen
+                ? "rgba(37,99,235,0.20)"
+                : "rgba(37,99,235,0.10)",
               color: "rgba(160,200,255,0.85)",
             }}
           >
             <span
               className="transition-transform duration-300"
-              style={{ transform: menuOpen ? "rotate(90deg)" : "rotate(0)" }}
+              style={{
+                transform: menuOpen ? "rotate(90deg)" : "rotate(0)",
+              }}
             >
               {menuOpen ? <CloseIcon /> : <MenuIcon />}
             </span>
@@ -529,24 +548,27 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* ════════ MOBILE DROPDOWN ════════ */}
       <div
         ref={mobileRef}
         className={`
           lg:hidden pointer-events-auto
-          absolute top-[68px] sm:top-[76px] left-4 right-4 sm:left-5 sm:right-5
+          absolute left-4 right-4 sm:left-5 sm:right-5
           rounded-[22px] overflow-hidden
           transition-all duration-300 ease-in-out
-          ${menuOpen
-            ? "opacity-100 max-h-[600px] translate-y-0 scale-100"
-            : "opacity-0 max-h-0 -translate-y-3 scale-[0.98] pointer-events-none"
+          ${
+            menuOpen
+              ? "opacity-100 max-h-[600px] translate-y-0 scale-100"
+              : "opacity-0 max-h-0 -translate-y-3 scale-[0.98] pointer-events-none"
           }
         `}
         style={{
+          top: "calc(100% + 8px)",
           background: "rgba(4,10,28,0.96)",
           backdropFilter: "blur(28px) saturate(180%)",
           WebkitBackdropFilter: "blur(28px) saturate(180%)",
-          border: menuOpen ? "1px solid rgba(37,99,235,0.20)" : "1px solid transparent",
+          border: menuOpen
+            ? "1px solid rgba(37,99,235,0.20)"
+            : "1px solid transparent",
           boxShadow: menuOpen
             ? "0 0 32px rgba(37,99,235,0.14), 0 20px 60px rgba(0,0,0,0.60)"
             : "none",
@@ -555,34 +577,32 @@ export default function Navbar() {
         }}
       >
         {NAV_LINKS.map((link, i) => {
-          const isActive = link.dropdown ? isProductsActive : active === link.href;
+          const isActive = link.dropdown
+            ? isProductsActive
+            : active === link.href;
           const isLast = i === NAV_LINKS.length - 1;
 
-          /* ── Mobile Products accordion ── */
           if (link.dropdown) {
             return (
               <div key={link.label}>
-                {/* Products toggle row */}
                 <button
                   onClick={() => setMobileProductsOpen((o) => !o)}
-                  className="
-                    w-full flex items-center justify-between
-                    px-6 py-4 text-[14px] leading-none
-                    cursor-pointer transition-all duration-200
-                    bg-transparent outline-none
-                  "
+                  className="w-full flex items-center justify-between px-6 py-4 text-[14px] leading-none cursor-pointer transition-all duration-200 bg-transparent outline-none"
                   style={{
                     borderBottom: "1px solid rgba(37,99,235,0.09)",
-                    color: isActive ? "#ffffff" : "rgba(160,190,255,0.62)",
+                    color: isActive
+                      ? "#ffffff"
+                      : "rgba(160,190,255,0.62)",
                     fontWeight: isActive ? 500 : 400,
-                    background: isActive ? "rgba(37,99,235,0.08)" : "transparent",
+                    background: isActive
+                      ? "rgba(37,99,235,0.08)"
+                      : "transparent",
                   }}
                 >
                   <span>{link.label}</span>
                   <ChevronDown open={mobileProductsOpen} />
                 </button>
 
-                {/* Accordion sub-items */}
                 <div
                   style={{
                     maxHeight: mobileProductsOpen ? "200px" : "0px",
@@ -597,40 +617,48 @@ export default function Navbar() {
                         key={item.href}
                         href={item.href}
                         onClick={(e) => handleNav(e, item.href)}
-                        className="
-                          flex items-center gap-3
-                          pl-10 pr-6 py-3.5 text-[13.5px]
-                          no-underline cursor-pointer
-                          transition-all duration-200
-                        "
+                        className="flex items-center gap-3 pl-10 pr-6 py-3.5 text-[13.5px] no-underline cursor-pointer transition-all duration-200"
                         style={{
                           borderBottom:
                             idx < link.dropdown.length - 1
                               ? "1px solid rgba(37,99,235,0.06)"
                               : "1px solid rgba(37,99,235,0.09)",
-                          color: isItemActive ? "#ffffff" : "rgba(140,170,220,0.70)",
+                          color: isItemActive
+                            ? "#ffffff"
+                            : "rgba(140,170,220,0.70)",
                           fontWeight: isItemActive ? 500 : 400,
-                          background: isItemActive ? "rgba(37,99,235,0.10)" : "rgba(255,255,255,0.015)",
+                          background: isItemActive
+                            ? "rgba(37,99,235,0.10)"
+                            : "rgba(255,255,255,0.015)",
                         }}
                         onMouseEnter={(e) => {
                           if (!isItemActive) {
                             e.currentTarget.style.color = "#fff";
-                            e.currentTarget.style.background = "rgba(37,99,235,0.08)";
+                            e.currentTarget.style.background =
+                              "rgba(37,99,235,0.08)";
                           }
                         }}
                         onMouseLeave={(e) => {
                           if (!isItemActive) {
-                            e.currentTarget.style.color = "rgba(140,170,220,0.70)";
-                            e.currentTarget.style.background = "rgba(255,255,255,0.015)";
+                            e.currentTarget.style.color =
+                              "rgba(140,170,220,0.70)";
+                            e.currentTarget.style.background =
+                              "rgba(255,255,255,0.015)";
                           }
                         }}
                       >
-                        <span className="text-[16px] shrink-0">{item.icon}</span>
+                        <span className="text-[16px] shrink-0">
+                          {item.icon}
+                        </span>
                         <div>
-                          <div className="leading-none mb-0.5">{item.label}</div>
+                          <div className="leading-none mb-0.5">
+                            {item.label}
+                          </div>
                           <div
                             className="text-[11px] leading-snug"
-                            style={{ color: "rgba(120,150,200,0.50)" }}
+                            style={{
+                              color: "rgba(120,150,200,0.50)",
+                            }}
                           >
                             {item.desc}
                           </div>
@@ -638,7 +666,10 @@ export default function Navbar() {
                         {isItemActive && (
                           <span
                             className="ml-auto w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0"
-                            style={{ boxShadow: "0 0 8px rgba(37,99,235,0.6)" }}
+                            style={{
+                              boxShadow:
+                                "0 0 8px rgba(37,99,235,0.6)",
+                            }}
                           />
                         )}
                       </a>
@@ -649,33 +680,35 @@ export default function Navbar() {
             );
           }
 
-          /* ── Regular mobile links ── */
           return (
             <a
               key={link.label}
               href={link.href}
               onClick={(e) => handleNav(e, link.href)}
-              className="
-                flex items-center justify-between
-                px-6 py-4 text-[14px] leading-none
-                no-underline cursor-pointer
-                transition-all duration-200
-              "
+              className="flex items-center justify-between px-6 py-4 text-[14px] leading-none no-underline cursor-pointer transition-all duration-200"
               style={{
-                borderBottom: !isLast ? "1px solid rgba(37,99,235,0.09)" : "none",
-                color: isActive ? "#ffffff" : "rgba(160,190,255,0.62)",
+                borderBottom: !isLast
+                  ? "1px solid rgba(37,99,235,0.09)"
+                  : "none",
+                color: isActive
+                  ? "#ffffff"
+                  : "rgba(160,190,255,0.62)",
                 fontWeight: isActive ? 500 : 400,
-                background: isActive ? "rgba(37,99,235,0.08)" : "transparent",
+                background: isActive
+                  ? "rgba(37,99,235,0.08)"
+                  : "transparent",
               }}
               onMouseEnter={(e) => {
                 if (!isActive) {
                   e.currentTarget.style.color = "#fff";
-                  e.currentTarget.style.background = "rgba(37,99,235,0.07)";
+                  e.currentTarget.style.background =
+                    "rgba(37,99,235,0.07)";
                 }
               }}
               onMouseLeave={(e) => {
                 if (!isActive) {
-                  e.currentTarget.style.color = "rgba(160,190,255,0.62)";
+                  e.currentTarget.style.color =
+                    "rgba(160,190,255,0.62)";
                   e.currentTarget.style.background = "transparent";
                 }
               }}
@@ -684,7 +717,9 @@ export default function Navbar() {
               {isActive && (
                 <span
                   className="w-1.5 h-1.5 rounded-full bg-blue-500"
-                  style={{ boxShadow: "0 0 8px rgba(37,99,235,0.6)" }}
+                  style={{
+                    boxShadow: "0 0 8px rgba(37,99,235,0.6)",
+                  }}
                 />
               )}
             </a>
@@ -695,19 +730,15 @@ export default function Navbar() {
           <a
             href="#cta"
             onClick={(e) => handleNav(e, "#cta")}
-            className="
-              block w-full py-3 px-6 rounded-full
-              text-[13.5px] font-medium text-white text-center
-              no-underline cursor-pointer
-              transition-all duration-200 active:scale-[0.97]
-            "
+            className="block w-full py-3 px-6 rounded-full text-[13.5px] font-medium text-white text-center no-underline cursor-pointer transition-all duration-200 active:scale-[0.97]"
             style={{
-              background: "linear-gradient(135deg, #2563EB 0%, #1d4ed8 100%)",
+              background:
+                "linear-gradient(135deg, #2563EB 0%, #1d4ed8 100%)",
               border: "1px solid rgba(59,130,246,0.40)",
               boxShadow: "0 0 20px rgba(37,99,235,0.30)",
             }}
           >
-            Get in Touch
+            Partner with us
           </a>
         </div>
       </div>
