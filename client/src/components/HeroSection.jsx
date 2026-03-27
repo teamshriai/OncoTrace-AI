@@ -584,7 +584,7 @@ export default function HeroSection() {
                     opacity: 0.6,
                     textShadow: '0 0 12px rgba(255,140,50,0.25)',
                   }}>
-                  AI Prediction × Liquid Biopsy × Real-Time Monitoring
+                  AI Prediction  × Real-Time Monitoring
                 </span>
               </div>
 
