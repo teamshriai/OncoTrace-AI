@@ -39,12 +39,7 @@ export default function App() {
           <SolutionSection />
         </div>
 
-        <div className="relative">
-
-
-          <span id="liquid-biopsy" className="absolute -top-24 block" aria-hidden="true" />
-          <LiquidBiopsySection />
-        </div>
+        
 
         <div className="relative">
           <span id="case-study" className="absolute -top-24 block" aria-hidden="true" />
