@@ -8,6 +8,7 @@ const founder = {
 };
 
 const specialists = [
+  { name: "Molecular Biologist", role: "Genomics & Biomarker Expert", bio: "Studies molecular mechanisms and biomarkers to enable precision-driven cancer insights."},
   { name: "Oncologist", role: "Cancer Care Specialist", bio: "Leads cancer diagnosis, treatment planning, and patient care strategies."},
   { name: "Pathologist", role: "Diagnostic Expert", bio: "Analyzes tissue and lab samples to detect disease at the cellular level."},
   { name: "Radiologist", role: "Imaging Specialist", bio: "Interprets medical imaging to identify abnormalities and guide treatment."},
