@@ -1,91 +1,76 @@
 import useInView from "../hooks/useInView";
 
-const team = [
-  {
-    name: "Senapathi Palanisamy",
-    role: "CEO & Founder",
-    bio: "Founder of ViSolve and founder of Senas.net Pvt. Ltd",
-    initials: "SP",
-  },
-  {
-    name: "Vimal Prasath",
-    role: "Researcher & Developer",
-    bio: "Built realtime AI Oxidative stress prediction",
-    initials: "VP",
-  },
-  {
-    name: "Sri Vathsav",
-    role: "Researcher & Developer",
-    bio: "Built realtime AI Oxidative stress prediction",
-    initials: "SV",
-  },
-  {
-    name: "Anand Jyothis",
-    role: "Researcher & Developer Engineering",
-    bio: "Built realtime AI Oxidative stress prediction",
-    initials: "AJ",
-  },
-  {
-    name: "Thulasi",
-    role: "Researcher & Developer Engineering",
-    bio: "Built realtime AI Oxidative stress prediction",
-    initials: "T",
-  },
-    {
-    name: "Sri Minalini",
-    role: "Researcher & Developer Engineering",
-    bio: "Built realtime AI Oxidative stress prediction",
-    initials: "SM",
-  },
+const founder = {
+  name: "Sena Palanisamy",
+  role: "CEO & Founder",
+  bio: "Founder of ViSolve and founder of Senas.net Pvt. Ltd",
+  initials: "SP",
+};
+
+const advisory = [
+  { name: "Anand Jyothis", role: "Advisory Board", bio: "Built realtime AI Oxidative stress prediction", initials: "AJ" },
+  { name: "Vimal Prasath", role: "Advisory Board", bio: "Built realtime AI Oxidative stress prediction", initials: "VP" },
+  { name: "Sri Vathsav", role: "Advisory Board", bio: "Built realtime AI Oxidative stress prediction", initials: "SV" },
 ];
 
+const technical = [
+  { name: "Thulasi", role: "Technical Board", bio: "Built realtime AI Oxidative stress prediction", initials: "T" },
+  { name: "Sri Minalini", role: "Technical Board", bio: "Built realtime AI Oxidative stress prediction", initials: "SM" },
+];
+
+function Card({ member, delay, inView }) {
+  return (
+    <div
+      className={`rounded-xl border border-slate-200 bg-white p-6 text-center shadow-sm transition-all duration-500 hover:shadow-md ${
+        inView ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
+      }`}
+      style={{ transitionDelay: `${delay}ms` }}
+    >
+      <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-blue-100 text-sm font-bold text-blue-700">
+        {member.initials}
+      </div>
+      <h3 className="mt-3 text-sm font-semibold text-slate-900">{member.name}</h3>
+      <p className="mt-0.5 text-xs font-medium text-blue-600">{member.role}</p>
+      <p className="mt-2 text-xs leading-relaxed text-slate-500">{member.bio}</p>
+    </div>
+  );
+}
+
 export default function TeamSection() {
-  const [ref, inView] = useInView();
+  const [ref, inView] = useInView(0.1);
 
   return (
-    <section id="team" className="scroll-mt-20 bg-white py-24 lg:py-32">
-      <div className="mx-auto max-w-7xl px-6">
-        <div className="mx-auto max-w-2xl text-center">
-          <p className="text-sm font-semibold uppercase tracking-widest text-emerald-600">
-            Our Team
-          </p>
-          <h2 className="mt-4 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-            Built by clinicians &amp; Developers
-          </h2>
-          <p className="mt-4 text-base text-slate-500">
-            A multidisciplinary team united by the belief that smarter data
-            means healthier lives.
-          </p>
+    <section id="team" className="scroll-mt-20 bg-slate-50 py-24" ref={ref}>
+      <div className="mx-auto max-w-5xl px-6">
+        <div className="text-center">
+          <p className="text-xs font-semibold uppercase tracking-widest text-blue-600">Our Team</p>
+          <h2 className="mt-3 text-3xl font-bold text-slate-900">Built by clinicians &amp; developers</h2>
+          <p className="mt-3 text-sm text-slate-500">A multidisciplinary team united by the belief that smarter data means healthier lives.</p>
         </div>
 
-        <div
-          ref={ref}
-          className="mx-auto mt-16 grid max-w-4xl gap-8 sm:grid-cols-2 lg:grid-cols-4"
-        >
-          {team.map((m, i) => (
-            <div
-              key={m.name}
-              className={`rounded-2xl border border-slate-100 bg-slate-50 p-6 text-center transition-all duration-700 hover:shadow-md ${
-                inView
-                  ? "translate-y-0 opacity-100"
-                  : "translate-y-10 opacity-0"
-              }`}
-              style={{ transitionDelay: `${i * 100}ms` }}
-            >
-              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-lg font-bold text-emerald-700">
-                {m.initials}
-              </div>
-              <h3 className="mt-4 text-sm font-bold text-slate-900">
-                {m.name}
-              </h3>
-              <p className="mt-0.5 text-xs font-semibold text-emerald-600">
-                {m.role}
-              </p>
-              <p className="mt-3 text-xs leading-relaxed text-slate-500">
-                {m.bio}
-              </p>
-            </div>
-          ))}
+        <div className="mt-16">
+          <h3 className="mb-6 text-center text-xs font-semibold uppercase tracking-widest text-slate-400">Founder</h3>
+          <div className="mx-auto max-w-xs">
+            <Card member={founder} delay={0} inView={inView} />
+          </div>
+        </div>
+
+        <div className="mt-16">
+          <h3 className="mb-6 text-center text-xs font-semibold uppercase tracking-widest text-slate-400">Advisory Board</h3>
+          <div className="mx-auto grid max-w-3xl gap-6 sm:grid-cols-3">
+            {advisory.map((m, i) => (
+              <Card key={m.name} member={m} delay={(i + 1) * 100} inView={inView} />
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-16">
+          <h3 className="mb-6 text-center text-xs font-semibold uppercase tracking-widest text-slate-400">Technical Board</h3>
+          <div className="mx-auto grid max-w-2xl gap-6 sm:grid-cols-2">
+            {technical.map((m, i) => (
+              <Card key={m.name} member={m} delay={(i + 4) * 100} inView={inView} />
+            ))}
+          </div>
         </div>
       </div>
     </section>
