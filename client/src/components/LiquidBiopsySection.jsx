@@ -61,7 +61,7 @@ export default function LiquidBiopsyMonitoring() {
     { label: "Clinicians", desc: "Predictive insights to guide treatment decisions." },
     { label: "Researchers", desc: "Open-source oncology tools and shared datasets." },
     { label: "Pharma", desc: "Continuous, non-invasive monitoring endpoints." },
-    { label: "Innovators", desc: "An open, evolving oncology intelligence ecosystem." },
+    { label: "Open source contibutors", desc: "An open, evolving oncology intelligence ecosystem." },
   ];
 
   return (
@@ -130,32 +130,6 @@ export default function LiquidBiopsyMonitoring() {
         <div className="mt-14 h-px bg-gray-200" />
       </section>
 
-      {/* TECHNOLOGY */}
-      <section id="technology" className="max-w-6xl mx-auto px-6 py-14">
-        <Reveal>
-          <p className="text-[10px] font-semibold tracking-[.2em] uppercase text-blue-600 mb-3">Key Technologies</p>
-          <h2 className="text-[clamp(1.4rem,3vw,2.2rem)] font-bold tracking-tight text-gray-900 mb-10">Three Pillars of Precision Monitoring</h2>
-        </Reveal>
-        <div className="grid md:grid-cols-3 border-t-2 border-blue-600 border-l border-gray-200">
-          {TECH.map((t, i) => (
-            <Reveal key={i} delay={i * 0.08}>
-              <div className="border-r border-b border-gray-200 p-7 h-full hover:bg-blue-50/40 transition-colors group relative">
-                <span className="absolute top-4 right-4 text-[48px] font-extrabold text-gray-100 group-hover:text-blue-100 transition-colors select-none">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <div className="relative">
-                  <div className="w-8 h-8 rounded-full border-2 border-blue-200 flex items-center justify-center mb-5 group-hover:border-blue-400 transition-colors">
-                    <div className="w-2 h-2 rounded-full bg-blue-500" />
-                  </div>
-                  <h3 className="text-[15px] font-bold text-gray-900 mb-2 tracking-tight">{t.title}</h3>
-                  <p className="text-[13px] text-gray-500 leading-[1.75]">{t.body}</p>
-                </div>
-              </div>
-            </Reveal>
-          ))}
-        </div>
-        <div className="mt-14 h-px bg-gray-200" />
-      </section>
 
       {/* AUDIENCE */}
       <section id="audience" className="max-w-6xl mx-auto px-6 py-14">
@@ -185,31 +159,6 @@ export default function LiquidBiopsyMonitoring() {
         <div className="mt-14 h-px bg-gray-200" />
       </section>
 
-      {/* PHILOSOPHY + OPEN SOURCE — side by side */}
-      <section className="bg-gray-50">
-        <div className="max-w-6xl mx-auto px-6 py-14">
-          <div className="grid md:grid-cols-2 gap-px bg-gray-200">
-            <Reveal>
-              <div className="bg-white p-8 h-full">
-                <p className="text-[10px] font-semibold tracking-[.2em] uppercase text-blue-600 mb-3">Philosophy</p>
-                <h3 className="text-lg font-bold tracking-tight text-gray-900 mb-4">Data. Monitoring. Intelligence.</h3>
-                <p className="text-[13px] text-gray-500 leading-[1.8]">
-                  No treatments or prescriptions — purely data, monitoring, and intelligence. Combining AI with liquid biopsy to complement clinical expertise with continuous actionable insights.
-                </p>
-              </div>
-            </Reveal>
-            <Reveal delay={0.06}>
-              <div className="bg-white p-8 h-full">
-                <p className="text-[10px] font-semibold tracking-[.2em] uppercase text-blue-600 mb-3">Open Source & Not-for-Profit</p>
-                <h3 className="text-lg font-bold tracking-tight text-gray-900 mb-4">Accessible. Transparent. Collaborative.</h3>
-                <p className="text-[13px] text-gray-500 leading-[1.8]">
-                  An open-source, not-for-profit initiative welcoming partnerships with research institutions, healthcare organizations, and technology developers worldwide.
-                </p>
-              </div>
-            </Reveal>
-          </div>
-        </div>
-      </section>
 
       {/* MISSION & VISION */}
       <section id="mission" className="max-w-6xl mx-auto px-6 py-14">

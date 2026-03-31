@@ -584,7 +584,7 @@ export default function HeroSection() {
                     opacity: 0.6,
                     textShadow: '0 0 12px rgba(255,140,50,0.25)',
                   }}>
-                  AI Prediction  × Real-Time Monitoring
+                  AI assistance  × Real-Time Monitoring
                 </span>
               </div>
 
@@ -822,53 +822,9 @@ export default function HeroSection() {
         <section ref={secondRef} id="home"
           className="relative w-full min-h-[100vh] sm:min-h-[100vh] md:h-screen md:min-h-[600px] overflow-hidden bg-[#f0f2f5] font-['Source_Sans_3']">
           <div className="absolute inset-0 z-[1]">
-            <img src="/test.png" alt="AI-powered precision oncology platform"
+            <img src="/test1.png" alt="AI-powered precision oncology platform"
               className="w-full h-full object-cover block"
               style={{ objectPosition: '70% center' }} />
-            <div className="absolute inset-0 z-[2]" style={{
-              background: 'linear-gradient(to right, rgba(240,242,245,0.94) 0%, rgba(240,242,245,0.6) 35%, rgba(240,242,245,0.08) 62%, transparent 100%)'
-            }} />
-          </div>
-
-          <div className="absolute top-1/2 -translate-y-1/2 left-4 right-4 sm:left-6 sm:right-6
-                          md:left-8 md:right-auto lg:left-12 z-10 bg-white
-                          w-auto md:w-full md:max-w-[460px] lg:max-w-[500px]
-                          p-6 sm:p-8 md:px-12 md:py-10 lg:px-12 lg:pt-10 lg:pb-12
-                          shadow-[0_8px_48px_rgba(0,0,0,0.10),0_2px_8px_rgba(0,0,0,0.04)]
-                          transition-all duration-[850ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
-            style={{ opacity: secondVisible ? 1 : 0, marginTop: secondVisible ? '0px' : '32px' }}>
-            <div className="w-16 h-[5px] bg-[#c0392b] mb-6 rounded-[1px]" />
-            <h2 className="font-['Merriweather'] text-[1.35rem] sm:text-2xl md:text-[clamp(1.55rem,2.8vw,2.2rem)]
-                           font-bold text-[#1565c0] leading-[1.22] tracking-[-0.01em] m-0 mb-5">
-              From Risk Prediction to<br />Real-Time Cancer Tracking
-            </h2>
-            <p className="font-['Source_Sans_3'] text-sm sm:text-[14.5px] md:text-[15.5px]
-                          text-[#4a4a4a] leading-[1.75] font-normal m-0 mb-6 sm:mb-8">
-              OncoTrace-AI, built under Shri-AI, brings together two
-              complementary approaches into a unified precision oncology
-              platform. Our AI-based cancer risk prediction uses X-ray
-              imaging data to forecast breast cancer risk over the next
-              5 years — and is currently live. Our liquid biopsy-powered
-              real-time monitoring, now in R&D, tracks cancer progression
-              non-invasively and continuously for diagnosed patients. We
-              don't prescribe treatments. We deliver precision intelligence
-              that empowers patients, clinicians, and pharmaceutical teams
-              to make smarter decisions — open source and built by a
-              multidisciplinary team of engineers, clinicians, and
-              oncologists.
-            </p>
-            <button className="inline-flex items-center gap-2 bg-[#c0392b] text-white
-                               font-['Source_Sans_3'] text-[13px] sm:text-sm font-semibold tracking-[0.04em]
-                               px-5 sm:px-7 py-3 sm:py-3.5 border-none rounded-[2px] cursor-pointer
-                               hover:bg-[#a93226] hover:-translate-y-px
-                               hover:shadow-[0_6px_20px_rgba(192,57,43,0.3)]
-                               transition-all duration-200 ease-in-out w-full sm:w-auto
-                               justify-center sm:justify-start">
-              <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-                <path d="M4 8h8M8 4l4 4-4 4" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              Collaborate With Us
-            </button>
           </div>
           <div className="absolute bottom-0 left-0 right-0 h-px bg-[#d0d4da] z-20" />
         </section>

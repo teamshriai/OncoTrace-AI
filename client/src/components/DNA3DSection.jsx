@@ -111,6 +111,7 @@ export default function DNA3DSection() {
   const headingRef = useRef();
   const scrollHintRef = useRef();
   const textTrackRef = useRef();
+  const initialOffsetRef = useRef(null);
 
   useEffect(() => {
     const onScroll = () => {
@@ -146,9 +147,35 @@ export default function DNA3DSection() {
       }
 
       if (textTrackRef.current) {
+        // Calculate initial offset to show panels 1 & 2 on first load
+        if (initialOffsetRef.current === null) {
+          const trackEl = textTrackRef.current;
+          const children = trackEl.children;
+          if (children.length >= 2) {
+            // Get the gap between items
+            const child0Rect = children[0].getBoundingClientRect();
+            const child1Rect = children[1].getBoundingClientRect();
+            const trackRect = trackEl.getBoundingClientRect();
+
+            // Width from start of track to end of second panel
+            const panel1Start = child0Rect.left - trackRect.left;
+            const panel2End = child1Rect.right - trackRect.left;
+            const twoCardSpan = panel2End - panel1Start;
+
+            const vw = window.innerWidth;
+            // Center the two panels in the viewport
+            initialOffsetRef.current = (vw - twoCardSpan) / 2 - panel1Start;
+          } else {
+            initialOffsetRef.current = 0;
+          }
+        }
+
         const trackW = textTrackRef.current.scrollWidth;
         const vw = window.innerWidth;
-        const x = vw - progress * (vw + trackW);
+        const startX = initialOffsetRef.current;
+        // End position: fully scrolled out to the left
+        const endX = -(trackW);
+        const x = startX + progress * (endX - startX);
         textTrackRef.current.style.transform = `translate3d(${x}px, 0, 0)`;
       }
 
@@ -157,12 +184,20 @@ export default function DNA3DSection() {
 
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll, { passive: true });
+
+    // Recalculate initial offset on resize
+    const onResize = () => {
+      initialOffsetRef.current = null;
+    };
+    window.addEventListener("resize", onResize, { passive: true });
+
     onScroll();
     raf = requestAnimationFrame(animate);
 
     return () => {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
+      window.removeEventListener("resize", onResize);
       cancelAnimationFrame(raf);
     };
   }, []);
