@@ -7,15 +7,10 @@ const founder = {
   initials: "SP",
 };
 
-const advisory = [
-  { name: "Anand Jyothis", role: "Advisory Board", bio: "Built realtime AI Oxidative stress prediction", initials: "AJ" },
-  { name: "Vimal Prasath", role: "Advisory Board", bio: "Built realtime AI Oxidative stress prediction", initials: "VP" },
-  { name: "Sri Vathsav", role: "Advisory Board", bio: "Built realtime AI Oxidative stress prediction", initials: "SV" },
-];
-
-const technical = [
-  { name: "Thulasi", role: "Technical Board", bio: "Built realtime AI Oxidative stress prediction", initials: "T" },
-  { name: "Sri Minalini", role: "Technical Board", bio: "Built realtime AI Oxidative stress prediction", initials: "SM" },
+const specialists = [
+  { name: "Oncologist", role: "Cancer Care Specialist", bio: "Leads cancer diagnosis, treatment planning, and patient care strategies."},
+  { name: "Pathologist", role: "Diagnostic Expert", bio: "Analyzes tissue and lab samples to detect disease at the cellular level."},
+  { name: "Radiologist", role: "Imaging Specialist", bio: "Interprets medical imaging to identify abnormalities and guide treatment."},
 ];
 
 function Card({ member, delay, inView }) {
@@ -58,17 +53,8 @@ export default function TeamSection() {
         <div className="mt-16">
           <h3 className="mb-6 text-center text-xs font-semibold uppercase tracking-widest text-slate-400">Advisory Board</h3>
           <div className="mx-auto grid max-w-3xl gap-6 sm:grid-cols-3">
-            {advisory.map((m, i) => (
+            {specialists.map((m, i) => (
               <Card key={m.name} member={m} delay={(i + 1) * 100} inView={inView} />
-            ))}
-          </div>
-        </div>
-
-        <div className="mt-16">
-          <h3 className="mb-6 text-center text-xs font-semibold uppercase tracking-widest text-slate-400">Technical Board</h3>
-          <div className="mx-auto grid max-w-2xl gap-6 sm:grid-cols-2">
-            {technical.map((m, i) => (
-              <Card key={m.name} member={m} delay={(i + 4) * 100} inView={inView} />
             ))}
           </div>
         </div>
