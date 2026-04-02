@@ -1,14 +1,11 @@
-// components/SolutionSection.tsx
 import { useState, useEffect, useRef } from "react";
 
 const SPRING = "cubic-bezier(0.16, 1, 0.3, 1)";
-const SMOOTH = "cubic-bezier(0.25, 0.46, 0.45, 0.94)";
 
-/* ═══ useInView hook (self-contained) ═══ */
+/* ═══ useInView hook ═══ */
 function useInView(threshold = 0.15) {
   const ref = useRef(null);
   const [inView, setInView] = useState(false);
-
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -24,48 +21,13 @@ function useInView(threshold = 0.15) {
     observer.observe(el);
     return () => observer.disconnect();
   }, [threshold]);
-
   return [ref, inView];
 }
-
-/* ═══ Data ═══ */
-const capabilities = [
-  {
-    num: "01",
-    title: "AI-Based Risk Prediction",
-    desc: "X-ray imaging data combined with Artificial Intelligence to predict the risk of developing breast cancer over the next 5 years — fully developed and currently live.",
-    badge: "LIVE",
-  },
-  {
-    num: "02",
-    title: "Liquid Biopsy Monitoring",
-    desc: "Non-invasive capture of real-time biological signals — circulating tumor DNA, proteins, and critical biomarkers — enabling continuous cancer progression tracking for diagnosed patients.",
-    badge: "R&D",
-  },
-  {
-    num: "03",
-    title: "Real-Time Precision Monitoring",
-    desc: "Continuous tracking across the entire disease lifecycle — from early risk assessment to progression monitoring — delivering actionable insights as cancer evolves and responds.",
-  },
-  {
-    num: "04",
-    title: "Open Source Platform",
-    desc: "Built as an open-source, not-for-profit platform ensuring accessibility, transparency, and global collaborative innovation across the oncology ecosystem.",
-  },
-];
-
-const audiences = [
-  { role: "Clinicians", desc: "Access predictive risk insights and real-time monitoring data for faster, more informed clinical decisions." },
-  { role: "Patients", desc: "Gain clarity from early risk prediction through continuous, transparent precision monitoring of cancer progression." },
-  { role: "Researchers", desc: "Build, test, and collaborate using open-source oncology tools spanning prediction and real-time monitoring." },
-  { role: "Pharma Companies", desc: "Track treatment effectiveness through continuous monitoring and longitudinal data across the disease lifecycle." },
-];
 
 /* ═══ Parallax Hook ═══ */
 function useParallax(speed = 0.1) {
   const [offset, setOffset] = useState(0);
   const ref = useRef(null);
-
   useEffect(() => {
     const handleScroll = () => {
       if (ref.current) {
@@ -78,42 +40,21 @@ function useParallax(speed = 0.1) {
     handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
   }, [speed]);
-
-  return [ref, offset];
+  return [ref, offset] ;
 }
 
-/* ═══ Mouse Glow Hook ═══ */
-function useMouseGlow() {
-  const ref = useRef(null);
-  const [pos, setPos] = useState({ x: 0, y: 0 });
-  const [active, setActive] = useState(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const move = (e) => {
-      const rect = el.getBoundingClientRect();
-      setPos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
-    };
-    const enter = () => setActive(true);
-    const leave = () => setActive(false);
-    el.addEventListener("mousemove", move);
-    el.addEventListener("mouseenter", enter);
-    el.addEventListener("mouseleave", leave);
-    return () => {
-      el.removeEventListener("mousemove", move);
-      el.removeEventListener("mouseenter", enter);
-      el.removeEventListener("mouseleave", leave);
-    };
-  }, []);
-
-  return [ref, pos, active];
-}
+/* ═══ Data ═══ */
+const audiences = [
+  { role: "Clinicians", desc: "Access predictive risk insights and real-time monitoring data for faster, more informed clinical decisions." },
+  { role: "Patients", desc: "Gain clarity from early risk prediction through continuous, transparent precision monitoring of cancer progression." },
+  { role: "Researchers", desc: "Build, test, and collaborate using open-source oncology tools spanning prediction and real-time monitoring." },
+  { role: "Pharma Companies", desc: "Track treatment effectiveness through continuous monitoring and longitudinal data across the disease lifecycle." },
+];
 
 /* ═══ Icons ═══ */
 function ScanIcon() {
   return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
       <rect x="3" y="3" width="18" height="18" rx="2" />
       <path d="M3 12h18M12 3v18" />
       <circle cx="12" cy="12" r="3" />
@@ -122,32 +63,31 @@ function ScanIcon() {
 }
 function DropletIcon() {
   return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
       <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" />
     </svg>
   );
 }
 function PulseIcon() {
   return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
       <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
     </svg>
   );
 }
 function GlobeIcon() {
   return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="12" cy="12" r="10" /><path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" />
     </svg>
   );
 }
-const capIcons = [ScanIcon, DropletIcon, PulseIcon, GlobeIcon];
 
 /* ═══ Floating Particle Component ═══ */
 function FloatingParticles({ count = 6, color = "blue" }) {
   const particles = Array.from({ length: count }, (_, i) => ({
     id: i,
-    size: Math.random() * 4 + 2,
+    size: Math.random() * 3 + 1.5,
     x: Math.random() * 100,
     y: Math.random() * 100,
     duration: Math.random() * 8 + 12,
@@ -159,7 +99,7 @@ function FloatingParticles({ count = 6, color = "blue" }) {
       {particles.map((p) => (
         <div
           key={p.id}
-          className="absolute rounded-full animate-pulse"
+          className="absolute rounded-full"
           style={{
             width: p.size,
             height: p.size,
@@ -167,8 +107,8 @@ function FloatingParticles({ count = 6, color = "blue" }) {
             top: `${p.y}%`,
             background:
               color === "blue"
-                ? `rgba(59, 130, 246, ${0.1 + Math.random() * 0.15})`
-                : `rgba(255,255,255,${0.05 + Math.random() * 0.1})`,
+                ? `rgba(59, 130, 246, ${0.08 + Math.random() * 0.12})`
+                : `rgba(255,255,255,${0.04 + Math.random() * 0.08})`,
             animation: `floatParticle${p.id % 3} ${p.duration}s ease-in-out ${p.delay}s infinite`,
           }}
         />
@@ -185,69 +125,50 @@ function BentoHero({ inView }) {
   });
 
   return (
-    <div className="grid grid-cols-12 grid-rows-[auto] gap-3 sm:gap-4 lg:gap-5 auto-rows-min">
-
+    <div className="grid grid-cols-12 gap-2.5 sm:gap-3 lg:gap-3.5 auto-rows-min">
       {/* Cell 1: Main Headline */}
       <div
-        className={`col-span-12 lg:col-span-8 row-span-2 relative rounded-3xl overflow-hidden transition-all duration-[1800ms] ${
+        className={`col-span-12 lg:col-span-8 row-span-2 relative rounded-[1.75rem] overflow-hidden transition-all duration-[1600ms] ${
           inView
             ? "opacity-100 translate-x-0 translate-y-0 scale-100"
-            : "opacity-0 -translate-x-[120px] translate-y-8 scale-[0.92]"
+            : "opacity-0 -translate-x-[100px] translate-y-6 scale-[0.94]"
         }`}
         style={{
           ...t(0),
-          background: "linear-gradient(155deg, #eff6ff 0%, #dbeafe 40%, #bfdbfe 100%)",
+          background: "linear-gradient(155deg, #f2f7ff 0%, #e4efff 40%, #d8e6ff 100%)",
         }}
       >
-        <FloatingParticles count={8} />
+        <FloatingParticles count={6} />
         <div
-          className="pointer-events-none absolute inset-0"
-          style={{
-            background:
-              "radial-gradient(ellipse 60% 50% at 80% 20%, rgba(37,99,235,0.08) 0%, transparent 60%), radial-gradient(ellipse 40% 60% at 10% 90%, rgba(147,197,253,0.15) 0%, transparent 60%)",
-          }}
-        />
-        <div
-          className="pointer-events-none absolute inset-0 opacity-[0.03]"
+          className="pointer-events-none absolute inset-0 opacity-[0.025]"
           style={{
             backgroundImage:
               "linear-gradient(rgba(37,99,235,1) 1px, transparent 1px), linear-gradient(90deg, rgba(37,99,235,1) 1px, transparent 1px)",
-            backgroundSize: "40px 40px",
+            backgroundSize: "36px 36px",
           }}
         />
-
-        <div className="relative p-8 sm:p-10 lg:p-12 xl:p-14 flex flex-col justify-between min-h-[380px] lg:min-h-[440px]">
+        <div className="relative p-6 sm:p-8 lg:p-10 flex flex-col justify-between min-h-[300px] sm:min-h-[340px] lg:min-h-[380px]">
           <div
-            className={`transition-all duration-[1200ms] ${
-              inView ? "opacity-100 translate-y-0 blur-0" : "opacity-0 -translate-y-8 blur-sm"
+            className={`transition-all duration-[1100ms] ${
+              inView ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-6"
             }`}
-            style={t(300)}
+            style={t(200)}
           >
-            <span
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[10.5px] font-bold tracking-[0.14em] uppercase text-blue-700"
-              style={{
-                background: "rgba(37,99,235,0.08)",
-                border: "1px solid rgba(37,99,235,0.18)",
-              }}
-            >
+            <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[10px] font-bold tracking-[0.14em] uppercase text-blue-700 bg-blue-600/[0.07] border border-blue-600/[0.14]">
               <span className="h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse" />
-              OncoTrace-AI &middot; Open-Source &middot; Not-for-Profit
+              OncoTrace-AI · Open-Source · Not-for-Profit
             </span>
           </div>
-
           <div className="mt-auto">
-            <h2
-              className={`text-[2.2rem] sm:text-5xl md:text-[3.2rem] lg:text-[3.6rem] xl:text-[4rem] font-extrabold leading-[1.05] tracking-[-0.04em] transition-all duration-[1800ms] ${
-                inView
-                  ? "opacity-100 translate-y-0 blur-0"
-                  : "opacity-0 translate-y-16 blur-[3px]"
+            <h1
+              className={`text-[1.95rem] sm:text-[2.6rem] md:text-[2.9rem] lg:text-[3.1rem] font-[800] leading-[1.06] tracking-[-0.035em] transition-all duration-[1600ms] ${
+                inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
               }`}
-              style={t(400)}
+              style={t(300)}
             >
-              <span className="text-neutral-900 inline-block">Real-Time Precision</span>
+              <span className="text-neutral-900">Real-Time Precision</span>
               <br />
               <span
-                className="inline-block"
                 style={{
                   background: "linear-gradient(135deg, #1d4ed8 0%, #3b82f6 50%, #60a5fa 100%)",
                   WebkitBackgroundClip: "text",
@@ -257,14 +178,13 @@ function BentoHero({ inView }) {
               >
                 Monitoring
               </span>
-              <span className="text-neutral-900 inline-block"> in Oncology</span>
-            </h2>
-
+              <span className="text-neutral-900"> in Oncology</span>
+            </h1>
             <p
-              className={`mt-4 text-[15px] sm:text-base text-neutral-500 leading-[1.75] max-w-[34rem] transition-all duration-[1600ms] ${
-                inView ? "opacity-100 translate-y-0 blur-0" : "opacity-0 translate-y-10 blur-[2px]"
+              className={`mt-3.5 text-[14px] sm:text-[15px] text-neutral-600 leading-[1.7] max-w-[32rem] transition-all duration-[1400ms] ${
+                inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
               }`}
-              style={t(600)}
+              style={t(450)}
             >
               AI-driven cancer intelligence across the entire disease lifecycle — from
               predicting breast cancer risk using imaging data to real-time progression
@@ -274,354 +194,237 @@ function BentoHero({ inView }) {
         </div>
       </div>
 
-      {/* Cell 2: Image card */}
+      {/* Cell 2: AI Risk Prediction */}
       <div
-        className={`col-span-6 lg:col-span-4 relative rounded-3xl overflow-hidden transition-all duration-[1600ms] ${
+        className={`col-span-6 lg:col-span-4 relative rounded-[1.75rem] overflow-hidden transition-all duration-[1400ms] ${
           inView
             ? "opacity-100 translate-x-0 translate-y-0 scale-100"
-            : "opacity-0 translate-x-[100px] -translate-y-[80px] scale-[0.88]"
-        }`}
-        style={{ ...t(200), minHeight: "200px" }}
-      >
-        <img
-          src="/solution-bg.png"
-          alt="OncoTrace-AI precision oncology platform"
-          className={`absolute inset-0 w-full h-full object-cover transition-transform duration-[2500ms] ${
-            inView ? "scale-100" : "scale-110"
-          }`}
-          style={{ transitionTimingFunction: SMOOTH }}
-          onError={(e) => {
-            e.currentTarget.style.display = "none";
-            e.currentTarget.parentElement.style.background =
-              "linear-gradient(135deg, #1e3a5f 0%, #172554 100%)";
-          }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-blue-950/60 via-blue-900/20 to-transparent" />
-        <div className="absolute bottom-4 left-4 right-4">
-          <div
-            className={`flex items-center gap-2 px-3 py-2 rounded-xl transition-all duration-[1200ms] ${
-              inView ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-6 scale-90"
-            }`}
-            style={{
-              ...t(900),
-              background: "rgba(255,255,255,0.15)",
-              backdropFilter: "blur(12px)",
-              border: "1px solid rgba(255,255,255,0.2)",
-            }}
-          >
-            <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-[11px] font-semibold text-white/90 tracking-wide">
-              Risk Prediction Live
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* Cell 3: Orbital animation */}
-      <div
-        className={`col-span-6 lg:col-span-4 relative rounded-3xl overflow-hidden transition-all duration-[1600ms] ${
-          inView
-            ? "opacity-100 translate-x-0 translate-y-0 scale-100"
-            : "opacity-0 translate-x-[80px] translate-y-[80px] scale-[0.85]"
+            : "opacity-0 translate-x-[80px] -translate-y-[60px] scale-[0.9]"
         }`}
         style={{
-          ...t(350),
+          ...t(150),
           background: "linear-gradient(145deg, #1e3a5f 0%, #172554 50%, #0f172a 100%)",
-          minHeight: "200px",
-        }}
-      >
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div
-            className={`relative w-[140px] h-[140px] sm:w-[160px] sm:h-[160px] transition-all duration-[2000ms] ${
-              inView ? "scale-100 opacity-100" : "scale-50 opacity-0"
-            }`}
-            style={t(600)}
-          >
-            <div
-              className="absolute inset-0 rounded-full"
-              style={{ border: "1px solid rgba(96,165,250,0.2)" }}
-            >
-              <div
-                className="absolute inset-0 rounded-full animate-spin"
-                style={{ animationDuration: "18s" }}
-              >
-                <div className="absolute -top-[4px] left-1/2 -translate-x-1/2 h-2 w-2 rounded-full bg-blue-400 shadow-[0_0_14px_3px_rgba(96,165,250,0.5)]" />
-              </div>
-            </div>
-            <div
-              className="absolute inset-[18%] rounded-full"
-              style={{ border: "1px solid rgba(96,165,250,0.15)" }}
-            >
-              <div
-                className="absolute inset-0 rounded-full animate-spin"
-                style={{ animationDuration: "12s", animationDirection: "reverse" }}
-              >
-                <div className="absolute -bottom-[3px] left-1/2 -translate-x-1/2 h-1.5 w-1.5 rounded-full bg-sky-300 shadow-md shadow-sky-400/30" />
-              </div>
-            </div>
-            <div
-              className="absolute inset-[38%] rounded-full"
-              style={{ border: "1px solid rgba(96,165,250,0.25)" }}
-            >
-              <div
-                className="absolute inset-0 rounded-full animate-spin"
-                style={{ animationDuration: "7s" }}
-              >
-                <div className="absolute -right-[2px] top-1/2 -translate-y-1/2 h-1 w-1 rounded-full bg-blue-300/80" />
-              </div>
-            </div>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="relative">
-                <div
-                  className="absolute -inset-5 rounded-full bg-blue-500/15 blur-xl animate-pulse"
-                  style={{ animationDuration: "3s" }}
-                />
-                <div className="h-4 w-4 rounded-full bg-blue-500 shadow-[0_0_24px_6px_rgba(59,130,246,0.4)]" />
-                <div
-                  className="absolute inset-0 h-4 w-4 animate-ping rounded-full bg-blue-400/20"
-                  style={{ animationDuration: "2.5s" }}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-        <div
-          className={`absolute bottom-4 left-4 transition-all duration-[1200ms] ${
-            inView ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4"
-          }`}
-          style={t(800)}
-        >
-          <span className="text-[10px] font-bold tracking-[0.18em] uppercase text-blue-300/70">
-            AI Engine
-          </span>
-        </div>
-        <div
-          className={`absolute top-4 right-4 transition-all duration-[1200ms] ${
-            inView ? "opacity-100 translate-x-0" : "opacity-0 translate-x-4"
-          }`}
-          style={t(850)}
-        >
-          <span className="text-[10px] font-bold tracking-[0.18em] uppercase text-blue-400/50">
-            Neural
-          </span>
-        </div>
-      </div>
-
-      {/* Cell 4: CTA buttons */}
-      <div
-        className={`col-span-12 sm:col-span-6 lg:col-span-4 rounded-3xl overflow-hidden transition-all duration-[1500ms] ${
-          inView
-            ? "opacity-100 translate-x-0 translate-y-0 scale-100"
-            : "opacity-0 -translate-x-[100px] translate-y-[60px] scale-[0.9]"
-        }`}
-        style={{
-          ...t(450),
-          background: "linear-gradient(145deg, #ffffff 0%, #f0f7ff 100%)",
-          border: "1px solid rgba(37,99,235,0.1)",
-        }}
-      >
-        <div className="p-7 sm:p-8 flex flex-col justify-center h-full min-h-[180px]">
-          <p
-            className={`text-[13px] text-neutral-500 leading-[1.7] mb-5 transition-all duration-[1200ms] ${
-              inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-            }`}
-            style={t(650)}
-          >
-            Join the open oncology ecosystem — from AI-based risk prediction to
-            real-time cancer monitoring.
-          </p>
-          <div
-            className={`flex flex-wrap gap-2.5 transition-all duration-[1200ms] ${
-              inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
-            }`}
-            style={t(750)}
-          >
-            <a
-              href="#cta"
-              className="group relative inline-flex items-center gap-2 px-6 py-3 rounded-xl text-white text-[12.5px] font-bold overflow-hidden shadow-lg active:scale-[0.97] transition-all duration-300 hover:shadow-xl hover:shadow-blue-600/30 hover:-translate-y-0.5"
-              style={{
-                background: "linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%)",
-                boxShadow: "0 6px 20px rgba(37,99,235,0.28)",
-              }}
-            >
-              <span
-                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700"
-                style={{
-                  background:
-                    "linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.15) 50%, transparent 70%)",
-                  backgroundSize: "200% 100%",
-                  animation: "shimmer 1.5s infinite",
-                }}
-              />
-              <span className="relative z-10">Book a Demo</span>
-              <svg
-                className="w-3 h-3 transition-transform duration-300 group-hover:translate-x-1 relative z-10"
-                viewBox="0 0 16 16"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M3.5 8h9M8.5 3.5 13 8l-4.5 4.5" />
-              </svg>
-            </a>
-            <a
-              href="#solution-platform"
-              className="group inline-flex items-center gap-2 px-5 py-3 rounded-xl text-[12.5px] font-bold text-neutral-600 hover:text-blue-600 active:scale-[0.97] transition-all duration-300 hover:-translate-y-0.5"
-              style={{
-                background: "rgba(255,255,255,0.9)",
-                border: "1px solid rgba(0,0,0,0.08)",
-              }}
-            >
-              Explore Platform
-              <svg
-                className="w-3 h-3 opacity-40 group-hover:opacity-100 transition-all duration-300 group-hover:translate-x-0.5"
-                viewBox="0 0 16 16"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M5 11 11 5M11 11V5H5" />
-              </svg>
-            </a>
-          </div>
-        </div>
-      </div>
-
-      {/* Cell 5: Stats strip */}
-      <div
-        className={`col-span-12 sm:col-span-6 lg:col-span-5 rounded-3xl overflow-hidden transition-all duration-[1500ms] ${
-          inView
-            ? "opacity-100 translate-y-0 scale-100"
-            : "opacity-0 translate-y-[100px] scale-[0.88]"
-        }`}
-        style={{
-          ...t(400),
-          background: "linear-gradient(135deg, #1e40af 0%, #2563eb 50%, #3b82f6 100%)",
         }}
       >
         <FloatingParticles count={4} color="white" />
-        <div className="relative p-7 sm:p-8 min-h-[180px] flex flex-col justify-between">
-          <p
-            className={`text-[10.5px] font-bold tracking-[0.2em] uppercase text-blue-200/70 mb-4 transition-all duration-1000 ${
-              inView ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4"
-            }`}
-            style={t(600)}
-          >
+        <div className="relative h-full p-5 sm:p-6 flex flex-col justify-between min-h-[175px] sm:min-h-[185px]">
+          <div className="flex items-start justify-between">
+            <div
+              className={`flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-blue-300 transition-all duration-[1000ms] ${
+                inView ? "scale-100 opacity-100" : "scale-75 opacity-0"
+              }`}
+              style={t(400)}
+            >
+              <ScanIcon />
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span
+                className={`px-2 py-0.5 rounded-md text-[9px] font-bold tracking-[0.12em] uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/25 transition-all duration-[900ms] ${
+                  inView ? "opacity-100 scale-100" : "opacity-0 scale-75"
+                }`}
+                style={t(500)}
+              >
+                LIVE
+              </span>
+              <span className="text-[1.75rem] font-bold text-white/10 leading-none font-mono select-none">01</span>
+            </div>
+          </div>
+          <div>
+            <h3 className="text-[0.9rem] font-bold text-white mb-1.5">AI-Based Risk Prediction</h3>
+            <p className="text-[11.5px] leading-[1.65] text-blue-200/65">
+              X-ray imaging + AI to predict breast cancer risk over 5 years — live.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Cell 3: Liquid Biopsy */}
+      <div
+        className={`col-span-6 lg:col-span-4 relative rounded-[1.75rem] overflow-hidden transition-all duration-[1400ms] ${
+          inView
+            ? "opacity-100 translate-x-0 translate-y-0 scale-100"
+            : "opacity-0 translate-x-[70px] translate-y-[70px] scale-[0.88]"
+        }`}
+        style={{
+          ...t(250),
+          background: "linear-gradient(145deg, #0c1a3a 0%, #1e3a5f 100%)",
+        }}
+      >
+        <div className="absolute inset-0 flex items-center justify-center opacity-[0.18]">
+          <div className="relative w-[100px] h-[100px]">
+            <div className="absolute inset-0 rounded-full border border-blue-400/30">
+              <div className="absolute inset-0 rounded-full animate-spin" style={{ animationDuration: "18s" }}>
+                <div className="absolute -top-[3px] left-1/2 -translate-x-1/2 h-1.5 w-1.5 rounded-full bg-blue-400" />
+              </div>
+            </div>
+            <div className="absolute inset-[22%] rounded-full border border-blue-300/25">
+              <div className="absolute inset-0 rounded-full animate-spin" style={{ animationDuration: "12s", animationDirection: "reverse" }}>
+                <div className="absolute -bottom-[2.5px] left-1/2 -translate-x-1/2 h-1.25 w-1.25 rounded-full bg-sky-300" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="relative h-full p-5 sm:p-6 flex flex-col justify-between min-h-[175px] sm:min-h-[185px]">
+          <div className="flex items-start justify-between">
+            <div
+              className={`flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-blue-300 transition-all duration-[1000ms] ${
+                inView ? "scale-100 opacity-100" : "scale-75 opacity-0"
+              }`}
+              style={t(450)}
+            >
+              <DropletIcon />
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span
+                className={`px-2 py-0.5 rounded-md text-[9px] font-bold tracking-[0.12em] uppercase bg-amber-500/15 text-amber-300 border border-amber-500/22 transition-all duration-[900ms] ${
+                  inView ? "opacity-100 scale-100" : "opacity-0 scale-75"
+                }`}
+                style={t(550)}
+              >
+                R&D
+              </span>
+              <span className="text-[1.75rem] font-bold text-white/10 leading-none font-mono select-none">02</span>
+            </div>
+          </div>
+          <div>
+            <h3 className="text-[0.9rem] font-bold text-white mb-1.5">Liquid Biopsy Monitoring</h3>
+            <p className="text-[11.5px] leading-[1.65] text-blue-200/65">
+              ctDNA, proteins & biomarkers for continuous cancer progression tracking.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Cell 4: Real-Time Monitoring */}
+      <div
+        className={`col-span-12 sm:col-span-6 lg:col-span-4 rounded-[1.75rem] overflow-hidden transition-all duration-[1300ms] ${
+          inView ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-[50px] scale-[0.92]"
+        }`}
+        style={{
+          ...t(320),
+          background: "linear-gradient(145deg, #ffffff 0%, #f3f8ff 100%)",
+          border: "1px solid rgba(37,99,235,0.09)",
+        }}
+      >
+        <div className="p-5 sm:p-6 flex flex-col justify-between h-full min-h-[175px]">
+          <div className="flex items-start justify-between">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+              <PulseIcon />
+            </div>
+            <span className="text-[1.75rem] font-bold text-blue-100 leading-none font-mono select-none">03</span>
+          </div>
+          <div className="pt-3">
+            <h3 className="text-[0.9rem] font-bold text-neutral-800 mb-1.5">Real-Time Precision Monitoring</h3>
+            <p className="text-[11.5px] leading-[1.65] text-neutral-500">
+              Continuous tracking across the entire disease lifecycle — actionable insights as cancer evolves.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Cell 5: Stats */}
+      <div
+        className={`col-span-12 sm:col-span-6 lg:col-span-5 rounded-[1.75rem] overflow-hidden transition-all duration-[1300ms] ${
+          inView ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-[70px] scale-[0.9]"
+        }`}
+        style={{
+          ...t(280),
+          background: "linear-gradient(135deg, #1e40af 0%, #2563eb 50%, #3b82f6 100%)",
+        }}
+      >
+        <FloatingParticles count={3} color="white" />
+        <div className="relative p-5 sm:p-6 min-h-[175px] flex flex-col justify-between">
+          <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-blue-200/75 mb-3">
             Platform at a Glance
           </p>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-3.5">
             {[
-              { value: "5yr", label: "Risk Prediction Window" },
-              { value: "24/7", label: "Continuous Monitoring" },
+              { value: "5yr", label: "Risk Window" },
+              { value: "24/7", label: "Monitoring" },
               { value: "100%", label: "Open Source" },
-              { value: "Zero", label: "Invasive Procedures" },
+              { value: "Zero", label: "Invasive" },
             ].map((m, i) => (
               <div
                 key={m.label}
-                className={`transition-all duration-[1000ms] ${
-                  inView
-                    ? "opacity-100 translate-y-0 scale-100"
-                    : "opacity-0 translate-y-8 scale-90"
+                className={`transition-all duration-[900ms] ${
+                  inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
                 }`}
-                style={t(700 + i * 120)}
+                style={t(420 + i * 90)}
               >
-                <div className="text-xl sm:text-2xl font-black text-white leading-none tracking-tight">
-                  {m.value}
-                </div>
-                <div className="text-[10.5px] text-blue-200/60 mt-1 font-medium tracking-wide">
-                  {m.label}
-                </div>
+                <div className="text-[1.35rem] font-black text-white leading-none tracking-tight">{m.value}</div>
+                <div className="text-[10px] text-blue-200/65 mt-0.5 font-medium">{m.label}</div>
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      {/* Cell 6: Technology tags */}
+      {/* Cell 6: Open Source */}
       <div
-        className={`col-span-12 lg:col-span-3 rounded-3xl overflow-hidden transition-all duration-[1500ms] ${
-          inView
-            ? "opacity-100 translate-x-0 translate-y-0 scale-100"
-            : "opacity-0 translate-x-[120px] translate-y-[40px] scale-[0.85]"
+        className={`col-span-12 lg:col-span-3 rounded-[1.75rem] overflow-hidden transition-all duration-[1300ms] ${
+          inView ? "opacity-100 translate-x-0 scale-100" : "opacity-0 translate-x-[90px] scale-[0.88]"
         }`}
         style={{
-          ...t(500),
-          background: "linear-gradient(160deg, #f8fafc 0%, #e0ecff 100%)",
-          border: "1px solid rgba(37,99,235,0.08)",
+          ...t(380),
+          background: "linear-gradient(160deg, #f9fbff 0%, #e8f0ff 100%)",
+          border: "1px solid rgba(37,99,235,0.07)",
         }}
       >
-        <div className="p-6 sm:p-7 min-h-[180px] flex flex-col justify-between">
-          <p
-            className={`text-[10.5px] font-bold tracking-[0.2em] uppercase text-blue-600/60 mb-4 transition-all duration-1000 ${
-              inView ? "opacity-100" : "opacity-0"
-            }`}
-            style={t(700)}
-          >
-            Tracking
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {["X-ray AI", "ctDNA", "Proteins", "Exosomes", "cfRNA", "Methylation", "CTC"].map(
-              (tag, i) => (
+        <div className="p-5 sm:p-6 min-h-[175px] flex flex-col justify-between">
+          <div className="flex items-start justify-between mb-2.5">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+              <GlobeIcon />
+            </div>
+            <span className="text-[1.75rem] font-bold text-blue-100 leading-none font-mono select-none">04</span>
+          </div>
+          <div>
+            <h3 className="text-[0.875rem] font-bold text-neutral-800 mb-1">Open Source Platform</h3>
+            <p className="text-[11px] leading-[1.6] text-neutral-500 mb-3">
+              Not-for-profit, open & globally collaborative.
+            </p>
+            <div className="flex flex-wrap gap-1.25">
+              {["X-ray AI", "ctDNA", "Proteins", "cfRNA", "CTC"].map((tag, i) => (
                 <span
                   key={tag}
-                  className={`px-3 py-1.5 rounded-lg text-[10.5px] font-bold tracking-wider transition-all duration-[900ms] hover:scale-105 hover:-translate-y-0.5 cursor-default ${
-                    inView
-                      ? "opacity-100 scale-100 translate-y-0 blur-0"
-                      : "opacity-0 scale-75 translate-y-4 blur-[2px]"
+                  className={`px-2 py-0.75 rounded-lg text-[9.5px] font-bold tracking-wide transition-all duration-[800ms] ${
+                    inView ? "opacity-100 scale-100" : "opacity-0 scale-80"
                   }`}
                   style={{
-                    ...t(800 + i * 80),
-                    background: i === 0 ? "rgba(37,99,235,0.12)" : "rgba(255,255,255,0.8)",
+                    ...t(600 + i * 50),
+                    background: i === 0 ? "rgba(37,99,235,0.11)" : "rgba(255,255,255,0.85)",
                     color: i === 0 ? "#1d4ed8" : "#64748b",
-                    border: `1px solid ${i === 0 ? "rgba(37,99,235,0.2)" : "rgba(0,0,0,0.05)"}`,
+                    border: `1px solid ${i === 0 ? "rgba(37,99,235,0.18)" : "rgba(0,0,0,0.045)"}`,
                   }}
                 >
                   {tag}
                 </span>
-              )
-            )}
+              ))}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Cell 7: Bottom tagline */}
+      {/* Bottom tagline - compact */}
       <div
-        className={`col-span-12 rounded-2xl overflow-hidden transition-all duration-[1400ms] ${
-          inView ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-[60px] scale-[0.95]"
+        className={`col-span-12 rounded-2xl overflow-hidden transition-all duration-[1200ms] ${
+          inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-[40px]"
         }`}
         style={{
-          ...t(650),
-          background: "rgba(248,250,252,0.7)",
-          border: "1px solid rgba(37,99,235,0.06)",
+          ...t(520),
+          background: "rgba(248,250,252,0.9)",
+          border: "1px solid rgba(37,99,235,0.055)",
         }}
       >
-        <div className="px-7 py-5 flex flex-wrap items-center justify-between gap-4">
-          <p
-            className={`text-[11.5px] text-neutral-400 leading-[1.7] max-w-[34rem] transition-all duration-[1200ms] ${
-              inView ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-6"
-            }`}
-            style={t(800)}
-          >
-            An open-source platform connecting AI-based risk prediction with liquid
-            biopsy-powered monitoring — making precision oncology accessible, transparent,
-            and collaborative worldwide.
+        <div className="px-5 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-3">
+          <p className="text-[11px] text-neutral-500 leading-[1.65] max-w-[38rem]">
+            An open-source platform connecting AI-based risk prediction with liquid biopsy-powered monitoring — making precision oncology accessible, transparent, and collaborative worldwide.
           </p>
-          <div className="flex items-center gap-5">
-            {["AI Prediction", "Liquid Biopsy", "Precision Oncology"].map((tag, i) => (
-              <span
-                key={tag}
-                className={`hidden sm:inline text-[10px] tracking-[0.12em] uppercase text-neutral-300 font-semibold transition-all duration-[1000ms] ${
-                  inView ? "opacity-100 translate-x-0" : "opacity-0 translate-x-6"
-                }`}
-                style={t(900 + i * 120)}
-              >
-                {tag}
-              </span>
-            ))}
+          <div className="hidden md:flex items-center gap-4 text-[9.5px] tracking-[0.11em] uppercase text-neutral-400 font-semibold">
+            <span>AI Prediction</span>
+            <span>•</span>
+            <span>Liquid Biopsy</span>
+            <span>•</span>
+            <span>Precision Oncology</span>
           </div>
         </div>
       </div>
@@ -631,20 +434,14 @@ function BentoHero({ inView }) {
 
 /* ═══════════════════════════════════════════════════════
    MAIN COMPONENT
-   ═══════════════════════════════════════════════════════ */
-export default function SolutionSection() {
+═══════════════════════════════════════════════════════ */
+export default function App() {
   const [heroRef, heroIn] = useInView(0.08);
   const [aboutRef, aboutIn] = useInView(0.12);
-  const [capRef, capIn] = useInView(0.1);
   const [audRef, audIn] = useInView(0.1);
-  const [mvRef, mvIn] = useInView(0.1);
   const [ctaRef, ctaIn] = useInView(0.1);
 
   const [parallaxAbout, aboutOffset] = useParallax(0.04);
-  const [parallaxCap, capOffset] = useParallax(0.03);
-  const [parallaxMv, mvOffset] = useParallax(0.035);
-
-  const [glowRef, glowPos, glowActive] = useMouseGlow();
 
   const t = (inView, delay = 0) => ({
     transitionTimingFunction: SPRING,
@@ -653,697 +450,180 @@ export default function SolutionSection() {
 
   return (
     <div
-      className="bg-white text-neutral-900 antialiased selection:bg-blue-600 selection:text-white overflow-x-hidden"
-      style={{ fontFamily: "'DM Sans', sans-serif" }}
+      className="bg-[#fefefe] text-neutral-900 antialiased selection:bg-blue-600 selection:text-white overflow-x-hidden"
+      style={{ fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif" }}
     >
-      {/* Global keyframes */}
+      {/* Global styles */}
       <style>{`
-        @keyframes shimmer {
-          0% { background-position: -200% center; }
-          100% { background-position: 200% center; }
-        }
         @keyframes floatParticle0 {
-          0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.3; }
-          25% { transform: translate(15px, -20px) scale(1.3); opacity: 0.6; }
-          50% { transform: translate(-10px, -35px) scale(0.8); opacity: 0.4; }
-          75% { transform: translate(20px, -15px) scale(1.1); opacity: 0.5; }
+          0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.28; }
+          25% { transform: translate(12px, -16px) scale(1.25); opacity: 0.5; }
+          50% { transform: translate(-8px, -28px) scale(0.85); opacity: 0.35; }
+          75% { transform: translate(16px, -12px) scale(1.1); opacity: 0.42; }
         }
         @keyframes floatParticle1 {
-          0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.2; }
-          33% { transform: translate(-20px, -25px) scale(1.2); opacity: 0.5; }
-          66% { transform: translate(15px, -40px) scale(0.9); opacity: 0.3; }
+          0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.22; }
+          33% { transform: translate(-16px, -20px) scale(1.18); opacity: 0.44; }
+          66% { transform: translate(12px, -32px) scale(0.92); opacity: 0.28; }
         }
         @keyframes floatParticle2 {
-          0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.4; }
-          50% { transform: translate(25px, -30px) scale(1.4); opacity: 0.6; }
+          0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.32; }
+          50% { transform: translate(20px, -24px) scale(1.32); opacity: 0.52; }
         }
-        @keyframes pulseGlow {
-          0%, 100% { box-shadow: 0 0 20px rgba(59,130,246,0.15); }
-          50% { box-shadow: 0 0 40px rgba(59,130,246,0.3); }
-        }
+        * { font-optical-sizing: auto; }
       `}</style>
 
-      {/* ════════════════════════════════════════
-          HERO — Bento Grid
-          ════════════════════════════════════════ */}
-      <section className="relative overflow-hidden min-h-[100dvh] flex items-center">
-        <div className="pointer-events-none absolute inset-0">
+      {/* HERO */}
+      <section className="relative min-h-[100svh] flex items-center py-8 sm:py-10">
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
           <div
             className="absolute inset-0"
             style={{
               background:
-                "radial-gradient(ellipse 80% 60% at 70% 30%, rgba(219,234,254,0.50) 0%, transparent 65%), radial-gradient(ellipse 55% 50% at 20% 70%, rgba(191,219,254,0.30) 0%, transparent 60%)",
+                "radial-gradient(ellipse 75% 55% at 72% 28%, rgba(219,234,254,0.45) 0%, transparent 62%), radial-gradient(ellipse 50% 45% at 18% 72%, rgba(191,219,254,0.28) 0%, transparent 58%)",
             }}
           />
-          <div
-            className="absolute -top-32 right-[-5%] w-[600px] h-[600px] rounded-full bg-blue-200/20 blur-[140px] animate-pulse"
-            style={{ animationDuration: "8s" }}
-          />
-          <div
-            className="absolute bottom-[-15%] left-[-8%] w-[500px] h-[500px] rounded-full bg-blue-100/25 blur-[120px] animate-pulse"
-            style={{ animationDuration: "10s" }}
-          />
-          <div
-            className="absolute top-[50%] left-[50%] w-[300px] h-[300px] rounded-full bg-sky-200/15 blur-[100px] animate-pulse"
-            style={{ animationDuration: "6s" }}
-          />
+          <div className="absolute -top-24 right-[-4%] w-[520px] h-[520px] rounded-full bg-blue-200/18 blur-[120px]" />
+          <div className="absolute bottom-[-12%] left-[-6%] w-[440px] h-[440px] rounded-full bg-blue-100/22 blur-[105px]" />
         </div>
-
-        <div
-          ref={heroRef}
-          className="relative w-full max-w-[1400px] mx-auto px-5 sm:px-10 lg:px-16 xl:px-24 py-20 lg:py-24"
-        >
+        <div ref={heroRef} className="relative w-full max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
           <BentoHero inView={heroIn} />
         </div>
       </section>
 
-      {/* ════════════════════════════════════════
-          ABOUT
-          ════════════════════════════════════════ */}
-      <section className="relative overflow-hidden">
-        <div className="pointer-events-none absolute inset-0">
-          <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-blue-50/30 blur-[100px] rounded-full" />
-        </div>
-
-        <div
-          ref={aboutRef}
-          className="max-w-[1400px] mx-auto px-8 sm:px-12 lg:px-20 xl:px-28 py-20 lg:py-28"
-        >
-          <div ref={parallaxAbout} className="grid lg:grid-cols-12 gap-8 lg:gap-14">
-            {/* Left label */}
+      {/* ABOUT - Compact */}
+      <section className="relative py-14 sm:py-16 lg:py-20">
+        <div className="absolute top-0 right-0 w-[320px] h-[320px] bg-blue-50/25 blur-[90px] rounded-full pointer-events-none" />
+        <div ref={aboutRef} className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div ref={parallaxAbout} className="grid lg:grid-cols-12 gap-6 lg:gap-10 items-start">
             <div
-              className={`lg:col-span-4 transition-all duration-[1600ms] ${
-                aboutIn
-                  ? "opacity-100 translate-x-0"
-                  : "opacity-0 -translate-x-[100px]"
+              className={`lg:col-span-4 transition-all duration-[1400ms] ${
+                aboutIn ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-12"
               }`}
-              style={{
-                ...t(aboutIn),
-                transform: aboutIn ? `translateY(${aboutOffset}px)` : undefined,
-              }}
+              style={{ ...t(aboutIn), transform: aboutIn ? `translateY(${aboutOffset * 0.6}px)` : undefined }}
             >
-              <p
-                className={`text-[11px] font-bold tracking-[0.25em] uppercase text-blue-600 mb-3 transition-all duration-[1000ms] ${
-                  aboutIn ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-6"
-                }`}
-                style={t(aboutIn, 100)}
-              >
+              <p className={`text-[10.5px] font-bold tracking-[0.22em] uppercase text-blue-600 mb-2.5 transition-all duration-900 ${aboutIn ? "opacity-100" : "opacity-0"}`} style={t(aboutIn, 80)}>
                 About OncoTrace-AI
               </p>
-              <h2
-                className={`text-[1.7rem] sm:text-3xl lg:text-[2.1rem] font-bold tracking-[-0.025em] leading-[1.15] transition-all duration-[1400ms] ${
-                  aboutIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
-                }`}
-                style={t(aboutIn, 200)}
-              >
+              <h2 className={`text-[1.55rem] sm:text-[1.85rem] lg:text-[2rem] font-[750] tracking-[-0.022em] leading-[1.14] transition-all duration-[1200ms] ${aboutIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`} style={t(aboutIn, 150)}>
                 From risk prediction
                 <br className="hidden lg:block" /> to real-time tracking
               </h2>
-              <div
-                className={`mt-5 h-[3px] w-10 rounded-full bg-blue-600 origin-left transition-transform duration-[1200ms] ${
-                  aboutIn ? "scale-x-100" : "scale-x-0"
-                }`}
-                style={t(aboutIn, 400)}
-              />
+              <div className={`mt-4 h-[2.5px] w-9 rounded-full bg-blue-600 origin-left transition-transform duration-[1000ms] ${aboutIn ? "scale-x-100" : "scale-x-0"}`} style={t(aboutIn, 300)} />
             </div>
-
-            {/* Right content */}
-            <div
-              className={`lg:col-span-7 lg:col-start-6 transition-all duration-[1600ms] ${
-                aboutIn
-                  ? "opacity-100 translate-x-0"
-                  : "opacity-0 translate-x-[100px]"
-              }`}
-              style={t(aboutIn, 150)}
-            >
-              <p
-                className={`text-neutral-600 text-[15px] sm:text-base leading-[1.9] transition-all duration-[1400ms] ${
-                  aboutIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-                }`}
-                style={t(aboutIn, 250)}
-              >
-                OncoTrace-AI is a platform designed to enable AI-driven cancer intelligence
-                across the entire disease lifecycle. It brings together two complementary
-                approaches — AI-based cancer risk prediction using imaging data, and liquid
-                biopsy-powered real-time monitoring — into a unified system for continuous,
-                data-driven insights in oncology.
-              </p>
-
-              {/* Pull quote */}
-              <div
-                className={`relative my-7 pl-6 py-3 rounded-r-lg transition-all duration-[1600ms] ${
-                  aboutIn ? "opacity-100 translate-x-0" : "opacity-0 translate-x-[60px]"
-                }`}
-                style={t(aboutIn, 350)}
-              >
-                <div
-                  className={`absolute left-0 top-0 bottom-0 w-[3px] bg-blue-600 origin-top transition-transform duration-[1200ms] ${
-                    aboutIn ? "scale-y-100" : "scale-y-0"
-                  }`}
-                  style={t(aboutIn, 500)}
-                />
-                <div
-                  className={`absolute inset-0 rounded-r-lg transition-opacity duration-[1000ms] ${
-                    aboutIn ? "opacity-100" : "opacity-0"
-                  }`}
-                  style={{
-                    ...t(aboutIn, 450),
-                    background: "rgba(239,246,255,0.4)",
-                  }}
-                />
-                <p className="relative text-[1.05rem] sm:text-lg font-semibold text-neutral-800 leading-[1.55] tracking-[-0.01em]">
-                  We focus on data, monitoring, and intelligence — connecting prediction
-                  with progression tracking to empower better decision-making through
-                  accurate, real-time insights.
+            
+            <div className={`lg:col-span-8 transition-all duration-[1400ms] ${aboutIn ? "opacity-100 translate-x-0" : "opacity-0 translate-x-12"}`} style={t(aboutIn, 120)}>
+              <div className="space-y-4">
+                <p className={`text-neutral-600 text-[14.5px] leading-[1.75] transition-all duration-[1200ms] ${aboutIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"}`} style={t(aboutIn, 200)}>
+                  OncoTrace-AI is a platform designed to enable AI-driven cancer intelligence across the entire disease lifecycle. It brings together two complementary approaches — AI-based cancer risk prediction using imaging data, and liquid biopsy-powered real-time monitoring — into a unified system for continuous, data-driven insights in oncology.
+                </p>
+                
+                <div className={`relative py-3 pl-5 rounded-r-xl border-l-[2.5px] border-blue-600 bg-blue-50/40 transition-all duration-[1300ms] ${aboutIn ? "opacity-100 translate-x-0" : "opacity-0 translate-x-8"}`} style={t(aboutIn, 280)}>
+                  <p className="text-[15px] font-[600] text-neutral-800 leading-[1.5] tracking-[-0.008em]">
+                    We focus on data, monitoring, and intelligence — connecting prediction with progression tracking to empower better decision-making through accurate, real-time insights.
+                  </p>
+                </div>
+                
+                <p className={`text-neutral-500 text-[14.5px] leading-[1.75] transition-all duration-[1200ms] ${aboutIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"}`} style={t(aboutIn, 360)}>
+                  We do not provide treatments or prescribe medications. Built as an open-source, not-for-profit initiative, OncoTrace-AI encourages global collaboration across research institutions, healthcare providers, and technology communities — ensuring innovation in oncology is accessible, transparent, and collaborative.
                 </p>
               </div>
-
-              <p
-                className={`text-neutral-500 text-[15px] sm:text-base leading-[1.9] transition-all duration-[1400ms] ${
-                  aboutIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-                }`}
-                style={t(aboutIn, 450)}
-              >
-                We do not provide treatments or prescribe medications. Built as an open-source,
-                not-for-profit initiative, OncoTrace-AI encourages global collaboration across
-                research institutions, healthcare providers, and technology communities — ensuring
-                innovation in oncology is accessible, transparent, and collaborative.
-              </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ════════════════════════════════════════
-          CAPABILITIES
-          ════════════════════════════════════════ */}
-      <section
-        className="bg-neutral-950 text-white relative overflow-hidden"
-        ref={glowRef}
-      >
-        {glowActive && (
-          <div
-            className="pointer-events-none absolute w-[500px] h-[500px] rounded-full transition-opacity duration-500"
-            style={{
-              left: glowPos.x - 250,
-              top: glowPos.y - 250,
-              background: "radial-gradient(circle, rgba(59,130,246,0.06) 0%, transparent 70%)",
-              opacity: glowActive ? 1 : 0,
-            }}
-          />
-        )}
-
-        <div className="pointer-events-none absolute top-0 left-1/3 w-[700px] h-[500px] bg-blue-600/[0.04] blur-[120px] rounded-full" />
-        <div className="pointer-events-none absolute bottom-0 right-1/4 w-[500px] h-[400px] bg-indigo-600/[0.03] blur-[100px] rounded-full" />
-
-        <div
-          ref={capRef}
-          className="relative max-w-[1400px] mx-auto px-8 sm:px-12 lg:px-20 xl:px-28 py-20 lg:py-28"
-        >
-          <div ref={parallaxCap}>
-            <div
-              className={`mb-12 lg:mb-16 transition-all duration-[1500ms] ${
-                capIn ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-[40px]"
-              }`}
-              style={t(capIn)}
-            >
-              <p
-                className={`text-[11px] font-bold tracking-[0.25em] uppercase text-blue-400 mb-3 transition-all duration-[1200ms] ${
-                  capIn ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-8"
-                }`}
-                style={t(capIn, 100)}
-              >
-                Our Approach
-              </p>
-              <h2
-                className={`text-[1.7rem] sm:text-3xl lg:text-[2.1rem] font-bold tracking-[-0.025em] leading-[1.15] max-w-md transition-all duration-[1400ms] ${
-                  capIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
-                }`}
-                style={t(capIn, 200)}
-              >
-                Four foundational pillars
-              </h2>
-            </div>
-
-            <div className="grid sm:grid-cols-2 gap-4 lg:gap-5">
-              {capabilities.map((item, i) => {
-                const Icon = capIcons[i];
-                const directions = [
-                  { x: -120, y: -60, rot: -3 },
-                  { x: 120, y: -60, rot: 3 },
-                  { x: -120, y: 60, rot: 2 },
-                  { x: 120, y: 60, rot: -2 },
-                ];
-                const dir = directions[i];
-
-                return (
-                  <div
-                    key={item.num}
-                    className={`group relative rounded-2xl border border-neutral-800 bg-neutral-900/80 backdrop-blur-sm p-7 lg:p-9 transition-all duration-[1600ms] hover:bg-neutral-800/60 hover:border-neutral-700 hover:shadow-2xl hover:shadow-blue-500/[0.08] hover:-translate-y-1.5 ${
-                      capIn ? "opacity-100 blur-0" : "opacity-0 blur-[3px]"
-                    }`}
-                    style={{
-                      ...t(capIn, 200 + i * 150),
-                      transform: capIn
-                        ? `translateX(0) translateY(${capOffset}px) rotate(0deg) scale(1)`
-                        : `translateX(${dir.x}px) translateY(${dir.y}px) rotate(${dir.rot}deg) scale(0.85)`,
-                    }}
-                  >
-                    <div className="absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-blue-500/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                    <div className="absolute -top-20 -right-20 w-40 h-40 bg-blue-500/[0.03] rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-
-                    <div className="flex items-start justify-between mb-7">
-                      <div className="flex items-center gap-3">
-                        <div
-                          className={`flex h-12 w-12 items-center justify-center rounded-xl bg-neutral-800 text-blue-400 transition-all duration-500 group-hover:bg-blue-600 group-hover:text-white group-hover:shadow-lg group-hover:shadow-blue-600/25 group-hover:scale-110 ${
-                            capIn ? "scale-100 rotate-0" : "scale-0 -rotate-45"
-                          }`}
-                          style={t(capIn, 400 + i * 150)}
-                        >
-                          <Icon />
-                        </div>
-                        {item.badge && (
-                          <span
-                            className={`px-2.5 py-1 rounded-md text-[9px] font-bold tracking-[0.12em] uppercase transition-all duration-[1000ms] ${
-                              capIn ? "opacity-100 scale-100" : "opacity-0 scale-75"
-                            } ${
-                              item.badge === "LIVE"
-                                ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
-                                : "bg-amber-500/15 text-amber-400 border border-amber-500/25"
-                            }`}
-                            style={t(capIn, 500 + i * 150)}
-                          >
-                            {item.badge}
-                          </span>
-                        )}
-                      </div>
-                      <span
-                        className={`text-[2.5rem] font-bold text-neutral-800/60 group-hover:text-neutral-700/40 transition-all duration-[1200ms] leading-none tracking-tighter font-mono select-none ${
-                          capIn ? "opacity-100 translate-x-0" : "opacity-0 translate-x-6"
-                        }`}
-                        style={t(capIn, 500 + i * 150)}
-                      >
-                        {item.num}
-                      </span>
-                    </div>
-
-                    <h3
-                      className={`text-[1.05rem] font-bold tracking-[-0.01em] mb-2.5 group-hover:text-blue-400 transition-all duration-[1200ms] ${
-                        capIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-                      }`}
-                      style={t(capIn, 500 + i * 150)}
-                    >
-                      {item.title}
-                    </h3>
-                    <p
-                      className={`text-[13.5px] leading-[1.8] text-neutral-400 font-light transition-all duration-[1200ms] ${
-                        capIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-                      }`}
-                      style={t(capIn, 600 + i * 150)}
-                    >
-                      {item.desc}
-                    </p>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ════════════════════════════════════════
-          WHO IT'S FOR
-          ════════════════════════════════════════ */}
-      <section className="relative overflow-hidden">
-        <div className="pointer-events-none absolute inset-0">
-          <div className="absolute bottom-0 left-1/4 w-[500px] h-[400px] bg-blue-50/20 blur-[120px] rounded-full" />
-        </div>
-
-        <div
-          ref={audRef}
-          className="relative max-w-[1400px] mx-auto px-8 sm:px-12 lg:px-20 xl:px-28 py-20 lg:py-28"
-        >
-          <div
-            className={`mb-12 lg:mb-14 transition-all duration-[1500ms] ${
-              audIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-[50px]"
-            }`}
-            style={t(audIn)}
-          >
-            <p
-              className={`text-[11px] font-bold tracking-[0.25em] uppercase text-blue-600 mb-3 transition-all duration-[1200ms] ${
-                audIn ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-5"
-              }`}
-              style={t(audIn, 100)}
-            >
-              Who It&apos;s For
-            </p>
-            <h2
-              className={`text-[1.7rem] sm:text-3xl lg:text-[2.1rem] font-bold tracking-[-0.025em] leading-[1.15] max-w-lg transition-all duration-[1400ms] ${
-                audIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
-              }`}
-              style={t(audIn, 200)}
-            >
+      {/* WHO IT'S FOR - Compact Grid */}
+      <section className="relative py-14 sm:py-16 lg:py-20 bg-gradient-to-b from-transparent via-blue-[2]/10 to-transparent">
+        <div className="absolute bottom-0 left-1/4 w-[420px] h-[340px] bg-blue-50/18 blur-[100px] rounded-full pointer-events-none" />
+        <div ref={audRef} className="relative max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className={`mb-8 lg:mb-10 transition-all duration-[1300ms] ${audIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`} style={t(audIn)}>
+            <p className="text-[10.5px] font-bold tracking-[0.22em] uppercase text-blue-600 mb-2">Who It&apos;s For</p>
+            <h2 className="text-[1.55rem] sm:text-[1.85rem] lg:text-[2rem] font-[750] tracking-[-0.022em] leading-[1.14] max-w-lg">
               Built for the entire oncology ecosystem
             </h2>
           </div>
-
-          <div className="grid sm:grid-cols-2 gap-4">
-            {audiences.map((a, i) => {
-              const directions = [
-                { x: -140, y: -80, rot: -4 },
-                { x: 140, y: -80, rot: 4 },
-                { x: -140, y: 80, rot: 3 },
-                { x: 140, y: 80, rot: -3 },
-              ];
-              const dir = directions[i];
-
-              return (
-                <div
-                  key={a.role}
-                  className={`group relative overflow-hidden rounded-2xl border border-neutral-100 bg-white p-7 lg:p-9 transition-all duration-[1600ms] hover:shadow-xl hover:shadow-blue-600/[0.07] hover:border-blue-100 hover:-translate-y-1.5 ${
-                    audIn ? "opacity-100 blur-0" : "opacity-0 blur-[3px]"
-                  }`}
-                  style={{
-                    ...t(audIn, 150 + i * 130),
-                    transform: audIn
-                      ? "translateX(0) translateY(0) rotate(0deg) scale(1)"
-                      : `translateX(${dir.x}px) translateY(${dir.y}px) rotate(${dir.rot}deg) scale(0.82)`,
-                  }}
-                >
-                  <div className="absolute left-0 top-8 bottom-8 w-[3px] rounded-full bg-blue-600 scale-y-0 group-hover:scale-y-100 transition-transform duration-500 origin-top" />
-                  <div className="absolute inset-0 bg-gradient-to-br from-blue-50/0 to-blue-50/0 group-hover:from-blue-50/30 group-hover:to-transparent transition-all duration-700 rounded-2xl" />
-
-                  <div className="relative flex items-start justify-between mb-3">
-                    <h3
-                      className={`text-lg font-bold tracking-[-0.01em] group-hover:text-blue-600 transition-all duration-[1200ms] ${
-                        audIn ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4"
-                      }`}
-                      style={t(audIn, 350 + i * 130)}
-                    >
-                      {a.role}
-                    </h3>
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-neutral-50 group-hover:bg-blue-50 transition-all duration-300 group-hover:scale-110">
-                      <svg
-                        className="w-4 h-4 text-neutral-300 group-hover:text-blue-500 group-hover:translate-x-0.5 transition-all duration-300"
-                        viewBox="0 0 20 20"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <path d="M4.5 10h11M11 5.5 15.5 10 11 14.5" />
-                      </svg>
-                    </div>
+          
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-3.5">
+            {audiences.map((a, i) => (
+              <div
+                key={a.role}
+                className={`group relative overflow-hidden rounded-2xl border border-neutral-200/70 bg-white p-5 transition-all duration-[1200ms] hover:shadow-lg hover:shadow-blue-600/[0.06] hover:border-blue-200/80 hover:-translate-y-1 ${
+                  audIn ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-10 scale-[0.94]"
+                }`}
+                style={t(audIn, 120 + i * 90)}
+              >
+                <div className="absolute left-0 top-6 bottom-6 w-[2.5px] rounded-full bg-blue-600 scale-y-0 group-hover:scale-y-100 transition-transform duration-400 origin-top" />
+                <div className="flex items-start justify-between mb-2.5">
+                  <h3 className="text-[15.5px] font-[700] tracking-[-0.01em] group-hover:text-blue-600 transition-colors">
+                    {a.role}
+                  </h3>
+                  <div className="flex h-7 w-7 items-center justify-center rounded-full bg-neutral-100 group-hover:bg-blue-50 transition-colors">
+                    <svg className="w-3.5 h-3.5 text-neutral-400 group-hover:text-blue-500 group-hover:translate-x-0.5 transition-all" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
+                      <path d="M5 10h10M10 6l4 4-4 4" />
+                    </svg>
                   </div>
-                  <p
-                    className={`relative text-[14px] text-neutral-500 leading-[1.75] font-light pr-4 transition-all duration-[1400ms] ${
-                      audIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-                    }`}
-                    style={t(audIn, 450 + i * 130)}
-                  >
-                    {a.desc}
-                  </p>
                 </div>
-              );
-            })}
+                <p className="text-[13px] text-neutral-600 leading-[1.65] font-[450]">
+                  {a.desc}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* ════════════════════════════════════════
-          MISSION & VISION
-          ════════════════════════════════════════ */}
-      <section className="bg-neutral-50 relative overflow-hidden">
-        <div className="pointer-events-none absolute inset-0">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-blue-100/20 blur-[100px] rounded-full" />
-          <div className="absolute top-0 left-0 w-[300px] h-[300px] bg-blue-50/30 blur-[80px] rounded-full" />
-          <div className="absolute bottom-0 right-0 w-[350px] h-[350px] bg-indigo-50/20 blur-[90px] rounded-full" />
+      {/* CTA - Compact */}
+      <section className="relative py-16 sm:py-20 lg:py-24">
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="absolute bottom-0 left-0 w-[42%] h-[55%] bg-gradient-to-tr from-blue-50/40 to-transparent" />
+          <div className="absolute -bottom-20 -left-16 w-[420px] h-[420px] rounded-full bg-blue-100/20 blur-[90px]" />
         </div>
-
-        <div
-          ref={mvRef}
-          className="relative max-w-[1400px] mx-auto px-8 sm:px-12 lg:px-20 xl:px-28 py-20 lg:py-28"
-        >
-          <div ref={parallaxMv} className="grid lg:grid-cols-2 gap-12 lg:gap-16">
-            {/* Mission */}
-            <div
-              className={`transition-all duration-[1700ms] ${
-                mvIn
-                  ? "opacity-100 translate-x-0 blur-0"
-                  : "opacity-0 -translate-x-[120px] blur-[3px]"
-              }`}
-              style={{
-                ...t(mvIn, 0),
-                transform: mvIn ? `translateX(0) translateY(${mvOffset}px)` : undefined,
-              }}
-            >
-              <div
-                className={`flex items-center gap-3 mb-5 transition-all duration-[1200ms] ${
-                  mvIn ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4"
-                }`}
-                style={t(mvIn, 100)}
-              >
-                <div
-                  className="h-8 w-8 rounded-lg bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-600/20"
-                  style={{
-                    animation: mvIn ? "pulseGlow 3s ease-in-out infinite" : "none",
-                  }}
-                >
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="white"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <circle cx="12" cy="12" r="10" />
-                    <path d="M12 16v-4M12 8h.01" />
-                  </svg>
-                </div>
-                <p className="text-[11px] font-bold tracking-[0.25em] uppercase text-blue-600">
-                  Mission
+        
+        <div ref={ctaRef} className="relative max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-5xl mx-auto">
+            <div className="grid lg:grid-cols-[1.1fr_0.9fr] gap-8 lg:gap-12 items-center">
+              <div className={`transition-all duration-[1500ms] ${ctaIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`} style={t(ctaIn)}>
+                <h2 className="text-[1.75rem] sm:text-[2.15rem] lg:text-[2.5rem] font-[800] tracking-[-0.028em] leading-[1.08] mb-4">
+                  Ready to explore{" "}
+                  <span className="text-blue-600">precision</span>
+                  <br className="hidden sm:block" />
+                  cancer intelligence?
+                </h2>
+                <p className="text-neutral-600 text-[15px] leading-[1.68] max-w-[28rem]">
+                  Join the open oncology ecosystem. From AI-based risk prediction to real-time monitoring — collaborate with researchers, clinicians, and institutions shaping precision oncology.
                 </p>
               </div>
-              <p
-                className={`text-xl sm:text-2xl lg:text-[1.55rem] leading-[1.55] tracking-[-0.01em] text-neutral-700 transition-all duration-[1500ms] ${
-                  mvIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-                }`}
-                style={t(mvIn, 200)}
-              >
-                To democratize real-time precision monitoring in oncology by combining
-                Artificial Intelligence, Liquid Biopsy, and predictive modeling within an{" "}
-                <span className="text-blue-600 font-semibold">
-                  open and collaborative framework
-                </span>
-                .
-              </p>
-            </div>
-
-            {/* Vision */}
-            <div
-              className={`transition-all duration-[1700ms] ${
-                mvIn
-                  ? "opacity-100 translate-x-0 blur-0"
-                  : "opacity-0 translate-x-[120px] blur-[3px]"
-              }`}
-              style={{
-                ...t(mvIn, 200),
-                transform: mvIn
-                  ? `translateX(0) translateY(${mvOffset * 0.7}px)`
-                  : undefined,
-              }}
-            >
-              <div
-                className={`flex items-center gap-3 mb-5 transition-all duration-[1200ms] ${
-                  mvIn ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4"
-                }`}
-                style={t(mvIn, 300)}
-              >
-                <div
-                  className="h-8 w-8 rounded-lg bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-600/20"
-                  style={{
-                    animation: mvIn ? "pulseGlow 3s ease-in-out 1.5s infinite" : "none",
-                  }}
+              
+              <div className={`flex flex-col sm:flex-row lg:flex-col gap-3 transition-all duration-[1400ms] ${ctaIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`} style={t(ctaIn, 200)}>
+                <a
+                  href="#explore"
+                  className="group inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-blue-600 text-white text-[13.5px] font-[600] shadow-lg shadow-blue-600/18 hover:bg-blue-700 hover:shadow-xl hover:shadow-blue-700/22 hover:-translate-y-0.5 active:scale-[0.98] transition-all"
                 >
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="white"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z" />
-                    <circle cx="12" cy="12" r="3" />
+                  Explore OncoTrace-AI
+                  <svg className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round">
+                    <path d="M4 8h8M9 4l4 4-4 4" />
                   </svg>
-                </div>
-                <p className="text-[11px] font-bold tracking-[0.25em] uppercase text-blue-600">
-                  Vision
-                </p>
+                </a>
+                <a
+                  href="#collaborate"
+                  className="inline-flex items-center justify-center px-6 py-3.5 rounded-full border-[1.5px] border-neutral-200 text-[13.5px] font-[600] text-neutral-700 hover:border-blue-300 hover:text-blue-700 hover:bg-blue-50/50 hover:-translate-y-0.5 active:scale-[0.98] transition-all"
+                >
+                  Collaborate with Us
+                </a>
               </div>
-              <p
-                className={`text-xl sm:text-2xl lg:text-[1.55rem] leading-[1.55] tracking-[-0.01em] text-neutral-700 transition-all duration-[1500ms] ${
-                  mvIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-                }`}
-                style={t(mvIn, 400)}
-              >
-                To create a future where cancer is continuously understood through{" "}
-                <span className="text-blue-600 font-semibold">
-                  AI-driven prediction and real-time monitoring
-                </span>{" "}
-                — supported by a global open-source ecosystem.
-              </p>
             </div>
-          </div>
-
-          {/* Tagline strip */}
-          <div
-            className={`mt-14 pt-7 border-t transition-all duration-[1400ms] ${
-              mvIn ? "opacity-100 border-neutral-200" : "opacity-0 border-transparent"
-            }`}
-            style={t(mvIn, 500)}
-          >
-            <div
-              className={`absolute left-8 right-8 lg:left-20 lg:right-20 xl:left-28 xl:right-28 h-px origin-left transition-transform duration-[1800ms] ${
-                mvIn ? "scale-x-100" : "scale-x-0"
-              }`}
-              style={{
-                ...t(mvIn, 500),
-                background:
-                  "linear-gradient(90deg, transparent, rgba(37,99,235,0.15), transparent)",
-              }}
-            />
-
-            <div className="flex flex-wrap gap-x-8 gap-y-2.5">
-              {[
-                "Predict. Monitor. Understand.",
-                "From Risk Prediction to Real-Time Tracking",
-                "Precision Oncology, In Real Time",
-                "Open Source Intelligence",
-              ].map((tag, i) => (
-                <span
-                  key={tag}
-                  className={`text-[11px] tracking-[0.1em] uppercase text-neutral-400 font-semibold transition-all duration-[1000ms] ${
-                    mvIn
-                      ? "opacity-100 translate-y-0 blur-0"
-                      : "opacity-0 translate-y-6 blur-[2px]"
-                  }`}
-                  style={t(mvIn, 600 + i * 120)}
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ════════════════════════════════════════
-          SOLUTION CTA
-          ════════════════════════════════════════ */}
-      <section className="relative overflow-hidden">
-        <div className="pointer-events-none absolute inset-0">
-          <div className="absolute bottom-0 left-0 w-[50%] h-[60%] bg-gradient-to-tr from-blue-50/50 to-transparent" />
-          <div
-            className="absolute -bottom-32 -left-20 w-[500px] h-[500px] rounded-full bg-blue-100/25 blur-[100px] animate-pulse"
-            style={{ animationDuration: "7s" }}
-          />
-          <div className="absolute top-20 right-10 w-[300px] h-[300px] rounded-full bg-blue-50/20 blur-[80px]" />
-        </div>
-
-        <div
-          ref={ctaRef}
-          className="relative max-w-[1400px] mx-auto px-8 sm:px-12 lg:px-20 xl:px-28 py-24 lg:py-32"
-        >
-          <div className="grid lg:grid-cols-12 gap-10 items-end">
-            {/* Text */}
-            <div
-              className={`lg:col-span-7 transition-all duration-[1800ms] ${
-                ctaIn
-                  ? "opacity-100 translate-x-0 translate-y-0 blur-0"
-                  : "opacity-0 -translate-x-[100px] translate-y-[40px] blur-[3px]"
-              }`}
-              style={t(ctaIn)}
-            >
-              <h2 className="text-[1.8rem] sm:text-4xl lg:text-5xl font-bold tracking-[-0.03em] leading-[1.1]">
-                <span
-                  className={`inline-block transition-all duration-[1400ms] ${
-                    ctaIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-                  }`}
-                  style={t(ctaIn, 100)}
-                >
-                  Ready to explore
-                </span>
-                <br className="hidden sm:block" />{" "}
-                <span
-                  className={`inline-block transition-all duration-[1400ms] ${
-                    ctaIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-                  }`}
-                  style={t(ctaIn, 250)}
-                >
-                  <span className="text-blue-600">precision</span> cancer intelligence?
-                </span>
-              </h2>
-              <p
-                className={`mt-5 text-neutral-500 text-base sm:text-lg leading-[1.65] max-w-lg transition-all duration-[1500ms] ${
-                  ctaIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-                }`}
-                style={t(ctaIn, 350)}
-              >
-                Join the open oncology ecosystem. From AI-based risk prediction to
-                real-time monitoring — collaborate with researchers, clinicians, and
-                institutions shaping the future of precision oncology.
-              </p>
-            </div>
-
-            {/* Buttons */}
-            <div
-              className={`lg:col-span-5 flex flex-col sm:flex-row lg:flex-col xl:flex-row items-start gap-3.5 transition-all duration-[1600ms] ${
-                ctaIn
-                  ? "opacity-100 translate-x-0 translate-y-0"
-                  : "opacity-0 translate-x-[100px] translate-y-[30px]"
-              }`}
-              style={t(ctaIn, 300)}
-            >
-              <a
-                href="#cta"
-                className={`group inline-flex items-center gap-2.5 px-8 py-4 rounded-full bg-blue-600 text-white text-[13px] font-semibold shadow-lg shadow-blue-600/20 hover:bg-blue-700 hover:shadow-xl hover:shadow-blue-700/25 active:scale-[0.97] transition-all duration-300 whitespace-nowrap hover:-translate-y-1 ${
-                  ctaIn
-                    ? "opacity-100 translate-y-0 scale-100"
-                    : "opacity-0 translate-y-6 scale-90"
-                }`}
-                style={t(ctaIn, 450)}
-              >
-                Explore OncoTrace-AI
-                <svg
-                  className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1"
-                  viewBox="0 0 16 16"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.6"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M3.5 8h9M8.5 3.5 13 8l-4.5 4.5" />
-                </svg>
-              </a>
-              <a
-                href="#team"
-                className={`inline-flex items-center px-7 py-4 rounded-full border border-neutral-200 text-[13px] font-semibold text-neutral-600 hover:border-blue-200 hover:text-blue-600 active:scale-[0.97] transition-all duration-300 whitespace-nowrap hover:-translate-y-1 ${
-                  ctaIn
-                    ? "opacity-100 translate-y-0 scale-100"
-                    : "opacity-0 translate-y-6 scale-90"
-                }`}
-                style={t(ctaIn, 550)}
-              >
-                Collaborate with Us
-              </a>
+            
+            {/* Mini footer bar */}
+            <div className="mt-12 pt-6 border-t border-neutral-200/60 flex flex-wrap items-center justify-between gap-4 text-[11.5px] text-neutral-500">
+              <p>© 2025 OncoTrace-AI • Open-source • Not-for-profit</p>
+              <div className="flex items-center gap-5 font-medium">
+                <span className="opacity-60">Prediction</span>
+                <span className="opacity-30">•</span>
+                <span className="opacity-60">Monitoring</span>
+                <span className="opacity-30">•</span>
+                <span className="opacity-60">Intelligence</span>
+              </div>
             </div>
           </div>
         </div>
