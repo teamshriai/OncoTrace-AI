@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 function useOnScreen(threshold = 0.12) {
-  const ref = useRef(null);
+  const ref = useRef (null);
   const [visible, setVisible] = useState(false);
   useEffect(() => {
     const el = ref.current;
@@ -18,9 +18,15 @@ function useOnScreen(threshold = 0.12) {
     obs.observe(el);
     return () => obs.disconnect();
   }, [threshold]);
-    return [ref, visible];}
+  return [ref, visible];
+}
 
-function Reveal({ children, className = "", delay = 0 }) {
+function Reveal({
+  children,
+  className = "",
+  delay = 0,
+
+}) {
   const [ref, vis] = useOnScreen();
   return (
     <div
@@ -62,10 +68,22 @@ export default function LiquidBiopsyMonitoring() {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
 
   const AUDIENCE = [
-    { label: "Clinicians", desc: "Predictive insights to guide treatment decisions." },
-    { label: "Researchers", desc: "Open-source oncology tools and shared datasets." },
-    { label: "Pharma", desc: "Continuous, non-invasive monitoring endpoints." },
-    { label: "Open source contributors", desc: "An open, evolving oncology intelligence ecosystem." },
+    {
+      label: "Clinicians",
+      desc: "Predictive insights to guide treatment decisions.",
+    },
+    {
+      label: "Researchers",
+      desc: "Open-source oncology tools and shared datasets.",
+    },
+    {
+      label: "Pharma",
+      desc: "Continuous, non-invasive monitoring endpoints.",
+    },
+    {
+      label: "Open source contributors",
+      desc: "An open, evolving oncology intelligence ecosystem.",
+    },
   ];
 
   return (
@@ -91,7 +109,7 @@ export default function LiquidBiopsyMonitoring() {
               <span className="relative rounded-full h-2 w-2 bg-blue-500" />
             </span>
             <span className="text-[10px] font-semibold tracking-[.12em] uppercase text-blue-600">
-              R&D Phase
+              R&amp;D Phase
             </span>
           </div>
         </div>
@@ -104,7 +122,7 @@ export default function LiquidBiopsyMonitoring() {
             {/* Left: text content */}
             <div>
               <p className="text-[10px] font-semibold tracking-[.2em] uppercase text-blue-600 mb-3">
-                Research & Development
+                Research &amp; Development
               </p>
               <h1 className="text-[clamp(1.8rem,4.5vw,3.2rem)] font-extrabold leading-[1.08] tracking-tight text-gray-900 mb-5">
                 Liquid Biopsy-Based{" "}
@@ -133,27 +151,30 @@ export default function LiquidBiopsyMonitoring() {
               </div>
             </div>
 
-            {/* Right: hero image */}
-            <div className="relative w-full overflow-hidden rounded-sm shadow-2xl group">
-              {/* Blue gradient overlay top */}
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-900/30 via-transparent to-transparent z-10 pointer-events-none rounded-sm" />
-              {/* Animated corner accent */}
+            {/* Right: hero image — sharp edges (no rounded corners) */}
+            <div className="relative w-full overflow-hidden group">
+              {/* Sharp corner accent lines */}
               <div className="absolute top-0 left-0 w-12 h-12 border-t-2 border-l-2 border-blue-400 z-20 pointer-events-none" />
               <div className="absolute bottom-0 right-0 w-12 h-12 border-b-2 border-r-2 border-blue-400 z-20 pointer-events-none" />
+              {/* Blue gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-900/30 via-transparent to-transparent z-10 pointer-events-none" />
               <img
                 src="/liquid-biopsy-hero.png"
                 alt="Liquid biopsy test tubes with glowing DNA strands"
-                className="w-full h-full object-cover max-h-[420px] md:max-h-[380px] transition-transform duration-700 group-hover:scale-105"
-                style={{ display: "block" }}
+                className="w-full object-cover max-h-[420px] md:max-h-[380px] transition-transform duration-700 group-hover:scale-105"
+                style={{
+                  display: "block",
+                  borderRadius: 0,
+                }}
               />
               {/* Bottom badge overlay */}
-              <div className="absolute bottom-4 left-4 z-20 flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-3 py-1.5 rounded-sm">
+              <div className="absolute bottom-4 left-4 z-20 flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-3 py-1.5">
                 <span className="relative flex h-1.5 w-1.5">
                   <span className="animate-ping absolute h-full w-full rounded-full bg-blue-300 opacity-75" />
                   <span className="relative rounded-full h-1.5 w-1.5 bg-blue-400" />
                 </span>
                 <span className="text-[9px] font-semibold tracking-[.15em] uppercase text-white">
-                  Active R&D
+                  Active R&amp;D
                 </span>
               </div>
             </div>
@@ -182,9 +203,87 @@ export default function LiquidBiopsyMonitoring() {
                 non-invasive biological signals captured through liquid biopsy.
               </p>
               <p className="text-gray-400 text-[12px] border-l-2 border-blue-200 pl-4">
-                Currently in R&D, with ongoing work to refine accuracy,
+                Currently in R&amp;D, with ongoing work to refine accuracy,
                 scalability, and clinical integration.
               </p>
+            </div>
+          </div>
+        </Reveal>
+        <div className="mt-14 h-px bg-gray-200" />
+      </section>
+
+      {/* NGS MACHINE SECTION */}
+      <section id="technology" className="max-w-6xl mx-auto px-6 py-14">
+        <Reveal>
+          <div className="grid md:grid-cols-2 gap-10 items-center">
+            {/* Left: NGS machine image — sharp edges */}
+            <div className="relative w-full overflow-hidden group order-2 md:order-1">
+              {/* Sharp corner accent lines */}
+              <div className="absolute top-0 left-0 w-12 h-12 border-t-2 border-l-2 border-blue-400 z-20 pointer-events-none" />
+              <div className="absolute bottom-0 right-0 w-12 h-12 border-b-2 border-r-2 border-blue-400 z-20 pointer-events-none" />
+              {/* Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-tl from-blue-900/25 via-transparent to-transparent z-10 pointer-events-none" />
+              <img
+                src="/ngs-machine.png"
+                alt="Next Generation Sequencing NGS machine"
+                className="w-full object-cover max-h-[400px] transition-transform duration-700 group-hover:scale-105"
+                style={{
+                  display: "block",
+                  borderRadius: 0,
+                }}
+              />
+              {/* Badge */}
+              <div className="absolute bottom-4 left-4 z-20 flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-3 py-1.5">
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="animate-ping absolute h-full w-full rounded-full bg-blue-300 opacity-75" />
+                  <span className="relative rounded-full h-1.5 w-1.5 bg-blue-400" />
+                </span>
+                <span className="text-[9px] font-semibold tracking-[.15em] uppercase text-white">
+                  NGS Platform
+                </span>
+              </div>
+            </div>
+
+            {/* Right: text content */}
+            <div className="order-1 md:order-2">
+              <p className="text-[10px] font-semibold tracking-[.2em] uppercase text-blue-600 mb-3">
+                Technology
+              </p>
+              <h2 className="text-[clamp(1.4rem,3vw,2.2rem)] font-bold leading-tight tracking-tight text-gray-900 mb-5">
+                Next Generation{" "}
+                <span className="text-blue-600">Sequencing</span> at the Core
+              </h2>
+              <p className="text-[14px] text-gray-500 leading-[1.8] mb-4">
+                Our platform leverages state-of-the-art Next Generation
+                Sequencing (NGS) instruments to decode circulating tumor DNA
+                (ctDNA) from a simple blood draw — enabling ultra-sensitive
+                genomic profiling without invasive tissue sampling.
+              </p>
+              <p className="text-gray-400 text-[12px] border-l-2 border-blue-200 pl-4 mb-6">
+                Sequencing data is processed through our AI pipeline to
+                identify mutations, copy number alterations, and epigenetic
+                signatures in real time.
+              </p>
+              <div className="grid grid-cols-2 gap-4">
+                {[
+                  { stat: "ctDNA", label: "Primary Biomarker" },
+                  { stat: "AI-driven", label: "Analysis Pipeline" },
+                  { stat: "Non-invasive", label: "Blood Draw Only" },
+                  { stat: "Real-time", label: "Continuous Monitoring" },
+                ].map((item, i) => (
+                  <div
+                    key={i}
+                    className="border border-gray-200 p-4 hover:border-blue-300 transition-colors"
+                  >
+                    <p className="text-[13px] font-bold text-blue-600 mb-1">
+                      {item.stat}
+                    </p>
+                    <p className="text-[11px] text-gray-400 leading-snug">
+                      {item.label}
+                    </p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </Reveal>
@@ -236,7 +335,7 @@ export default function LiquidBiopsyMonitoring() {
       <section id="mission" className="max-w-6xl mx-auto px-6 py-14">
         <Reveal>
           <p className="text-[10px] font-semibold tracking-[.2em] uppercase text-blue-600 mb-3">
-            Mission & Vision
+            Mission &amp; Vision
           </p>
           <h2 className="text-[clamp(1.4rem,3vw,2.2rem)] font-bold tracking-tight text-gray-900 mb-10">
             Toward Continuous Cancer Understanding
@@ -313,7 +412,7 @@ export default function LiquidBiopsyMonitoring() {
               Liquid Biopsy Monitoring
             </span>
             <span className="text-[9px] font-medium tracking-[.12em] uppercase text-gray-400 border border-gray-200 px-2 py-0.5">
-              R&D
+              R&amp;D
             </span>
           </div>
           <p className="text-[11px] text-gray-400">
