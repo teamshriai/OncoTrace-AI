@@ -27,7 +27,7 @@ const PANELS = [
   },
   {
     tag: "04 — Open Source",
-    title: "Global\nCollaboration",
+    title: "Global\nCollab",
     body: "Built as an open-source, not-for-profit platform, ensuring accessibility, transparency, and collaborative innovation across the global oncology ecosystem.",
   },
   {
@@ -39,7 +39,7 @@ const PANELS = [
 
 const LERP_FACTOR = 0.065;
 
-/* ── 3-D DNA Model — sized to fill ~70% of screen height ── */
+/* ── 3-D DNA Model ── */
 function DNAModel() {
   const { scene } = useGLTF("/DNA_STRAND_NEW.glb");
   const groupRef = useRef();
@@ -51,7 +51,6 @@ function DNAModel() {
     const center = box.getCenter(new THREE.Vector3());
 
     const s = 13.5 / Math.max(size.x, size.y, size.z);
-
     clone.position.set(-center.x, -center.y, -center.z);
 
     const wrapper = new THREE.Group();
@@ -111,9 +110,72 @@ export default function DNA3DSection() {
   const headingRef = useRef();
   const scrollHintRef = useRef();
   const textTrackRef = useRef();
-  const initialOffsetRef = useRef(null);
+  const offsetsRef = useRef({ start: 0, end: 0, computed: false });
 
   useEffect(() => {
+    /* ───────────────────────────────────────────
+       Measure panel positions & compute start/end
+       translateX values.
+       • Desktop (2 panels fit): center panels 1&2
+         at start, panels 4&5 at end.
+       • Mobile  (only 1 fits): center panel 1
+         at start, panel 5 at end.
+       ─────────────────────────────────────────── */
+    const computeOffsets = () => {
+      const trackEl = textTrackRef.current;
+      if (!trackEl) return;
+      const children = trackEl.children;
+      const n = children.length;
+      if (n < 1) return;
+
+      // Reset transform so getBoundingClientRect gives natural positions
+      const prevTransform = trackEl.style.transform;
+      trackEl.style.transform = "translate3d(0,0,0)";
+      void trackEl.offsetHeight; // force synchronous reflow
+
+      const vw = window.innerWidth;
+      const trackRect = trackEl.getBoundingClientRect();
+
+      // Measure every panel relative to the track's left edge
+      const rects = Array.from(children).map((child) => {
+        const r = child.getBoundingClientRect();
+        return {
+          left: r.left - trackRect.left,
+          right: r.right - trackRect.left,
+          width: r.width,
+        };
+      });
+
+      // Can two panels sit side-by-side comfortably?
+      const firstTwoSpan =
+        n >= 2 ? rects[1].right - rects[0].left : rects[0].width;
+      const canFitTwo = n >= 2 && firstTwoSpan <= vw * 0.92;
+
+      let startX;
+      let endX;
+
+      if (canFitTwo) {
+        // ── Desktop: center first two / last two ──
+        const startSpan = rects[1].right - rects[0].left;
+        startX = (vw - startSpan) / 2 - rects[0].left;
+
+        const endSpan = rects[n - 1].right - rects[n - 2].left;
+        endX = (vw - endSpan) / 2 - rects[n - 2].left;
+      } else {
+        // ── Mobile: center single first / single last ──
+        startX = (vw - rects[0].width) / 2 - rects[0].left;
+        endX = (vw - rects[n - 1].width) / 2 - rects[n - 1].left;
+      }
+
+      offsetsRef.current = { start: startX, end: endX, computed: true };
+
+      // Restore previous transform (animation loop overwrites next frame)
+      trackEl.style.transform = prevTransform || "";
+    };
+
+    computeOffsets();
+
+    /* ── Scroll → progress 0-1 ── */
     const onScroll = () => {
       if (!sectionRef.current) return;
       const r = sectionRef.current.getBoundingClientRect();
@@ -123,6 +185,7 @@ export default function DNA3DSection() {
       scrollStore.target = Math.max(0, Math.min(1, scrolled / scrollable));
     };
 
+    /* ── Animation loop ── */
     let raf;
     const animate = () => {
       const diff = scrollStore.target - scrollStore.current;
@@ -134,61 +197,37 @@ export default function DNA3DSection() {
 
       const progress = scrollStore.current;
 
+      // Fade heading
       if (headingRef.current) {
         headingRef.current.style.opacity = String(
           Math.max(0, 1 - progress * 5)
         );
       }
 
+      // Fade scroll hint
       if (scrollHintRef.current) {
         scrollHintRef.current.style.opacity = String(
           Math.max(0, 1 - progress * 8)
         );
       }
 
-      if (textTrackRef.current) {
-        // Calculate initial offset to show panels 1 & 2 on first load
-        if (initialOffsetRef.current === null) {
-          const trackEl = textTrackRef.current;
-          const children = trackEl.children;
-          if (children.length >= 2) {
-            // Get the gap between items
-            const child0Rect = children[0].getBoundingClientRect();
-            const child1Rect = children[1].getBoundingClientRect();
-            const trackRect = trackEl.getBoundingClientRect();
-
-            // Width from start of track to end of second panel
-            const panel1Start = child0Rect.left - trackRect.left;
-            const panel2End = child1Rect.right - trackRect.left;
-            const twoCardSpan = panel2End - panel1Start;
-
-            const vw = window.innerWidth;
-            // Center the two panels in the viewport
-            initialOffsetRef.current = (vw - twoCardSpan) / 2 - panel1Start;
-          } else {
-            initialOffsetRef.current = 0;
-          }
-        }
-
-        const trackW = textTrackRef.current.scrollWidth;
-        const vw = window.innerWidth;
-        const startX = initialOffsetRef.current;
-        // End position: fully scrolled out to the left
-        const endX = -(trackW);
-        const x = startX + progress * (endX - startX);
+      // Slide text track: lerp from startX → endX
+      if (textTrackRef.current && offsetsRef.current.computed) {
+        const { start, end } = offsetsRef.current;
+        const x = start + progress * (end - start);
         textTrackRef.current.style.transform = `translate3d(${x}px, 0, 0)`;
       }
 
       raf = requestAnimationFrame(animate);
     };
 
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll, { passive: true });
-
-    // Recalculate initial offset on resize
+    /* ── Resize → recompute everything ── */
     const onResize = () => {
-      initialOffsetRef.current = null;
+      computeOffsets();
+      onScroll();
     };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onResize, { passive: true });
 
     onScroll();
@@ -196,17 +235,15 @@ export default function DNA3DSection() {
 
     return () => {
       window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
       window.removeEventListener("resize", onResize);
       cancelAnimationFrame(raf);
     };
   }, []);
 
   return (
-    <section ref={sectionRef} className="relative h-[600vh]">
+    <section ref={sectionRef} className="relative h-[500vh]">
       {/* ─── sticky viewport ─── */}
       <div className="sticky top-0 h-screen overflow-hidden bg-white">
-
         {/* ── ambient glows ── */}
         <div className="pointer-events-none absolute inset-0">
           <div
@@ -376,7 +413,6 @@ export default function DNA3DSection() {
             >
               <Suspense fallback={<Loader />}>
                 <ambientLight intensity={1.1} />
-
                 <directionalLight
                   position={[5, 8, 5]}
                   intensity={2.4}
@@ -387,7 +423,6 @@ export default function DNA3DSection() {
                   intensity={1.0}
                   color="#93c5fd"
                 />
-
                 <pointLight
                   position={[-6, 4, 4]}
                   intensity={0.8}
@@ -408,7 +443,6 @@ export default function DNA3DSection() {
                   intensity={0.5}
                   color="#dbeafe"
                 />
-
                 <DNAModel />
               </Suspense>
             </Canvas>
