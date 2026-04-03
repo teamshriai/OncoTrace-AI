@@ -456,15 +456,7 @@ export default function Navbar({ currentPage, onNavigate }) {
 
           {/* Desktop CTA */}
           <div className="nb-cta-area">
-            {!isDemoPage && (
-              <button
-                className="nb-btn-ghost"
-                type="button"
-                onClick={() => scrollTo('#cta')}
-              >
-                Contact
-              </button>
-            )}
+            
             <button className="nb-btn-primary" type="button" onClick={handleCta}>
               {isDemoPage ? '← Back to Home' : 'View Demo →'}
             </button>
