@@ -4,7 +4,7 @@ const team = [
   {
     name: "Senapathi Palanisamy",
     role: "CEO & Founder",
-    bio: "Founder of ViSolve and founder of Senas.net Pvt. Ltd",
+    bio: "Founder of ViSolve, Senas.net Pvt. Ltd  \n Ex-Chairman of OpenEMR",
     initials: "SP",
   },
   {
@@ -47,7 +47,7 @@ export default function TeamSection() {
       <div className="mx-auto max-w-7xl px-6">
 
         <div className="mx-auto max-w-2xl text-center">
-          <p className="text-sm font-semibold uppercase tracking-widest text-emerald-600">
+          <p className="text-sm font-semibold uppercase tracking-widest text-blue-600">
             Our Team
           </p>
           <h2 className="mt-4 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
@@ -58,12 +58,10 @@ export default function TeamSection() {
           </p>
         </div>
 
-        <div className="mt-12">
-          <div
-            ref={ref}
-            className="mx-auto mt-4 grid max-w-6xl gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
-          >
-            {team.map((m, i) => (
+        <div className="mt-12" ref={ref}>
+          {/* First Row: Sena and Manoj */}
+          <div className="mx-auto grid max-w-2xl gap-8 sm:grid-cols-2">
+            {team.slice(0, 2).map((m, i) => (
               <div
                 key={m.name}
                 className={`rounded-2xl border border-slate-100 bg-slate-50 p-6 text-center transition-all duration-700 hover:shadow-md ${
@@ -71,7 +69,7 @@ export default function TeamSection() {
                 }`}
                 style={{ transitionDelay: `${i * 100}ms` }}
               >
-                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-lg font-bold text-emerald-700">
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-blue-100 text-lg font-bold text-blue-700">
                   {m.initials}
                 </div>
 
@@ -79,11 +77,40 @@ export default function TeamSection() {
                   {m.name}
                 </h3>
 
-                <p className="mt-0.5 text-xs font-semibold text-emerald-600">
+                <p className="mt-0.5 text-xs font-semibold text-blue-600">
                   {m.role}
                 </p>
 
-                <p className="mt-3 text-xs leading-relaxed text-slate-500">
+                <p className="mt-3 text-xs leading-relaxed text-slate-500 whitespace-pre-line">
+                  {m.bio}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          {/* Second Row: Rest of the team */}
+          <div className="mx-auto mt-8 grid max-w-6xl gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+            {team.slice(2).map((m, i) => (
+              <div
+                key={m.name}
+                className={`rounded-2xl border border-slate-100 bg-slate-50 p-6 text-center transition-all duration-700 hover:shadow-md ${
+                  inView ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0"
+                }`}
+                style={{ transitionDelay: `${(i + 2) * 100}ms` }}
+              >
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-blue-100 text-lg font-bold text-blue-700">
+                  {m.initials}
+                </div>
+
+                <h3 className="mt-4 text-sm font-bold text-slate-900">
+                  {m.name}
+                </h3>
+
+                <p className="mt-0.5 text-xs font-semibold text-blue-600">
+                  {m.role}
+                </p>
+
+                <p className="mt-3 text-xs leading-relaxed text-slate-500 whitespace-pre-line">
                   {m.bio}
                 </p>
               </div>
