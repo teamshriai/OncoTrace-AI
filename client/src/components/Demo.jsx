@@ -1,6 +1,4 @@
 import { useState } from 'react';
-import { patients, getFeatureImportance } from '../data/mockData';
-import { datasets, quickStartSteps } from '../data/datasets';
 import {
   LineChart,
   Line,
@@ -20,6 +18,352 @@ import {
   AreaChart,
   Area,
 } from 'recharts';
+
+// ─── Mock Data ─────────────────────────────────────────────────────
+const patients = [
+  {
+    id: 'PT-001',
+    name: 'Lakshmi Devi',
+    age: 58,
+    sex: 'Female',
+    cancerType: 'Non-Small Cell Lung Cancer (NSCLC)',
+    stage: 'Stage IV',
+    diagnosisDate: '2023-01-15',
+    currentTherapy: 'Osimertinib',
+    riskScore: 78,
+    riskCategory: 'high',
+    progressionProbability: 0.82,
+    predictedRECIST: 'Progressive Disease',
+    timeToProgression: 4.2,
+    confidenceScore: 0.88,
+    timepoints: [
+      {
+        id: 'T1',
+        label: 'Baseline',
+        date: '2023-01-20',
+        dayFromBaseline: 0,
+        treatmentPhase: 'Pre-treatment',
+        tumorFraction: 0.08,
+        totalCfDNA: 22.5,
+        shortFragmentRatio: 0.42,
+        methylationScore: 0.45,
+        genomeInstabilityScore: 52,
+        mutations: [
+          { gene: 'EGFR', variant: 'L858R', vaf: 0.12, type: 'SNV', pathogenicity: 'Pathogenic' },
+          { gene: 'TP53', variant: 'R273H', vaf: 0.08, type: 'SNV', pathogenicity: 'Pathogenic' },
+        ],
+        imagingResult: 'Multiple pulmonary nodules',
+      },
+      {
+        id: 'T2',
+        label: '6 Weeks',
+        date: '2023-03-03',
+        dayFromBaseline: 42,
+        treatmentPhase: 'On TKI',
+        tumorFraction: 0.04,
+        totalCfDNA: 15.2,
+        shortFragmentRatio: 0.38,
+        methylationScore: 0.32,
+        genomeInstabilityScore: 38,
+        mutations: [
+          { gene: 'EGFR', variant: 'L858R', vaf: 0.05, type: 'SNV', pathogenicity: 'Pathogenic' },
+          { gene: 'TP53', variant: 'R273H', vaf: 0.04, type: 'SNV', pathogenicity: 'Pathogenic' },
+        ],
+        imagingResult: 'Partial response',
+      },
+      {
+        id: 'T3',
+        label: '12 Weeks',
+        date: '2023-04-14',
+        dayFromBaseline: 84,
+        treatmentPhase: 'On TKI',
+        tumorFraction: 0.06,
+        totalCfDNA: 18.8,
+        shortFragmentRatio: 0.41,
+        methylationScore: 0.38,
+        genomeInstabilityScore: 45,
+        mutations: [
+          { gene: 'EGFR', variant: 'L858R', vaf: 0.07, type: 'SNV', pathogenicity: 'Pathogenic' },
+          { gene: 'TP53', variant: 'R273H', vaf: 0.05, type: 'SNV', pathogenicity: 'Pathogenic' },
+          { gene: 'EGFR', variant: 'T790M', vaf: 0.03, type: 'SNV', pathogenicity: 'Pathogenic' },
+        ],
+        imagingResult: null,
+      },
+      {
+        id: 'T4',
+        label: '18 Weeks',
+        date: '2023-05-26',
+        dayFromBaseline: 126,
+        treatmentPhase: 'On TKI',
+        tumorFraction: 0.11,
+        totalCfDNA: 28.4,
+        shortFragmentRatio: 0.44,
+        methylationScore: 0.52,
+        genomeInstabilityScore: 61,
+        mutations: [
+          { gene: 'EGFR', variant: 'L858R', vaf: 0.13, type: 'SNV', pathogenicity: 'Pathogenic' },
+          { gene: 'TP53', variant: 'R273H', vaf: 0.09, type: 'SNV', pathogenicity: 'Pathogenic' },
+          { gene: 'EGFR', variant: 'T790M', vaf: 0.08, type: 'SNV', pathogenicity: 'Pathogenic' },
+          { gene: 'MET', variant: 'Amplification', vaf: 0.06, type: 'CNV', pathogenicity: 'Likely Pathogenic' },
+        ],
+        imagingResult: 'Disease progression',
+      },
+    ],
+  },
+  {
+    id: 'PT-002',
+    name: 'Priya Ramesh',
+    age: 45,
+    sex: 'Female',
+    cancerType: 'Colorectal Cancer (CRC)',
+    stage: 'Stage III',
+    diagnosisDate: '2023-02-10',
+    currentTherapy: 'FOLFOX',
+    riskScore: 42,
+    riskCategory: 'moderate',
+    progressionProbability: 0.48,
+    predictedRECIST: 'Stable Disease',
+    timeToProgression: 9.5,
+    confidenceScore: 0.76,
+    timepoints: [
+      {
+        id: 'T1',
+        label: 'Baseline',
+        date: '2023-02-15',
+        dayFromBaseline: 0,
+        treatmentPhase: 'Pre-treatment',
+        tumorFraction: 0.05,
+        totalCfDNA: 18.2,
+        shortFragmentRatio: 0.39,
+        methylationScore: 0.35,
+        genomeInstabilityScore: 41,
+        mutations: [
+          { gene: 'KRAS', variant: 'G12D', vaf: 0.09, type: 'SNV', pathogenicity: 'Pathogenic' },
+          { gene: 'APC', variant: 'R1450*', vaf: 0.07, type: 'SNV', pathogenicity: 'Pathogenic' },
+        ],
+        imagingResult: null,
+      },
+      {
+        id: 'T2',
+        label: '8 Weeks',
+        date: '2023-04-12',
+        dayFromBaseline: 56,
+        treatmentPhase: 'On Chemo',
+        tumorFraction: 0.03,
+        totalCfDNA: 12.5,
+        shortFragmentRatio: 0.36,
+        methylationScore: 0.28,
+        genomeInstabilityScore: 32,
+        mutations: [
+          { gene: 'KRAS', variant: 'G12D', vaf: 0.04, type: 'SNV', pathogenicity: 'Pathogenic' },
+          { gene: 'APC', variant: 'R1450*', vaf: 0.03, type: 'SNV', pathogenicity: 'Pathogenic' },
+        ],
+        imagingResult: 'Stable disease',
+      },
+      {
+        id: 'T3',
+        label: '16 Weeks',
+        date: '2023-06-07',
+        dayFromBaseline: 112,
+        treatmentPhase: 'On Chemo',
+        tumorFraction: 0.04,
+        totalCfDNA: 14.8,
+        shortFragmentRatio: 0.37,
+        methylationScore: 0.31,
+        genomeInstabilityScore: 36,
+        mutations: [
+          { gene: 'KRAS', variant: 'G12D', vaf: 0.05, type: 'SNV', pathogenicity: 'Pathogenic' },
+          { gene: 'APC', variant: 'R1450*', vaf: 0.04, type: 'SNV', pathogenicity: 'Pathogenic' },
+        ],
+        imagingResult: 'Stable disease',
+      },
+    ],
+  },
+  {
+    id: 'PT-003',
+    name: 'Meera Krishnan',
+    age: 52,
+    sex: 'Female',
+    cancerType: 'Breast Cancer (ER+/HER2-)',
+    stage: 'Stage II',
+    diagnosisDate: '2023-03-05',
+    currentTherapy: 'Letrozole + Palbociclib',
+    riskScore: 28,
+    riskCategory: 'low',
+    progressionProbability: 0.22,
+    predictedRECIST: 'Partial Response',
+    timeToProgression: 18.2,
+    confidenceScore: 0.82,
+    timepoints: [
+      {
+        id: 'T1',
+        label: 'Baseline',
+        date: '2023-03-10',
+        dayFromBaseline: 0,
+        treatmentPhase: 'Pre-treatment',
+        tumorFraction: 0.02,
+        totalCfDNA: 8.5,
+        shortFragmentRatio: 0.34,
+        methylationScore: 0.22,
+        genomeInstabilityScore: 25,
+        mutations: [
+          { gene: 'PIK3CA', variant: 'H1047R', vaf: 0.04, type: 'SNV', pathogenicity: 'Pathogenic' },
+        ],
+        imagingResult: null,
+      },
+      {
+        id: 'T2',
+        label: '12 Weeks',
+        date: '2023-06-02',
+        dayFromBaseline: 84,
+        treatmentPhase: 'On Treatment',
+        tumorFraction: 0.01,
+        totalCfDNA: 5.2,
+        shortFragmentRatio: 0.31,
+        methylationScore: 0.15,
+        genomeInstabilityScore: 18,
+        mutations: [
+          { gene: 'PIK3CA', variant: 'H1047R', vaf: 0.02, type: 'SNV', pathogenicity: 'Pathogenic' },
+        ],
+        imagingResult: 'Partial response',
+      },
+      {
+        id: 'T3',
+        label: '24 Weeks',
+        date: '2023-08-25',
+        dayFromBaseline: 168,
+        treatmentPhase: 'On Treatment',
+        tumorFraction: 0.008,
+        totalCfDNA: 4.1,
+        shortFragmentRatio: 0.29,
+        methylationScore: 0.12,
+        genomeInstabilityScore: 15,
+        mutations: [
+          { gene: 'PIK3CA', variant: 'H1047R', vaf: 0.01, type: 'SNV', pathogenicity: 'Pathogenic' },
+        ],
+        imagingResult: 'Near complete response',
+      },
+    ],
+  },
+];
+
+const getFeatureImportance = (patient) => {
+  const latest = patient.timepoints[patient.timepoints.length - 1];
+  return [
+    {
+      feature: 'Tumor Fraction',
+      importance: latest.tumorFraction * 500,
+      direction: 'positive',
+      value: `${(latest.tumorFraction * 100).toFixed(2)}%`,
+    },
+    {
+      feature: 'Methylation Score',
+      importance: latest.methylationScore * 100,
+      direction: 'positive',
+      value: latest.methylationScore.toFixed(2),
+    },
+    {
+      feature: 'Total cfDNA',
+      importance: latest.totalCfDNA * 2,
+      direction: 'positive',
+      value: `${latest.totalCfDNA.toFixed(1)} ng/mL`,
+    },
+    {
+      feature: 'Max VAF',
+      importance: Math.max(...latest.mutations.map((m) => m.vaf)) * 200,
+      direction: 'positive',
+      value: `${(Math.max(...latest.mutations.map((m) => m.vaf)) * 100).toFixed(1)}%`,
+    },
+    {
+      feature: 'Genome Instability',
+      importance: latest.genomeInstabilityScore * 0.8,
+      direction: 'positive',
+      value: latest.genomeInstabilityScore.toString(),
+    },
+    {
+      feature: 'Fragment Ratio',
+      importance: latest.shortFragmentRatio * 80,
+      direction: 'positive',
+      value: latest.shortFragmentRatio.toFixed(2),
+    },
+    {
+      feature: 'Mutation Count',
+      importance: latest.mutations.length * 8,
+      direction: 'positive',
+      value: latest.mutations.length.toString(),
+    },
+  ].sort((a, b) => b.importance - a.importance);
+};
+
+const datasets = [
+  {
+    name: 'AACR Project GENIE',
+    description:
+      'Large-scale cancer genomic database with >100,000 samples. Includes clinical and genomic data from real-world cancer patients across multiple institutions.',
+    dataTypes: ['Targeted sequencing', 'Clinical outcomes', 'Treatment data'],
+    cancerTypes: ['Pan-cancer', 'NSCLC', 'Breast', 'Colorectal', 'Melanoma'],
+    sampleSize: '~140,000 samples',
+    access: 'Open access after registration',
+    relevance:
+      'Gold standard for training models on real genomic-clinical associations. Includes mutation data similar to ctDNA panels.',
+    url: 'https://www.aacr.org/professionals/research/aacr-project-genie/',
+  },
+  {
+    name: 'TCGA (The Cancer Genome Atlas)',
+    description:
+      'Comprehensive genomic characterization of 33 cancer types. Includes WGS, RNA-seq, methylation, and clinical data.',
+    dataTypes: ['WGS', 'RNA-seq', 'Methylation', 'CNV', 'Clinical'],
+    cancerTypes: ['33 cancer types', 'LUAD', 'BRCA', 'COAD', 'many more'],
+    sampleSize: '~11,000 patients',
+    access: 'Open via GDC Data Portal',
+    relevance:
+      'Rich multi-omics data for feature engineering. Methylation and CNV profiles mimic ctDNA signals.',
+    url: 'https://portal.gdc.cancer.gov/',
+  },
+  {
+    name: 'PCAWG (Pan-Cancer Analysis of Whole Genomes)',
+    description:
+      'Whole genome sequencing of 2,658 cancers across 38 tumor types. Deep genomic characterization including structural variants.',
+    dataTypes: ['WGS', 'Structural variants', 'Driver mutations'],
+    cancerTypes: ['38 tumor types'],
+    sampleSize: '2,658 samples',
+    access: 'Open via ICGC Data Portal',
+    relevance: 'Comprehensive mutation landscapes. Useful for variant annotation and pathogenicity training.',
+    url: 'https://dcc.icgc.org/pcawg',
+  },
+  {
+    name: 'MSK-IMPACT Clinical Sequencing',
+    description:
+      'Memorial Sloan Kettering targeted sequencing cohort with longitudinal data and treatment outcomes.',
+    dataTypes: ['Targeted panel (468 genes)', 'Longitudinal', 'Treatment response'],
+    cancerTypes: ['Pan-cancer', 'focus on solid tumors'],
+    sampleSize: '~50,000 patients',
+    access: 'Controlled access via cBioPortal',
+    relevance:
+      'Best publicly available longitudinal sequencing data. Directly models ctDNA monitoring scenarios.',
+    url: 'https://www.cbioportal.org/study/summary?id=msk_impact_2017',
+  },
+  {
+    name: 'CPTAC (Clinical Proteomic Tumor Analysis)',
+    description:
+      'Multi-omics cancer datasets including genomics, proteomics, and imaging. High-quality clinical annotations.',
+    dataTypes: ['Genomics', 'Proteomics', 'Imaging', 'Clinical'],
+    cancerTypes: ['LUAD', 'BRCA', 'COAD', 'HNSCC', 'others'],
+    sampleSize: '~1,000 tumors',
+    access: 'Open via PDC',
+    relevance: 'Multi-modal data fusion practice. Imaging correlation with molecular features.',
+    url: 'https://proteomics.cancer.gov/programs/cptac',
+  },
+];
+
+const quickStartSteps = [
+  { step: 1, title: 'Get TCGA Data', description: 'Download mutation + methylation data for your cancer type' },
+  { step: 2, title: 'Simulate ctDNA', description: 'Downsample VAFs to mimic low tumor fractions' },
+  { step: 3, title: 'Extract Features', description: 'VAF, TF, methylation, fragment size proxies' },
+  { step: 4, title: 'Add Clinical Data', description: 'Treatment, stage, imaging from GENIE/MSK' },
+  { step: 5, title: 'Train Models', description: 'XGBoost for snapshot, LSTM for temporal' },
+  { step: 6, title: 'Evaluate', description: 'AUC, sensitivity, time-dependent ROC' },
+];
 
 // ─── SVG Icon Component ────────────────────────────────────────────
 const Icon = ({ d, className = '' }) => (
@@ -59,9 +403,9 @@ const navItems = [
   { id: 'dashboard', label: 'Dashboard', icon: icons.dashboard },
   { id: 'dynamics', label: 'ctDNA Dynamics', icon: icons.chart },
   { id: 'predictions', label: 'AI Predictions', icon: icons.brain },
-  { id: 'clinical', label: 'Clinical Decision', icon: icons.shield },
+  { id: 'clinical', label: 'Clinical View', icon: icons.shield },
   { id: 'datasets', label: 'Datasets & Resources', icon: icons.database },
-  { id: 'architecture', label: 'System Architecture', icon: icons.architecture },
+  { id: 'architecture', label: 'How OncoTrace AI works', icon: icons.architecture },
 ];
 
 // ─── Chart Colors ──────────────────────────────────────────────────
@@ -120,15 +464,7 @@ export default function Demo() {
       <header className="bg-white/90 backdrop-blur-xl border-b border-gray-200 shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center font-bold text-white text-sm shadow-md shadow-blue-500/20">
-              OT
-            </div>
-            <div className="hidden sm:block">
-              <h1 className="text-lg font-bold tracking-tight text-gray-900">OncoTrace AI</h1>
-              <p className="text-[10px] text-gray-400 -mt-0.5 tracking-widest uppercase">
-                Liquid Biopsy Cancer Monitor
-              </p>
-            </div>
+            <div className="text-lg font-bold tracking-tight text-gray-900">ctDNA Monitor</div>
           </div>
 
           <div className="flex items-center gap-2 sm:gap-3">
@@ -489,8 +825,8 @@ function DashboardPage({ patient, onNavigate }) {
           },
           {
             page: 'clinical',
-            title: 'Clinical Decision',
-            desc: 'Action recommendations and decision support',
+            title: 'Clinical View',
+            desc: 'Data visualization and monitoring history',
             color: 'from-amber-50 to-orange-50 border-amber-200',
           },
         ].map((card) => (
@@ -898,60 +1234,16 @@ function PredictionsPage({ patient }) {
   );
 }
 
-// ─── CLINICAL DECISION PAGE ────────────────────────────────────────
+// ─── CLINICAL VIEW PAGE ────────────────────────────────────────────
 function ClinicalPage({ patient }) {
   const latest = patient.timepoints[patient.timepoints.length - 1];
   const prev = patient.timepoints.length > 1 ? patient.timepoints[patient.timepoints.length - 2] : null;
 
-  const riskConfig = {
-    low: {
-      emoji: '🟢',
-      title: 'LOW RISK — Continue Monitoring',
-      actions: [
-        'Continue scheduled liquid biopsy collections',
-        'Next blood draw recommended in 8-12 weeks',
-        'Standard imaging schedule per protocol',
-        'No change in current therapy recommended',
-      ],
-      bgClass: 'from-emerald-50 to-emerald-50/50 border-emerald-200',
-      textClass: 'text-emerald-600',
-    },
-    moderate: {
-      emoji: '🟡',
-      title: 'UNCERTAIN — Enhanced Surveillance',
-      actions: [
-        'Shorten liquid biopsy interval to 4-6 weeks',
-        'Consider confirmatory imaging (CT) within 4 weeks',
-        'Multidisciplinary team review recommended',
-        'Monitor for emerging resistance mutations',
-        'Evaluate response criteria at next assessment',
-      ],
-      bgClass: 'from-amber-50 to-amber-50/50 border-amber-200',
-      textClass: 'text-amber-600',
-    },
-    high: {
-      emoji: '🔴',
-      title: 'HIGH RISK — Immediate Action Required',
-      actions: [
-        '⚠️ Recommend immediate CT/PET imaging',
-        'Urgent multidisciplinary tumor board review',
-        'Evaluate for treatment change/escalation',
-        'Consider resistance mechanism-targeted therapy',
-        'Increase liquid biopsy frequency to q2-4 weeks',
-        'Assess eligibility for clinical trials',
-      ],
-      bgClass: 'from-red-50 to-red-50/50 border-red-200',
-      textClass: 'text-red-600',
-    },
-  };
-
-  const config = riskConfig[patient.riskCategory];
-
-  // Generate alerts
-  const alerts = [];
+  // Generate observations
+  const observations = [];
 
   if (prev && latest.tumorFraction > prev.tumorFraction * 1.5) {
-    alerts.push({
+    observations.push({
       severity: 'critical',
       message: `Tumor fraction increased ${((latest.tumorFraction / prev.tumorFraction - 1) * 100).toFixed(0)}% from previous draw`,
     });
@@ -961,7 +1253,7 @@ function ClinicalPage({ patient }) {
     (m) => prev && !prev.mutations.some((pm) => pm.gene === m.gene && pm.variant === m.variant)
   );
   if (newMuts.length > 0) {
-    alerts.push({
+    observations.push({
       severity: 'critical',
       message: `New mutation(s) detected: ${newMuts.map((m) => `${m.gene} ${m.variant}`).join(', ')}`,
     });
@@ -971,45 +1263,55 @@ function ClinicalPage({ patient }) {
     ['T790M', 'C797S', 'Loss', 'Amplification'].includes(m.variant)
   );
   if (resistanceMuts.length > 0) {
-    alerts.push({
+    observations.push({
       severity: 'warning',
       message: `Resistance mechanism detected: ${resistanceMuts.map((m) => `${m.gene} ${m.variant}`).join(', ')}`,
     });
   }
 
   if (latest.methylationScore > 0.6) {
-    alerts.push({
+    observations.push({
       severity: 'warning',
       message: `Elevated methylation score (${latest.methylationScore.toFixed(2)}) suggests high tumor burden`,
     });
   }
 
   if (patient.confidenceScore < 0.75) {
-    alerts.push({
+    observations.push({
       severity: 'info',
-      message: `Model confidence is moderate (${(patient.confidenceScore * 100).toFixed(0)}%) — consider additional data`,
+      message: `Model confidence is moderate (${(patient.confidenceScore * 100).toFixed(0)}%)`,
     });
   }
+
+  const getRiskColorClass = (category) => {
+    switch (category) {
+      case 'high':
+        return 'text-red-500';
+      case 'moderate':
+        return 'text-amber-500';
+      default:
+        return 'text-emerald-500';
+    }
+  };
 
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Clinical Decision Support"
-        subtitle={`AI-guided recommendations for ${patient.id} — ${patient.cancerType}`}
+        title="Clinical View"
+        subtitle={`Data visualization and monitoring for ${patient.id} — ${patient.cancerType}`}
       />
 
-      {/* Risk Banner */}
-      <div className={`bg-gradient-to-r ${config.bgClass} border rounded-2xl p-4 sm:p-6`}>
-        <div className="flex flex-col sm:flex-row sm:items-start gap-4">
-          <span className="text-3xl sm:text-4xl">{config.emoji}</span>
+      {/* Risk Overview */}
+      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 sm:p-6">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4">
           <div className="flex-1">
-            <h3 className={`text-lg sm:text-xl font-bold ${config.textClass} mb-2`}>{config.title}</h3>
-            <div className="flex flex-wrap items-center gap-3 sm:gap-6 mb-4 text-xs sm:text-sm text-gray-500">
+            <h3 className="text-lg font-bold text-gray-900 mb-2">Risk Assessment</h3>
+            <div className="flex flex-wrap items-center gap-3 sm:gap-6 text-xs sm:text-sm text-gray-500">
               <span>
-                Risk Score: <span className="font-bold text-gray-900">{patient.riskScore}/100</span>
+                Risk Score: <span className={`font-bold ${getRiskColorClass(patient.riskCategory)}`}>{patient.riskScore}/100</span>
               </span>
               <span>
-                Progression:{' '}
+                Progression Probability:{' '}
                 <span className="font-bold text-gray-900">
                   {(patient.progressionProbability * 100).toFixed(0)}%
                 </span>
@@ -1021,84 +1323,59 @@ function ClinicalPage({ patient }) {
                 </span>
               </span>
             </div>
-            <div className="space-y-2">
-              {config.actions.map((action, i) => (
-                <div key={i} className="flex items-start gap-2 text-sm">
-                  <span className={config.textClass}>→</span>
-                  <span className="text-gray-700">{action}</span>
-                </div>
-              ))}
+          </div>
+          <div
+            className={`px-4 sm:px-6 py-2 sm:py-3 rounded-xl text-center ${
+              patient.riskCategory === 'high'
+                ? 'bg-red-50 border border-red-200'
+                : patient.riskCategory === 'moderate'
+                ? 'bg-amber-50 border border-amber-200'
+                : 'bg-emerald-50 border border-emerald-200'
+            }`}
+          >
+            <div className="text-2xl sm:text-3xl mb-1">
+              {patient.riskCategory === 'high' ? '🔴' : patient.riskCategory === 'moderate' ? '🟡' : '🟢'}
+            </div>
+            <div className={`text-xs sm:text-sm font-bold uppercase ${getRiskColorClass(patient.riskCategory)}`}>
+              {patient.riskCategory} Risk
             </div>
           </div>
         </div>
       </div>
 
-      {/* Alerts */}
-      {alerts.length > 0 && (
+      {/* Observations */}
+      {observations.length > 0 && (
         <div className="space-y-3">
-          <h3 className="text-sm font-semibold text-gray-700">Active Alerts</h3>
-          {alerts.map((alert, i) => (
+          <h3 className="text-sm font-semibold text-gray-700">Key Observations</h3>
+          {observations.map((obs, i) => (
             <div
               key={i}
               className={`rounded-xl p-3 sm:p-4 border flex items-start gap-3 ${
-                alert.severity === 'critical'
+                obs.severity === 'critical'
                   ? 'bg-red-50 border-red-200'
-                  : alert.severity === 'warning'
+                  : obs.severity === 'warning'
                   ? 'bg-amber-50 border-amber-200'
                   : 'bg-blue-50 border-blue-200'
               }`}
             >
               <span className="text-lg">
-                {alert.severity === 'critical' ? '🚨' : alert.severity === 'warning' ? '⚠️' : 'ℹ️'}
+                {obs.severity === 'critical' ? '🚨' : obs.severity === 'warning' ? '⚠️' : 'ℹ️'}
               </span>
               <span
                 className={`text-sm ${
-                  alert.severity === 'critical'
+                  obs.severity === 'critical'
                     ? 'text-red-700'
-                    : alert.severity === 'warning'
+                    : obs.severity === 'warning'
                     ? 'text-amber-700'
                     : 'text-blue-700'
                 }`}
               >
-                {alert.message}
+                {obs.message}
               </span>
             </div>
           ))}
         </div>
       )}
-
-      {/* Risk Level Cards */}
-      <div className="grid sm:grid-cols-3 gap-3 sm:gap-4">
-        {['low', 'moderate', 'high'].map((level) => {
-          const c = riskConfig[level];
-          const isActive = patient.riskCategory === level;
-          return (
-            <div
-              key={level}
-              className={`rounded-xl p-4 sm:p-5 border transition-all ${
-                isActive
-                  ? `bg-gradient-to-b ${c.bgClass} scale-[1.02] shadow-md`
-                  : 'bg-white border-gray-200 opacity-50'
-              }`}
-            >
-              <div className="flex items-center gap-2 mb-3">
-                <span className="text-xl">{c.emoji}</span>
-                <span className={`text-sm font-bold ${c.textClass}`}>{level.toUpperCase()}</span>
-                {isActive && (
-                  <span className="text-xs bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full ml-auto font-medium">CURRENT</span>
-                )}
-              </div>
-              <div className="space-y-1.5">
-                {c.actions.slice(0, 3).map((a, i) => (
-                  <p key={i} className="text-xs text-gray-500">
-                    • {a}
-                  </p>
-                ))}
-              </div>
-            </div>
-          );
-        })}
-      </div>
 
       {/* Monitoring History */}
       <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-4 sm:p-5">
@@ -1146,11 +1423,10 @@ function ClinicalPage({ patient }) {
 
       {/* Disclaimer */}
       <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 text-xs text-gray-500">
-        <p className="font-semibold text-gray-600 mb-1">⚕️ Clinical Disclaimer</p>
+        <p className="font-semibold text-gray-600 mb-1">⚕️ Research Prototype</p>
         <p>
-          This is a prototype decision support tool. All predictions are from simulated data and
-          should NOT be used for actual clinical decisions. In production, predictions must be
-          validated and reviewed by qualified oncologists.
+          This system is for research and demonstration purposes only. All data shown is simulated.
+          This tool is not intended for clinical decision-making.
         </p>
       </div>
     </div>
@@ -1344,11 +1620,11 @@ function ArchitecturePage() {
     },
     {
       id: 4,
-      title: 'Clinical Decision',
+      title: 'Clinical Interface',
       icon: '🏥',
       color: 'from-amber-50 to-orange-50 border-amber-200',
       components: [
-        { name: 'Risk Stratification', desc: 'Low/Moderate/High risk levels', input: 'Predictions', output: 'Action plan' },
+        { name: 'Risk Stratification', desc: 'Low/Moderate/High risk levels', input: 'Predictions', output: 'Risk category' },
         { name: 'Explainability (SHAP)', desc: 'Feature-level explanations', input: 'Model internals', output: 'SHAP values' },
         { name: 'Confidence Intervals', desc: 'Uncertainty quantification', input: 'Ensemble variance', output: 'CI bounds' },
       ],
@@ -1359,7 +1635,7 @@ function ArchitecturePage() {
     <div className="space-y-6">
       <PageHeader
         title="System Architecture"
-        subtitle="Complete pipeline from patient blood samples to clinical decisions"
+        subtitle="Complete pipeline from patient blood samples to predictions"
       />
 
       {/* Flow Diagram */}
@@ -1417,33 +1693,6 @@ function ArchitecturePage() {
             </div>
           ))}
         </div>
-      </div>
-
-      {/* Project Structure */}
-      <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-4 sm:p-5">
-        <h3 className="text-sm font-semibold text-gray-700 mb-4">📁 Recommended Project Structure</h3>
-        <pre className="text-[10px] sm:text-xs text-gray-600 font-mono bg-gray-50 rounded-lg p-4 overflow-x-auto whitespace-pre border border-gray-100">
-{`cancer_progression_predictor/
-├── config/
-│   └── config.yaml              # Hyperparameters, paths
-├── data/
-│   ├── raw/                     # Raw FASTQ/BAM files
-│   ├── processed/               # Processed feature tables
-│   └── clinical/                # Clinical metadata
-├── src/
-│   ├── data_ingestion.py        # Parse BAM/VCF/methylation
-│   ├── feature_engineering.py   # Feature extraction
-│   ├── models.py                # XGBoost, LSTM, Transformer
-│   ├── training.py              # Training pipeline
-│   ├── prediction.py            # Inference
-│   └── explainability.py        # SHAP explanations
-├── notebooks/
-│   ├── 01_EDA.ipynb
-│   └── 02_model_evaluation.ipynb
-├── pretrained/                  # Model weights
-├── requirements.txt
-└── main.py                      # CLI entrypoint`}
-        </pre>
       </div>
 
       {/* Tech Stack */}
