@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 function useOnScreen(threshold = 0.12) {
-  const ref = useRef (null);
+  const ref = useRef(null);
   const [visible, setVisible] = useState(false);
   useEffect(() => {
     const el = ref.current;
@@ -25,7 +25,6 @@ function Reveal({
   children,
   className = "",
   delay = 0,
-
 }) {
   const [ref, vis] = useOnScreen();
   return (
@@ -315,7 +314,7 @@ export default function LiquidBiopsyMonitoring() {
                 <div className="flex items-center gap-2 mb-4">
                   <div className="w-6 h-[2px] bg-blue-500 group-hover:w-10 transition-all" />
                   <span className="text-[10px] font-semibold tracking-[.18em] uppercase text-blue-600">
-                    {String(i + 1).padStart(2, "0")}
+                    {i + 1}
                   </span>
                 </div>
                 <h3 className="text-[14px] font-bold text-gray-900 mb-2">
