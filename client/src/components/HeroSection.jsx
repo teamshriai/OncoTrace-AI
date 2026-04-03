@@ -1,3 +1,4 @@
+// HeroSection.jsx - Updated with improvements
 import {
   useEffect, useRef, useState, useCallback, forwardRef, useImperativeHandle,
 } from 'react'
@@ -95,6 +96,10 @@ const scopedCSS = `
   @keyframes heroShimmerBar {
     0%   { background-position: -200% 0; }
     100% { background-position:  200% 0; }
+  }
+  @keyframes heroGentleGlow {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 0.85; }
   }
 `
 
@@ -263,12 +268,12 @@ const HeroImage = forwardRef(function HeroImage(
 function HeadlineLine({ text, type, delay, isReduced }) {
   const base = [
     "block font-['Outfit'] leading-[0.88] tracking-[-0.05em]",
-    'text-[clamp(1.3rem,6.5vw,1.8rem)]',
-    'sm:text-[clamp(1.6rem,5.5vw,2.4rem)]',
-    'md:text-[clamp(1.8rem,4.5vw,2.8rem)]',
-    'lg:text-[clamp(1.5rem,2.6vw,2.6rem)]',
-    'xl:text-[clamp(2rem,3.2vw,3.6rem)]',
-    '2xl:text-[clamp(2.5rem,3.5vw,5rem)]',
+    'text-[clamp(1.5rem,7vw,2rem)]',
+    'sm:text-[clamp(1.8rem,6vw,2.6rem)]',
+    'md:text-[clamp(2rem,5vw,3rem)]',
+    'lg:text-[clamp(1.7rem,2.8vw,2.8rem)]',
+    'xl:text-[clamp(2.2rem,3.4vw,3.8rem)]',
+    '2xl:text-[clamp(2.8rem,3.8vw,5.2rem)]',
   ].join(' ')
 
   const revealAnim = isReduced
@@ -336,12 +341,6 @@ export default function HeroSection({ onNavigate }) {
 
   useEffect(() => { injectHeroStyles() }, [])
 
-  const handleLB = useCallback(() => onNavigate?.('lb'), [onNavigate])
-  
-  const handleMammo = useCallback(() => {
-    window.location.href = 'https://oncotraceai.org/mammo-demo/ui'
-  }, [])
-
   return (
     <div className="hero-root">
       {/* Skip link */}
@@ -384,7 +383,7 @@ export default function HeroSection({ onNavigate }) {
 
           {/* ── LEFT: cover image ── */}
           <HeroImage
-            src="/cover-image.png"
+            src="/hospital1.png"
             alt="AI-powered precision oncology monitoring — diagnostic imaging analysis"
             priority
             containerClassName="relative w-full min-h-[240px] h-[35vh] sm:h-[40vh] md:h-[45vh] lg:h-auto lg:min-h-screen"
@@ -461,14 +460,6 @@ export default function HeroSection({ onNavigate }) {
                       <span
                         aria-hidden="true"
                         className="w-3 h-3 lg:w-3.5 lg:h-3.5 xl:w-4 xl:h-4 rounded-full flex-shrink-0"
-                        style={{
-                          background: '#ff8c32',
-                          boxShadow:
-                            '0 0 12px rgba(255,140,50,0.9),0 0 30px rgba(255,140,50,0.5)',
-                          animation: isReduced
-                            ? undefined
-                            : 'heroDotPulse 2s ease-in-out infinite',
-                        }}
                       />
                       Open Source · Not for Profit
                     </span>
@@ -554,24 +545,27 @@ export default function HeroSection({ onNavigate }) {
               </span>
             </div>
 
-            {/* Eyebrow */}
+            {/* Eyebrow - Enhanced visibility */}
             <span
-              className="relative z-10 font-['DM_Sans'] text-[clamp(7px,1.2vw,11px)] text-white/20 tracking-[0.25em] uppercase font-medium mb-2 sm:mb-3 lg:mb-5 xl:mb-6 flex items-center justify-center lg:justify-start w-full"
-              style={{ animation: isReduced ? undefined : anim('heroFloatUp', 0.2, '1s') }}
+              className="relative z-10 font-['DM_Sans'] text-[clamp(12px,1.4vw,15px)] text-white/95 tracking-[0.3em] uppercase font-bold mb-5 sm:mb-6 lg:mb-6 xl:mb-8 flex items-center justify-center lg:justify-start w-full"
+              style={{ 
+                animation: isReduced ? undefined : anim('heroFloatUp', 0.2, '1s'),
+                textShadow: '0 0 20px rgba(255,255,255,0.3)',
+              }}
             >
               <span
                 aria-hidden="true"
-                className="inline-block w-4 sm:w-5 lg:w-6 h-px mr-2 sm:mr-3 flex-shrink-0"
+                className="inline-block w-5 sm:w-6 lg:w-7 h-[2px] mr-2.5 sm:mr-3 flex-shrink-0"
                 style={{
-                  background:
-                    'linear-gradient(90deg,rgba(255,140,50,0.5),rgba(255,140,50,0.05))',
+                  background: 'linear-gradient(90deg,rgb(255, 111, 0),rgb(255, 255, 255))',
+                  boxShadow: '0 0 8px rgba(255,111,0,0.4)',
                 }}
               />
               OncoTrace-AI Platform
             </span>
 
-            {/* Headline */}
-            <h1 className="relative z-10 m-0 p-0" style={{ perspective: '800px' }}>
+            {/* Headline - Increased font sizes */}
+            <h1 className="relative z-10 m-0 p-0 mb-1" style={{ perspective: '800px' }}>
               {HEADLINE.map((line) => (
                 <HeadlineLine key={line.text} {...line} isReduced={isReduced} />
               ))}
@@ -580,7 +574,7 @@ export default function HeroSection({ onNavigate }) {
             {/* Accent line */}
             <div
               aria-hidden="true"
-              className="relative z-10 w-10 sm:w-14 lg:w-16 xl:w-20 h-px mt-3 sm:mt-4 lg:mt-7 xl:mt-8 mb-2.5 sm:mb-3 lg:mb-5 xl:mb-6 mx-auto lg:mx-0"
+              className="relative z-10 w-12 sm:w-16 lg:w-18 xl:w-24 h-[2px] mt-4 sm:mt-5 lg:mt-6 xl:mt-7 mb-3 sm:mb-4 lg:mb-5 xl:mb-6 mx-auto lg:mx-0"
               style={{
                 background:
                   'linear-gradient(90deg,rgba(255,140,50,0.6),rgba(59,130,246,0.3),rgba(59,130,246,0.02))',
@@ -591,9 +585,9 @@ export default function HeroSection({ onNavigate }) {
               }}
             />
 
-            {/* Description */}
+            {/* Description - Increased font size */}
             <p
-              className="relative z-10 font-['Plus_Jakarta_Sans'] text-[clamp(10px,1.4vw,14px)] text-white/90 leading-[1.7] sm:leading-[1.75] max-w-[320px] sm:max-w-[360px] lg:max-w-[340px] xl:max-w-[380px] font-light tracking-[0.015em] mx-auto lg:mx-0"
+              className="relative z-10 font-['Plus_Jakarta_Sans'] text-[clamp(12px,1.6vw,16px)] text-white/95 leading-[1.75] sm:leading-[1.8] max-w-[340px] sm:max-w-[380px] lg:max-w-[360px] xl:max-w-[420px] font-light tracking-[0.02em] mx-auto lg:mx-0 mb-4 sm:mb-5 lg:mb-5 xl:mb-6"
               style={{ animation: isReduced ? undefined : anim('heroFloatUp', 1, '1s') }}
             >
               AI-based risk prediction meets liquid biopsy — from forecasting cancer risk
@@ -601,81 +595,45 @@ export default function HeroSection({ onNavigate }) {
               precision intelligence — open source and built for every community.
             </p>
 
-            {/* CTA buttons */}
+            {/* Powered by footer - NEW */}
             <div
-              className="relative z-10 flex flex-col sm:flex-row items-center gap-3 mt-4 sm:mt-5 lg:mt-7 xl:mt-9 justify-center lg:justify-start w-full sm:w-auto"
-              style={{ animation: isReduced ? undefined : anim('heroFloatUp', 1.1, '1s') }}
+              className="relative z-10 flex items-center justify-center lg:justify-start gap-2 mb-4 sm:mb-5 lg:mb-6 xl:mb-7"
+              style={{ animation: isReduced ? undefined : anim('heroFloatUp', 1.15, '1s') }}
             >
-              {/* Primary — Liquid Biopsy */}
-              <button
-                onClick={handleLB}
-                type="button"
-                className="group relative overflow-hidden inline-flex items-center justify-center gap-2 px-5 py-3 sm:px-7 sm:py-3.5 lg:px-8 lg:py-3.5 xl:px-9 xl:py-4 rounded-[4px] font-['DM_Sans'] text-[clamp(10px,1.2vw,13px)] font-semibold tracking-[0.05em] uppercase text-white transition-all duration-300 ease-out border-none cursor-pointer w-full sm:w-auto min-h-[48px] bg-gradient-to-br from-blue-600 to-blue-500 shadow-[0_8px_32px_rgba(37,99,235,0.3),0_2px_8px_rgba(37,99,235,0.15)] hover:-translate-y-0.5 hover:shadow-[0_16px_48px_rgba(37,99,235,0.4)] active:translate-y-0 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-blue-600"
-                aria-label="Book a demo for the Liquid Biopsy platform"
+              <div
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full backdrop-blur-sm"
+                style={{
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                }}
               >
                 <span
-                  aria-hidden="true"
-                  className="absolute top-0 -left-full w-full h-full bg-gradient-to-r from-transparent via-white/[0.1] to-transparent group-hover:left-full transition-all duration-500"
-                />
-                <svg
-                  width="13" height="13" viewBox="0 0 16 16" fill="none"
-                  className="relative z-10" aria-hidden="true"
+                  className="font-['DM_Sans'] text-[clamp(9px,1.1vw,11px)] text-white/60 tracking-[0.08em] uppercase font-medium"
                 >
-                  <rect x="2" y="2" width="12" height="12" rx="2" stroke="white" strokeWidth="1.5" />
-                  <path d="M5 8h6M8 5v6" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
-                </svg>
-                <span className="relative z-10">Book Demo — Liquid Biopsy</span>
-              </button>
-
-              {/* Secondary — Mammogram (Direct Link) */}
-              <button
-                onClick={handleMammo}
-                type="button"
-                className="group relative overflow-hidden inline-flex items-center justify-center gap-2 px-5 py-3 sm:px-7 sm:py-3.5 lg:px-8 lg:py-3.5 xl:px-9 xl:py-4 rounded-[4px] font-['DM_Sans'] text-[clamp(10px,1.2vw,13px)] font-semibold tracking-[0.05em] uppercase text-white/90 transition-all duration-300 ease-out cursor-pointer w-full sm:w-auto min-h-[48px] bg-white/[0.07] backdrop-blur-sm hover:bg-white/[0.12] hover:-translate-y-0.5 active:translate-y-0 focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-1"
-                style={{ border: '1px solid rgba(255,255,255,0.12)' }}
-                aria-label="Experience the Mammogram AI platform demo"
-              >
+                  Powered by
+                </span>
                 <span
-                  aria-hidden="true"
-                  className="absolute top-0 -left-full w-full h-full bg-gradient-to-r from-transparent via-white/[0.06] to-transparent group-hover:left-full transition-all duration-500"
-                />
-                <svg
-                  width="13" height="13" viewBox="0 0 16 16" fill="none"
-                  className="relative z-10" aria-hidden="true"
+                  className="font-['DM_Sans'] text-[clamp(9px,1.1vw,11px)] font-semibold tracking-[0.05em]"
+                  style={{
+                    background: 'linear-gradient(135deg, #60a5fa 0%, #93c5fd 100%)',
+                    WebkitBackgroundClip: 'text',
+                    backgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    animation: isReduced ? undefined : 'heroGentleGlow 3s ease-in-out infinite',
+                  }}
                 >
-                  <rect x="1" y="3" width="14" height="10" rx="2" stroke="rgba(255,255,255,0.8)" strokeWidth="1.5" />
-                  <circle cx="8" cy="8" r="2.5" stroke="rgba(255,255,255,0.8)" strokeWidth="1.5" />
-                  <circle cx="8" cy="8" r="0.8" fill="rgba(255,255,255,0.8)" />
-                </svg>
-                <span className="relative z-10">Experience Mammogram</span>
-              </button>
+                  Senus Health Care and Research Institution
+                </span>
+              </div>
             </div>
 
-            {/* Status indicators */}
+            {/* Status indicators - Increased font size */}
             <div
-              className="relative z-10 mt-4 sm:mt-6 lg:mt-8 xl:mt-10 flex flex-wrap items-center gap-3 sm:gap-5 justify-center lg:justify-start pb-4 lg:pb-0"
+              className="relative z-10 flex flex-wrap items-center gap-3 sm:gap-5 justify-center lg:justify-start pb-4 lg:pb-0"
               style={{ animation: isReduced ? undefined : anim('heroFloatUp', 1.3, '1s') }}
               aria-label="Platform status"
             >
-              {STATUS_INDICATORS.map((ind, i) => (
-                <div key={ind.label} className="flex items-center gap-1.5">
-                  {i > 0 && (
-                    <div aria-hidden="true" className="w-px h-2.5 bg-white/10 -ml-1.5 mr-1.5 sm:-ml-2 sm:mr-2" />
-                  )}
-                  <div
-                    aria-hidden="true"
-                    className={`w-1.5 h-1.5 rounded-full ${ind.bg ?? ''}`}
-                    style={
-                      ind.color
-                        ? { background: ind.color, boxShadow: `0 0 6px ${ind.shadow}` }
-                        : undefined
-                    }
-                  />
-                  <span className="font-['DM_Sans'] text-[clamp(7px,1vw,9.5px)] text-white/25 tracking-[0.1em] uppercase">
-                    {ind.label}
-                  </span>
-                </div>
-              ))}
             </div>
           </div>
         </div>

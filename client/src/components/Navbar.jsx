@@ -4,14 +4,58 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 const NAV_LINKS = [
   { label: 'Home',          href: '#home' },
   { label: 'Mammogram',     href: '#mammogram' },
-  { label: 'Liquid Biopsy', href: '#liquid-biopsy' },
+  { label: 'Blood-Based Cancer Test', href: '#liquid-biopsy' },
   { label: 'Solution',      href: '#solution' },
   { label: 'Research',      href: '#case-study' },
   { label: 'Team',          href: '#team' },
   { label: 'Contact',       href: '#cta' },
 ];
 
-const STYLE_ID = 'navbar-styles-v3';
+const PRODUCT_LINKS = [
+  { 
+    label: 'Book a Demo',
+    subtitle: 'Liquid Biopsy',
+    action: 'book-lb',
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <rect x="3" y="2" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M7 1v3M11 1v3M3 6h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        <circle cx="7" cy="9.5" r="0.75" fill="currentColor" />
+        <circle cx="9" cy="9.5" r="0.75" fill="currentColor" />
+        <circle cx="11" cy="9.5" r="0.75" fill="currentColor" />
+      </svg>
+    ),
+    featured: true
+  },
+  { 
+    label: 'View a Demo',
+    subtitle: 'Liquid Biopsy',
+    action: 'view-lb',
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <rect x="2" y="3" width="14" height="11" rx="2" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M7 8l3 2-3 2V8z" fill="currentColor" />
+      </svg>
+    ),
+    featured: false
+  },
+  { 
+    label: 'AI-Powered Mammogram',
+    subtitle: 'Analysis Platform',
+    action: 'mammo',
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <rect x="2" y="4" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="1.5" />
+        <circle cx="9" cy="9" r="2.5" stroke="currentColor" strokeWidth="1.5" />
+        <circle cx="9" cy="9" r="1" fill="currentColor" />
+        <path d="M13 6h1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      </svg>
+    ),
+    featured: false
+  },
+];
+
+const STYLE_ID = 'navbar-styles-v4';
 if (typeof document !== 'undefined' && !document.getElementById(STYLE_ID)) {
   const link = document.createElement('link');
   link.id = 'navbar-gf';
@@ -35,7 +79,7 @@ if (typeof document !== 'undefined' && !document.getElementById(STYLE_ID)) {
 
     /* ── BAR ── */
     .nb-bar {
-      height: 108px; /* ↑ was 72px, now 1.5× = 108px */
+      height: 108px;
       background: rgba(255,255,255,0.97);
       backdrop-filter: blur(20px) saturate(180%);
       -webkit-backdrop-filter: blur(20px) saturate(180%);
@@ -65,7 +109,7 @@ if (typeof document !== 'undefined' && !document.getElementById(STYLE_ID)) {
       outline-offset: 4px;
     }
     .nb-logo-img {
-      height: 100px; /* ↑ was 50px, now 2× = 100px (desktop + mobile) */
+      height: 100px;
       width: auto;
       object-fit: contain; display: block;
       user-select: none; pointer-events: none;
@@ -115,7 +159,170 @@ if (typeof document !== 'undefined' && !document.getElementById(STYLE_ID)) {
     .nb-cta-area {
       display: flex; align-items: center;
       gap: 8px; flex-shrink: 0;
+      position: relative;
     }
+    
+    /* ── DROPDOWN BUTTON ── */
+    .nb-dropdown {
+      position: relative;
+    }
+    .nb-btn-dropdown {
+      border: none;
+      background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%);
+      color: #fff; font-family: 'DM Sans', inherit;
+      font-size: 0.875rem; font-weight: 600;
+      padding: 8px 20px; border-radius: 50px; cursor: pointer;
+      transition: all 0.25s ease; outline: none; white-space: nowrap;
+      box-shadow: 0 2px 12px rgba(37,99,235,0.30);
+      -webkit-tap-highlight-color: transparent;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .nb-btn-dropdown:hover {
+      box-shadow: 0 4px 20px rgba(37,99,235,0.45);
+      transform: translateY(-1px);
+    }
+    .nb-btn-dropdown:active { transform: translateY(0) scale(0.98); }
+    .nb-btn-dropdown:focus-visible { box-shadow: 0 0 0 3px rgba(59,130,246,0.4); }
+    
+    .nb-dropdown-icon {
+      width: 12px; height: 12px;
+      transition: transform 0.2s ease;
+      flex-shrink: 0;
+    }
+    .nb-dropdown-icon.nb-open {
+      transform: rotate(180deg);
+    }
+    
+    /* ── DROPDOWN MENU ── */
+    .nb-dropdown-menu {
+      position: absolute;
+      top: calc(100% + 12px);
+      right: 0;
+      background: #fff;
+      border-radius: 16px;
+      border: 1px solid #e0ecff;
+      box-shadow: 
+        0 20px 60px rgba(37,99,235,0.12),
+        0 8px 24px rgba(0,0,0,0.08),
+        0 0 0 1px rgba(37,99,235,0.04);
+      min-width: 340px;
+      overflow: hidden;
+      z-index: 10000;
+      transform-origin: top right;
+      padding: 8px;
+    }
+    
+    /* Enhanced dropdown item */
+    .nb-dropdown-item {
+      display: flex; 
+      align-items: flex-start;
+      gap: 14px;
+      width: 100%; 
+      padding: 14px 16px;
+      border: none; 
+      background: transparent;
+      cursor: pointer; 
+      font-family: 'DM Sans', inherit;
+      text-align: left;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      outline: none; 
+      -webkit-tap-highlight-color: transparent;
+      border-radius: 12px;
+      position: relative;
+    }
+    
+    .nb-dropdown-item::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+    
+    .nb-dropdown-item:hover::before {
+      opacity: 1;
+    }
+    
+    .nb-dropdown-item:hover {
+      transform: translateX(2px);
+    }
+    
+    .nb-dropdown-item:active {
+      transform: translateX(2px) scale(0.98);
+    }
+    
+    .nb-dropdown-item:focus-visible {
+      box-shadow: inset 0 0 0 2px rgba(59,130,246,0.5);
+    }
+    
+    .nb-dropdown-item-icon {
+      flex-shrink: 0;
+      color: #3b82f6;
+      transition: all 0.2s ease;
+      position: relative;
+      z-index: 1;
+      margin-top: 2px;
+    }
+    
+    .nb-dropdown-item:hover .nb-dropdown-item-icon {
+      color: #1d4ed8;
+      transform: scale(1.1);
+    }
+    
+    .nb-dropdown-item-content {
+      flex: 1;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .nb-dropdown-item-label {
+      font-size: 0.9375rem;
+      font-weight: 600;
+      color: #1e293b;
+      line-height: 1.3;
+      display: block;
+      margin-bottom: 2px;
+    }
+    
+    .nb-dropdown-item-subtitle {
+      font-size: 0.8125rem;
+      font-weight: 400;
+      color: #64748b;
+      line-height: 1.3;
+      display: block;
+    }
+    
+    .nb-dropdown-item:hover .nb-dropdown-item-label {
+      color: #1d4ed8;
+    }
+    
+    .nb-dropdown-item:hover .nb-dropdown-item-subtitle {
+      color: #475569;
+    }
+    
+    /* Featured item badge */
+    .nb-dropdown-item-featured {
+      border: 1.5px solid #bfdbfe;
+      background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+    }
+    
+    .nb-dropdown-item-featured::before {
+      background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    }
+    
+    .nb-dropdown-item-featured .nb-dropdown-item-label {
+      color: #1d4ed8;
+    }
+    
+    /* Divider */
+    .nb-dropdown-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, #e0ecff 50%, transparent 100%);
+      margin: 6px 0;
+    }
+
     .nb-btn-ghost {
       border: 1.5px solid #bfdbfe; background: #eff6ff; color: #1d4ed8;
       font-family: 'DM Sans', inherit; font-size: 0.875rem; font-weight: 600;
@@ -125,6 +332,7 @@ if (typeof document !== 'undefined' && !document.getElementById(STYLE_ID)) {
     }
     .nb-btn-ghost:hover { background: #dbeafe; border-color: #93c5fd; }
     .nb-btn-ghost:focus-visible { box-shadow: 0 0 0 3px rgba(59,130,246,0.3); }
+    
     .nb-btn-primary {
       border: none;
       background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%);
@@ -191,7 +399,7 @@ if (typeof document !== 'undefined' && !document.getElementById(STYLE_ID)) {
     .nb-drawer {
       position: fixed;
       z-index: 9998;
-      top: 116px; /* ↑ was 80px, updated to match new 108px bar + 8px gap */
+      top: 116px;
       left: 12px; right: 12px;
       background: #fff;
       border-radius: 20px;
@@ -199,19 +407,17 @@ if (typeof document !== 'undefined' && !document.getElementById(STYLE_ID)) {
       box-shadow:
         0 20px 60px rgba(37,99,235,0.12),
         0 4px 16px rgba(0,0,0,0.08);
-      max-height: calc(100dvh - 128px); /* ↑ was calc(100dvh - 100px) */
+      max-height: calc(100dvh - 128px);
       overflow-y: auto;
       transform-origin: top center;
       padding-bottom: env(safe-area-inset-bottom, 8px);
       overscroll-behavior: contain;
     }
 
-    /* Drawer item stagger via CSS variables */
     .nb-di {
       transition: opacity 0.22s ease, transform 0.22s ease;
     }
 
-    /* Drawer link */
     .nb-dl {
       display: flex; align-items: center;
       justify-content: space-between;
@@ -232,7 +438,6 @@ if (typeof document !== 'undefined' && !document.getElementById(STYLE_ID)) {
     }
     .nb-dl:focus-visible { box-shadow: 0 0 0 3px rgba(59,130,246,0.3); }
 
-    /* Drawer CTA */
     .nb-dcta {
       display: block; width: 100%; padding: 13px;
       border-radius: 12px; border: none; cursor: pointer;
@@ -255,14 +460,95 @@ if (typeof document !== 'undefined' && !document.getElementById(STYLE_ID)) {
     }
     .nb-dcta-secondary:active { background: #f1f5f9; }
 
-    /* Pulse dot */
+    /* Mobile dropdown section */
+    .nb-mobile-dropdown-section {
+      padding: 4px;
+    }
+    .nb-mobile-dropdown-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #6b7280;
+      padding: 12px 14px 8px;
+      display: block;
+    }
+    
+    /* Mobile dropdown item */
+    .nb-mobile-dropdown-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      font-family: 'DM Sans', inherit;
+      background: transparent;
+      text-align: left;
+      transition: all 0.18s ease;
+      outline: none;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-appearance: none;
+      margin-bottom: 4px;
+    }
+    
+    .nb-mobile-dropdown-item:hover {
+      background: #eff6ff;
+    }
+    
+    .nb-mobile-dropdown-item:active {
+      background: #dbeafe;
+    }
+    
+    .nb-mobile-dropdown-item:focus-visible {
+      box-shadow: 0 0 0 3px rgba(59,130,246,0.3);
+    }
+    
+    .nb-mobile-dropdown-item-icon {
+      flex-shrink: 0;
+      color: #3b82f6;
+      margin-top: 2px;
+    }
+    
+    .nb-mobile-dropdown-item-content {
+      flex: 1;
+      min-width: 0;
+    }
+    
+    .nb-mobile-dropdown-item-label {
+      font-size: 0.9375rem;
+      font-weight: 600;
+      color: #1e293b;
+      line-height: 1.3;
+      display: block;
+      margin-bottom: 2px;
+    }
+    
+    .nb-mobile-dropdown-item-subtitle {
+      font-size: 0.8125rem;
+      font-weight: 400;
+      color: #64748b;
+      line-height: 1.3;
+      display: block;
+    }
+    
+    .nb-mobile-dropdown-item-featured {
+      border: 1.5px solid #bfdbfe;
+      background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+    }
+    
+    .nb-mobile-dropdown-item-featured .nb-mobile-dropdown-item-label {
+      color: #1d4ed8;
+    }
+
     @keyframes nbpulse {
       0%, 100% { opacity: 1; transform: scale(1); }
       50% { opacity: 0.5; transform: scale(0.75); }
     }
     .nb-dot-pulse { animation: nbpulse 2s infinite; }
 
-    /* Demo badge */
     .nb-demo-badge {
       font-size: 0.75rem; font-weight: 700;
       letter-spacing: 0.08em; text-transform: uppercase;
@@ -272,10 +558,8 @@ if (typeof document !== 'undefined' && !document.getElementById(STYLE_ID)) {
       white-space: nowrap;
     }
 
-    /* scroll offset for anchor targets — matches new bar height */
-    html { scroll-padding-top: 116px; } /* ↑ was 80px */
+    html { scroll-padding-top: 116px; }
 
-    /* ── RESPONSIVE ── */
     @media (min-width: 1024px) {
       .nb-nav      { display: flex !important; }
       .nb-cta-area { display: flex !important; }
@@ -285,23 +569,42 @@ if (typeof document !== 'undefined' && !document.getElementById(STYLE_ID)) {
       .nb-nav      { display: none !important; }
       .nb-cta-area { display: none !important; }
       .nb-hb       { display: flex !important; }
-
-      /* On mobile the bar stays the same 108px tall so logo fits */
       .nb-bar { height: 108px; }
+      
+      /* Mobile dropdown adjustments */
+      .nb-dropdown-menu {
+        min-width: auto;
+        left: 12px;
+        right: 12px;
+        width: calc(100% - 24px);
+      }
+    }
+    
+    @media (max-width: 374px) {
+      .nb-dropdown-item-label {
+        font-size: 0.875rem;
+      }
+      .nb-dropdown-item-subtitle {
+        font-size: 0.75rem;
+      }
     }
   `;
   document.head.appendChild(s);
 }
 
 export default function Navbar({ currentPage, onNavigate }) {
-  const [isOpen,     setIsOpen]     = useState(false);
-  const [scrolled,   setScrolled]   = useState(false);
-  const [progress,   setProgress]   = useState(0);
-  const [activeHref, setActiveHref] = useState('#home');
-  const [logoError,  setLogoError]  = useState(false);
-  const navRef                       = useRef(null);
-  const drawerRef                    = useRef(null);
-  const isDemoPage                   = currentPage === 'demo';
+  const [isOpen,        setIsOpen]        = useState(false);
+  const [scrolled,      setScrolled]      = useState(false);
+  const [progress,      setProgress]      = useState(0);
+  const [activeHref,    setActiveHref]    = useState('#home');
+  const [logoError,     setLogoError]     = useState(false);
+  const [dropdownOpen,  setDropdownOpen]  = useState(false);
+  
+  const navRef      = useRef(null);
+  const drawerRef   = useRef(null);
+  const dropdownRef = useRef(null);
+  
+  const isDemoPage = currentPage === 'demo';
 
   /* ── Scroll: shadow + progress + spy ── */
   useEffect(() => {
@@ -329,10 +632,27 @@ export default function Navbar({ currentPage, onNavigate }) {
 
   /* ── Escape key ── */
   useEffect(() => {
-    const fn = (e) => { if (e.key === 'Escape' && isOpen) setIsOpen(false); };
+    const fn = (e) => { 
+      if (e.key === 'Escape') {
+        if (isOpen) setIsOpen(false);
+        if (dropdownOpen) setDropdownOpen(false);
+      }
+    };
     document.addEventListener('keydown', fn);
     return () => document.removeEventListener('keydown', fn);
-  }, [isOpen]);
+  }, [isOpen, dropdownOpen]);
+
+  /* ── Click outside dropdown ── */
+  useEffect(() => {
+    if (!dropdownOpen) return;
+    const handleClick = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, [dropdownOpen]);
 
   /* ── Body scroll lock ── */
   useEffect(() => {
@@ -359,7 +679,10 @@ export default function Navbar({ currentPage, onNavigate }) {
   }, [isOpen]);
 
   /* ── Close on route/page change ── */
-  useEffect(() => { setIsOpen(false); }, [currentPage]);
+  useEffect(() => { 
+    setIsOpen(false);
+    setDropdownOpen(false);
+  }, [currentPage]);
 
   /* ── Smooth scroll / navigate ── */
   const scrollTo = useCallback((href) => {
@@ -382,19 +705,36 @@ export default function Navbar({ currentPage, onNavigate }) {
     }
   }, [isDemoPage, onNavigate]);
 
-  const handleCta = useCallback(() => {
+  const handleProductClick = useCallback((action) => {
+    setDropdownOpen(false);
     setIsOpen(false);
-    onNavigate(isDemoPage ? 'home' : 'demo');
-  }, [isDemoPage, onNavigate]);
+    
+    if (action === 'book-lb') {
+      // Book a demo - navigate to liquid biopsy booking
+      onNavigate('lb');
+    } else if (action === 'view-lb') {
+      // View a demo - navigate to liquid biopsy demo
+      onNavigate('demo');
+    } else if (action === 'mammo') {
+      // Mammogram - external link
+      window.location.href = 'https://oncotraceai.org/mammo-demo/ui';
+    }
+  }, [onNavigate]);
 
   const handleLogo = useCallback(() => {
     setIsOpen(false);
+    setDropdownOpen(false);
     if (isDemoPage) onNavigate('home');
     else window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [isDemoPage, onNavigate]);
 
   const toggleMenu = useCallback(() => {
     setIsOpen((v) => !v);
+    setDropdownOpen(false);
+  }, []);
+
+  const toggleDropdown = useCallback(() => {
+    setDropdownOpen((v) => !v);
   }, []);
 
   /* ── Stagger delays for drawer items ── */
@@ -454,12 +794,79 @@ export default function Navbar({ currentPage, onNavigate }) {
             </ul>
           </nav>
 
-          {/* Desktop CTA */}
+          {/* Desktop CTA with Dropdown */}
           <div className="nb-cta-area">
-            
-            <button className="nb-btn-primary" type="button" onClick={handleCta}>
-              {isDemoPage ? '← Back to Home' : 'View Demo →'}
-            </button>
+            {!isDemoPage ? (
+              <div className="nb-dropdown" ref={dropdownRef}>
+                <button 
+                  className="nb-btn-dropdown" 
+                  type="button" 
+                  onClick={toggleDropdown}
+                  aria-expanded={dropdownOpen}
+                  aria-haspopup="true"
+                >
+                  <span>View Products</span>
+                  <svg 
+                    className={`nb-dropdown-icon${dropdownOpen ? ' nb-open' : ''}`}
+                    viewBox="0 0 12 12" 
+                    fill="none"
+                    aria-hidden="true"
+                  >
+                    <path 
+                      d="M3 4.5L6 7.5L9 4.5" 
+                      stroke="currentColor" 
+                      strokeWidth="1.5" 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </button>
+                
+                {dropdownOpen && (
+                  <div 
+                    className="nb-dropdown-menu"
+                    style={{
+                      opacity: dropdownOpen ? 1 : 0,
+                      transform: dropdownOpen ? 'scale(1)' : 'scale(0.95)',
+                      transition: 'opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                    }}
+                  >
+                    {PRODUCT_LINKS.map((product, idx) => (
+                      <div key={product.action}>
+                        <button
+                          className={`nb-dropdown-item${product.featured ? ' nb-dropdown-item-featured' : ''}`}
+                          type="button"
+                          onClick={() => handleProductClick(product.action)}
+                        >
+                          <div className="nb-dropdown-item-icon">
+                            {product.icon}
+                          </div>
+                          <div className="nb-dropdown-item-content">
+                            <span className="nb-dropdown-item-label">
+                              {product.label}
+                            </span>
+                            <span className="nb-dropdown-item-subtitle">
+                              {product.subtitle}
+                            </span>
+                          </div>
+                        </button>
+                        {idx < PRODUCT_LINKS.length - 1 && (
+                          <div className="nb-dropdown-divider" aria-hidden="true" />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <button 
+                className="nb-btn-primary" 
+                type="button" 
+                onClick={() => onNavigate('home')}
+              >
+                ← Back to Home
+              </button>
+            )}
           </div>
 
           {/* Hamburger */}
@@ -570,33 +977,79 @@ export default function Navbar({ currentPage, onNavigate }) {
                 </div>
               )}
 
-          {/* Divider */}
-          <div
-            className="nb-di"
-            style={{
-              ...staggerStyle(NAV_LINKS.length + 1),
-              padding: '6px 4px',
-            }}
-          >
-            <div style={{
-              height: 1,
-              background: 'linear-gradient(90deg, #dbeafe 0%, transparent 100%)',
-            }} />
-          </div>
+          {/* Product Links Section (Mobile) */}
+          {!isDemoPage && (
+            <>
+              <div
+                className="nb-di"
+                style={{
+                  ...staggerStyle(NAV_LINKS.length + 1),
+                  padding: '6px 4px',
+                }}
+              >
+                <div style={{
+                  height: 1,
+                  background: 'linear-gradient(90deg, #dbeafe 0%, transparent 100%)',
+                }} />
+              </div>
 
-          {/* CTA button */}
-          <div
-            className="nb-di"
-            style={staggerStyle(NAV_LINKS.length + 2)}
-          >
-            <button
-              className={`nb-dcta ${isDemoPage ? 'nb-dcta-secondary' : 'nb-dcta-primary'}`}
-              type="button"
-              onClick={handleCta}
+              <div className="nb-di nb-mobile-dropdown-section" style={staggerStyle(NAV_LINKS.length + 2)}>
+                <span className="nb-mobile-dropdown-label">View Products</span>
+                {PRODUCT_LINKS.map((product) => (
+                  <button
+                    key={product.action}
+                    className={`nb-mobile-dropdown-item${product.featured ? ' nb-mobile-dropdown-item-featured' : ''}`}
+                    type="button"
+                    onClick={() => handleProductClick(product.action)}
+                  >
+                    <div className="nb-mobile-dropdown-item-icon">
+                      {product.icon}
+                    </div>
+                    <div className="nb-mobile-dropdown-item-content">
+                      <span className="nb-mobile-dropdown-item-label">
+                        {product.label}
+                      </span>
+                      <span className="nb-mobile-dropdown-item-subtitle">
+                        {product.subtitle}
+                      </span>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
+
+          {/* Final divider */}
+          {isDemoPage && (
+            <div
+              className="nb-di"
+              style={{
+                ...staggerStyle(NAV_LINKS.length + 1),
+                padding: '6px 4px',
+              }}
             >
-              {isDemoPage ? '← Back to Home' : 'View Demo →'}
-            </button>
-          </div>
+              <div style={{
+                height: 1,
+                background: 'linear-gradient(90deg, #dbeafe 0%, transparent 100%)',
+              }} />
+            </div>
+          )}
+
+          {/* Back to Home (Demo mode only) */}
+          {isDemoPage && (
+            <div
+              className="nb-di"
+              style={staggerStyle(NAV_LINKS.length + 2)}
+            >
+              <button
+                className="nb-dcta nb-dcta-secondary"
+                type="button"
+                onClick={() => onNavigate('home')}
+              >
+                ← Back to Home
+              </button>
+            </div>
+          )}
 
         </div>
       </div>
