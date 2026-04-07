@@ -34,15 +34,14 @@ export default function Footer() {
 
   const handleCopy = useCallback(() => {
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText("dev-team@oncotraceai.org");
+      navigator.clipboard.writeText("info@oncotraceai.org");
     }
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   }, []);
 
   const outerPadding = isMobile ? "16px 10px" : isTablet ? "24px 16px" : "32px 24px";
-  const cardPadding = isMobile ? "0" : "0";
-
+  
   const colPadding = isMobile
     ? "28px 20px 24px"
     : isTablet
@@ -116,7 +115,7 @@ export default function Footer() {
     <div
       style={{
         background: "rgba(59,130,246,0.15)",
-        margin: isDesktop ? "32px 0" : "32px 0",
+        margin: "32px 0",
       }}
     />
   );
@@ -292,7 +291,7 @@ export default function Footer() {
                   aria-label="Copy email address"
                 >
                   <a
-                    href="mailto:dev-team@oncotraceai.org"
+                    href="mailto:info@oncotraceai.org"
                     style={{
                       fontSize: isMobile ? "11px" : "13px",
                       fontWeight: "600",
@@ -302,7 +301,7 @@ export default function Footer() {
                     }}
                     onClick={(e) => e.stopPropagation()}
                   >
-                    dev-team@oncotraceai.org
+                    info@oncotraceai.org
                   </a>
                   <span style={{ fontSize: "12px", color: "#93c5fd" }}>
                     {copied ? "✓" : "⎘"}
@@ -470,20 +469,9 @@ export default function Footer() {
 
             {/* Divider between col2 and col3 */}
             {isDesktop && <VerticalDivider />}
-            {isTablet && (
-              <>
-                {/* On tablet, col3 spans full width below the first two cols */}
-              </>
-            )}
             {isMobile && <HorizontalDivider />}
 
             {/* COL 3 — Newsletter + Social links */}
-            {isTablet && (
-              <>
-                {/* Close the 2-col grid row, add horizontal divider, then col3 full width */}
-              </>
-            )}
-
             {!isTablet && (
               <div
                 style={{
