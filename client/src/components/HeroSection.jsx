@@ -545,24 +545,7 @@ export default function HeroSection({ onNavigate }) {
               </span>
             </div>
 
-            {/* Eyebrow - Enhanced visibility */}
-            <span
-              className="relative z-10 font-['DM_Sans'] text-[clamp(12px,1.4vw,15px)] text-white/95 tracking-[0.3em] uppercase font-bold mb-5 sm:mb-6 lg:mb-6 xl:mb-8 flex items-center justify-center lg:justify-start w-full"
-              style={{ 
-                animation: isReduced ? undefined : anim('heroFloatUp', 0.2, '1s'),
-                textShadow: '0 0 20px rgba(255,255,255,0.3)',
-              }}
-            >
-              <span
-                aria-hidden="true"
-                className="inline-block w-5 sm:w-6 lg:w-7 h-[2px] mr-2.5 sm:mr-3 flex-shrink-0"
-                style={{
-                  background: 'linear-gradient(90deg,rgb(255, 111, 0),rgb(255, 255, 255))',
-                  boxShadow: '0 0 8px rgba(255,111,0,0.4)',
-                }}
-              />
-              OncoTrace-AI Platform
-            </span>
+            
 
             {/* Headline - Increased font sizes */}
             <h1 className="relative z-10 m-0 p-0 mb-1" style={{ perspective: '800px' }}>
@@ -700,7 +683,7 @@ export default function HeroSection({ onNavigate }) {
         >
           <HeroImage
             ref={dCardRef}
-            src="/model.png"
+            src="/desktop.png"
             alt="OncoTrace-AI precision oncology platform — full dashboard view"
             containerClassName="relative w-full h-screen"
             objectPosition="center 58%"

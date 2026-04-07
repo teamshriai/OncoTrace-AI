@@ -3,9 +3,8 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 
 const NAV_LINKS = [
   { label: 'Home',          href: '#home' },
-  { label: 'Mammogram',     href: '#mammogram' },
+  { label: 'Mammogram risk-analysis',     href: '#mammogram' },
   { label: 'Blood-Based Cancer Test', href: '#liquid-biopsy' },
-  { label: 'Solution',      href: '#solution' },
   { label: 'Research',      href: '#case-study' },
   { label: 'Team',          href: '#team' },
   { label: 'Contact',       href: '#cta' },
@@ -103,6 +102,8 @@ if (typeof document !== 'undefined' && !document.getElementById(STYLE_ID)) {
       display: flex; align-items: center; flex-shrink: 0;
       outline: none; -webkit-tap-highlight-color: transparent;
       border-radius: 8px;
+      position: relative;
+      z-index: 10001;
     }
     .nb-logo-btn:focus-visible {
       outline: 2px solid #3b82f6;
@@ -370,6 +371,8 @@ if (typeof document !== 'undefined' && !document.getElementById(STYLE_ID)) {
       -webkit-tap-highlight-color: transparent;
       box-shadow: 0 1px 4px rgba(0,0,0,0.06);
       display: none;
+      position: relative;
+      z-index: 10001;
     }
     .nb-hb.nb-hb-open {
       border-color: #bfdbfe; background: #eff6ff;
@@ -388,30 +391,40 @@ if (typeof document !== 'undefined' && !document.getElementById(STYLE_ID)) {
 
     /* ── OVERLAY ── */
     .nb-overlay {
-      position: fixed; inset: 0;
+      position: fixed; 
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
       background: rgba(15,23,42,0.4);
-      z-index: 9997;
+      z-index: 9998;
       -webkit-tap-highlight-color: transparent;
       transition: opacity 0.3s ease;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
     }
 
     /* ── DRAWER ── */
     .nb-drawer {
       position: fixed;
-      z-index: 9998;
+      z-index: 9999;
       top: 116px;
-      left: 12px; right: 12px;
+      left: 12px; 
+      right: 12px;
       background: #fff;
       border-radius: 20px;
       border: 1px solid #e0ecff;
       box-shadow:
         0 20px 60px rgba(37,99,235,0.12),
         0 4px 16px rgba(0,0,0,0.08);
+      max-height: calc(100vh - 128px);
       max-height: calc(100dvh - 128px);
       overflow-y: auto;
+      overflow-x: hidden;
       transform-origin: top center;
       padding-bottom: env(safe-area-inset-bottom, 8px);
       overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
     }
 
     .nb-di {
@@ -430,6 +443,7 @@ if (typeof document !== 'undefined' && !document.getElementById(STYLE_ID)) {
       transition: background 0.18s ease, color 0.18s ease;
       outline: none; -webkit-tap-highlight-color: transparent;
       -webkit-appearance: none;
+      user-select: none;
     }
     .nb-dl:hover { background: #eff6ff; color: #1d4ed8; }
     .nb-dl:active { background: #dbeafe; }
@@ -447,6 +461,7 @@ if (typeof document !== 'undefined' && !document.getElementById(STYLE_ID)) {
       transition: all 0.2s ease;
       -webkit-tap-highlight-color: transparent;
       -webkit-appearance: none;
+      user-select: none;
     }
     .nb-dcta-primary {
       background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%);
@@ -472,6 +487,7 @@ if (typeof document !== 'undefined' && !document.getElementById(STYLE_ID)) {
       color: #6b7280;
       padding: 12px 14px 8px;
       display: block;
+      user-select: none;
     }
     
     /* Mobile dropdown item */
@@ -492,6 +508,7 @@ if (typeof document !== 'undefined' && !document.getElementById(STYLE_ID)) {
       -webkit-tap-highlight-color: transparent;
       -webkit-appearance: none;
       margin-bottom: 4px;
+      user-select: none;
     }
     
     .nb-mobile-dropdown-item:hover {
@@ -559,6 +576,7 @@ if (typeof document !== 'undefined' && !document.getElementById(STYLE_ID)) {
     }
 
     html { scroll-padding-top: 116px; }
+    body { overflow-x: hidden; }
 
     @media (min-width: 1024px) {
       .nb-nav      { display: flex !important; }
@@ -581,11 +599,59 @@ if (typeof document !== 'undefined' && !document.getElementById(STYLE_ID)) {
     }
     
     @media (max-width: 374px) {
-      .nb-dropdown-item-label {
+      .nb-dropdown-item-label,
+      .nb-mobile-dropdown-item-label {
         font-size: 0.875rem;
       }
-      .nb-dropdown-item-subtitle {
+      .nb-dropdown-item-subtitle,
+      .nb-mobile-dropdown-item-subtitle {
         font-size: 0.75rem;
+      }
+      .nb-logo-img {
+        height: 80px;
+      }
+    }
+
+    /* Safe area for iOS notch */
+    @supports (padding: max(0px)) {
+      .nb-bar {
+        padding-left: max(1rem, env(safe-area-inset-left));
+        padding-right: max(1rem, env(safe-area-inset-right));
+      }
+      .nb-drawer {
+        left: max(12px, env(safe-area-inset-left));
+        right: max(12px, env(safe-area-inset-right));
+      }
+    }
+
+    /* Prevent scrolling issues on iOS */
+    @supports (-webkit-touch-callout: none) {
+      .nb-drawer {
+        max-height: calc(100vh - 128px - env(safe-area-inset-bottom));
+      }
+    }
+
+    /* High contrast mode support */
+    @media (prefers-contrast: high) {
+      .nb-bar {
+        border-width: 2px;
+      }
+      .nb-link:focus-visible,
+      .nb-dl:focus-visible,
+      .nb-dcta:focus-visible {
+        outline: 3px solid;
+        outline-offset: 2px;
+      }
+    }
+
+    /* Reduced motion support */
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
       }
     }
   `;
@@ -603,39 +669,78 @@ export default function Navbar({ currentPage, onNavigate }) {
   const navRef      = useRef(null);
   const drawerRef   = useRef(null);
   const dropdownRef = useRef(null);
+  const scrollTimeoutRef = useRef(null);
+  const savedScrollPos = useRef(0);
   
   const isDemoPage = currentPage === 'demo';
 
   /* ── Scroll: shadow + progress + spy ── */
   useEffect(() => {
     const handle = () => {
-      const top = window.scrollY;
-      const max =
-        document.documentElement.scrollHeight -
-        document.documentElement.clientHeight;
-      setScrolled(top > 8);
-      setProgress(max > 0 ? (top / max) * 100 : 0);
+      // Clear existing timeout
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
 
-      let cur = '#home';
-      NAV_LINKS.forEach(({ href }) => {
-        if (href === '#home') return;
-        const id = href.replace('#', '');
-        const el = document.getElementById(id);
-        if (el && el.getBoundingClientRect().top <= 100) cur = href;
-      });
-      setActiveHref(cur);
+      // Debounce scroll handler for better performance
+      scrollTimeoutRef.current = setTimeout(() => {
+        const top = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
+        const max =
+          document.documentElement.scrollHeight -
+          document.documentElement.clientHeight;
+        
+        setScrolled(top > 8);
+        setProgress(max > 0 ? (top / max) * 100 : 0);
+
+        // Active section detection
+        let cur = '#home';
+        const offset = 120; // Account for navbar height + some buffer
+        
+        for (let i = NAV_LINKS.length - 1; i >= 0; i--) {
+          const { href } = NAV_LINKS[i];
+          if (href === '#home') continue;
+          
+          const id = href.replace('#', '');
+          const el = document.getElementById(id);
+          
+          if (el) {
+            const rect = el.getBoundingClientRect();
+            if (rect.top <= offset) {
+              cur = href;
+              break;
+            }
+          }
+        }
+        
+        setActiveHref(cur);
+      }, 10);
     };
+
     window.addEventListener('scroll', handle, { passive: true });
     handle();
-    return () => window.removeEventListener('scroll', handle);
+    
+    return () => {
+      window.removeEventListener('scroll', handle);
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+    };
   }, []);
 
   /* ── Escape key ── */
   useEffect(() => {
     const fn = (e) => { 
       if (e.key === 'Escape') {
-        if (isOpen) setIsOpen(false);
-        if (dropdownOpen) setDropdownOpen(false);
+        if (isOpen) {
+          setIsOpen(false);
+          e.preventDefault();
+          e.stopPropagation();
+        }
+        if (dropdownOpen) {
+          setDropdownOpen(false);
+          e.preventDefault();
+          e.stopPropagation();
+        }
       }
     };
     document.addEventListener('keydown', fn);
@@ -645,36 +750,59 @@ export default function Navbar({ currentPage, onNavigate }) {
   /* ── Click outside dropdown ── */
   useEffect(() => {
     if (!dropdownOpen) return;
+    
     const handleClick = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
         setDropdownOpen(false);
       }
     };
-    document.addEventListener('mousedown', handleClick);
-    return () => document.removeEventListener('mousedown', handleClick);
+    
+    // Use capture phase for better reliability
+    document.addEventListener('mousedown', handleClick, true);
+    document.addEventListener('touchstart', handleClick, true);
+    
+    return () => {
+      document.removeEventListener('mousedown', handleClick, true);
+      document.removeEventListener('touchstart', handleClick, true);
+    };
   }, [dropdownOpen]);
 
-  /* ── Body scroll lock ── */
+  /* ── Body scroll lock with improved mobile handling ── */
   useEffect(() => {
     if (isOpen) {
-      const scrollY = window.scrollY;
+      // Save current scroll position
+      savedScrollPos.current = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
+      
+      // Lock body scroll
       document.body.style.position = 'fixed';
-      document.body.style.top = `-${scrollY}px`;
+      document.body.style.top = `-${savedScrollPos.current}px`;
       document.body.style.width = '100%';
       document.body.style.overflowY = 'scroll';
+      
+      // Prevent bounce on iOS
+      if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+        document.body.style.overflow = 'hidden';
+      }
     } else {
-      const scrollY = document.body.style.top;
+      // Release body scroll lock
       document.body.style.position = '';
       document.body.style.top = '';
       document.body.style.width = '';
       document.body.style.overflowY = '';
-      if (scrollY) window.scrollTo(0, parseInt(scrollY || '0') * -1);
+      document.body.style.overflow = '';
+      
+      // Restore scroll position
+      if (savedScrollPos.current !== 0) {
+        window.scrollTo(0, savedScrollPos.current);
+      }
     }
+    
     return () => {
       document.body.style.position = '';
       document.body.style.top = '';
       document.body.style.width = '';
       document.body.style.overflowY = '';
+      document.body.style.overflow = '';
     };
   }, [isOpen]);
 
@@ -684,65 +812,109 @@ export default function Navbar({ currentPage, onNavigate }) {
     setDropdownOpen(false);
   }, [currentPage]);
 
-  /* ── Smooth scroll / navigate ── */
+  /* ── IMPROVED: Smooth scroll / navigate with proper mobile handling ── */
   const scrollTo = useCallback((href) => {
-    setIsOpen(false);
     const id = href.replace('#', '');
-    const exec = () => {
-      if (href === '#home') {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        return;
-      }
+    
+    // Calculate scroll target BEFORE closing drawer (while body position is still fixed)
+    let targetScrollPosition = 0;
+    
+    if (href !== '#home' && id !== 'home') {
       const el = document.getElementById(id);
       if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        // Get element position relative to the document
+        const navbarHeight = 116;
+        const rect = el.getBoundingClientRect();
+        // Add saved scroll position because body is fixed
+        targetScrollPosition = rect.top + savedScrollPos.current - navbarHeight;
       }
-    };
-    if (isDemoPage) {
-      onNavigate(id === 'home' ? 'home' : id);
-    } else {
-      exec();
     }
+    
+    // Close menus
+    setIsOpen(false);
+    setDropdownOpen(false);
+    
+    // Wait for drawer to close and body scroll lock to be released
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        if (isDemoPage) {
+          // Navigate to home page first
+          onNavigate(id === 'home' ? 'home' : id);
+          // Execute scroll after navigation completes
+          setTimeout(() => {
+            window.scrollTo({
+              top: targetScrollPosition,
+              behavior: 'smooth'
+            });
+          }, 150);
+        } else {
+          // Directly scroll to target
+          window.scrollTo({
+            top: targetScrollPosition,
+            behavior: 'smooth'
+          });
+        }
+      }, 50); // Small delay to allow drawer animation to start
+    });
   }, [isDemoPage, onNavigate]);
 
   const handleProductClick = useCallback((action) => {
+    // Close all menus
     setDropdownOpen(false);
     setIsOpen(false);
     
-    if (action === 'book-lb') {
-      // Book a demo - navigate to liquid biopsy booking
-      onNavigate('lb');
-    } else if (action === 'view-lb') {
-      // View a demo - navigate to liquid biopsy demo
-      onNavigate('demo');
-    } else if (action === 'mammo') {
-      // Mammogram - external link
-      window.location.href = 'https://oncotraceai.org/mammo-demo/ui';
-    }
+    // Small delay to allow UI to update
+    setTimeout(() => {
+      if (action === 'book-lb') {
+        // Book a demo - navigate to liquid biopsy booking
+        onNavigate('lb');
+      } else if (action === 'view-lb') {
+        // View a demo - navigate to liquid biopsy demo
+        onNavigate('demo');
+      } else if (action === 'mammo') {
+        // Mammogram - external link
+        window.location.href = 'https://oncotraceai.org/mammo-demo/ui';
+      }
+    }, 50);
   }, [onNavigate]);
 
   const handleLogo = useCallback(() => {
     setIsOpen(false);
     setDropdownOpen(false);
-    if (isDemoPage) onNavigate('home');
-    else window.scrollTo({ top: 0, behavior: 'smooth' });
+    
+    if (isDemoPage) {
+      onNavigate('home');
+    } else {
+      // Close drawer first, then scroll
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }, 50);
+      });
+    }
   }, [isDemoPage, onNavigate]);
 
-  const toggleMenu = useCallback(() => {
-    setIsOpen((v) => !v);
+  const toggleMenu = useCallback((e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    setIsOpen((prev) => !prev);
     setDropdownOpen(false);
   }, []);
 
-  const toggleDropdown = useCallback(() => {
-    setDropdownOpen((v) => !v);
+  const toggleDropdown = useCallback((e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    setDropdownOpen((prev) => !prev);
   }, []);
 
   /* ── Stagger delays for drawer items ── */
-  const staggerStyle = (i) => ({
+  const staggerStyle = useCallback((i) => ({
     transitionDelay: isOpen ? `${i * 30}ms` : '0ms',
     opacity: isOpen ? 1 : 0,
     transform: isOpen ? 'translateX(0)' : 'translateX(-12px)',
-  });
+  }), [isOpen]);
 
   return (
     <>
@@ -887,7 +1059,11 @@ export default function Navbar({ currentPage, onNavigate }) {
           <div
             className="nb-progress"
             style={{ width: `${progress}%` }}
-            aria-hidden="true"
+            role="progressbar"
+            aria-valuenow={Math.round(progress)}
+            aria-valuemin="0"
+            aria-valuemax="100"
+            aria-label="Page scroll progress"
           />
         </div>
       </div>
@@ -898,7 +1074,10 @@ export default function Navbar({ currentPage, onNavigate }) {
           className="nb-overlay"
           onClick={() => setIsOpen(false)}
           aria-hidden="true"
-          style={{ opacity: isOpen ? 1 : 0 }}
+          style={{ 
+            opacity: isOpen ? 1 : 0,
+            pointerEvents: isOpen ? 'auto' : 'none'
+          }}
         />
       )}
 
@@ -910,6 +1089,7 @@ export default function Navbar({ currentPage, onNavigate }) {
         role="dialog"
         aria-modal="true"
         aria-label="Site navigation"
+        inert={!isOpen ? '' : undefined}
         style={{
           opacity: isOpen ? 1 : 0,
           transform: isOpen ? 'translateY(0) scale(1)' : 'translateY(-12px) scale(0.96)',
