@@ -1,1238 +1,890 @@
 // Navbar.jsx
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+
+// ─── Constants ────────────────────────────────────────────────────────────────
 
 const NAV_LINKS = [
-  { label: 'Home',          href: '#home' },
-  { label: 'Mammogram risk-analysis',     href: '#mammogram' },
+  { label: 'Home',                    href: '#home' },
+  { label: 'Mammogram Analysis',      href: '#mammogram' },
   { label: 'Blood-Based Cancer Test', href: '#liquid-biopsy' },
-  { label: 'Research',      href: '#case-study' },
-  { label: 'Team',          href: '#team' },
-  { label: 'Contact',       href: '#cta' },
+  { label: 'Research',                href: '#case-study' },
+  { label: 'Team',                    href: '#team' },
+  { label: 'Contact',                 href: '#cta' },
 ];
 
 const PRODUCT_LINKS = [
-  { 
-    label: 'Book a Demo',
+  {
+    label:    'Book a Demo',
     subtitle: 'Liquid Biopsy',
-    action: 'book-lb',
+    action:   'book-lb',
+    featured: true,
     icon: (
-      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-        <rect x="3" y="2" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M7 1v3M11 1v3M3 6h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        <circle cx="7" cy="9.5" r="0.75" fill="currentColor" />
-        <circle cx="9" cy="9.5" r="0.75" fill="currentColor" />
-        <circle cx="11" cy="9.5" r="0.75" fill="currentColor" />
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <rect x="3" y="2" width="14" height="16" rx="2"
+          stroke="currentColor" strokeWidth="1.5" />
+        <path d="M7 1v3M13 1v3M3 7h14"
+          stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        <circle cx="7"  cy="11" r="1" fill="currentColor" />
+        <circle cx="10" cy="11" r="1" fill="currentColor" />
+        <circle cx="13" cy="11" r="1" fill="currentColor" />
+        <circle cx="7"  cy="14" r="1" fill="currentColor" />
+        <circle cx="10" cy="14" r="1" fill="currentColor" />
       </svg>
     ),
-    featured: true
   },
-  { 
-    label: 'View a Demo',
+  {
+    label:    'View a Demo',
     subtitle: 'Liquid Biopsy',
-    action: 'view-lb',
+    action:   'view-lb',
+    featured: false,
     icon: (
-      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-        <rect x="2" y="3" width="14" height="11" rx="2" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M7 8l3 2-3 2V8z" fill="currentColor" />
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <rect x="2" y="4" width="16" height="12" rx="2"
+          stroke="currentColor" strokeWidth="1.5" />
+        <path d="M8 8.5l4 2.5-4 2.5V8.5z" fill="currentColor" />
       </svg>
     ),
-    featured: false
   },
-  { 
-    label: 'AI-Powered Mammogram',
+  {
+    label:    'AI-Powered Mammogram',
     subtitle: 'Analysis Platform',
-    action: 'mammo',
+    action:   'mammo',
+    featured: false,
     icon: (
-      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-        <rect x="2" y="4" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="1.5" />
-        <circle cx="9" cy="9" r="2.5" stroke="currentColor" strokeWidth="1.5" />
-        <circle cx="9" cy="9" r="1" fill="currentColor" />
-        <path d="M13 6h1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <rect x="2" y="5" width="16" height="11" rx="2"
+          stroke="currentColor" strokeWidth="1.5" />
+        <circle cx="10" cy="10.5" r="3"  stroke="currentColor" strokeWidth="1.5" />
+        <circle cx="10" cy="10.5" r="1"  fill="currentColor" />
+        <path d="M14.5 7h1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
       </svg>
     ),
-    featured: false
   },
 ];
 
-const STYLE_ID = 'navbar-styles-v4';
-if (typeof document !== 'undefined' && !document.getElementById(STYLE_ID)) {
-  const link = document.createElement('link');
-  link.id = 'navbar-gf';
-  link.rel = 'stylesheet';
-  link.href =
-    'https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap';
-  if (!document.getElementById('navbar-gf')) document.head.appendChild(link);
+const NAVBAR_HEIGHT  = 108;
+const SCROLL_OFFSET  = NAVBAR_HEIGHT + 8;
+
+// ─── Minimal CSS (animations + pseudo-elements) ───────────────────────────────
+
+const STYLE_ID = 'nb-minimal-styles';
+
+function injectMinimalStyles() {
+  if (typeof document === 'undefined') return;
+  if (document.getElementById(STYLE_ID)) return;
+
+  if (!document.getElementById('nb-gf')) {
+    const link  = document.createElement('link');
+    link.id     = 'nb-gf';
+    link.rel    = 'stylesheet';
+    link.href   = 'https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap';
+    document.head.appendChild(link);
+  }
 
   const s = document.createElement('style');
   s.id = STYLE_ID;
   s.textContent = `
-    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-padding-top: ${SCROLL_OFFSET}px; }
 
-    .nb-root {
-      font-family: 'DM Sans', system-ui, sans-serif;
-      -webkit-font-smoothing: antialiased;
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 9999;
-    }
+    .nb-font { font-family: 'DM Sans', system-ui, -apple-system, sans-serif; }
 
-    /* ── BAR ── */
-    .nb-bar {
-      height: 108px;
-      background: rgba(255,255,255,0.97);
-      backdrop-filter: blur(20px) saturate(180%);
-      -webkit-backdrop-filter: blur(20px) saturate(180%);
-      border-bottom: 1px solid #e5e7eb;
-      box-shadow: 0 1px 8px rgba(0,0,0,0.05);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 clamp(1rem, 4vw, 2.5rem);
-      position: relative;
-      transition: box-shadow 0.3s ease, border-color 0.3s ease;
-    }
-    .nb-bar.nb-scrolled {
-      border-color: #dbeafe;
-      box-shadow: 0 4px 24px rgba(37,99,235,0.10), 0 1px 4px rgba(37,99,235,0.06);
-    }
-
-    /* ── LOGO ── */
-    .nb-logo-btn {
-      background: none; border: none; padding: 0; cursor: pointer;
-      display: flex; align-items: center; flex-shrink: 0;
-      outline: none; -webkit-tap-highlight-color: transparent;
-      border-radius: 8px;
-      position: relative;
-      z-index: 10001;
-    }
-    .nb-logo-btn:focus-visible {
-      outline: 2px solid #3b82f6;
-      outline-offset: 4px;
-    }
-    .nb-logo-img {
-      height: 100px;
-      width: auto;
-      object-fit: contain; display: block;
-      user-select: none; pointer-events: none;
-    }
-    .nb-logo-text {
-      font-size: 1.2rem; font-weight: 700;
-      color: #1d4ed8; letter-spacing: -0.02em;
-      font-family: 'DM Sans', sans-serif;
-    }
-
-    /* ── DESKTOP NAV ── */
-    .nb-nav {
-      display: flex;
-      align-items: center;
-      flex: 1;
-      justify-content: center;
-    }
-    .nb-nav ul {
-      display: flex; align-items: center;
-      gap: 2px; list-style: none;
-      margin: 0; padding: 0;
-    }
-    .nb-link {
-      position: relative; border: none; background: none;
-      cursor: pointer; font-family: 'DM Sans', inherit;
-      font-size: 0.875rem; font-weight: 500;
-      color: #374151; padding: 6px 11px; border-radius: 8px;
-      transition: color 0.2s ease, background 0.2s ease;
-      outline: none; white-space: nowrap;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .nb-link::after {
-      content: ''; position: absolute;
-      bottom: 1px; left: 50%;
-      transform: translateX(-50%) scaleX(0);
-      width: calc(100% - 18px); height: 2px;
-      border-radius: 2px; background: #2563eb;
-      transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
-    }
-    .nb-link:hover { background: #eff6ff; color: #1d4ed8; }
-    .nb-link:hover::after,
-    .nb-link.nb-active::after { transform: translateX(-50%) scaleX(1); }
-    .nb-link.nb-active { color: #1d4ed8; font-weight: 600; }
-    .nb-link:focus-visible { box-shadow: 0 0 0 3px rgba(59,130,246,0.3); }
-
-    /* ── DESKTOP CTA ── */
-    .nb-cta-area {
-      display: flex; align-items: center;
-      gap: 8px; flex-shrink: 0;
-      position: relative;
-    }
-    
-    /* ── DROPDOWN BUTTON ── */
-    .nb-dropdown {
-      position: relative;
-    }
-    .nb-btn-dropdown {
-      border: none;
-      background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%);
-      color: #fff; font-family: 'DM Sans', inherit;
-      font-size: 0.875rem; font-weight: 600;
-      padding: 8px 20px; border-radius: 50px; cursor: pointer;
-      transition: all 0.25s ease; outline: none; white-space: nowrap;
-      box-shadow: 0 2px 12px rgba(37,99,235,0.30);
-      -webkit-tap-highlight-color: transparent;
-      display: flex; align-items: center; gap: 6px;
-    }
-    .nb-btn-dropdown:hover {
-      box-shadow: 0 4px 20px rgba(37,99,235,0.45);
-      transform: translateY(-1px);
-    }
-    .nb-btn-dropdown:active { transform: translateY(0) scale(0.98); }
-    .nb-btn-dropdown:focus-visible { box-shadow: 0 0 0 3px rgba(59,130,246,0.4); }
-    
-    .nb-dropdown-icon {
-      width: 12px; height: 12px;
-      transition: transform 0.2s ease;
-      flex-shrink: 0;
-    }
-    .nb-dropdown-icon.nb-open {
-      transform: rotate(180deg);
-    }
-    
-    /* ── DROPDOWN MENU ── */
-    .nb-dropdown-menu {
-      position: absolute;
-      top: calc(100% + 12px);
-      right: 0;
-      background: #fff;
-      border-radius: 16px;
-      border: 1px solid #e0ecff;
-      box-shadow: 
-        0 20px 60px rgba(37,99,235,0.12),
-        0 8px 24px rgba(0,0,0,0.08),
-        0 0 0 1px rgba(37,99,235,0.04);
-      min-width: 340px;
-      overflow: hidden;
-      z-index: 10000;
-      transform-origin: top right;
-      padding: 8px;
-    }
-    
-    /* Enhanced dropdown item */
-    .nb-dropdown-item {
-      display: flex; 
-      align-items: flex-start;
-      gap: 14px;
-      width: 100%; 
-      padding: 14px 16px;
-      border: none; 
-      background: transparent;
-      cursor: pointer; 
-      font-family: 'DM Sans', inherit;
-      text-align: left;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      outline: none; 
-      -webkit-tap-highlight-color: transparent;
-      border-radius: 12px;
-      position: relative;
-    }
-    
-    .nb-dropdown-item::before {
+    /* Underline indicator */
+    .nb-nav-btn::after {
       content: '';
       position: absolute;
-      inset: 0;
-      border-radius: 12px;
-      background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-      opacity: 0;
-      transition: opacity 0.2s ease;
-    }
-    
-    .nb-dropdown-item:hover::before {
-      opacity: 1;
-    }
-    
-    .nb-dropdown-item:hover {
-      transform: translateX(2px);
-    }
-    
-    .nb-dropdown-item:active {
-      transform: translateX(2px) scale(0.98);
-    }
-    
-    .nb-dropdown-item:focus-visible {
-      box-shadow: inset 0 0 0 2px rgba(59,130,246,0.5);
-    }
-    
-    .nb-dropdown-item-icon {
-      flex-shrink: 0;
-      color: #3b82f6;
-      transition: all 0.2s ease;
-      position: relative;
-      z-index: 1;
-      margin-top: 2px;
-    }
-    
-    .nb-dropdown-item:hover .nb-dropdown-item-icon {
-      color: #1d4ed8;
-      transform: scale(1.1);
-    }
-    
-    .nb-dropdown-item-content {
-      flex: 1;
-      position: relative;
-      z-index: 1;
-    }
-    
-    .nb-dropdown-item-label {
-      font-size: 0.9375rem;
-      font-weight: 600;
-      color: #1e293b;
-      line-height: 1.3;
-      display: block;
-      margin-bottom: 2px;
-    }
-    
-    .nb-dropdown-item-subtitle {
-      font-size: 0.8125rem;
-      font-weight: 400;
-      color: #64748b;
-      line-height: 1.3;
-      display: block;
-    }
-    
-    .nb-dropdown-item:hover .nb-dropdown-item-label {
-      color: #1d4ed8;
-    }
-    
-    .nb-dropdown-item:hover .nb-dropdown-item-subtitle {
-      color: #475569;
-    }
-    
-    /* Featured item badge */
-    .nb-dropdown-item-featured {
-      border: 1.5px solid #bfdbfe;
-      background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-    }
-    
-    .nb-dropdown-item-featured::before {
-      background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-    }
-    
-    .nb-dropdown-item-featured .nb-dropdown-item-label {
-      color: #1d4ed8;
-    }
-    
-    /* Divider */
-    .nb-dropdown-divider {
-      height: 1px;
-      background: linear-gradient(90deg, transparent 0%, #e0ecff 50%, transparent 100%);
-      margin: 6px 0;
-    }
-
-    .nb-btn-ghost {
-      border: 1.5px solid #bfdbfe; background: #eff6ff; color: #1d4ed8;
-      font-family: 'DM Sans', inherit; font-size: 0.875rem; font-weight: 600;
-      padding: 8px 18px; border-radius: 50px; cursor: pointer;
-      transition: all 0.2s ease; outline: none; white-space: nowrap;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .nb-btn-ghost:hover { background: #dbeafe; border-color: #93c5fd; }
-    .nb-btn-ghost:focus-visible { box-shadow: 0 0 0 3px rgba(59,130,246,0.3); }
-    
-    .nb-btn-primary {
-      border: none;
-      background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%);
-      color: #fff; font-family: 'DM Sans', inherit;
-      font-size: 0.875rem; font-weight: 600;
-      padding: 8px 20px; border-radius: 50px; cursor: pointer;
-      transition: all 0.25s ease; outline: none; white-space: nowrap;
-      box-shadow: 0 2px 12px rgba(37,99,235,0.30);
-      -webkit-tap-highlight-color: transparent;
-    }
-    .nb-btn-primary:hover {
-      box-shadow: 0 4px 20px rgba(37,99,235,0.45);
-      transform: translateY(-1px);
-    }
-    .nb-btn-primary:active { transform: translateY(0) scale(0.98); }
-    .nb-btn-primary:focus-visible { box-shadow: 0 0 0 3px rgba(59,130,246,0.4); }
-
-    /* ── PROGRESS BAR ── */
-    .nb-progress {
-      position: absolute; bottom: 0; left: 0; height: 2px;
-      background: linear-gradient(90deg, #1d4ed8, #3b82f6, #60a5fa);
-      border-radius: 0 2px 2px 0;
-      transition: width 0.08s linear;
-      pointer-events: none;
-    }
-
-    /* ── HAMBURGER ── */
-    .nb-hb {
-      flex-direction: column; align-items: center;
-      justify-content: center; gap: 5px;
-      width: 44px; height: 44px; border-radius: 12px;
-      border: 1.5px solid #e5e7eb; background: #fff;
-      cursor: pointer; padding: 0; outline: none; flex-shrink: 0;
-      transition: all 0.25s ease;
-      -webkit-tap-highlight-color: transparent;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-      display: none;
-      position: relative;
-      z-index: 10001;
-    }
-    .nb-hb.nb-hb-open {
-      border-color: #bfdbfe; background: #eff6ff;
-      box-shadow: 0 4px 16px rgba(37,99,235,0.12);
-    }
-    .nb-hb:focus-visible { box-shadow: 0 0 0 3px rgba(59,130,246,0.3); }
-    .nb-hb-bar {
-      display: block; width: 18px; height: 2px; border-radius: 4px;
+      bottom: 2px;
+      left: 50%;
+      transform: translateX(-50%) scaleX(0);
+      width: calc(100% - 20px);
+      height: 2px;
+      border-radius: 2px;
       background: #2563eb;
-      transition: all 0.3s cubic-bezier(0.4,0.2,0.2,1);
-      transform-origin: center;
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
-    .nb-hb.nb-hb-open .nb-hb-bar:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-    .nb-hb.nb-hb-open .nb-hb-bar:nth-child(2) { opacity: 0; transform: scaleX(0); }
-    .nb-hb.nb-hb-open .nb-hb-bar:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-
-    /* ── OVERLAY ── */
-    .nb-overlay {
-      position: fixed; 
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(15,23,42,0.4);
-      z-index: 9998;
-      -webkit-tap-highlight-color: transparent;
-      transition: opacity 0.3s ease;
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
+    .nb-nav-btn:hover::after,
+    .nb-nav-btn.nb-active::after {
+      transform: translateX(-50%) scaleX(1);
     }
 
-    /* ── DRAWER ── */
-    .nb-drawer {
-      position: fixed;
-      z-index: 9999;
-      top: 116px;
-      left: 12px; 
-      right: 12px;
-      background: #fff;
-      border-radius: 20px;
-      border: 1px solid #e0ecff;
-      box-shadow:
-        0 20px 60px rgba(37,99,235,0.12),
-        0 4px 16px rgba(0,0,0,0.08);
-      max-height: calc(100vh - 128px);
-      max-height: calc(100dvh - 128px);
-      overflow-y: auto;
-      overflow-x: hidden;
-      transform-origin: top center;
-      padding-bottom: env(safe-area-inset-bottom, 8px);
-      overscroll-behavior: contain;
+    /* Keyframes */
+    @keyframes nbDropdownIn {
+      from { opacity: 0; transform: scale(0.93) translateY(-6px); }
+      to   { opacity: 1; transform: scale(1)    translateY(0);    }
+    }
+    @keyframes nbDrawerIn {
+      from { opacity: 0; transform: translateY(-10px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0)     scale(1);    }
+    }
+    @keyframes nbDrawerOut {
+      from { opacity: 1; transform: translateY(0)    scale(1);    }
+      to   { opacity: 0; transform: translateY(-8px) scale(0.97); }
+    }
+    @keyframes nbFadeIn  { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes nbFadeOut { from { opacity: 1; } to { opacity: 0; } }
+    @keyframes nbPulse {
+      0%, 100% { opacity: 1;   transform: scale(1);   }
+      50%      { opacity: 0.5; transform: scale(0.7); }
+    }
+
+    .nb-animate-dropdown  { animation: nbDropdownIn  0.2s  cubic-bezier(0.16,1,0.3,1) both; }
+    .nb-animate-drawer    { animation: nbDrawerIn    0.28s cubic-bezier(0.16,1,0.3,1) both; }
+    .nb-animate-drawer-out{ animation: nbDrawerOut   0.2s  cubic-bezier(0.4,0,1,1)   both; }
+    .nb-animate-fade-in   { animation: nbFadeIn      0.25s ease both; }
+    .nb-animate-fade-out  { animation: nbFadeOut     0.2s  ease both; }
+    .nb-badge-dot         { animation: nbPulse       2s    ease infinite; }
+
+    /* iOS Safari — prevent elastic scroll bleeding into fixed overlay */
+    .nb-drawer-scroll {
       -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
     }
 
-    .nb-di {
-      transition: opacity 0.22s ease, transform 0.22s ease;
+    /* Body locked state — avoids the position:fixed jump on iOS */
+    body.nb-locked {
+      overflow: hidden !important;
+      /* do NOT use position:fixed — it resets scroll position on iOS */
     }
 
-    .nb-dl {
-      display: flex; align-items: center;
-      justify-content: space-between;
-      width: 100%; padding: 13px 14px;
-      border-radius: 12px; border: none;
-      cursor: pointer; font-family: 'DM Sans', inherit;
-      font-size: 0.9375rem; font-weight: 500;
-      color: #374151; background: transparent;
-      text-align: left;
-      transition: background 0.18s ease, color 0.18s ease;
-      outline: none; -webkit-tap-highlight-color: transparent;
-      -webkit-appearance: none;
-      user-select: none;
-    }
-    .nb-dl:hover { background: #eff6ff; color: #1d4ed8; }
-    .nb-dl:active { background: #dbeafe; }
-    .nb-dl.nb-dl-active {
-      background: #eff6ff; color: #1d4ed8; font-weight: 600;
-    }
-    .nb-dl:focus-visible { box-shadow: 0 0 0 3px rgba(59,130,246,0.3); }
-
-    .nb-dcta {
-      display: block; width: 100%; padding: 13px;
-      border-radius: 12px; border: none; cursor: pointer;
-      font-family: 'DM Sans', inherit; font-size: 0.9375rem;
-      font-weight: 600; letter-spacing: 0.02em;
-      text-align: center; outline: none;
-      transition: all 0.2s ease;
-      -webkit-tap-highlight-color: transparent;
-      -webkit-appearance: none;
-      user-select: none;
-    }
-    .nb-dcta-primary {
-      background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%);
-      color: #fff !important;
-      box-shadow: 0 2px 12px rgba(37,99,235,0.28);
-    }
-    .nb-dcta-primary:active { transform: scale(0.98); opacity: 0.9; }
-    .nb-dcta-secondary {
-      background: #f8fafc; color: #374151 !important;
-      border: 1.5px solid #e2e8f0 !important;
-    }
-    .nb-dcta-secondary:active { background: #f1f5f9; }
-
-    /* Mobile dropdown section */
-    .nb-mobile-dropdown-section {
-      padding: 4px;
-    }
-    .nb-mobile-dropdown-label {
-      font-size: 0.75rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: #6b7280;
-      padding: 12px 14px 8px;
-      display: block;
-      user-select: none;
-    }
-    
-    /* Mobile dropdown item */
-    .nb-mobile-dropdown-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      width: 100%;
-      padding: 12px 14px;
-      border-radius: 12px;
-      border: none;
-      cursor: pointer;
-      font-family: 'DM Sans', inherit;
-      background: transparent;
-      text-align: left;
-      transition: all 0.18s ease;
-      outline: none;
-      -webkit-tap-highlight-color: transparent;
-      -webkit-appearance: none;
-      margin-bottom: 4px;
-      user-select: none;
-    }
-    
-    .nb-mobile-dropdown-item:hover {
-      background: #eff6ff;
-    }
-    
-    .nb-mobile-dropdown-item:active {
-      background: #dbeafe;
-    }
-    
-    .nb-mobile-dropdown-item:focus-visible {
-      box-shadow: 0 0 0 3px rgba(59,130,246,0.3);
-    }
-    
-    .nb-mobile-dropdown-item-icon {
-      flex-shrink: 0;
-      color: #3b82f6;
-      margin-top: 2px;
-    }
-    
-    .nb-mobile-dropdown-item-content {
-      flex: 1;
-      min-width: 0;
-    }
-    
-    .nb-mobile-dropdown-item-label {
-      font-size: 0.9375rem;
-      font-weight: 600;
-      color: #1e293b;
-      line-height: 1.3;
-      display: block;
-      margin-bottom: 2px;
-    }
-    
-    .nb-mobile-dropdown-item-subtitle {
-      font-size: 0.8125rem;
-      font-weight: 400;
-      color: #64748b;
-      line-height: 1.3;
-      display: block;
-    }
-    
-    .nb-mobile-dropdown-item-featured {
-      border: 1.5px solid #bfdbfe;
-      background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-    }
-    
-    .nb-mobile-dropdown-item-featured .nb-mobile-dropdown-item-label {
-      color: #1d4ed8;
-    }
-
-    @keyframes nbpulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.5; transform: scale(0.75); }
-    }
-    .nb-dot-pulse { animation: nbpulse 2s infinite; }
-
-    .nb-demo-badge {
-      font-size: 0.75rem; font-weight: 700;
-      letter-spacing: 0.08em; text-transform: uppercase;
-      color: #2563eb; background: #eff6ff;
-      padding: 4px 12px; border-radius: 50px;
-      border: 1px solid #bfdbfe;
-      white-space: nowrap;
-    }
-
-    html { scroll-padding-top: 116px; }
-    body { overflow-x: hidden; }
-
-    @media (min-width: 1024px) {
-      .nb-nav      { display: flex !important; }
-      .nb-cta-area { display: flex !important; }
-      .nb-hb       { display: none !important; }
-    }
-    @media (max-width: 1023px) {
-      .nb-nav      { display: none !important; }
-      .nb-cta-area { display: none !important; }
-      .nb-hb       { display: flex !important; }
-      .nb-bar { height: 108px; }
-      
-      /* Mobile dropdown adjustments */
-      .nb-dropdown-menu {
-        min-width: auto;
-        left: 12px;
-        right: 12px;
-        width: calc(100% - 24px);
-      }
-    }
-    
-    @media (max-width: 374px) {
-      .nb-dropdown-item-label,
-      .nb-mobile-dropdown-item-label {
-        font-size: 0.875rem;
-      }
-      .nb-dropdown-item-subtitle,
-      .nb-mobile-dropdown-item-subtitle {
-        font-size: 0.75rem;
-      }
-      .nb-logo-img {
-        height: 80px;
-      }
-    }
-
-    /* Safe area for iOS notch */
-    @supports (padding: max(0px)) {
-      .nb-bar {
-        padding-left: max(1rem, env(safe-area-inset-left));
-        padding-right: max(1rem, env(safe-area-inset-right));
-      }
-      .nb-drawer {
-        left: max(12px, env(safe-area-inset-left));
-        right: max(12px, env(safe-area-inset-right));
-      }
-    }
-
-    /* Prevent scrolling issues on iOS */
-    @supports (-webkit-touch-callout: none) {
-      .nb-drawer {
-        max-height: calc(100vh - 128px - env(safe-area-inset-bottom));
-      }
-    }
-
-    /* High contrast mode support */
-    @media (prefers-contrast: high) {
-      .nb-bar {
-        border-width: 2px;
-      }
-      .nb-link:focus-visible,
-      .nb-dl:focus-visible,
-      .nb-dcta:focus-visible {
-        outline: 3px solid;
-        outline-offset: 2px;
-      }
-    }
-
-    /* Reduced motion support */
     @media (prefers-reduced-motion: reduce) {
-      *,
-      *::before,
-      *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
+      *, *::before, *::after {
+        animation-duration:        0.01ms !important;
+        animation-iteration-count: 1      !important;
+        transition-duration:       0.01ms !important;
       }
     }
   `;
   document.head.appendChild(s);
 }
 
-export default function Navbar({ currentPage, onNavigate }) {
-  const [isOpen,        setIsOpen]        = useState(false);
-  const [scrolled,      setScrolled]      = useState(false);
-  const [progress,      setProgress]      = useState(0);
-  const [activeHref,    setActiveHref]    = useState('#home');
-  const [logoError,     setLogoError]     = useState(false);
-  const [dropdownOpen,  setDropdownOpen]  = useState(false);
-  
-  const navRef      = useRef(null);
-  const drawerRef   = useRef(null);
-  const dropdownRef = useRef(null);
-  const scrollTimeoutRef = useRef(null);
-  const savedScrollPos = useRef(0);
-  
-  const isDemoPage = currentPage === 'demo';
+injectMinimalStyles();
 
-  /* ── Scroll: shadow + progress + spy ── */
+// ─── Smooth scroll helper ─────────────────────────────────────────────────────
+
+function smoothScrollToId(id) {
+  if (!id || id === 'home') {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    return;
+  }
+  const el = document.getElementById(id);
+  if (!el) return;
+  const top = el.getBoundingClientRect().top + window.scrollY - SCROLL_OFFSET;
+  window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+}
+
+// ─── Sub-components ───────────────────────────────────────────────────────────
+
+function Chevron({ open }) {
+  return (
+    <svg
+      width="12" height="12" viewBox="0 0 12 12"
+      fill="none" aria-hidden="true"
+      className={`transition-transform duration-200 flex-shrink-0 ${open ? 'rotate-180' : 'rotate-0'}`}
+    >
+      <path
+        d="M2.5 4.5L6 8l3.5-3.5"
+        stroke="currentColor" strokeWidth="1.6"
+        strokeLinecap="round" strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function ArrowRight() {
+  return (
+    <svg
+      width="16" height="16" viewBox="0 0 16 16"
+      fill="none" aria-hidden="true"
+      className="opacity-35 flex-shrink-0 transition-opacity duration-150 group-hover:opacity-70"
+    >
+      <path
+        d="M3 8h10M9 4l4 4-4 4"
+        stroke="currentColor" strokeWidth="1.5"
+        strokeLinecap="round" strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function ArrowLeft() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <path
+        d="M10 3L5 8l5 5"
+        stroke="currentColor" strokeWidth="1.8"
+        strokeLinecap="round" strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+/** Desktop dropdown — rendered inside a portal-like wrapper to avoid stacking issues */
+function DesktopDropdown({ onAction, onClose, triggerRef }) {
+  const panelRef = useRef(null);
+
   useEffect(() => {
-    const handle = () => {
-      // Clear existing timeout
-      if (scrollTimeoutRef.current) {
-        clearTimeout(scrollTimeoutRef.current);
+    function handleOutside(e) {
+      // Check if clicking inside the panel
+      if (panelRef.current && panelRef.current.contains(e.target)) {
+        return;
       }
+      
+      // Check if clicking the trigger button
+      if (triggerRef.current && triggerRef.current.contains(e.target)) {
+        return;
+      }
+      
+      // Otherwise close the dropdown
+      onClose();
+    }
 
-      // Debounce scroll handler for better performance
-      scrollTimeoutRef.current = setTimeout(() => {
-        const top = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
-        const max =
-          document.documentElement.scrollHeight -
-          document.documentElement.clientHeight;
-        
+    // Use a small timeout to avoid race conditions with the opening click
+    const timer = setTimeout(() => {
+      document.addEventListener('mousedown', handleOutside, true);
+      document.addEventListener('touchstart', handleOutside, { capture: true, passive: true });
+    }, 10);
+
+    return () => {
+      clearTimeout(timer);
+      document.removeEventListener('mousedown', handleOutside, true);
+      document.removeEventListener('touchstart', handleOutside, { capture: true, passive: true });
+    };
+  }, [onClose, triggerRef]);
+
+  return (
+    <div
+      ref={panelRef}
+      id="nb-dd-panel"
+      role="menu"
+      aria-label="Products"
+      className="
+        nb-animate-dropdown
+        absolute top-[calc(100%+10px)] right-0
+        min-w-[300px] z-[10001]
+        bg-white rounded-2xl
+        border border-blue-100
+        shadow-[0_4px_6px_-1px_rgba(0,0,0,0.07),0_20px_50px_rgba(37,99,235,0.13)]
+        p-2
+      "
+      onMouseDown={(e) => e.stopPropagation()}
+      onTouchStart={(e) => e.stopPropagation()}
+    >
+      {PRODUCT_LINKS.map((p, i) => (
+        <div key={p.action}>
+          <button
+            type="button"
+            role="menuitem"
+            onClick={() => onAction(p.action)}
+            className={`
+              group flex items-start gap-3 w-full px-4 py-3.5
+              rounded-xl border text-left cursor-pointer outline-none
+              transition-all duration-200
+              focus-visible:ring-2 focus-visible:ring-blue-400/50
+              ${p.featured
+                ? 'bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 hover:from-blue-100 hover:to-blue-200'
+                : 'bg-transparent border-transparent hover:bg-blue-50 hover:translate-x-0.5'
+              }
+            `}
+          >
+            <span className={`
+              flex-shrink-0 mt-0.5 transition-all duration-200 group-hover:scale-110
+              ${p.featured ? 'text-blue-600' : 'text-blue-500 group-hover:text-blue-700'}
+            `}>
+              {p.icon}
+            </span>
+            <span className="flex flex-col">
+              <span className={`
+                text-[0.9375rem] font-semibold leading-snug mb-0.5
+                transition-colors duration-200
+                ${p.featured ? 'text-blue-700' : 'text-slate-800 group-hover:text-blue-700'}
+              `}>
+                {p.label}
+              </span>
+              <span className="text-[0.8125rem] font-normal text-slate-500 leading-snug">
+                {p.subtitle}
+              </span>
+            </span>
+          </button>
+
+          {i < PRODUCT_LINKS.length - 1 && (
+            <div
+              aria-hidden="true"
+              className="h-px my-1.5 bg-gradient-to-r from-transparent via-blue-100 to-transparent"
+            />
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ─── Custom hook: iOS-safe body scroll lock ───────────────────────────────────
+
+function useBodyScrollLock(active) {
+  useEffect(() => {
+    if (!active) return;
+
+    // Simple overflow:hidden approach — avoids iOS position:fixed jump
+    const scrollY  = window.scrollY;
+    const prevOver = document.body.style.overflow;
+    const prevPR   = document.body.style.paddingRight;
+
+    // Account for scrollbar width so content doesn't shift
+    const scrollbarW = window.innerWidth - document.documentElement.clientWidth;
+
+    document.body.style.overflow     = 'hidden';
+    document.body.style.paddingRight = `${scrollbarW}px`;
+
+    return () => {
+      document.body.style.overflow     = prevOver;
+      document.body.style.paddingRight = prevPR;
+      // Restore scroll position (iOS sometimes resets it)
+      window.scrollTo({ top: scrollY, behavior: 'instant' });
+    };
+  }, [active]);
+}
+
+// ─── Main Component ───────────────────────────────────────────────────────────
+
+export default function Navbar({ currentPage = 'home', onNavigate }) {
+  const [menuOpen,    setMenuOpen]    = useState(false);
+  const [menuClosing, setMenuClosing] = useState(false);
+  const [ddOpen,      setDdOpen]      = useState(false);
+  const [scrolled,    setScrolled]    = useState(false);
+  const [progress,    setProgress]    = useState(0);
+  const [activeHref,  setActiveHref]  = useState('#home');
+  const [logoError,   setLogoError]   = useState(false);
+
+  const ddTriggerRef = useRef(null);
+  const rafRef       = useRef(null);
+  const isDemoPage   = currentPage === 'demo';
+
+  // ── Body scroll lock (iOS-safe) ──────────────────────────────────────────
+  useBodyScrollLock(menuOpen);
+
+  // ── Safe navigate ────────────────────────────────────────────────────────
+  const navigate = useCallback((page) => {
+    if (typeof onNavigate === 'function') onNavigate(page);
+  }, [onNavigate]);
+
+  // ── Close menu with exit animation ──────────────────────────────────────
+  const closeMenu = useCallback(() => {
+    setMenuClosing(true);
+    setTimeout(() => {
+      setMenuOpen(false);
+      setMenuClosing(false);
+    }, 220);
+  }, []);
+
+  // ── rAF-throttled scroll handler ─────────────────────────────────────────
+  useEffect(() => {
+    const onScroll = () => {
+      if (rafRef.current) return;
+      rafRef.current = requestAnimationFrame(() => {
+        rafRef.current = null;
+        const top = window.scrollY;
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+
         setScrolled(top > 8);
-        setProgress(max > 0 ? (top / max) * 100 : 0);
+        setProgress(max > 0 ? Math.min((top / max) * 100, 100) : 0);
 
-        // Active section detection
         let cur = '#home';
-        const offset = 120; // Account for navbar height + some buffer
-        
         for (let i = NAV_LINKS.length - 1; i >= 0; i--) {
           const { href } = NAV_LINKS[i];
           if (href === '#home') continue;
-          
-          const id = href.replace('#', '');
-          const el = document.getElementById(id);
-          
-          if (el) {
-            const rect = el.getBoundingClientRect();
-            if (rect.top <= offset) {
-              cur = href;
-              break;
-            }
+          const el = document.getElementById(href.slice(1));
+          if (el && el.getBoundingClientRect().top <= SCROLL_OFFSET + 20) {
+            cur = href;
+            break;
           }
         }
-        
         setActiveHref(cur);
-      }, 10);
+      });
     };
 
-    window.addEventListener('scroll', handle, { passive: true });
-    handle();
-    
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
     return () => {
-      window.removeEventListener('scroll', handle);
-      if (scrollTimeoutRef.current) {
-        clearTimeout(scrollTimeoutRef.current);
-      }
+      window.removeEventListener('scroll', onScroll);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
   }, []);
 
-  /* ── Escape key ── */
+  // ── Reset on page change ─────────────────────────────────────────────────
   useEffect(() => {
-    const fn = (e) => { 
-      if (e.key === 'Escape') {
-        if (isOpen) {
-          setIsOpen(false);
-          e.preventDefault();
-          e.stopPropagation();
-        }
-        if (dropdownOpen) {
-          setDropdownOpen(false);
-          e.preventDefault();
-          e.stopPropagation();
-        }
-      }
-    };
-    document.addEventListener('keydown', fn);
-    return () => document.removeEventListener('keydown', fn);
-  }, [isOpen, dropdownOpen]);
-
-  /* ── Click outside dropdown ── */
-  useEffect(() => {
-    if (!dropdownOpen) return;
-    
-    const handleClick = (e) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-        setDropdownOpen(false);
-      }
-    };
-    
-    // Use capture phase for better reliability
-    document.addEventListener('mousedown', handleClick, true);
-    document.addEventListener('touchstart', handleClick, true);
-    
-    return () => {
-      document.removeEventListener('mousedown', handleClick, true);
-      document.removeEventListener('touchstart', handleClick, true);
-    };
-  }, [dropdownOpen]);
-
-  /* ── Body scroll lock with improved mobile handling ── */
-  useEffect(() => {
-    if (isOpen) {
-      // Save current scroll position
-      savedScrollPos.current = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
-      
-      // Lock body scroll
-      document.body.style.position = 'fixed';
-      document.body.style.top = `-${savedScrollPos.current}px`;
-      document.body.style.width = '100%';
-      document.body.style.overflowY = 'scroll';
-      
-      // Prevent bounce on iOS
-      if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-        document.body.style.overflow = 'hidden';
-      }
-    } else {
-      // Release body scroll lock
-      document.body.style.position = '';
-      document.body.style.top = '';
-      document.body.style.width = '';
-      document.body.style.overflowY = '';
-      document.body.style.overflow = '';
-      
-      // Restore scroll position
-      if (savedScrollPos.current !== 0) {
-        window.scrollTo(0, savedScrollPos.current);
-      }
-    }
-    
-    return () => {
-      document.body.style.position = '';
-      document.body.style.top = '';
-      document.body.style.width = '';
-      document.body.style.overflowY = '';
-      document.body.style.overflow = '';
-    };
-  }, [isOpen]);
-
-  /* ── Close on route/page change ── */
-  useEffect(() => { 
-    setIsOpen(false);
-    setDropdownOpen(false);
+    setMenuOpen(false);
+    setMenuClosing(false);
+    setDdOpen(false);
   }, [currentPage]);
 
-  /* ── IMPROVED: Smooth scroll / navigate with proper mobile handling ── */
-  const scrollTo = useCallback((href) => {
-    const id = href.replace('#', '');
-    
-    // Calculate scroll target BEFORE closing drawer (while body position is still fixed)
-    let targetScrollPosition = 0;
-    
-    if (href !== '#home' && id !== 'home') {
-      const el = document.getElementById(id);
-      if (el) {
-        // Get element position relative to the document
-        const navbarHeight = 116;
-        const rect = el.getBoundingClientRect();
-        // Add saved scroll position because body is fixed
-        targetScrollPosition = rect.top + savedScrollPos.current - navbarHeight;
-      }
-    }
-    
-    // Close menus
-    setIsOpen(false);
-    setDropdownOpen(false);
-    
-    // Wait for drawer to close and body scroll lock to be released
+  // ── Escape key ───────────────────────────────────────────────────────────
+  useEffect(() => {
+    const handler = (e) => {
+      if (e.key !== 'Escape') return;
+      if (ddOpen)   { setDdOpen(false); return; }
+      if (menuOpen) { closeMenu();      return; }
+    };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, [ddOpen, menuOpen, closeMenu]);
+
+  // ── Consume cross-page scroll target ────────────────────────────────────
+  useEffect(() => {
+    if (currentPage !== 'home') return;
+    const target = sessionStorage.getItem('nb-scroll-target');
+    if (!target) return;
+    sessionStorage.removeItem('nb-scroll-target');
     requestAnimationFrame(() => {
-      setTimeout(() => {
-        if (isDemoPage) {
-          // Navigate to home page first
-          onNavigate(id === 'home' ? 'home' : id);
-          // Execute scroll after navigation completes
-          setTimeout(() => {
-            window.scrollTo({
-              top: targetScrollPosition,
-              behavior: 'smooth'
-            });
-          }, 150);
-        } else {
-          // Directly scroll to target
-          window.scrollTo({
-            top: targetScrollPosition,
-            behavior: 'smooth'
-          });
-        }
-      }, 50); // Small delay to allow drawer animation to start
+      setTimeout(() => smoothScrollToId(target), 120);
     });
-  }, [isDemoPage, onNavigate]);
+  }, [currentPage]);
 
-  const handleProductClick = useCallback((action) => {
-    // Close all menus
-    setDropdownOpen(false);
-    setIsOpen(false);
-    
-    // Small delay to allow UI to update
-    setTimeout(() => {
-      if (action === 'book-lb') {
-        // Book a demo - navigate to liquid biopsy booking
-        onNavigate('lb');
-      } else if (action === 'view-lb') {
-        // View a demo - navigate to liquid biopsy demo
-        onNavigate('demo');
-      } else if (action === 'mammo') {
-        // Mammogram - external link
-        window.location.href = 'https://oncotraceai.org/mammo-demo/ui';
-      }
-    }, 50);
-  }, [onNavigate]);
-
-  const handleLogo = useCallback(() => {
-    setIsOpen(false);
-    setDropdownOpen(false);
-    
+  // ── Navigation handler (FIXED: Don't close dropdown here) ───────────────
+  const handleNavClick = useCallback((href) => {
+    const id = href.slice(1);
+    closeMenu();
+    // REMOVED: setDdOpen(false) — dropdown should only close on outside click or escape
     if (isDemoPage) {
-      onNavigate('home');
+      navigate('home');
+      if (id !== 'home') sessionStorage.setItem('nb-scroll-target', id);
     } else {
-      // Close drawer first, then scroll
-      requestAnimationFrame(() => {
-        setTimeout(() => {
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }, 50);
-      });
+      setTimeout(() => smoothScrollToId(id), 30);
     }
-  }, [isDemoPage, onNavigate]);
+  }, [isDemoPage, navigate, closeMenu]);
 
-  const toggleMenu = useCallback((e) => {
-    e.preventDefault();
+  // ── Logo handler (FIXED: Don't close dropdown here) ─────────────────────
+  const handleLogo = useCallback(() => {
+    closeMenu();
+    // REMOVED: setDdOpen(false) — dropdown should only close on outside click or escape
+    if (isDemoPage) {
+      navigate('home');
+    } else {
+      setTimeout(() => smoothScrollToId('home'), 30);
+    }
+  }, [isDemoPage, navigate, closeMenu]);
+
+  // ── Product action handler ───────────────────────────────────────────────
+  const handleProduct = useCallback((action) => {
+    setDdOpen(false);
+    closeMenu();
+    setTimeout(() => {
+      if (action === 'book-lb')      navigate('lb');
+      else if (action === 'view-lb') navigate('demo');
+      else if (action === 'mammo')
+        window.open('https://oncotraceai.org/mammo-demo/ui', '_blank', 'noopener,noreferrer');
+    }, 50);
+  }, [navigate, closeMenu]);
+
+  // ── Toggle dropdown ──────────────────────────────────────────────────────
+  const toggleDd = useCallback((e) => {
     e.stopPropagation();
-    
-    setIsOpen((prev) => !prev);
-    setDropdownOpen(false);
+    setDdOpen((prev) => !prev);
   }, []);
 
-  const toggleDropdown = useCallback((e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    
-    setDropdownOpen((prev) => !prev);
+  // ── Toggle mobile menu ───────────────────────────────────────────────────
+  const toggleMenu = useCallback(() => {
+    if (menuOpen) {
+      closeMenu();
+    } else {
+      setMenuOpen(true);
+      setDdOpen(false);
+    }
+  }, [menuOpen, closeMenu]);
+
+  // ── Stagger animation delay ──────────────────────────────────────────────
+  const prefersReducedMotion = useMemo(() => {
+    if (typeof window === 'undefined') return false;
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   }, []);
 
-  /* ── Stagger delays for drawer items ── */
-  const staggerStyle = useCallback((i) => ({
-    transitionDelay: isOpen ? `${i * 30}ms` : '0ms',
-    opacity: isOpen ? 1 : 0,
-    transform: isOpen ? 'translateX(0)' : 'translateX(-12px)',
-  }), [isOpen]);
+  const staggerStyle = useCallback((i) =>
+    prefersReducedMotion ? {} : { animationDelay: `${i * 35}ms` }
+  , [prefersReducedMotion]);
 
+  const showDrawer = menuOpen || menuClosing;
+
+  // ─── Render ───────────────────────────────────────────────────────────────
   return (
-    <>
-      <div ref={navRef} className="nb-root">
-        {/* ══ TOP BAR ══ */}
-        <div className={`nb-bar${scrolled ? ' nb-scrolled' : ''}`}>
+    <div className="nb-font">
 
-          {/* Logo */}
+      {/* ══ FIXED BAR ══════════════════════════════════════════════════════ */}
+      <div className="fixed top-0 left-0 right-0 z-[9999]">
+        <header
+          className={`
+            relative flex items-center justify-between
+            h-[108px] px-[clamp(1rem,4vw,2.5rem)]
+            bg-white/[0.97] backdrop-blur-xl
+            border-b transition-all duration-300
+            ${scrolled
+              ? 'border-blue-100 shadow-[0_4px_24px_rgba(37,99,235,0.10),0_1px_4px_rgba(37,99,235,0.06)]'
+              : 'border-gray-200 shadow-[0_1px_8px_rgba(0,0,0,0.05)]'
+            }
+          `}
+        >
+          {/* ── Logo ── */}
           <button
-            className="nb-logo-btn"
-            onClick={handleLogo}
-            aria-label="Go to homepage"
             type="button"
+            onClick={handleLogo}
+            aria-label="OncoTrace AI — go to homepage"
+            className="
+              relative z-[10001] flex items-center flex-shrink-0
+              bg-transparent border-none p-0 cursor-pointer
+              rounded-lg outline-none
+              opacity-100 hover:opacity-85 active:opacity-70
+              transition-opacity duration-200
+              focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2
+            "
           >
             {logoError ? (
-              <span className="nb-logo-text">OncoTrace AI</span>
+              <span className="text-xl font-bold text-blue-700 tracking-tight">
+                OncoTrace AI
+              </span>
             ) : (
               <img
-                className="nb-logo-img"
                 src="/Logo.png"
                 alt="OncoTrace AI"
                 draggable={false}
                 onError={() => setLogoError(true)}
+                className="h-[88px] w-auto object-contain block pointer-events-none select-none"
               />
             )}
           </button>
 
-          {/* Desktop nav */}
-          <nav className="nb-nav" aria-label="Main navigation">
-            <ul role="list">
-              {!isDemoPage
-                ? NAV_LINKS.map(({ label, href }) => (
-                    <li key={href}>
-                      <button
-                        className={`nb-link${activeHref === href ? ' nb-active' : ''}`}
-                        onClick={() => scrollTo(href)}
-                        type="button"
-                        aria-current={activeHref === href ? 'page' : undefined}
-                      >
-                        {label}
-                      </button>
-                    </li>
-                  ))
-                : (
-                    <li>
-                      <span className="nb-demo-badge">Demo Mode</span>
-                    </li>
-                  )}
+          {/* ── Desktop Nav ── */}
+          <nav
+            aria-label="Main navigation"
+            className="hidden lg:flex items-center flex-1 justify-center"
+          >
+            <ul role="list" className="flex items-center gap-0.5 list-none m-0 p-0">
+              {isDemoPage ? (
+                <li>
+                  <span
+                    aria-live="polite"
+                    className="
+                      text-xs font-bold tracking-widest uppercase
+                      text-blue-600 bg-blue-50 border border-blue-200
+                      px-4 py-1.5 rounded-full whitespace-nowrap
+                    "
+                  >
+                    Demo Mode
+                  </span>
+                </li>
+              ) : (
+                NAV_LINKS.map(({ label, href }) => (
+                  <li key={href}>
+                    <button
+                      type="button"
+                      onClick={() => handleNavClick(href)}
+                      aria-current={activeHref === href ? 'page' : undefined}
+                      className={`
+                        nb-nav-btn
+                        relative border-none cursor-pointer font-medium
+                        text-[0.875rem] px-3 py-[7px] rounded-lg
+                        outline-none whitespace-nowrap
+                        transition-colors duration-200
+                        focus-visible:ring-2 focus-visible:ring-blue-400/50
+                        ${activeHref === href
+                          ? 'nb-active text-blue-700 font-semibold bg-blue-50'
+                          : 'text-gray-600 bg-transparent hover:bg-blue-50 hover:text-blue-700'
+                        }
+                      `}
+                    >
+                      {label}
+                    </button>
+                  </li>
+                ))
+              )}
             </ul>
           </nav>
 
-          {/* Desktop CTA with Dropdown */}
-          <div className="nb-cta-area">
-            {!isDemoPage ? (
-              <div className="nb-dropdown" ref={dropdownRef}>
-                <button 
-                  className="nb-btn-dropdown" 
-                  type="button" 
-                  onClick={toggleDropdown}
-                  aria-expanded={dropdownOpen}
-                  aria-haspopup="true"
+          {/* ── Desktop Actions ── */}
+          <div
+            aria-label="Product actions"
+            className="hidden lg:flex items-center gap-2 flex-shrink-0"
+          >
+            {isDemoPage ? (
+              <button
+                type="button"
+                onClick={() => navigate('home')}
+                className="
+                  flex items-center gap-1.5 border-none cursor-pointer
+                  text-[0.875rem] font-semibold text-white
+                  px-5 py-2.5 rounded-full outline-none whitespace-nowrap
+                  bg-gradient-to-br from-blue-700 to-blue-500
+                  shadow-[0_2px_12px_rgba(37,99,235,0.28)]
+                  hover:shadow-[0_6px_22px_rgba(37,99,235,0.40)] hover:-translate-y-px
+                  active:translate-y-0 active:scale-[0.98]
+                  transition-all duration-200
+                  focus-visible:ring-2 focus-visible:ring-blue-400
+                "
+              >
+                <ArrowLeft />
+                Back to Home
+              </button>
+            ) : (
+              <div className="relative">
+                <button
+                  ref={ddTriggerRef}
+                  type="button"
+                  onClick={toggleDd}
+                  aria-expanded={ddOpen}
+                  aria-haspopup="menu"
+                  aria-controls="nb-dd-panel"
+                  className="
+                    flex items-center gap-1.5 border-none cursor-pointer
+                    text-[0.875rem] font-semibold text-white
+                    px-5 py-2.5 rounded-full outline-none whitespace-nowrap
+                    bg-gradient-to-br from-blue-700 to-blue-500
+                    shadow-[0_2px_12px_rgba(37,99,235,0.30)]
+                    hover:shadow-[0_6px_22px_rgba(37,99,235,0.42)] hover:-translate-y-px
+                    active:translate-y-0 active:scale-[0.98]
+                    transition-all duration-200
+                    focus-visible:ring-2 focus-visible:ring-blue-400
+                  "
                 >
                   <span>View Products</span>
-                  <svg 
-                    className={`nb-dropdown-icon${dropdownOpen ? ' nb-open' : ''}`}
-                    viewBox="0 0 12 12" 
-                    fill="none"
-                    aria-hidden="true"
-                  >
-                    <path 
-                      d="M3 4.5L6 7.5L9 4.5" 
-                      stroke="currentColor" 
-                      strokeWidth="1.5" 
-                      strokeLinecap="round" 
-                      strokeLinejoin="round"
-                    />
-                  </svg>
+                  <Chevron open={ddOpen} />
                 </button>
-                
-                {dropdownOpen && (
-                  <div 
-                    className="nb-dropdown-menu"
-                    style={{
-                      opacity: dropdownOpen ? 1 : 0,
-                      transform: dropdownOpen ? 'scale(1)' : 'scale(0.95)',
-                      transition: 'opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-                    }}
-                  >
-                    {PRODUCT_LINKS.map((product, idx) => (
-                      <div key={product.action}>
-                        <button
-                          className={`nb-dropdown-item${product.featured ? ' nb-dropdown-item-featured' : ''}`}
-                          type="button"
-                          onClick={() => handleProductClick(product.action)}
-                        >
-                          <div className="nb-dropdown-item-icon">
-                            {product.icon}
-                          </div>
-                          <div className="nb-dropdown-item-content">
-                            <span className="nb-dropdown-item-label">
-                              {product.label}
-                            </span>
-                            <span className="nb-dropdown-item-subtitle">
-                              {product.subtitle}
-                            </span>
-                          </div>
-                        </button>
-                        {idx < PRODUCT_LINKS.length - 1 && (
-                          <div className="nb-dropdown-divider" aria-hidden="true" />
-                        )}
-                      </div>
-                    ))}
-                  </div>
+
+                {ddOpen && (
+                  <DesktopDropdown
+                    onAction={handleProduct}
+                    onClose={() => setDdOpen(false)}
+                    triggerRef={ddTriggerRef}
+                  />
                 )}
               </div>
-            ) : (
-              <button 
-                className="nb-btn-primary" 
-                type="button" 
-                onClick={() => onNavigate('home')}
-              >
-                ← Back to Home
-              </button>
             )}
           </div>
 
-          {/* Hamburger */}
+          {/* ── Hamburger ── */}
           <button
-            className={`nb-hb${isOpen ? ' nb-hb-open' : ''}`}
             type="button"
             onClick={toggleMenu}
-            aria-label={isOpen ? 'Close menu' : 'Open menu'}
-            aria-expanded={isOpen}
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={menuOpen}
             aria-controls="nb-mobile-drawer"
+            className={`
+              lg:hidden flex flex-col items-center justify-center gap-[5px]
+              w-11 h-11 rounded-xl border cursor-pointer p-0 outline-none
+              flex-shrink-0 relative z-[10001]
+              transition-all duration-200
+              focus-visible:ring-2 focus-visible:ring-blue-400/50
+              ${menuOpen
+                ? 'border-blue-200 bg-blue-50 shadow-[0_4px_16px_rgba(37,99,235,0.12)]'
+                : 'border-gray-200 bg-white shadow-[0_1px_4px_rgba(0,0,0,0.06)]'
+              }
+            `}
           >
-            <span className="nb-hb-bar" aria-hidden="true" />
-            <span className="nb-hb-bar" aria-hidden="true" />
-            <span className="nb-hb-bar" aria-hidden="true" />
+            {[1, 2, 3].map((n) => (
+              <span
+                key={n}
+                aria-hidden="true"
+                className={`
+                  block w-[18px] h-0.5 rounded bg-blue-600
+                  transition-all duration-300 origin-center
+                  ${menuOpen && n === 1 ? 'translate-y-[7px] rotate-45'  : ''}
+                  ${menuOpen && n === 2 ? 'opacity-0 scale-x-0'           : ''}
+                  ${menuOpen && n === 3 ? '-translate-y-[7px] -rotate-45' : ''}
+                `}
+              />
+            ))}
           </button>
 
-          {/* Scroll progress */}
+          {/* ── Scroll progress ── */}
           <div
-            className="nb-progress"
-            style={{ width: `${progress}%` }}
             role="progressbar"
             aria-valuenow={Math.round(progress)}
-            aria-valuemin="0"
-            aria-valuemax="100"
+            aria-valuemin={0}
+            aria-valuemax={100}
             aria-label="Page scroll progress"
+            className="
+              absolute bottom-0 left-0 h-0.5 rounded-r-sm pointer-events-none
+              bg-gradient-to-r from-blue-700 via-blue-500 to-blue-300
+              transition-[width] duration-100 ease-linear
+            "
+            style={{ width: `${progress}%` }}
           />
-        </div>
+        </header>
       </div>
 
-      {/* ══ BACKDROP ══ */}
-      {isOpen && (
+      {/* ══ OVERLAY ════════════════════════════════════════════════════════ */}
+      {showDrawer && (
         <div
-          className="nb-overlay"
-          onClick={() => setIsOpen(false)}
           aria-hidden="true"
-          style={{ 
-            opacity: isOpen ? 1 : 0,
-            pointerEvents: isOpen ? 'auto' : 'none'
-          }}
+          onClick={closeMenu}
+          className={`
+            fixed inset-0 z-[9997] cursor-pointer
+            bg-slate-900/45 backdrop-blur-[3px]
+            ${menuClosing ? 'nb-animate-fade-out' : 'nb-animate-fade-in'}
+          `}
+          onTouchStart={closeMenu}
         />
       )}
 
-      {/* ══ MOBILE DRAWER ══ */}
-      <div
-        id="nb-mobile-drawer"
-        ref={drawerRef}
-        className="nb-drawer"
-        role="dialog"
-        aria-modal="true"
-        aria-label="Site navigation"
-        inert={!isOpen ? '' : undefined}
-        style={{
-          opacity: isOpen ? 1 : 0,
-          transform: isOpen ? 'translateY(0) scale(1)' : 'translateY(-12px) scale(0.96)',
-          pointerEvents: isOpen ? 'auto' : 'none',
-          transition: 'opacity 0.28s cubic-bezier(0.16,1,0.3,1), transform 0.28s cubic-bezier(0.16,1,0.3,1)',
-          visibility: isOpen ? 'visible' : 'hidden',
-        }}
-      >
-        <div style={{ padding: '10px 10px 14px' }}>
+      {/* ══ MOBILE DRAWER ══════════════════════════════════════════════════ */}
+      {showDrawer && (
+        <div
+          id="nb-mobile-drawer"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Site navigation"
+          className={`
+            nb-drawer-scroll
+            fixed z-[9998]
+            top-[116px] left-3 right-3
+            bg-white rounded-[20px]
+            border border-blue-100
+            shadow-[0_4px_6px_-1px_rgba(0,0,0,0.07),0_20px_50px_rgba(37,99,235,0.13)]
+            max-h-[calc(100dvh-128px)] overflow-y-auto overflow-x-hidden
+            pb-[max(env(safe-area-inset-bottom,0px),12px)]
+            ${menuClosing ? 'nb-animate-drawer-out' : 'nb-animate-drawer'}
+          `}
+          onClick={(e)      => e.stopPropagation()}
+          onTouchStart={(e) => e.stopPropagation()}
+          onTouchMove={(e)  => e.stopPropagation()}
+        >
+          <div className="p-2.5 pb-1">
 
-          {/* Badge */}
-          <div className="nb-di" style={staggerStyle(0)}>
-            <div style={{ padding: '8px 12px 4px' }}>
-              <span style={{
-                display: 'inline-flex', alignItems: 'center', gap: 6,
-                fontSize: '0.6875rem', fontWeight: 700,
-                letterSpacing: '0.1em', textTransform: 'uppercase',
-                color: '#2563eb', background: '#eff6ff',
-                padding: '4px 10px', borderRadius: 50,
-                border: '1px solid #bfdbfe',
-              }}>
-                <span
-                  className="nb-dot-pulse"
-                  style={{
-                    width: 6, height: 6, borderRadius: '50%',
-                    background: '#3b82f6', flexShrink: 0,
-                    display: 'inline-block',
-                  }}
-                />
+            {/* Badge */}
+            <div className="px-3 pt-2 pb-1.5" style={staggerStyle(0)}>
+              <span className="
+                inline-flex items-center gap-1.5
+                text-[0.6875rem] font-bold tracking-[0.1em] uppercase
+                text-blue-600 bg-blue-50 border border-blue-200
+                px-3 py-1 rounded-full
+              ">
+                <span className="nb-badge-dot w-1.5 h-1.5 rounded-full bg-blue-500 flex-shrink-0" />
                 {isDemoPage ? 'Demo Mode' : 'Navigate'}
               </span>
             </div>
-          </div>
 
-          {/* Nav links */}
-          {!isDemoPage
-            ? NAV_LINKS.map(({ label, href }, i) => (
-                <div className="nb-di" key={href} style={staggerStyle(i + 1)}>
+            {isDemoPage ? (
+              <>
+                <p
+                  className="text-[0.8125rem] text-gray-500 leading-relaxed px-3.5 py-1.5 pb-3"
+                  style={staggerStyle(1)}
+                >
+                  You're currently viewing the OncoTrace platform demo.
+                </p>
+
+                <div
+                  className="h-px mx-1 my-1.5 bg-gradient-to-r from-blue-100 to-transparent"
+                  aria-hidden="true"
+                  style={staggerStyle(2)}
+                />
+
+                <div className="p-1 pt-0" style={staggerStyle(3)}>
                   <button
-                    className={`nb-dl${activeHref === href ? ' nb-dl-active' : ''}`}
                     type="button"
-                    onClick={() => scrollTo(href)}
-                    aria-current={activeHref === href ? 'page' : undefined}
+                    onClick={() => { closeMenu(); setTimeout(() => navigate('home'), 50); }}
+                    className="
+                      block w-full py-3.5 px-4 rounded-xl border cursor-pointer
+                      text-[0.9375rem] font-semibold text-center outline-none
+                      bg-gray-50 text-gray-700 border-gray-200
+                      hover:bg-gray-100 active:bg-gray-200 active:scale-[0.99]
+                      transition-all duration-150
+                      focus-visible:ring-2 focus-visible:ring-blue-400/50
+                    "
                   >
-                    <span>{label}</span>
-                    <svg
-                      width="16" height="16" viewBox="0 0 16 16"
-                      fill="none" aria-hidden="true"
-                      style={{ opacity: 0.4, flexShrink: 0 }}
+                    ← Back to Home
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                {/* Nav links */}
+                {NAV_LINKS.map(({ label, href }, i) => (
+                  <div
+                    key={href}
+                    className="nb-animate-drawer"
+                    style={staggerStyle(i + 1)}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => handleNavClick(href)}
+                      aria-current={activeHref === href ? 'page' : undefined}
+                      className={`
+                        group flex items-center justify-between
+                        w-full px-3.5 py-3.5 rounded-xl
+                        border-none cursor-pointer font-medium
+                        text-[0.9375rem] text-left outline-none
+                        transition-all duration-150
+                        focus-visible:ring-2 focus-visible:ring-blue-400/50
+                        ${activeHref === href
+                          ? 'bg-blue-50 text-blue-700 font-semibold'
+                          : 'bg-transparent text-gray-700 hover:bg-blue-50 hover:text-blue-700'
+                        }
+                      `}
                     >
-                      <path
-                        d="M3 8h10M9 4l4 4-4 4"
-                        stroke="currentColor" strokeWidth="1.5"
-                        strokeLinecap="round" strokeLinejoin="round"
-                      />
-                    </svg>
-                  </button>
-                </div>
-              ))
-            : (
-                <div className="nb-di" style={{ ...staggerStyle(1), padding: '8px 14px 12px' }}>
-                  <p style={{ fontSize: '0.8125rem', color: '#6b7280', lineHeight: 1.6, margin: 0 }}>
-                    You're currently viewing the OncoTrace platform demo.
-                  </p>
-                </div>
-              )}
-
-          {/* Product Links Section (Mobile) */}
-          {!isDemoPage && (
-            <>
-              <div
-                className="nb-di"
-                style={{
-                  ...staggerStyle(NAV_LINKS.length + 1),
-                  padding: '6px 4px',
-                }}
-              >
-                <div style={{
-                  height: 1,
-                  background: 'linear-gradient(90deg, #dbeafe 0%, transparent 100%)',
-                }} />
-              </div>
-
-              <div className="nb-di nb-mobile-dropdown-section" style={staggerStyle(NAV_LINKS.length + 2)}>
-                <span className="nb-mobile-dropdown-label">View Products</span>
-                {PRODUCT_LINKS.map((product) => (
-                  <button
-                    key={product.action}
-                    className={`nb-mobile-dropdown-item${product.featured ? ' nb-mobile-dropdown-item-featured' : ''}`}
-                    type="button"
-                    onClick={() => handleProductClick(product.action)}
-                  >
-                    <div className="nb-mobile-dropdown-item-icon">
-                      {product.icon}
-                    </div>
-                    <div className="nb-mobile-dropdown-item-content">
-                      <span className="nb-mobile-dropdown-item-label">
-                        {product.label}
-                      </span>
-                      <span className="nb-mobile-dropdown-item-subtitle">
-                        {product.subtitle}
-                      </span>
-                    </div>
-                  </button>
+                      <span>{label}</span>
+                      <ArrowRight />
+                    </button>
+                  </div>
                 ))}
-              </div>
-            </>
-          )}
 
-          {/* Final divider */}
-          {isDemoPage && (
-            <div
-              className="nb-di"
-              style={{
-                ...staggerStyle(NAV_LINKS.length + 1),
-                padding: '6px 4px',
-              }}
-            >
-              <div style={{
-                height: 1,
-                background: 'linear-gradient(90deg, #dbeafe 0%, transparent 100%)',
-              }} />
-            </div>
-          )}
+                {/* Separator */}
+                <div
+                  className="h-px mx-1 my-2 bg-gradient-to-r from-blue-100 to-transparent"
+                  aria-hidden="true"
+                  style={staggerStyle(NAV_LINKS.length + 1)}
+                />
 
-          {/* Back to Home (Demo mode only) */}
-          {isDemoPage && (
-            <div
-              className="nb-di"
-              style={staggerStyle(NAV_LINKS.length + 2)}
-            >
-              <button
-                className="nb-dcta nb-dcta-secondary"
-                type="button"
-                onClick={() => onNavigate('home')}
-              >
-                ← Back to Home
-              </button>
-            </div>
-          )}
+                {/* Products */}
+                <div
+                  className="nb-animate-drawer"
+                  style={staggerStyle(NAV_LINKS.length + 2)}
+                >
+                  <span className="
+                    block text-[0.6875rem] font-bold tracking-[0.09em] uppercase
+                    text-gray-400 px-3.5 pt-3 pb-2
+                  ">
+                    View Products
+                  </span>
 
+                  {PRODUCT_LINKS.map((p) => (
+                    <button
+                      key={p.action}
+                      type="button"
+                      onClick={() => handleProduct(p.action)}
+                      className={`
+                        group flex items-start gap-3 w-full
+                        px-3.5 py-3 mb-1 rounded-xl
+                        border cursor-pointer text-left outline-none
+                        transition-all duration-150
+                        focus-visible:ring-2 focus-visible:ring-blue-400/50
+                        ${p.featured
+                          ? 'bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 hover:from-blue-100 hover:to-blue-200'
+                          : 'bg-transparent border-transparent hover:bg-blue-50'
+                        }
+                      `}
+                    >
+                      <span className={`
+                        flex-shrink-0 mt-0.5
+                        ${p.featured ? 'text-blue-600' : 'text-blue-500'}
+                      `}>
+                        {p.icon}
+                      </span>
+                      <span className="flex flex-col min-w-0">
+                        <span className={`
+                          text-[0.9375rem] font-semibold leading-snug mb-0.5
+                          ${p.featured ? 'text-blue-700' : 'text-slate-800'}
+                        `}>
+                          {p.label}
+                        </span>
+                        <span className="text-[0.8125rem] font-normal text-slate-500 leading-snug">
+                          {p.subtitle}
+                        </span>
+                      </span>
+                    </button>
+                  ))}
+                </div>
+
+                <div className="h-2" />
+              </>
+            )}
+          </div>
         </div>
-      </div>
-    </>
+      )}
+    </div>
   );
 }

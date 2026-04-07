@@ -826,16 +826,14 @@ export default function Footer() {
             </div>
             <p
               style={{
-                fontSize: "10px",
+                fontSize: "12px",
                 color: "#9ca3af",
                 margin: 0,
                 flex: isMobile ? "none" : "1 1 180px",
                 textAlign: isMobile ? "center" : "left",
               }}
             >
-              © 2025 OncoTrace-AI – AI-Powered Precision Oncology Intelligence.
-              From risk prediction to real-time monitoring. Open source · Not
-              for profit.
+              © 2025 OncoTrace-AI • v2026.04.07 
             </p>
           </div>
         </div>

@@ -16,32 +16,63 @@ function useInView(opts = { threshold: 0.12 }) {
   return [ref, inView];
 }
 
-/* ── Palette — both studies share the same brand blue ──────────────────── */
-const BLUE = {
-  base:  "#2F5C8A",
-  dark:  "#1e3f63",
-  light: "#eef3f9",
-  mid:   "#b0c8e2",
-  text:  "#1e3f63",
-  pill:  "#dce8f4",
+/* ── Design Tokens ─────────────────────────────────────────────────────── */
+const T = {
+  blue:       "#2563eb",
+  blueDark:   "#1d4ed8",
+  blueDeep:   "#1e3a5f",
+  blueLight:  "rgba(37,99,235,0.07)",
+  blueMid:    "rgba(37,99,235,0.13)",
+  blueBorder: "rgba(37,99,235,0.18)",
+  textDark:   "#0f172a",
+  textMid:    "#475569",
+  textLight:  "#94a3b8",
+  border:     "rgba(148,163,184,0.2)",
+  glass:      "rgba(255,255,255,0.72)",
+  glassDark:  "rgba(255,255,255,0.5)",
+  bg:         "linear-gradient(155deg,#f8fafc 0%,#f1f5f9 50%,#eef3fb 100%)",
 };
+
+/* ── Icons ─────────────────────────────────────────────────────────────── */
+const IconDrop = () => (
+  <svg viewBox="0 0 44 44" fill="none" width="24" height="24">
+    <circle cx="22" cy="22" r="20" fill="rgba(37,99,235,0.08)" stroke="rgba(37,99,235,0.25)" strokeWidth="1.2" />
+    <path d="M22 9C22 9 14 18.5 14 25.5A8 8 0 0 0 30 25.5C30 18.5 22 9 22 9Z"
+      fill="rgba(37,99,235,0.15)" stroke="#2563eb" strokeWidth="1.5" strokeLinejoin="round" />
+    <circle cx="19.5" cy="25" r="1.8" fill="#2563eb" opacity="0.4" />
+    <circle cx="25" cy="27.5" r="1.2" fill="#2563eb" opacity="0.25" />
+  </svg>
+);
+
+const IconTarget = () => (
+  <svg viewBox="0 0 44 44" fill="none" width="24" height="24">
+    <circle cx="22" cy="22" r="20" fill="rgba(37,99,235,0.08)" stroke="rgba(37,99,235,0.25)" strokeWidth="1.2" />
+    <circle cx="22" cy="22" r="7" fill="rgba(37,99,235,0.15)" stroke="#2563eb" strokeWidth="1.4" />
+    <circle cx="22" cy="22" r="12.5" stroke="#2563eb" strokeWidth="0.7" strokeDasharray="2.5 3.5" opacity="0.35" />
+    <circle cx="22" cy="22" r="2.6" fill="#2563eb" />
+    {[0, 60, 120, 180, 240, 300].map((deg, i) => {
+      const r = (deg * Math.PI) / 180;
+      return (
+        <circle
+          key={i}
+          cx={22 + 17 * Math.sin(r)}
+          cy={22 - 17 * Math.cos(r)}
+          r="1.3"
+          fill="#2563eb"
+          opacity={0.15 + i * 0.07}
+        />
+      );
+    })}
+  </svg>
+);
 
 /* ── Data ──────────────────────────────────────────────────────────────── */
 const studies = [
   {
-    id:    "liquid-biopsy",
-    index: "01",
-    tag:   "Liquid Biopsy",
-    th:    BLUE,
-    icon: (
-      <svg viewBox="0 0 44 44" fill="none" width="26" height="26">
-        <circle cx="22" cy="22" r="20" stroke="#2F5C8A" strokeWidth="1.3" fill="#dce8f4" />
-        <path d="M22 8C22 8 14 17 14 24.5A8 8 0 0 0 30 24.5C30 17 22 8 22 8Z"
-          fill="#b0c8e2" stroke="#2F5C8A" strokeWidth="1.6" strokeLinejoin="round" />
-        <circle cx="19" cy="24" r="2" fill="#2F5C8A" opacity="0.5" />
-        <circle cx="25" cy="27" r="1.3" fill="#2F5C8A" opacity="0.35" />
-      </svg>
-    ),
+    id:       "liquid-biopsy",
+    index:    "01",
+    tag:      "Liquid Biopsy",
+    icon:     <IconDrop />,
     title:    "Early Cancer Detection & Monitoring Using Liquid Biopsy",
     overview: "A non-invasive method that detects cancer signals from a single blood draw — enabling continuous molecular monitoring that replaces painful and infrequent tissue biopsies.",
     metric:   { before: "Late-stage, invasive detection", after: "Real-time blood monitoring" },
@@ -77,22 +108,10 @@ const studies = [
     ],
   },
   {
-    id:    "mrd",
-    index: "02",
-    tag:   "MRD Detection",
-    th:    BLUE,
-    icon: (
-      <svg viewBox="0 0 44 44" fill="none" width="26" height="26">
-        <circle cx="22" cy="22" r="20" stroke="#2F5C8A" strokeWidth="1.3" fill="#dce8f4" />
-        <circle cx="22" cy="22" r="7" fill="#b0c8e2" stroke="#2F5C8A" strokeWidth="1.5" />
-        <circle cx="22" cy="22" r="13" stroke="#2F5C8A" strokeWidth="0.8" strokeDasharray="2.5 3.5" opacity="0.45" />
-        <circle cx="22" cy="22" r="2.8" fill="#2F5C8A" />
-        {[0, 60, 120, 180, 240, 300].map((deg, i) => {
-          const r = (deg * Math.PI) / 180;
-          return <circle key={i} cx={22 + 17 * Math.sin(r)} cy={22 - 17 * Math.cos(r)} r="1.4" fill="#2F5C8A" opacity={0.2 + i * 0.08} />;
-        })}
-      </svg>
-    ),
+    id:       "mrd",
+    index:    "02",
+    tag:      "MRD Detection",
+    icon:     <IconTarget />,
     title:    "Detecting Hidden Cancer with Minimal Residual Disease (MRD) Monitoring",
     overview: "After treatment ends, microscopic cancer cells can linger undetected for years. MRD monitoring catches what imaging misses — enabling early intervention before recurrence takes hold.",
     metric:   { before: "Relapse at symptom onset", after: "Sub-clinical early warning" },
@@ -132,17 +151,19 @@ const studies = [
 /* ── Modal ─────────────────────────────────────────────────────────────── */
 function StudyModal({ study, onClose }) {
   const [vis, setVis] = useState(false);
-  const { th } = study;
 
   useEffect(() => {
     requestAnimationFrame(() => setVis(true));
     const fn = (e) => e.key === "Escape" && close();
     window.addEventListener("keydown", fn);
     document.body.style.overflow = "hidden";
-    return () => { window.removeEventListener("keydown", fn); document.body.style.overflow = ""; };
+    return () => {
+      window.removeEventListener("keydown", fn);
+      document.body.style.overflow = "";
+    };
   }, []);
 
-  function close() { setVis(false); setTimeout(onClose, 270); }
+  function close() { setVis(false); setTimeout(onClose, 280); }
 
   return (
     <div
@@ -151,119 +172,204 @@ function StudyModal({ study, onClose }) {
         position: "fixed", inset: 0, zIndex: 60,
         display: "flex", alignItems: "center", justifyContent: "center",
         padding: "1.25rem",
-        background: `rgba(10,20,35,${vis ? 0.48 : 0})`,
-        backdropFilter: "blur(10px) saturate(1.4)",
-        transition: "background 0.28s ease",
+        background: `rgba(8,15,28,${vis ? 0.45 : 0})`,
+        backdropFilter: "blur(12px) saturate(1.3)",
+        WebkitBackdropFilter: "blur(12px) saturate(1.3)",
+        transition: "background 0.3s ease",
       }}
     >
-      <div style={{
-        position: "relative",
-        width: "100%", maxWidth: "660px",
-        maxHeight: "92vh", overflowY: "auto",
-        borderRadius: "24px",
-        background: "#ffffff",
-        border: "1px solid #d4e0ed",
-        boxShadow: vis
-          ? "0 24px 80px rgba(10,20,35,0.18), 0 4px 20px rgba(47,92,138,0.1), 0 0 0 1px rgba(255,255,255,0.9) inset"
-          : "none",
-        transform: vis ? "translateY(0) scale(1)" : "translateY(22px) scale(0.97)",
-        opacity: vis ? 1 : 0,
-        transition: "transform 0.36s cubic-bezier(0.34,1.4,0.64,1), opacity 0.26s ease, box-shadow 0.3s ease",
-        scrollbarWidth: "thin",
-        scrollbarColor: "#b0c8e2 #eef3f9",
-      }}>
-        {/* Top accent bar */}
-        <div style={{ height: "4px", background: `linear-gradient(90deg, ${th.base} 0%, ${th.mid} 100%)`, borderRadius: "24px 24px 0 0" }} />
+      <div
+        style={{
+          position: "relative",
+          width: "100%",
+          maxWidth: "640px",
+          maxHeight: "90vh",
+          overflowY: "auto",
+          borderRadius: "20px",
+          background: "rgba(255,255,255,0.9)",
+          backdropFilter: "blur(24px)",
+          WebkitBackdropFilter: "blur(24px)",
+          border: "1px solid rgba(148,163,184,0.25)",
+          boxShadow: vis
+            ? "0 32px 80px rgba(8,15,28,0.15), 0 4px 20px rgba(37,99,235,0.08), inset 0 1px 0 rgba(255,255,255,0.95)"
+            : "none",
+          transform: vis ? "translateY(0) scale(1)" : "translateY(20px) scale(0.97)",
+          opacity: vis ? 1 : 0,
+          transition: "transform 0.38s cubic-bezier(0.34,1.35,0.64,1), opacity 0.28s ease, box-shadow 0.3s ease",
+          scrollbarWidth: "thin",
+          scrollbarColor: "rgba(148,163,184,0.4) transparent",
+        }}
+      >
+        {/* Top accent */}
+        <div style={{
+          height: 3,
+          background: "linear-gradient(90deg, #1d4ed8, #60a5fa)",
+          borderRadius: "20px 20px 0 0",
+        }} />
 
         {/* Hero */}
-        <div style={{ padding: "2rem 2.25rem 1.75rem", background: th.light, borderBottom: `1px solid ${th.mid}` }}>
+        <div style={{
+          padding: "1.75rem 2rem 1.5rem",
+          background: "linear-gradient(135deg, rgba(37,99,235,0.04) 0%, rgba(255,255,255,0) 60%)",
+          borderBottom: "1px solid rgba(148,163,184,0.15)",
+        }}>
           <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "1rem" }}>
-            <div style={{ display: "flex", gap: "1rem", alignItems: "flex-start" }}>
+            <div style={{ display: "flex", gap: "0.875rem", alignItems: "flex-start" }}>
               <div style={{
-                padding: "0.65rem", borderRadius: "14px",
-                background: "white", border: `1px solid ${th.mid}`,
-                boxShadow: `0 2px 10px rgba(47,92,138,0.1)`, flexShrink: 0,
+                padding: "0.6rem",
+                borderRadius: "12px",
+                background: "rgba(255,255,255,0.9)",
+                border: "1px solid rgba(148,163,184,0.2)",
+                boxShadow: "0 2px 8px rgba(37,99,235,0.07)",
+                flexShrink: 0,
               }}>
                 {study.icon}
               </div>
               <div>
-                <span style={{ fontSize: "10px", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: th.text }}>
+                <span style={{
+                  fontSize: 10, fontWeight: 700, letterSpacing: "0.18em",
+                  textTransform: "uppercase", color: T.blue,
+                }}>
                   Case Study — {study.tag}
                 </span>
-                <h3 style={{ marginTop: "6px", fontSize: "1.2rem", fontWeight: 700, lineHeight: 1.32, color: "#0d1f35", maxWidth: "420px" }}>
+                <h3 style={{
+                  marginTop: 6, fontSize: "1.1rem", fontWeight: 700,
+                  lineHeight: 1.35, color: T.textDark, maxWidth: 400,
+                }}>
                   {study.title}
                 </h3>
               </div>
             </div>
+
+            {/* Close */}
             <button
               onClick={close}
               style={{
-                flexShrink: 0, padding: "7px", borderRadius: "50%",
-                border: "1px solid #d4e0ed", background: "white",
-                cursor: "pointer", color: "#8ba8c4",
-                boxShadow: "0 1px 4px rgba(0,0,0,0.05)", transition: "all 0.2s",
+                flexShrink: 0, padding: 7, borderRadius: "50%",
+                border: "1px solid rgba(148,163,184,0.25)",
+                background: "rgba(255,255,255,0.8)",
+                cursor: "pointer", color: T.textLight,
+                transition: "all 0.2s",
               }}
-              onMouseEnter={e => { e.currentTarget.style.background = th.light; e.currentTarget.style.color = th.base; }}
-              onMouseLeave={e => { e.currentTarget.style.background = "white"; e.currentTarget.style.color = "#8ba8c4"; }}
+              onMouseEnter={e => {
+                e.currentTarget.style.background = T.blueLight;
+                e.currentTarget.style.color = T.blue;
+                e.currentTarget.style.borderColor = T.blueBorder;
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.background = "rgba(255,255,255,0.8)";
+                e.currentTarget.style.color = T.textLight;
+                e.currentTarget.style.borderColor = "rgba(148,163,184,0.25)";
+              }}
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-                <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
               </svg>
             </button>
           </div>
 
           {/* Before / After */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", marginTop: "1.5rem" }}>
+          <div style={{
+            display: "grid", gridTemplateColumns: "1fr 1fr",
+            gap: 8, marginTop: "1.25rem",
+          }}>
             {[
-              { label: "Before", value: study.metric.before, before: true },
-              { label: "After",  value: study.metric.after,  before: false },
-            ].map(({ label, value, before }) => (
-              <div key={label} style={{
-                padding: "0.9rem 1.1rem", borderRadius: "12px",
-                background: before ? "white" : th.base,
-                border: before ? "1px solid #d4e0ed" : "none",
-                boxShadow: before ? "0 1px 4px rgba(0,0,0,0.04)" : `0 4px 16px rgba(47,92,138,0.28)`,
-              }}>
-                <p style={{ fontSize: "9px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.14em", color: before ? "#8ba8c4" : "rgba(255,255,255,0.6)", marginBottom: "4px" }}>{label}</p>
-                <p style={{ fontSize: "0.82rem", fontWeight: 600, color: before ? "#5a7a9a" : "white" }}>{value}</p>
+              { label: "Before", value: study.metric.before, isBefore: true },
+              { label: "After",  value: study.metric.after,  isBefore: false },
+            ].map(({ label, value, isBefore }) => (
+              <div
+                key={label}
+                style={{
+                  padding: "0.75rem 1rem",
+                  borderRadius: 10,
+                  background: isBefore ? "rgba(248,250,252,0.9)" : "rgba(37,99,235,0.07)",
+                  border: isBefore ? "1px solid rgba(148,163,184,0.2)" : "1px solid rgba(37,99,235,0.15)",
+                }}
+              >
+                <p style={{
+                  fontSize: 9, fontWeight: 700, textTransform: "uppercase",
+                  letterSpacing: "0.14em", marginBottom: 3,
+                  color: isBefore ? T.textLight : "rgba(37,99,235,0.55)",
+                }}>
+                  {label}
+                </p>
+                <p style={{
+                  fontSize: "0.78rem", fontWeight: 600,
+                  color: isBefore ? T.textLight : T.blue,
+                }}>
+                  {value}
+                </p>
               </div>
             ))}
           </div>
         </div>
 
         {/* Body */}
-        <div style={{ padding: "2rem 2.25rem", display: "flex", flexDirection: "column", gap: "1.875rem" }}>
+        <div style={{ padding: "1.75rem 2rem", display: "flex", flexDirection: "column", gap: "1.625rem" }}>
           {study.sections.map((s) => (
             <div key={s.heading}>
-              <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "0.75rem" }}>
-                <div style={{ width: "3px", height: "14px", borderRadius: "2px", background: th.base, opacity: 0.65 }} />
-                <p style={{ fontSize: "10px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.16em", color: "#8ba8c4" }}>{s.heading}</p>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "0.625rem" }}>
+                <div style={{
+                  width: 3, height: 13, borderRadius: 2,
+                  background: T.blue, opacity: 0.5,
+                }} />
+                <p style={{
+                  fontSize: 10, fontWeight: 700, textTransform: "uppercase",
+                  letterSpacing: "0.16em", color: T.textLight,
+                }}>
+                  {s.heading}
+                </p>
               </div>
-              {s.body && <p style={{ fontSize: "0.925rem", lineHeight: 1.8, color: "#3d5a74" }}>{s.body}</p>}
+
+              {s.body && (
+                <p style={{ fontSize: "0.9rem", lineHeight: 1.8, color: T.textMid }}>
+                  {s.body}
+                </p>
+              )}
+
               {s.steps && (
-                <ol style={{ display: "flex", flexDirection: "column", gap: "0.625rem", margin: 0, padding: 0, listStyle: "none" }}>
+                <ol style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "0.55rem" }}>
                   {s.steps.map((step, i) => (
-                    <li key={i} style={{ display: "flex", alignItems: "flex-start", gap: "0.75rem", fontSize: "0.9rem", color: "#3d5a74", lineHeight: 1.65 }}>
+                    <li
+                      key={i}
+                      style={{
+                        display: "flex", alignItems: "flex-start", gap: "0.7rem",
+                        fontSize: "0.875rem", color: T.textMid, lineHeight: 1.65,
+                      }}
+                    >
                       <span style={{
-                        flexShrink: 0, width: "22px", height: "22px", borderRadius: "50%",
-                        background: th.pill, border: `1.5px solid ${th.mid}`,
-                        color: th.text, fontSize: "10px", fontWeight: 700,
-                        display: "flex", alignItems: "center", justifyContent: "center", marginTop: "1px",
-                      }}>{i + 1}</span>
+                        flexShrink: 0, width: 21, height: 21, borderRadius: "50%",
+                        background: "rgba(37,99,235,0.07)",
+                        border: "1px solid rgba(37,99,235,0.18)",
+                        color: T.blue, fontSize: 10, fontWeight: 700,
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        marginTop: 1,
+                      }}>
+                        {i + 1}
+                      </span>
                       {step}
                     </li>
                   ))}
                 </ol>
               )}
+
               {s.pills && (
-                <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "0.45rem" }}>
                   {s.pills.map((p) => (
-                    <span key={p} style={{
-                      padding: "5px 13px", borderRadius: "100px",
-                      fontSize: "11.5px", fontWeight: 600,
-                      background: th.pill, color: th.text,
-                      border: `1px solid ${th.mid}`,
-                    }}>{p}</span>
+                    <span
+                      key={p}
+                      style={{
+                        padding: "4px 12px", borderRadius: 100,
+                        fontSize: 11, fontWeight: 600,
+                        background: "rgba(37,99,235,0.06)",
+                        color: T.blue,
+                        border: "1px solid rgba(37,99,235,0.15)",
+                      }}
+                    >
+                      {p}
+                    </span>
                   ))}
                 </div>
               )}
@@ -278,8 +384,7 @@ function StudyModal({ study, onClose }) {
 /* ── Card ──────────────────────────────────────────────────────────────── */
 function StudyCard({ study, index, inView, onOpen }) {
   const [hov, setHov] = useState(false);
-  const { th } = study;
-  const delay = `${index * 190}ms`;
+  const delay = `${index * 160}ms`;
 
   return (
     <article
@@ -289,89 +394,150 @@ function StudyCard({ study, index, inView, onOpen }) {
       style={{
         position: "relative",
         cursor: "pointer",
-        borderRadius: "20px",
+        borderRadius: 18,
         overflow: "hidden",
-        background: "white",
-        border: `1px solid ${hov ? th.mid : "#e2ecf5"}`,
+        background: hov
+          ? "rgba(255,255,255,0.85)"
+          : "rgba(255,255,255,0.65)",
+        backdropFilter: "blur(18px)",
+        WebkitBackdropFilter: "blur(18px)",
+        border: hov
+          ? "1px solid rgba(37,99,235,0.22)"
+          : "1px solid rgba(148,163,184,0.22)",
         boxShadow: hov
-          ? `0 16px 48px rgba(47,92,138,0.13), 0 4px 14px rgba(47,92,138,0.07)`
-          : "0 2px 10px rgba(47,92,138,0.06), 0 1px 3px rgba(47,92,138,0.04)",
-        transform: inView ? `translateY(${hov ? -4 : 0}px)` : "translateY(28px)",
+          ? "0 16px 48px rgba(37,99,235,0.09), 0 4px 16px rgba(37,99,235,0.05), inset 0 1px 0 rgba(255,255,255,0.95)"
+          : "0 4px 16px rgba(148,163,184,0.1), 0 1px 4px rgba(148,163,184,0.07), inset 0 1px 0 rgba(255,255,255,0.8)",
+        transform: inView
+          ? `translateY(${hov ? -3 : 0}px)`
+          : "translateY(24px)",
         opacity: inView ? 1 : 0,
-        transition: `transform 0.7s cubic-bezier(0.22,1,0.36,1) ${delay}, opacity 0.7s ease ${delay}, box-shadow 0.3s ease, border-color 0.3s ease`,
+        transition: `transform 0.65s cubic-bezier(0.22,1,0.36,1) ${delay}, opacity 0.65s ease ${delay}, box-shadow 0.28s ease, border-color 0.28s ease, background 0.28s ease`,
       }}
     >
-      {/* Left accent strip */}
+      {/* Left accent */}
       <div style={{
-        position: "absolute", left: 0, top: 0, bottom: 0, width: "4px",
-        background: `linear-gradient(180deg, ${th.base} 0%, ${th.mid} 100%)`,
-        opacity: hov ? 1 : 0.45, transition: "opacity 0.3s",
+        position: "absolute", left: 0, top: 0, bottom: 0, width: 3,
+        background: "linear-gradient(180deg, #2563eb, #60a5fa)",
+        opacity: hov ? 0.9 : 0.35,
+        transition: "opacity 0.28s",
       }} />
 
-      {/* Hover wash */}
-      <div style={{
-        position: "absolute", inset: 0, pointerEvents: "none",
-        background: `linear-gradient(140deg, ${th.light} 0%, white 55%)`,
-        opacity: hov ? 1 : 0, transition: "opacity 0.4s ease",
-      }} />
-
-      <div style={{ padding: "1.875rem 1.875rem 1.875rem 2.125rem", position: "relative" }}>
+      <div style={{ padding: "1.75rem 1.75rem 1.75rem 2rem" }}>
         {/* Top row */}
-        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "1.375rem" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-            <div style={{ padding: "0.55rem", borderRadius: "12px", background: th.light, border: `1px solid ${th.mid}`, flexShrink: 0 }}>
+        <div style={{
+          display: "flex", alignItems: "center",
+          justifyContent: "space-between", marginBottom: "1.125rem",
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.65rem" }}>
+            <div style={{
+              padding: "0.5rem", borderRadius: 11,
+              background: hov ? "rgba(37,99,235,0.08)" : "rgba(248,250,252,0.9)",
+              border: "1px solid rgba(148,163,184,0.18)",
+              transition: "background 0.28s",
+              flexShrink: 0,
+            }}>
               {study.icon}
             </div>
-            <span style={{ fontSize: "10px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.16em", color: th.text }}>
+            <span style={{
+              fontSize: 10, fontWeight: 700,
+              textTransform: "uppercase", letterSpacing: "0.15em",
+              color: T.blue,
+            }}>
               {study.tag}
             </span>
           </div>
-          <span style={{ fontSize: "11px", fontWeight: 500, color: th.mid, letterSpacing: "0.04em" }}>
+          <span style={{
+            fontSize: 11, fontWeight: 500,
+            color: T.textLight, letterSpacing: "0.04em",
+          }}>
             {study.index}
           </span>
         </div>
 
-        <h3 style={{ fontSize: "1.1rem", fontWeight: 700, lineHeight: 1.38, color: "#0d1f35", marginBottom: "0.8rem" }}>
+        <h3 style={{
+          fontSize: "1.05rem", fontWeight: 700,
+          lineHeight: 1.38, color: T.textDark, marginBottom: "0.7rem",
+        }}>
           {study.title}
         </h3>
 
-        <p style={{ fontSize: "0.875rem", lineHeight: 1.75, color: "#5a7a9a", marginBottom: "1.625rem" }}>
+        <p style={{
+          fontSize: "0.855rem", lineHeight: 1.75,
+          color: T.textMid, marginBottom: "1.375rem",
+        }}>
           {study.overview}
         </p>
 
         {/* Metric strip */}
         <div style={{
           display: "grid", gridTemplateColumns: "1fr 1fr",
-          borderRadius: "12px", overflow: "hidden",
-          border: "1px solid #e2ecf5", marginBottom: "1.625rem",
+          borderRadius: 10, overflow: "hidden",
+          border: "1px solid rgba(148,163,184,0.18)",
+          marginBottom: "1.375rem",
         }}>
-          <div style={{ padding: "0.7rem 1rem", background: "#f5f8fb", borderRight: "1px solid #e2ecf5" }}>
-            <p style={{ fontSize: "8.5px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.14em", color: "#8ba8c4", marginBottom: "3px" }}>Before</p>
-            <p style={{ fontSize: "0.74rem", fontWeight: 600, color: "#8ba8c4" }}>{study.metric.before}</p>
+          <div style={{
+            padding: "0.6rem 0.875rem",
+            background: "rgba(248,250,252,0.8)",
+            borderRight: "1px solid rgba(148,163,184,0.18)",
+          }}>
+            <p style={{
+              fontSize: 8.5, fontWeight: 700, textTransform: "uppercase",
+              letterSpacing: "0.13em", color: T.textLight, marginBottom: 3,
+            }}>
+              Before
+            </p>
+            <p style={{ fontSize: "0.72rem", fontWeight: 600, color: T.textLight }}>
+              {study.metric.before}
+            </p>
           </div>
-          <div style={{ padding: "0.7rem 1rem", background: th.light }}>
-            <p style={{ fontSize: "8.5px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.14em", color: th.text, opacity: 0.65, marginBottom: "3px" }}>After</p>
-            <p style={{ fontSize: "0.74rem", fontWeight: 600, color: th.text }}>{study.metric.after}</p>
+          <div style={{
+            padding: "0.6rem 0.875rem",
+            background: "rgba(37,99,235,0.05)",
+          }}>
+            <p style={{
+              fontSize: 8.5, fontWeight: 700, textTransform: "uppercase",
+              letterSpacing: "0.13em", color: "rgba(37,99,235,0.5)", marginBottom: 3,
+            }}>
+              After
+            </p>
+            <p style={{ fontSize: "0.72rem", fontWeight: 600, color: T.blue }}>
+              {study.metric.after}
+            </p>
           </div>
         </div>
 
-        {/* CTA */}
+        {/* CTA row */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <span style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "0.8rem", fontWeight: 700, color: th.base }}>
+          <span style={{
+            display: "flex", alignItems: "center", gap: 5,
+            fontSize: "0.78rem", fontWeight: 700, color: T.blue,
+          }}>
             View Full Study
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
-              style={{ transform: hov ? "translateX(3px)" : "translateX(0)", transition: "transform 0.22s ease" }}>
-              <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
+            <svg
+              width="13" height="13" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" strokeWidth="2.5"
+              strokeLinecap="round" strokeLinejoin="round"
+              style={{
+                transform: hov ? "translateX(3px)" : "translateX(0)",
+                transition: "transform 0.22s ease",
+              }}
+            >
+              <line x1="5" y1="12" x2="19" y2="12" />
+              <polyline points="12 5 19 12 12 19" />
             </svg>
           </span>
-          <div style={{ display: "flex", gap: "4px" }}>
-            {[0.9, 0.5, 0.25].map((op, i) => (
-              <div key={i} style={{
-                width: "5px", height: "5px", borderRadius: "50%", background: th.mid,
-                opacity: hov ? op : op * 0.45,
-                transition: `opacity 0.3s ease ${i * 55}ms`,
-              }} />
+
+          <div style={{ display: "flex", gap: 4 }}>
+            {[0.85, 0.45, 0.2].map((op, i) => (
+              <div
+                key={i}
+                style={{
+                  width: 5, height: 5, borderRadius: "50%",
+                  background: T.blue,
+                  opacity: hov ? op : op * 0.4,
+                  transition: `opacity 0.28s ease ${i * 50}ms`,
+                }}
+              />
             ))}
           </div>
         </div>
@@ -388,84 +554,89 @@ export default function CaseStudySection() {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;500;600;700;900&display=swap');
-        #cases-wrap, #cases-wrap * {
-          font-family: 'Source Sans 3', sans-serif;
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        #cs-wrap, #cs-wrap * {
+          font-family: 'Inter', sans-serif;
           box-sizing: border-box; margin: 0; padding: 0;
         }
-        #cases-wrap ::-webkit-scrollbar { width: 5px; }
-        #cases-wrap ::-webkit-scrollbar-track { background: #eef3f9; border-radius: 10px; }
-        #cases-wrap ::-webkit-scrollbar-thumb { background: #b0c8e2; border-radius: 10px; }
+        #cs-wrap ::-webkit-scrollbar { width: 4px; }
+        #cs-wrap ::-webkit-scrollbar-track { background: transparent; }
+        #cs-wrap ::-webkit-scrollbar-thumb {
+          background: rgba(148,163,184,0.35);
+          border-radius: 10px;
+        }
       `}</style>
 
       <section
-        id="cases-wrap"
-        className="scroll-mt-20"
+        id="cs-wrap"
         style={{
-          background: "linear-gradient(160deg, #f5f8fb 0%, #eef3f9 50%, #f5f8fb 100%)",
-          padding: "6.5rem 0 8rem",
+          background: T.bg,
+          padding: "7rem 0 8rem",
           position: "relative",
           overflow: "hidden",
         }}
       >
-        {/* Dot texture */}
+        {/* Subtle dot grid */}
         <div style={{
           position: "absolute", inset: 0, pointerEvents: "none",
-          backgroundImage: "radial-gradient(circle, #b0c8e2 1px, transparent 1px)",
-          backgroundSize: "32px 32px", opacity: 0.35,
+          backgroundImage: "radial-gradient(circle, rgba(148,163,184,0.28) 1px, transparent 1px)",
+          backgroundSize: "28px 28px",
         }} />
 
         {/* Top-right arcs */}
-        <svg style={{ position: "absolute", top: 0, right: 0, pointerEvents: "none", opacity: 0.25 }}
-          width="320" height="320" viewBox="0 0 320 320" fill="none">
-          <circle cx="320" cy="0" r="120" stroke="#2F5C8A" strokeWidth="1" fill="none" />
-          <circle cx="320" cy="0" r="180" stroke="#2F5C8A" strokeWidth="0.6" fill="none" />
-          <circle cx="320" cy="0" r="240" stroke="#2F5C8A" strokeWidth="0.4" fill="none" />
+        <svg
+          style={{ position: "absolute", top: 0, right: 0, pointerEvents: "none", opacity: 0.15 }}
+          width="300" height="300" viewBox="0 0 300 300" fill="none"
+        >
+          <circle cx="300" cy="0" r="110" stroke="#2563eb" strokeWidth="1" fill="none" />
+          <circle cx="300" cy="0" r="170" stroke="#2563eb" strokeWidth="0.6" fill="none" />
+          <circle cx="300" cy="0" r="230" stroke="#2563eb" strokeWidth="0.4" fill="none" />
         </svg>
 
         {/* Bottom-left arcs */}
-        <svg style={{ position: "absolute", bottom: 0, left: 0, pointerEvents: "none", opacity: 0.18 }}
-          width="260" height="260" viewBox="0 0 260 260" fill="none">
-          <circle cx="0" cy="260" r="100" stroke="#2F5C8A" strokeWidth="1" fill="none" />
-          <circle cx="0" cy="260" r="160" stroke="#2F5C8A" strokeWidth="0.6" fill="none" />
+        <svg
+          style={{ position: "absolute", bottom: 0, left: 0, pointerEvents: "none", opacity: 0.1 }}
+          width="240" height="240" viewBox="0 0 240 240" fill="none"
+        >
+          <circle cx="0" cy="240" r="90"  stroke="#2563eb" strokeWidth="1"   fill="none" />
+          <circle cx="0" cy="240" r="150" stroke="#2563eb" strokeWidth="0.6" fill="none" />
         </svg>
 
-        <div style={{ position: "relative", maxWidth: "1080px", margin: "0 auto", padding: "0 1.5rem" }}>
+        <div style={{ position: "relative", maxWidth: 1080, margin: "0 auto", padding: "0 1.5rem" }}>
 
           {/* ── Header ── */}
-          <div style={{ maxWidth: "540px", marginBottom: "4.5rem" }}>
-
-            <div style={{
-              display: "inline-flex", alignItems: "center", gap: "8px",
-              padding: "5px 14px 5px 10px", borderRadius: "100px",
-              background: "white", border: "1px solid #d4e0ed",
-              boxShadow: "0 1px 6px rgba(47,92,138,0.08)", marginBottom: "1.5rem",
-            }}>
-              <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#2F5C8A" }} />
-              <span style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: "#2F5C8A" }}>
-                Clinical Evidence
-              </span>
-            </div>
+          <div style={{ maxWidth: 520, marginBottom: "4rem" }}>
 
             <h2 style={{
-              fontSize: "clamp(2rem, 4.5vw, 3rem)",
-              fontWeight: 900,
+              fontSize: "clamp(1.9rem, 4.5vw, 2.9rem)",
+              fontWeight: 800,
               lineHeight: 1.1,
-              letterSpacing: "-0.02em",
-              color: "#0d1f35",
-              marginBottom: "1.25rem",
+              letterSpacing: "-0.025em",
+              color: T.textDark,
+              marginBottom: "1.125rem",
             }}>
-              Case Studies<br />
-              <span style={{ color: "#2F5C8A", fontWeight: 700 }}>From the Field</span>
+              Case Studies
+              <br />
+              <span style={{ color: T.blue, fontWeight: 700 }}>From the Field</span>
             </h2>
 
-            <p style={{ fontSize: "1rem", lineHeight: 1.78, color: "#5a7a9a", maxWidth: "400px", fontWeight: 400 }}>
-              Real-world evidence of how AI-powered genomic diagnostics are transforming cancer detection and reshaping patient outcomes.
+            <p style={{
+              fontSize: "0.95rem", lineHeight: 1.8,
+              color: T.textMid, maxWidth: 400, fontWeight: 400,
+            }}>
+              Real-world evidence of how AI-powered genomic diagnostics are
+              transforming cancer detection and reshaping patient outcomes.
             </p>
 
-            <div style={{ marginTop: "2rem", display: "flex", alignItems: "center", gap: "12px" }}>
-              <div style={{ height: "2px", width: "36px", background: "#2F5C8A", borderRadius: "2px", opacity: 0.45 }} />
-              <span style={{ fontSize: "11px", fontWeight: 600, color: "#8ba8c4", letterSpacing: "0.06em" }}>
+            <div style={{ marginTop: "1.75rem", display: "flex", alignItems: "center", gap: 12 }}>
+              <div style={{
+                height: 2, width: 32, borderRadius: 2,
+                background: T.blue, opacity: 0.35,
+              }} />
+              <span style={{
+                fontSize: 11, fontWeight: 600,
+                color: T.textLight, letterSpacing: "0.05em",
+              }}>
                 {studies.length} active studies
               </span>
             </div>
@@ -476,17 +647,28 @@ export default function CaseStudySection() {
             ref={ref}
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
-              gap: "1.375rem",
-              maxWidth: "860px",
+              gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+              gap: "1.25rem",
+              maxWidth: 860,
             }}
           >
             {studies.map((s, i) => (
-              <StudyCard key={s.id} study={s} index={i} inView={inView} onOpen={setActive} />
+              <StudyCard
+                key={s.id}
+                study={s}
+                index={i}
+                inView={inView}
+                onOpen={setActive}
+              />
             ))}
           </div>
 
-          <p style={{ marginTop: "2.75rem", fontSize: "0.78rem", color: "#8ba8c4", lineHeight: 1.6, fontWeight: 400 }}>
+          <p style={{
+            marginTop: "2.5rem",
+            fontSize: "0.76rem",
+            color: T.textLight,
+            lineHeight: 1.6,
+          }}>
             Click any card to explore the full methodology, results, and clinical impact.
           </p>
         </div>

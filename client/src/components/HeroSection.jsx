@@ -438,20 +438,11 @@ export default function HeroSection({ onNavigate }) {
                   style={{ animation: isReduced ? undefined : anim('heroFloatUp', 0.1, '1s') }}
                 >
                   <div className="pointer-events-auto relative">
-                    <div
-                      aria-hidden="true"
-                      className="absolute inset-0 rounded-full blur-2xl opacity-20"
-                      style={{
-                        background:
-                          'radial-gradient(circle,rgba(255,140,50,0.6),transparent 70%)',
-                      }}
-                    />
+
                     <span
                       className="relative inline-flex items-center gap-3 xl:gap-4 text-[20px] lg:text-[26px] xl:text-[32px] 2xl:text-[38px] font-extrabold tracking-[0.12em] uppercase font-['DM_Sans'] whitespace-nowrap px-2"
                       style={{
                         color: '#ff8c32',
-                        textShadow:
-                          '0 0 40px rgba(255,140,50,0.5),0 0 80px rgba(255,140,50,0.25)',
                         animation: isReduced
                           ? undefined
                           : 'heroNeonFlicker 4s ease-in-out infinite',
@@ -606,7 +597,7 @@ export default function HeroSection({ onNavigate }) {
                     animation: isReduced ? undefined : 'heroGentleGlow 3s ease-in-out infinite',
                   }}
                 >
-                  Senus Health Care and Research Institution
+                  Senus Healthcare and Research Institution
                 </span>
               </div>
             </div>

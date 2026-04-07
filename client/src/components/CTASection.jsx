@@ -59,7 +59,7 @@ export default function CTASection() {
         <div className="w-full max-w-[460px] rounded-lg border border-white/10 bg-white/5 p-6 shadow-[0_10px_30px_rgba(0,0,0,0.45)] backdrop-blur-md sm:p-10 md:max-w-[560px] lg:max-w-[620px]">
           <div className="mb-9">
             <p className="mb-3 text-[10px] tracking-[0.2em] text-white/40">
-              GET IN TOUCH
+              BUILD TOGETHER
             </p>
             <h2 className="mb-2.5 text-[28px] font-semibold text-white sm:text-[30px]">
               Partner With Us
