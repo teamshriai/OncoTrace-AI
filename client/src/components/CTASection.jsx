@@ -62,10 +62,10 @@ export default function CTASection() {
               GET IN TOUCH
             </p>
             <h2 className="mb-2.5 text-[28px] font-semibold text-white sm:text-[30px]">
-              Let&apos;s Connect
+              Partner With Us
             </h2>
             <p className="text-[13px] leading-6 text-white/65">
-              Interested in a demo, partnership, or learning more? Reach out to
+              Interested in a partnership? Reach out to
               us.
             </p>
           </div>
