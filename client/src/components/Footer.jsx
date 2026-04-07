@@ -581,7 +581,7 @@ export default function Footer() {
                     {[
                       { name: "LinkedIn", handle: "/oncotraceai" },
                       { name: "Twitter", handle: "@oncotraceai" },
-                      { name: "Call", handle: "+1 408.850.2243" },
+                      { name: "GitHub", handle: "oncotraceai" },
                       { name: "Instagram", handle: "@oncotraceai" },
                     ].map((s) => (
                       <a
@@ -742,7 +742,7 @@ export default function Footer() {
                     {[
                       { name: "LinkedIn", handle: "/oncotraceai" },
                       { name: "Twitter", handle: "@oncotraceai" },
-                      { name: "Call", handle: "+1 408.850.2243" },
+                      { name: "GitHub", handle: "oncotraceai" },
                       { name: "Instagram", handle: "@oncotraceai" },
                     ].map((s) => (
                       <a
@@ -826,15 +826,15 @@ export default function Footer() {
             </div>
             <p
               style={{
-                fontSize: "18px",
+                fontSize: "10px",
                 color: "#9ca3af",
                 margin: 0,
                 flex: isMobile ? "none" : "1 1 180px",
                 textAlign: isMobile ? "center" : "left",
               }}
             >
-              © 2025 OncoTrace-AI • v2026.04.07 
-               Open source · Not
+              © 2025 OncoTrace-AI – AI-Powered Precision Oncology Intelligence.
+              From risk prediction to real-time monitoring. Open source · Not
               for profit.
             </p>
           </div>
