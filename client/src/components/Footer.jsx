@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
-
+ 
 const MOUNTAIN_IMAGE_URL = "/footer_image.jpg";
-
+ 
 function useWindowWidth() {
   const [width, setWidth] = useState(
     typeof window !== "undefined" ? window.innerWidth : 1200
@@ -13,17 +13,17 @@ function useWindowWidth() {
   }, []);
   return width;
 }
-
+ 
 export default function Footer() {
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
   const [copied, setCopied] = useState(false);
   const width = useWindowWidth();
-
+ 
   const isMobile = width < 640;
   const isTablet = width >= 640 && width < 1024;
   const isDesktop = width >= 1024;
-
+ 
   const handleSend = useCallback(() => {
     if (email) {
       setSent(true);
@@ -31,7 +31,7 @@ export default function Footer() {
       setEmail("");
     }
   }, [email]);
-
+ 
   const handleCopy = useCallback(() => {
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText("info@oncotraceai.org");
@@ -39,29 +39,29 @@ export default function Footer() {
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   }, []);
-
+ 
   const outerPadding = isMobile ? "16px 10px" : isTablet ? "24px 16px" : "32px 24px";
-  
+ 
   const colPadding = isMobile
     ? "28px 20px 24px"
     : isTablet
     ? "36px 28px 28px"
     : "48px 44px 40px";
-
+ 
   const col2Padding = isMobile
     ? "28px 20px 24px"
     : isTablet
     ? "36px 28px 28px"
     : "48px 40px 40px";
-
+ 
   const col3Padding = col2Padding;
-
+ 
   const headingSize = isMobile
     ? "20px"
     : isTablet
     ? "24px"
     : "clamp(22px, 2.6vw, 36px)";
-
+ 
   const gridStyle = isDesktop
     ? {
         display: "grid",
@@ -78,7 +78,7 @@ export default function Footer() {
         display: "flex",
         flexDirection: "column",
       };
-
+ 
   const bottomBarStyle = isMobile
     ? {
         padding: "16px 20px 20px",
@@ -97,9 +97,9 @@ export default function Footer() {
         gap: "16px",
         flexWrap: "wrap",
       };
-
+ 
   const navGap = isMobile ? "24px" : "40px";
-
+ 
   const HorizontalDivider = () => (
     <div
       style={{
@@ -110,7 +110,7 @@ export default function Footer() {
       }}
     />
   );
-
+ 
   const VerticalDivider = () => (
     <div
       style={{
@@ -119,7 +119,7 @@ export default function Footer() {
       }}
     />
   );
-
+ 
   return (
     <footer
       style={{
@@ -152,7 +152,7 @@ export default function Footer() {
           zIndex: 1,
         }}
       />
-
+ 
       <div
         style={{
           position: "relative",
@@ -250,12 +250,14 @@ export default function Footer() {
                   onMouseLeave={(e) => {
                     e.currentTarget.style.background = "transparent";
                     e.currentTarget.style.color = "#0f1e50";
-                    e.currentTarget.style.borderColor = "rgba(15,30,80,0.22)";
+                    e.currentTarget.style.borderColor =
+                      "rgba(15,30,80,0.22)";
                   }}
                 >
                   Schedule a call now →
                 </a>
               </div>
+ 
               <div>
                 <p
                   style={{
@@ -307,14 +309,46 @@ export default function Footer() {
                     {copied ? "✓" : "⎘"}
                   </span>
                 </div>
+ 
+                {/* ── PHONE NUMBER ── */}
+                <p
+                  style={{
+                    fontSize: "10px",
+                    fontWeight: "700",
+                    letterSpacing: "0.14em",
+                    textTransform: "uppercase",
+                    color: "#9ca3af",
+                    marginBottom: "9px",
+                    marginTop: "14px",
+                  }}
+                >
+                  Or call us at
+                </p>
+                <a
+                  href="tel:+14088502243"
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    background: "#1e2a4a",
+                    borderRadius: "999px",
+                    padding: "10px 18px",
+                    fontSize: isMobile ? "11px" : "13px",
+                    fontWeight: "600",
+                    color: "#e8f0fe",
+                    textDecoration: "none",
+                  }}
+                >
+                  📞 +1 408.850.2243
+                </a>
               </div>
             </div>
-
+ 
             {/* Divider between col1 and col2 */}
             {isDesktop && <VerticalDivider />}
             {isTablet && <VerticalDivider />}
             {isMobile && <HorizontalDivider />}
-
+ 
             {/* COL 2 — Nav links */}
             <div
               style={{
@@ -419,7 +453,7 @@ export default function Footer() {
                   )}
                 </div>
               </div>
-
+ 
               {/* Brand tagline block */}
               <div
                 style={{
@@ -466,11 +500,11 @@ export default function Footer() {
                 </p>
               </div>
             </div>
-
+ 
             {/* Divider between col2 and col3 */}
             {isDesktop && <VerticalDivider />}
             {isMobile && <HorizontalDivider />}
-
+ 
             {/* COL 3 — Newsletter + Social links */}
             {!isTablet && (
               <div
@@ -556,7 +590,7 @@ export default function Footer() {
                     </button>
                   </div>
                 </div>
-
+ 
                 {/* Social links */}
                 <div>
                   <p
@@ -624,7 +658,7 @@ export default function Footer() {
               </div>
             )}
           </div>
-
+ 
           {/* Tablet: Col 3 rendered below the 2-col grid */}
           {isTablet && (
             <>
@@ -718,7 +752,7 @@ export default function Footer() {
                     </button>
                   </div>
                 </div>
-
+ 
                 <div>
                   <p
                     style={{
@@ -785,7 +819,7 @@ export default function Footer() {
               </div>
             </>
           )}
-
+ 
           {/* ── Divider ── */}
           <div
             style={{
@@ -795,7 +829,7 @@ export default function Footer() {
                 "linear-gradient(90deg,transparent,rgba(59,130,246,0.26) 30%,rgba(59,130,246,0.26) 70%,transparent)",
             }}
           />
-
+ 
           {/* ── BOTTOM BAR ── */}
           <div style={bottomBarStyle}>
             <div
@@ -824,18 +858,17 @@ export default function Footer() {
                 OncoTrace-<span style={{ color: "#3b82f6" }}>AI</span>
               </span>
             </div>
+            {/* ── UPDATED COPYRIGHT ── */}
             <p
               style={{
-                fontSize: "10px",
+                fontSize: "12px",
                 color: "#9ca3af",
                 margin: 0,
                 flex: isMobile ? "none" : "1 1 180px",
                 textAlign: isMobile ? "center" : "left",
               }}
             >
-              © 2025 OncoTrace-AI – AI-Powered Precision Oncology Intelligence.
-              From risk prediction to real-time monitoring. Open source · Not
-              for profit.
+              © 2026 Senas.net Pvt. Ltd. All Rights Reserved.
             </p>
           </div>
         </div>
