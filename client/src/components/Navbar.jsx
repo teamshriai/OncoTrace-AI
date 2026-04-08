@@ -5,8 +5,8 @@ import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 
 const NAV_LINKS = [
   { label: 'Home',                    href: '#home' },
-  { label: 'Mammogram Analysis',      href: '#mammogram' },
-  { label: 'Blood-Based Cancer Test', href: '#liquid-biopsy' },
+  { label: 'AI powered Mammogram Analysis',      href: '#mammogram' },
+  { label: 'AI powered Blood-Based cancer Test', href: '#liquid-biopsy' },
   { label: 'Research',                href: '#case-study' },
   { label: 'Team',                    href: '#team' },
   { label: 'Contact',                 href: '#cta' },
