@@ -20,7 +20,9 @@ import {
 } from 'recharts';
 
 // ─── Mock Data ─────────────────────────────────────────────────────
-const patients = [
+import { patient } from '../data/realVCFData.js';
+
+const patients = [patient,
   {
     id: 'PT-001',
     name: 'Lakshmi Devi',
@@ -270,9 +272,10 @@ const getFeatureImportance = (patient) => {
     },
     {
       feature: 'Max VAF',
-      importance: Math.max(...latest.mutations.map((m) => m.vaf)) * 200,
+      importance: Math.max(...latest.mutations.map((m) => m.af || m.vaf)) * 200,
+      importance: Math.max(...latest.mutations.map((m) => m.af || m.vaf)) * 200,
       direction: 'positive',
-      value: `${(Math.max(...latest.mutations.map((m) => m.vaf)) * 100).toFixed(1)}%`,
+      value: `${(Math.max(...latest.mutations.map((m) => m.af || m.vaf)) * 100).toFixed(1)}%`,
     },
     {
       feature: 'Genome Instability',
@@ -485,8 +488,8 @@ export default function Demo() {
                 patient.riskCategory
               )}`}
             >
-              {getRiskEmoji(patient.riskCategory)}{' '}
-              <span className="hidden sm:inline">{patient.riskCategory.toUpperCase()} RISK</span>
+              {getRiskEmoji(patient.timepoints[patient.timepoints.length-1].riskLevel.toLowerCase())}{' '}
+              <span className="hidden sm:inline">{patient.timepoints[patient.timepoints.length-1].riskLevel.toUpperCase()} RISK</span>
             </div>
           </div>
         </div>
@@ -573,7 +576,7 @@ function DashboardPage({ patient, onNavigate }) {
     },
     {
       label: 'Risk Score',
-      value: `${patient.riskScore}/100`,
+    value: `${patient.timepoints[patient.timepoints.length-1].riskScore}/100`,
       change: 0,
       icon: '⚡',
     },
@@ -1308,7 +1311,7 @@ function ClinicalPage({ patient }) {
             <h3 className="text-lg font-bold text-gray-900 mb-2">Risk Assessment</h3>
             <div className="flex flex-wrap items-center gap-3 sm:gap-6 text-xs sm:text-sm text-gray-500">
               <span>
-                Risk Score: <span className={`font-bold ${getRiskColorClass(patient.riskCategory)}`}>{patient.riskScore}/100</span>
+                Risk Score: <span className={`font-bold ${getRiskColorClass(patient.timepoints[patient.timepoints.length-1].riskLevel.toLowerCase())}`}>{patient.timepoints[patient.timepoints.length-1].riskScore}/100</span>
               </span>
               <span>
                 Progression Probability:{' '}
