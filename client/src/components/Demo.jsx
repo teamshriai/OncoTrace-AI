@@ -241,10 +241,10 @@ const patients = [
   },
   {
     id: 'PT-004',
-    name: 'Shiv Ram',
+    name: 'Patient D',
     age: 59,
     sex: 'Male',
-    cancerType: 'Micro lab data - Colorectal Adenocarcinoma',
+    cancerType: 'Colorectal Adenocarcinoma',
     stage: 'Stage IV (Metastatic)',
     primaryTreatment: 'FOLFOX + Bevacizumab',
     currentTherapy: 'Second-line FOLFIRI',
@@ -544,7 +544,8 @@ const BoltIcon = ({ className = '' }) => (
 
 const CameraIcon = ({ className = '' }) => (
   <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-    <path strokeLinecap="round" strokeLinejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
   </svg>
 );
 
@@ -580,7 +581,8 @@ const BeakerIcon = ({ className = '' }) => (
 
 const CogIcon = ({ className = '' }) => (
   <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-    <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
   </svg>
 );
 
@@ -647,41 +649,43 @@ export default function Demo() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50">
       {/* Header */}
       <header className="bg-white/80 backdrop-blur-xl border-b border-slate-200/60 sticky top-0 z-50 shadow-sm">
-        <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20">
-              <DNAIcon className="w-5 h-5 text-white" />
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="h-16 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20">
+                <DNAIcon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+              </div>
+              <div className="text-lg sm:text-xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent tracking-tight">
+                OncoTrace AI
+              </div>
             </div>
-            <div className="text-lg font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent tracking-tight">
-              OncoTrace AI
-            </div>
-          </div>
 
-          <div className="flex items-center gap-3">
-            <select
-              value={selectedPatientId}
-              onChange={(e) => setSelectedPatientId(e.target.value)}
-              className="bg-slate-50/50 backdrop-blur-sm border border-slate-200/60 rounded-lg px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all cursor-pointer hover:bg-slate-100/50"
-            >
-              {patients.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.id}: {p.cancerType.split('(')[0].trim()}
-                </option>
-              ))}
-            </select>
+            <div className="flex items-center gap-3">
+              <select
+                value={selectedPatientId}
+                onChange={(e) => setSelectedPatientId(e.target.value)}
+                className="bg-slate-50/50 backdrop-blur-sm border border-slate-200/60 rounded-lg px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all cursor-pointer hover:bg-slate-100/50"
+              >
+                {patients.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.id}: {p.cancerType.split('(')[0].trim()}
+                  </option>
+                ))}
+              </select>
 
-            <div className={`px-3 py-1.5 rounded-lg text-xs font-semibold backdrop-blur-sm flex items-center gap-2 ${getRiskBadgeClass(patient.riskCategory)}`}>
-              <span className={`w-2 h-2 rounded-full ${getRiskDot(patient.riskCategory)} animate-pulse`} />
-              <span className="hidden sm:inline uppercase tracking-wide">{patient.riskCategory} Risk</span>
+              <div className={`px-3 py-1.5 rounded-lg text-xs font-semibold backdrop-blur-sm flex items-center gap-2 ${getRiskBadgeClass(patient.riskCategory)}`}>
+                <span className={`w-2 h-2 rounded-full ${getRiskDot(patient.riskCategory)} animate-pulse`} />
+                <span className="uppercase tracking-wide">{patient.riskCategory}</span>
+              </div>
             </div>
           </div>
         </div>
       </header>
 
-      <div className="max-w-[1920px] mx-auto flex">
+      <div className="w-full max-w-7xl mx-auto flex">
         {/* Desktop Sidebar */}
         <nav className="w-64 shrink-0 min-h-[calc(100vh-4rem)] bg-white/60 backdrop-blur-xl border-r border-slate-200/60 sticky top-16 self-start hidden lg:block">
-          <div className="p-4 space-y-1.5">
+          <div className="p-4 space-y-2">
             {navItems.map((item) => (
               <button
                 key={item.id}
@@ -693,30 +697,32 @@ export default function Demo() {
                 }`}
               >
                 <item.Icon className={`w-5 h-5 ${page === item.id ? 'text-white' : 'text-slate-400'}`} />
-                {item.label}
+                <span>{item.label}</span>
               </button>
             ))}
           </div>
         </nav>
 
         {/* Mobile Bottom Navigation */}
-        <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-xl border-t border-slate-200/60 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-50 flex">
-          {navItems.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => setPage(item.id)}
-              className={`flex-1 min-w-0 flex flex-col items-center py-2.5 text-[10px] transition-all ${
-                page === item.id ? 'text-blue-600' : 'text-slate-400'
-              }`}
-            >
-              <item.Icon className="w-5 h-5 mb-1" />
-              <span className="truncate px-1 font-medium">{item.label.split(' ')[0]}</span>
-            </button>
-          ))}
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-xl border-t border-slate-200/60 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-50 safe-area-inset-bottom">
+          <div className="grid grid-cols-6 h-16">
+            {navItems.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => setPage(item.id)}
+                className={`flex flex-col items-center justify-center gap-1 transition-all ${
+                  page === item.id ? 'text-blue-600' : 'text-slate-400'
+                }`}
+              >
+                <item.Icon className="w-5 h-5" />
+                <span className="text-[10px] font-medium leading-tight text-center px-1">{item.label.split(' ')[0]}</span>
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Main Content */}
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 pb-24 lg:pb-8 min-w-0">
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 pb-24 lg:pb-8">
           {page === 'dashboard' && <DashboardPage patient={patient} onNavigate={setPage} />}
           {page === 'dynamics' && <DynamicsPage patient={patient} />}
           {page === 'predictions' && <PredictionsPage patient={patient} />}
@@ -745,7 +751,7 @@ function DashboardPage({ patient, onNavigate }) {
   ];
 
   const chartData = patient.timepoints.map((tp) => ({
-    name: tp.label.length > 12 ? tp.label.substring(0, 12) + '…' : tp.label,
+    name: tp.label,
     'Tumor Fraction': +(tp.tumorFraction * 100).toFixed(2),
     'cfDNA (ng/mL)': tp.totalCfDNA,
   }));
@@ -765,22 +771,22 @@ function DashboardPage({ patient, onNavigate }) {
     <div className="space-y-6">
       {/* Patient Header */}
       <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-slate-200/60 shadow-xl shadow-slate-200/50 p-6">
-        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
+        <div className="flex flex-col lg:flex-row gap-6">
           <div className="flex-1">
-            <div className="flex items-center gap-4 mb-3">
-              <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/25">
+            <div className="flex items-start gap-4 mb-4">
+              <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/25 shrink-0">
                 <UserIcon className="w-7 h-7 text-white" />
               </div>
-              <div>
+              <div className="flex-1 min-w-0">
                 <h2 className="text-2xl font-bold text-slate-900">
                   {patient.id} — {patient.name}
                 </h2>
-                <p className="text-slate-500 text-sm mt-0.5">
+                <p className="text-slate-500 text-sm mt-1">
                   {patient.cancerType} • {patient.stage}
                 </p>
               </div>
             </div>
-            <div className="flex flex-wrap gap-x-6 gap-y-2 mt-4 text-sm text-slate-600">
+            <div className="flex flex-wrap gap-6 mt-4 text-sm text-slate-600">
               <span className="flex items-center gap-2">
                 <span className="text-slate-400">Age:</span>
                 <span className="text-slate-900 font-semibold">{patient.age}</span>
@@ -793,15 +799,17 @@ function DashboardPage({ patient, onNavigate }) {
                 <span className="text-slate-400">Diagnosis:</span>
                 <span className="text-slate-900 font-semibold">{patient.diagnosisDate}</span>
               </span>
-              <span className="hidden xl:flex items-center gap-2">
+              <span className="flex items-center gap-2">
                 <span className="text-slate-400">Therapy:</span>
                 <span className="text-slate-900 font-semibold">{patient.currentTherapy}</span>
               </span>
             </div>
           </div>
-          <div className="flex flex-row lg:flex-col items-center lg:items-end gap-2 lg:min-w-[120px]">
-            <div className={`text-5xl font-black ${getRiskColorClass(patient.riskCategory)}`}>{patient.riskScore}</div>
-            <span className="text-xs text-slate-400 uppercase tracking-wider font-medium">Risk Score</span>
+          <div className="flex items-center justify-center lg:justify-end">
+            <div className="flex flex-col items-center gap-2">
+              <div className={`text-5xl font-black ${getRiskColorClass(patient.riskCategory)}`}>{patient.riskScore}</div>
+              <span className="text-xs text-slate-400 uppercase tracking-wider font-medium">Risk Score</span>
+            </div>
           </div>
         </div>
       </div>
@@ -836,7 +844,7 @@ function DashboardPage({ patient, onNavigate }) {
       {/* Charts */}
       <div className="grid lg:grid-cols-2 gap-6">
         <ChartCard title="Tumor Fraction Over Time" subtitle="Serial monitoring of circulating tumor DNA">
-          <ResponsiveContainer width="100%" height={240}>
+          <ResponsiveContainer width="100%" height={220}>
             <AreaChart data={chartData}>
               <defs>
                 <linearGradient id="tfGradient" x1="0" y1="0" x2="0" y2="1">
@@ -848,13 +856,13 @@ function DashboardPage({ patient, onNavigate }) {
               <XAxis dataKey="name" tick={{ fontSize: 11, fill: '#64748b' }} tickLine={false} />
               <YAxis tick={{ fontSize: 11, fill: '#64748b' }} unit="%" tickLine={false} axisLine={false} />
               <Tooltip contentStyle={tooltipStyle} />
-              <Area type="monotone" dataKey="Tumor Fraction" stroke="#3b82f6" fill="url(#tfGradient)" strokeWidth={3} dot={{ fill: '#3b82f6', r: 5, strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 6 }} />
+              <Area type="monotone" dataKey="Tumor Fraction" stroke="#3b82f6" fill="url(#tfGradient)" strokeWidth={2.5} dot={{ fill: '#3b82f6', r: 4, strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 5 }} />
             </AreaChart>
           </ResponsiveContainer>
         </ChartCard>
 
         <ChartCard title="cfDNA Concentration" subtitle="Total cell-free DNA quantification">
-          <ResponsiveContainer width="100%" height={240}>
+          <ResponsiveContainer width="100%" height={220}>
             <AreaChart data={chartData}>
               <defs>
                 <linearGradient id="cfGradient" x1="0" y1="0" x2="0" y2="1">
@@ -866,7 +874,7 @@ function DashboardPage({ patient, onNavigate }) {
               <XAxis dataKey="name" tick={{ fontSize: 11, fill: '#64748b' }} tickLine={false} />
               <YAxis tick={{ fontSize: 11, fill: '#64748b' }} unit=" ng" tickLine={false} axisLine={false} />
               <Tooltip contentStyle={tooltipStyle} />
-              <Area type="monotone" dataKey="cfDNA (ng/mL)" stroke="#6366f1" fill="url(#cfGradient)" strokeWidth={3} dot={{ fill: '#6366f1', r: 5, strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 6 }} />
+              <Area type="monotone" dataKey="cfDNA (ng/mL)" stroke="#6366f1" fill="url(#cfGradient)" strokeWidth={2.5} dot={{ fill: '#6366f1', r: 4, strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 5 }} />
             </AreaChart>
           </ResponsiveContainer>
         </ChartCard>
@@ -893,7 +901,7 @@ function DashboardPage({ patient, onNavigate }) {
                   />
                   {i < patient.timepoints.length - 1 && <div className="w-px flex-1 bg-slate-200 my-1.5 min-h-[24px]" />}
                 </div>
-                <div className="pb-5 flex-1">
+                <div className="pb-5 flex-1 min-w-0">
                   <p className="text-sm font-semibold text-slate-900">{tp.label}</p>
                   <p className="text-xs text-slate-500 mt-0.5">
                     {tp.date} • Day {tp.dayFromBaseline}
@@ -916,21 +924,21 @@ function DashboardPage({ patient, onNavigate }) {
             <div className="w-1 h-4 bg-gradient-to-b from-indigo-500 to-purple-500 rounded-full" />
             Latest Mutations — {latest.label}
           </h3>
-          <div className="overflow-x-auto -mx-6 sm:mx-0">
-            <table className="w-full text-sm min-w-[600px]">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm min-w-[500px]">
               <thead>
                 <tr className="text-left text-xs font-semibold text-slate-500 border-b border-slate-200">
-                  <th className="pb-3 pr-4 pl-6 sm:pl-0">Gene</th>
+                  <th className="pb-3 pr-4">Gene</th>
                   <th className="pb-3 pr-4">Variant</th>
                   <th className="pb-3 pr-4">VAF</th>
                   <th className="pb-3 pr-4">Type</th>
-                  <th className="pb-3 pr-4 sm:pr-0">Pathogenicity</th>
+                  <th className="pb-3">Path.</th>
                 </tr>
               </thead>
               <tbody>
                 {latest.mutations.map((m, i) => (
                   <tr key={i} className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors">
-                    <td className="py-3 pr-4 pl-6 sm:pl-0 font-bold text-blue-600">{m.gene}</td>
+                    <td className="py-3 pr-4 font-bold text-blue-600">{m.gene}</td>
                     <td className="py-3 pr-4 font-mono text-xs text-slate-600 bg-slate-50/50 rounded px-2">{m.variant}</td>
                     <td className="py-3 pr-4">
                       <div className="flex items-center gap-2">
@@ -944,13 +952,13 @@ function DashboardPage({ patient, onNavigate }) {
                       </div>
                     </td>
                     <td className="py-3 pr-4 text-xs text-slate-500 font-medium">{m.type}</td>
-                    <td className="py-3 pr-4 sm:pr-0">
+                    <td className="py-3">
                       <span
                         className={`text-xs font-semibold px-2.5 py-1 rounded-lg ${
                           m.pathogenicity === 'Pathogenic' ? 'bg-red-50 text-red-600' : 'bg-amber-50 text-amber-600'
                         }`}
                       >
-                        {m.pathogenicity}
+                        {m.pathogenicity.substring(0, 8)}
                       </span>
                     </td>
                   </tr>
@@ -1026,7 +1034,7 @@ function DynamicsPage({ patient }) {
 
       {/* VAF Tracking */}
       <ChartCard title="Variant Allele Frequency (VAF) Tracking" subtitle="Each line tracks a specific mutation across serial blood draws">
-        <ResponsiveContainer width="100%" height={320}>
+        <ResponsiveContainer width="100%" height={280}>
           <LineChart data={vafData}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
             <XAxis dataKey="name" tick={{ fontSize: 11, fill: '#64748b' }} tickLine={false} />
@@ -1038,16 +1046,16 @@ function DynamicsPage({ patient }) {
               axisLine={false}
             />
             <Tooltip contentStyle={tooltipStyle} />
-            <Legend wrapperStyle={{ fontSize: 11, paddingTop: 20 }} />
+            <Legend wrapperStyle={{ fontSize: 11, paddingTop: 15 }} />
             {allGenes.map((gene, i) => (
               <Line
                 key={gene}
                 type="monotone"
                 dataKey={gene}
                 stroke={chartColors[i % chartColors.length]}
-                strokeWidth={3}
-                dot={{ r: 5, fill: chartColors[i % chartColors.length], strokeWidth: 2, stroke: '#fff' }}
-                activeDot={{ r: 6 }}
+                strokeWidth={2.5}
+                dot={{ r: 4, fill: chartColors[i % chartColors.length], strokeWidth: 2, stroke: '#fff' }}
+                activeDot={{ r: 5 }}
                 connectNulls
               />
             ))}
@@ -1058,7 +1066,7 @@ function DynamicsPage({ patient }) {
       <div className="grid lg:grid-cols-2 gap-6">
         {/* Radar Chart */}
         <ChartCard title="Multi-Analyte Profile (Latest)" subtitle="Normalized feature values for the most recent timepoint">
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={260}>
             <RadarChart data={radarData}>
               <PolarGrid stroke="#e2e8f0" />
               <PolarAngleAxis dataKey="metric" tick={{ fontSize: 10, fill: '#475569' }} />
@@ -1070,17 +1078,17 @@ function DynamicsPage({ patient }) {
 
         {/* Feature Trends */}
         <ChartCard title="Feature Trends" subtitle="All biomarker channels over time">
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={260}>
             <LineChart data={trendData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
               <XAxis dataKey="name" tick={{ fontSize: 10, fill: '#64748b' }} tickLine={false} />
               <YAxis tick={{ fontSize: 10, fill: '#64748b' }} tickLine={false} axisLine={false} />
               <Tooltip contentStyle={tooltipStyle} />
-              <Legend wrapperStyle={{ fontSize: 10, paddingTop: 20 }} />
-              <Line type="monotone" dataKey="Tumor Fraction (%)" stroke="#3b82f6" strokeWidth={2.5} dot={{ r: 4, strokeWidth: 2, stroke: '#fff' }} />
-              <Line type="monotone" dataKey="Methylation Score" stroke="#f59e0b" strokeWidth={2.5} dot={{ r: 4, strokeWidth: 2, stroke: '#fff' }} />
-              <Line type="monotone" dataKey="Genome Instability" stroke="#ef4444" strokeWidth={2.5} dot={{ r: 4, strokeWidth: 2, stroke: '#fff' }} />
-              <Line type="monotone" dataKey="Fragment Ratio (×100)" stroke="#6366f1" strokeWidth={2.5} dot={{ r: 4, strokeWidth: 2, stroke: '#fff' }} />
+              <Legend wrapperStyle={{ fontSize: 10, paddingTop: 15 }} />
+              <Line type="monotone" dataKey="Tumor Fraction (%)" stroke="#3b82f6" strokeWidth={2} dot={{ r: 3, strokeWidth: 2, stroke: '#fff' }} />
+              <Line type="monotone" dataKey="Methylation Score" stroke="#f59e0b" strokeWidth={2} dot={{ r: 3, strokeWidth: 2, stroke: '#fff' }} />
+              <Line type="monotone" dataKey="Genome Instability" stroke="#ef4444" strokeWidth={2} dot={{ r: 3, strokeWidth: 2, stroke: '#fff' }} />
+              <Line type="monotone" dataKey="Fragment Ratio (×100)" stroke="#6366f1" strokeWidth={2} dot={{ r: 3, strokeWidth: 2, stroke: '#fff' }} />
             </LineChart>
           </ResponsiveContainer>
         </ChartCard>
@@ -1092,11 +1100,11 @@ function DynamicsPage({ patient }) {
           <div className="w-1 h-4 bg-gradient-to-b from-purple-500 to-pink-500 rounded-full" />
           Mutation Heatmap (VAF % across timepoints)
         </h3>
-        <div className="overflow-x-auto -mx-6 sm:mx-0">
-          <table className="w-full text-sm min-w-[700px]">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm min-w-[600px]">
             <thead>
               <tr className="text-left text-xs font-semibold text-slate-500 border-b border-slate-200">
-                <th className="pb-3 pr-4 pl-6 sm:pl-0 sticky left-0 bg-white/80 backdrop-blur-sm">Gene</th>
+                <th className="pb-3 pr-4 sticky left-0 bg-white/80 backdrop-blur-sm z-10">Gene</th>
                 <th className="pb-3 pr-4">Variant</th>
                 {patient.timepoints.map((tp) => (
                   <th key={tp.id} className="pb-3 px-2 text-center">
@@ -1125,7 +1133,7 @@ function DynamicsPage({ patient }) {
 
                   return (
                     <tr key={`${gene}-${variant}`} className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors">
-                      <td className="py-3 pr-4 pl-6 sm:pl-0 font-bold text-blue-600 sticky left-0 bg-white/80 backdrop-blur-sm">{gene}</td>
+                      <td className="py-3 pr-4 font-bold text-blue-600 sticky left-0 bg-white/80 backdrop-blur-sm z-10">{gene}</td>
                       <td className="py-3 pr-4 font-mono text-xs text-slate-600 bg-slate-50/50 rounded px-2">{variant}</td>
                       {vafs.map((vaf, i) => {
                         const intensity = maxVaf > 0 ? vaf / maxVaf : 0;
@@ -1163,7 +1171,7 @@ function PredictionsPage({ patient }) {
 
   const predictionHeads = [
     {
-      title: 'Progression (Binary)',
+      title: 'Progression',
       value: patient.progressionProbability > 0.5 ? 'YES' : 'NO',
       probability: patient.progressionProbability,
       color: patient.progressionProbability > 0.5 ? 'text-red-600' : 'text-emerald-600',
@@ -1171,8 +1179,8 @@ function PredictionsPage({ patient }) {
       desc: 'Likelihood of disease progression within 3 months',
     },
     {
-      title: 'RECIST Prediction',
-      value: patient.predictedRECIST,
+      title: 'RECIST',
+      value: patient.predictedRECIST.split(' ')[0],
       probability: null,
       color: patient.predictedRECIST.includes('Progressive')
         ? 'text-red-600'
@@ -1184,10 +1192,10 @@ function PredictionsPage({ patient }) {
         : patient.predictedRECIST.includes('Partial')
         ? 'from-emerald-500 to-teal-600'
         : 'from-amber-500 to-orange-600',
-      desc: 'Predicted RECIST 1.1 response category',
+      desc: 'Predicted RECIST category',
     },
     {
-      title: 'Time to Progression',
+      title: 'Time to Prog',
       value: patient.timeToProgression ? `${patient.timeToProgression} mo` : 'N/A',
       probability: null,
       color:
@@ -1202,26 +1210,26 @@ function PredictionsPage({ patient }) {
           : patient.timeToProgression && patient.timeToProgression < 12
           ? 'from-amber-500 to-orange-600'
           : 'from-emerald-500 to-teal-600',
-      desc: 'Estimated time until next progression event',
+      desc: 'Time until progression',
     },
     {
-      title: 'Model Confidence',
+      title: 'Confidence',
       value: `${(patient.confidenceScore * 100).toFixed(0)}%`,
       probability: patient.confidenceScore,
       color:
         patient.confidenceScore > 0.8 ? 'text-emerald-600' : patient.confidenceScore > 0.6 ? 'text-amber-600' : 'text-red-600',
       gradient:
         patient.confidenceScore > 0.8 ? 'from-emerald-500 to-teal-600' : patient.confidenceScore > 0.6 ? 'from-amber-500 to-orange-600' : 'from-red-500 to-rose-600',
-      desc: 'Overall prediction confidence interval',
+      desc: 'Model confidence',
     },
   ];
 
   const modelComparison = [
-    { model: 'XGBoost (Snapshot)', AUC: 0.82, Sensitivity: 0.78, Specificity: 0.85 },
-    { model: 'Random Forest', AUC: 0.79, Sensitivity: 0.75, Specificity: 0.83 },
-    { model: 'LSTM (Longitudinal)', AUC: 0.88, Sensitivity: 0.85, Specificity: 0.89 },
+    { model: 'XGBoost', AUC: 0.82, Sensitivity: 0.78, Specificity: 0.85 },
+    { model: 'RF', AUC: 0.79, Sensitivity: 0.75, Specificity: 0.83 },
+    { model: 'LSTM', AUC: 0.88, Sensitivity: 0.85, Specificity: 0.89 },
     { model: 'Transformer', AUC: 0.91, Sensitivity: 0.88, Specificity: 0.92 },
-    { model: 'Fusion (Ensemble)', AUC: 0.93, Sensitivity: 0.9, Specificity: 0.94 },
+    { model: 'Fusion', AUC: 0.93, Sensitivity: 0.9, Specificity: 0.94 },
   ];
 
   return (
@@ -1262,13 +1270,13 @@ function PredictionsPage({ patient }) {
         <div className="bg-white/80 backdrop-blur-sm border border-slate-200/60 rounded-2xl shadow-lg shadow-slate-200/50 p-6">
           <h3 className="text-sm font-bold text-slate-700 mb-1 flex items-center gap-2">
             <div className="w-1 h-4 bg-gradient-to-b from-blue-500 to-indigo-500 rounded-full" />
-            Feature Importance (SHAP-style)
+            Feature Importance
           </h3>
-          <p className="text-xs text-slate-500 mb-5">Which features are driving the prediction</p>
+          <p className="text-xs text-slate-500 mb-5">Driving the prediction</p>
           <div className="space-y-3">
             {features.map((f, i) => (
               <div key={i} className="flex items-center gap-3">
-                <div className="w-32 shrink-0 text-xs text-slate-600 text-right font-medium truncate">{f.feature}</div>
+                <div className="w-32 shrink-0 text-xs text-slate-600 text-right font-medium">{f.feature}</div>
                 <div className="flex-1 flex items-center gap-2">
                   <div className="flex-1 h-5 bg-slate-100 rounded-full overflow-hidden">
                     <div
@@ -1285,65 +1293,29 @@ function PredictionsPage({ patient }) {
               </div>
             ))}
           </div>
-          <div className="flex items-center gap-4 mt-5 pt-5 border-t border-slate-200 text-xs text-slate-500">
-            <span className="flex items-center gap-1.5 font-medium">
-              <span className="w-3 h-3 bg-gradient-to-br from-red-500 to-rose-600 rounded" /> Increases risk
-            </span>
-            <span className="flex items-center gap-1.5 font-medium">
-              <span className="w-3 h-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded" /> Decreases risk
-            </span>
-          </div>
         </div>
 
         {/* Model Comparison */}
-        <ChartCard title="Model Performance Comparison" subtitle="Cross-validated metrics across architectures">
-          <ResponsiveContainer width="100%" height={300}>
+        <ChartCard title="Model Performance" subtitle="Cross-validated metrics">
+          <ResponsiveContainer width="100%" height={260}>
             <BarChart data={modelComparison} layout="vertical">
               <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" horizontal={true} vertical={false} />
               <XAxis type="number" domain={[0, 1]} tick={{ fontSize: 10, fill: '#64748b' }} tickLine={false} axisLine={false} />
-              <YAxis type="category" dataKey="model" tick={{ fontSize: 9, fill: '#475569' }} width={140} tickLine={false} axisLine={false} />
+              <YAxis type="category" dataKey="model" tick={{ fontSize: 10, fill: '#475569' }} width={80} tickLine={false} axisLine={false} />
               <Tooltip contentStyle={tooltipStyle} />
-              <Legend wrapperStyle={{ fontSize: 10, paddingTop: 20 }} />
-              <Bar dataKey="AUC" fill="#3b82f6" radius={[0, 6, 6, 0]} />
-              <Bar dataKey="Sensitivity" fill="#6366f1" radius={[0, 6, 6, 0]} />
-              <Bar dataKey="Specificity" fill="#f59e0b" radius={[0, 6, 6, 0]} />
+              <Legend wrapperStyle={{ fontSize: 10, paddingTop: 15 }} />
+              <Bar dataKey="AUC" fill="#3b82f6" radius={[0, 4, 4, 0]} />
+              <Bar dataKey="Sensitivity" fill="#6366f1" radius={[0, 4, 4, 0]} />
+              <Bar dataKey="Specificity" fill="#f59e0b" radius={[0, 4, 4, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </ChartCard>
-      </div>
-
-      {/* Architecture Notes */}
-      <div className="bg-gradient-to-br from-blue-50 via-indigo-50/50 to-purple-50 border border-blue-200/60 rounded-2xl p-6">
-        <h3 className="text-sm font-bold text-blue-700 mb-4 flex items-center gap-2">
-          <BrainIcon className="w-5 h-5" />
-          Model Architecture Notes
-        </h3>
-        <div className="grid sm:grid-cols-2 gap-5 text-xs text-slate-600">
-          <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-white/60">
-            <p className="font-bold text-slate-800 mb-2">Branch A: Snapshot Models</p>
-            <p>
-              XGBoost and Random Forest trained on single-timepoint feature vectors. Best for patients with limited longitudinal data.
-            </p>
-          </div>
-          <div className="bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-white/60">
-            <p className="font-bold text-slate-800 mb-2">Branch B: Longitudinal Models</p>
-            <p>
-              LSTM and Transformer architectures processing full time-series. Captures temporal dynamics and trend patterns.
-            </p>
-          </div>
-        </div>
-        <div className="mt-4 bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-white/60 text-xs text-slate-600">
-          <p className="font-bold text-slate-800 mb-2">Fusion Layer</p>
-          <p>
-            Attention-weighted ensemble combining both branches. Weights longitudinal predictions higher when ≥3 timepoints available.
-          </p>
-        </div>
       </div>
     </div>
   );
 }
 
-// ─── CLINICAL VIEW PAGE ────────────────────────────────────────────
+// ─── CLINICAL PAGE ─────────────────────────────────────────────────
 function ClinicalPage({ patient }) {
   const latest = patient.timepoints[patient.timepoints.length - 1];
   const prev = patient.timepoints.length > 1 ? patient.timepoints[patient.timepoints.length - 2] : null;
@@ -1353,7 +1325,7 @@ function ClinicalPage({ patient }) {
   if (prev && latest.tumorFraction > prev.tumorFraction * 1.5) {
     observations.push({
       severity: 'critical',
-      message: `Tumor fraction increased ${((latest.tumorFraction / prev.tumorFraction - 1) * 100).toFixed(0)}% from previous draw`,
+      message: `Tumor fraction increased ${((latest.tumorFraction / prev.tumorFraction - 1) * 100).toFixed(0)}% from previous`,
       Icon: AlertIcon,
     });
   }
@@ -1362,33 +1334,8 @@ function ClinicalPage({ patient }) {
   if (newMuts.length > 0) {
     observations.push({
       severity: 'critical',
-      message: `New mutation(s) detected: ${newMuts.map((m) => `${m.gene} ${m.variant}`).join(', ')}`,
+      message: `New mutation(s): ${newMuts.map((m) => `${m.gene} ${m.variant}`).join(', ')}`,
       Icon: AlertIcon,
-    });
-  }
-
-  const resistanceMuts = latest.mutations.filter((m) => ['T790M', 'C797S', 'Loss', 'Amplification'].includes(m.variant));
-  if (resistanceMuts.length > 0) {
-    observations.push({
-      severity: 'warning',
-      message: `Resistance mechanism detected: ${resistanceMuts.map((m) => `${m.gene} ${m.variant}`).join(', ')}`,
-      Icon: AlertIcon,
-    });
-  }
-
-  if (latest.methylationScore > 0.6) {
-    observations.push({
-      severity: 'warning',
-      message: `Elevated methylation score (${latest.methylationScore.toFixed(2)}) suggests high tumor burden`,
-      Icon: InfoIcon,
-    });
-  }
-
-  if (patient.confidenceScore < 0.75) {
-    observations.push({
-      severity: 'info',
-      message: `Model confidence is moderate (${(patient.confidenceScore * 100).toFixed(0)}%)`,
-      Icon: InfoIcon,
     });
   }
 
@@ -1427,23 +1374,23 @@ function ClinicalPage({ patient }) {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Clinical View" subtitle={`Data visualization and monitoring for ${patient.id} — ${patient.cancerType}`} />
+      <PageHeader title="Clinical View" subtitle={`Monitoring for ${patient.id}`} />
 
       {/* Risk Overview */}
       <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-slate-200/60 shadow-xl shadow-slate-200/50 p-6">
-        <div className="flex flex-col lg:flex-row lg:items-center gap-6">
+        <div className="flex flex-col lg:flex-row gap-6">
           <div className="flex-1">
             <h3 className="text-lg font-bold text-slate-900 mb-3 flex items-center gap-2">
               <ShieldIcon className="w-5 h-5 text-slate-600" />
               Risk Assessment
             </h3>
-            <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-slate-600">
+            <div className="flex flex-wrap items-center gap-6 text-sm text-slate-600">
               <span className="flex items-center gap-2">
-                <span className="text-slate-400">Risk Score:</span>
+                <span className="text-slate-400">Score:</span>
                 <span className={`font-black ${getRiskColorClass(patient.riskCategory)}`}>{patient.riskScore}/100</span>
               </span>
               <span className="flex items-center gap-2">
-                <span className="text-slate-400">Progression Probability:</span>
+                <span className="text-slate-400">Probability:</span>
                 <span className="font-bold text-slate-900">{(patient.progressionProbability * 100).toFixed(0)}%</span>
               </span>
               <span className="flex items-center gap-2">
@@ -1452,7 +1399,7 @@ function ClinicalPage({ patient }) {
               </span>
             </div>
           </div>
-          <div className={`px-6 py-4 rounded-2xl text-center bg-gradient-to-br ${getRiskGradient(patient.riskCategory)}/10 border border-${patient.riskCategory === 'high' ? 'red' : patient.riskCategory === 'moderate' ? 'amber' : 'emerald'}-200/60`}>
+          <div className={`px-6 py-4 rounded-2xl text-center bg-gradient-to-br ${getRiskGradient(patient.riskCategory)}/10 border border-slate-200/60 min-w-[200px]`}>
             <div className="flex items-center justify-center gap-2 mb-2">
               <span className={`w-3 h-3 rounded-full ${getRiskDot(patient.riskCategory)} animate-pulse`} />
               <div className={`text-sm font-bold uppercase ${getRiskColorClass(patient.riskCategory)} tracking-wide`}>{patient.riskCategory} Risk</div>
@@ -1475,25 +1422,19 @@ function ClinicalPage({ patient }) {
               className={`rounded-2xl p-4 border flex items-start gap-3 backdrop-blur-sm ${
                 obs.severity === 'critical'
                   ? 'bg-red-50/80 border-red-200/60'
-                  : obs.severity === 'warning'
-                  ? 'bg-amber-50/80 border-amber-200/60'
-                  : 'bg-blue-50/80 border-blue-200/60'
+                  : 'bg-amber-50/80 border-amber-200/60'
               }`}
             >
               <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
-                obs.severity === 'critical'
-                  ? 'bg-red-100'
-                  : obs.severity === 'warning'
-                  ? 'bg-amber-100'
-                  : 'bg-blue-100'
+                obs.severity === 'critical' ? 'bg-red-100' : 'bg-amber-100'
               }`}>
                 <obs.Icon className={`w-4 h-4 ${
-                  obs.severity === 'critical' ? 'text-red-600' : obs.severity === 'warning' ? 'text-amber-600' : 'text-blue-600'
+                  obs.severity === 'critical' ? 'text-red-600' : 'text-amber-600'
                 }`} />
               </div>
               <span
                 className={`text-sm font-medium ${
-                  obs.severity === 'critical' ? 'text-red-800' : obs.severity === 'warning' ? 'text-amber-800' : 'text-blue-800'
+                  obs.severity === 'critical' ? 'text-red-800' : 'text-amber-800'
                 }`}
               >
                 {obs.message}
@@ -1507,49 +1448,38 @@ function ClinicalPage({ patient }) {
       <div className="bg-white/80 backdrop-blur-sm border border-slate-200/60 rounded-2xl shadow-lg shadow-slate-200/50 p-6">
         <h3 className="text-sm font-bold text-slate-700 mb-5 flex items-center gap-2">
           <div className="w-1 h-4 bg-gradient-to-b from-indigo-500 to-purple-500 rounded-full" />
-          Monitoring History & Response Correlation
+          Monitoring History
         </h3>
-        <div className="overflow-x-auto -mx-6 sm:mx-0">
-          <table className="w-full text-sm min-w-[700px]">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm min-w-[600px]">
             <thead>
               <tr className="text-left text-xs font-semibold text-slate-500 border-b border-slate-200">
-                <th className="pb-3 pr-4 pl-6 sm:pl-0">Timepoint</th>
+                <th className="pb-3 pr-4">Timepoint</th>
                 <th className="pb-3 pr-4">Date</th>
                 <th className="pb-3 pr-4">Phase</th>
                 <th className="pb-3 pr-4">TF</th>
                 <th className="pb-3 pr-4">cfDNA</th>
                 <th className="pb-3 pr-4">Mutations</th>
-                <th className="pb-3 pr-4 sm:pr-0">Imaging</th>
+                <th className="pb-3">Imaging</th>
               </tr>
             </thead>
             <tbody>
               {patient.timepoints.map((tp, i) => (
                 <tr key={tp.id} className={`border-b border-slate-100 transition-colors ${i === patient.timepoints.length - 1 ? 'bg-blue-50/50' : 'hover:bg-slate-50/50'}`}>
-                  <td className="py-3 pr-4 pl-6 sm:pl-0 font-bold text-slate-900">{tp.id}</td>
-                  <td className="py-3 pr-4 text-slate-600 font-medium">{tp.date}</td>
+                  <td className="py-3 pr-4 font-bold text-slate-900">{tp.id}</td>
+                  <td className="py-3 pr-4 text-slate-600 font-medium text-sm">{tp.date}</td>
                   <td className="py-3 pr-4">
-                    <span className="px-2.5 py-1 bg-slate-100 rounded-lg text-xs text-slate-700 font-semibold">{tp.treatmentPhase}</span>
+                    <span className="px-2 py-1 bg-slate-100 rounded-lg text-xs text-slate-700 font-semibold">{tp.treatmentPhase}</span>
                   </td>
                   <td className="py-3 pr-4 font-mono text-slate-700 font-semibold">{(tp.tumorFraction * 100).toFixed(1)}%</td>
                   <td className="py-3 pr-4 font-mono text-slate-700 font-semibold">{tp.totalCfDNA.toFixed(1)}</td>
                   <td className="py-3 pr-4 text-slate-700 font-semibold">{tp.mutations.length}</td>
-                  <td className="py-3 pr-4 sm:pr-0 text-xs text-slate-500">{tp.imagingResult || '—'}</td>
+                  <td className="py-3 text-xs text-slate-500">{tp.imagingResult || '—'}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-      </div>
-
-      {/* Disclaimer */}
-      <div className="bg-gradient-to-br from-slate-50 to-slate-100/50 border border-slate-200/60 rounded-2xl p-5 text-xs text-slate-600">
-        <p className="font-bold text-slate-700 mb-1.5 flex items-center gap-2">
-          <HospitalIcon className="w-4 h-4" />
-          Research Prototype
-        </p>
-        <p>
-          This system is for research and demonstration purposes only. All data shown is simulated. This tool is not intended for clinical decision-making.
-        </p>
       </div>
     </div>
   );
@@ -1560,20 +1490,20 @@ function DatasetsPage() {
   const [expandedIdx, setExpandedIdx] = useState(null);
 
   const getAccessBadge = (access) => {
-    if (access.startsWith('Open')) return { class: 'bg-emerald-50 text-emerald-700 border border-emerald-200/60', icon: 'Open Access', IconComponent: CheckCircleIcon };
+    if (access.startsWith('Open')) return { class: 'bg-emerald-50 text-emerald-700 border border-emerald-200/60', icon: 'Open', IconComponent: CheckCircleIcon };
     if (access.startsWith('Controlled')) return { class: 'bg-amber-50 text-amber-700 border border-amber-200/60', icon: 'Controlled', IconComponent: ShieldIcon };
     return { class: 'bg-red-50 text-red-700 border border-red-200/60', icon: 'Restricted', IconComponent: AlertIcon };
   };
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Datasets & Resources" subtitle="Where to find real liquid biopsy and ctDNA datasets for your project" />
+      <PageHeader title="Datasets & Resources" subtitle="Real liquid biopsy and ctDNA datasets" />
 
       {/* Quick Start Guide */}
       <div className="bg-gradient-to-br from-blue-50 via-indigo-50/50 to-blue-50 border border-blue-200/60 rounded-2xl p-6">
         <h3 className="text-lg font-bold text-blue-700 mb-5 flex items-center gap-2">
           <BoltIcon className="w-5 h-5" />
-          Quick Start: Recommended Data Pipeline
+          Quick Start Pipeline
         </h3>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {quickStartSteps.map((step) => (
@@ -1581,7 +1511,7 @@ function DatasetsPage() {
               <div className="w-8 h-8 shrink-0 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-lg flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-blue-500/20">
                 {step.step}
               </div>
-              <div>
+              <div className="flex-1 min-w-0">
                 <p className="text-sm font-bold text-slate-800">{step.title}</p>
                 <p className="text-xs text-slate-600 mt-1">{step.description}</p>
               </div>
@@ -1611,7 +1541,7 @@ function DatasetsPage() {
                       {badge.icon}
                     </span>
                   </div>
-                  <p className="text-sm text-slate-600 line-clamp-2">{ds.description}</p>
+                  <p className="text-sm text-slate-600">{ds.description}</p>
                 </div>
                 <ChevronDownIcon className={`w-5 h-5 text-slate-400 transition-transform shrink-0 ${expandedIdx === i ? 'rotate-180' : ''}`} />
               </button>
@@ -1640,25 +1570,11 @@ function DatasetsPage() {
                       </div>
                     </div>
                   </div>
-                  <div className="grid sm:grid-cols-2 gap-5">
-                    <div>
-                      <p className="text-xs text-slate-500 uppercase tracking-wider font-semibold mb-2">Sample Size</p>
-                      <p className="text-sm text-slate-700 font-semibold">{ds.sampleSize}</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-slate-500 uppercase tracking-wider font-semibold mb-2">Access</p>
-                      <p className="text-sm text-slate-700 font-semibold">{ds.access}</p>
-                    </div>
-                  </div>
-                  <div>
-                    <p className="text-xs text-slate-500 uppercase tracking-wider font-semibold mb-2">Why This Dataset</p>
-                    <p className="text-sm text-blue-600 font-medium">{ds.relevance}</p>
-                  </div>
                   <a
                     href={ds.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white rounded-xl text-sm font-semibold transition-all shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white rounded-xl text-sm font-semibold transition-all shadow-lg shadow-blue-500/25"
                   >
                     Visit Resource <ExternalIcon className="w-4 h-4" />
                   </a>
@@ -1667,36 +1583,6 @@ function DatasetsPage() {
             </div>
           );
         })}
-      </div>
-
-      {/* Tools Section */}
-      <div className="bg-white/80 backdrop-blur-sm border border-slate-200/60 rounded-2xl shadow-lg shadow-slate-200/50 p-6">
-        <h3 className="text-sm font-bold text-slate-700 mb-5 flex items-center gap-2">
-          <div className="w-1 h-4 bg-gradient-to-b from-green-500 to-emerald-500 rounded-full" />
-          Additional Resources & Tools
-        </h3>
-        <div className="grid sm:grid-cols-2 gap-5 text-sm">
-          <ToolSection
-            title="Bioinformatics Tools"
-            color="blue"
-            tools={[
-              { name: 'ichorCNA', desc: 'Tumor fraction estimation from shallow WGS', url: 'https://github.com/broadinstitute/ichorCNA' },
-              { name: 'VarDict', desc: 'Variant calling for low-frequency mutations', url: 'https://github.com/AstraZeneca-NGS/VarDict' },
-              { name: 'GATK/Mutect2', desc: 'Somatic variant calling gold standard', url: 'https://gatk.broadinstitute.org' },
-              { name: 'cfDNAPro', desc: 'cfDNA fragment size analysis', url: 'https://bioconductor.org/packages/cfDNAPro' },
-            ]}
-          />
-          <ToolSection
-            title="ML Frameworks"
-            color="indigo"
-            tools={[
-              { name: 'PyTorch + TSAI', desc: 'Time-series AI for longitudinal ctDNA', url: 'https://github.com/timeseriesAI/tsai' },
-              { name: 'XGBoost', desc: 'Gradient boosting for snapshot predictions', url: 'https://xgboost.readthedocs.io' },
-              { name: 'SHAP', desc: 'Model explainability for clinical trust', url: 'https://shap.readthedocs.io' },
-              { name: 'Lifelines', desc: 'Survival analysis for time-to-progression', url: 'https://lifelines.readthedocs.io' },
-            ]}
-          />
-        </div>
       </div>
     </div>
   );
@@ -1711,9 +1597,9 @@ function ArchitecturePage() {
       Icon: BeakerIcon,
       gradient: 'from-blue-500 to-cyan-500',
       components: [
-        { name: 'Targeted Panel Sequencing', desc: 'Track mutations via VAF', input: 'cfDNA', output: 'VAF values' },
-        { name: 'Shallow WGS', desc: 'CNA & tumor fraction (ichorCNA)', input: 'cfDNA', output: 'CNA profile' },
-        { name: 'cfDNA Methylation', desc: 'Methylation-based detection', input: 'cfDNA', output: 'Meth scores' },
+        { name: 'Targeted Panel', desc: 'Track mutations via VAF', input: 'cfDNA', output: 'VAF' },
+        { name: 'Shallow WGS', desc: 'CNA & tumor fraction', input: 'cfDNA', output: 'CNA' },
+        { name: 'Methylation', desc: 'Methylation detection', input: 'cfDNA', output: 'Scores' },
       ],
     },
     {
@@ -1722,20 +1608,20 @@ function ArchitecturePage() {
       Icon: CogIcon,
       gradient: 'from-emerald-500 to-teal-500',
       components: [
-        { name: 'Per-timepoint Features', desc: 'VAF, TF, methylation, GI score', input: 'Raw data', output: 'Feature vector' },
-        { name: 'Longitudinal Dynamics', desc: 'Slopes, deltas, trends', input: 'Multi-timepoint', output: 'Temporal features' },
-        { name: 'Clinical Integration', desc: 'Treatment, imaging, demographics', input: 'Clinical data', output: 'Combined matrix' },
+        { name: 'Per-timepoint', desc: 'VAF, TF, methylation', input: 'Raw', output: 'Vector' },
+        { name: 'Longitudinal', desc: 'Slopes, deltas', input: 'Multi-TP', output: 'Temporal' },
+        { name: 'Clinical', desc: 'Treatment, imaging', input: 'Clinical', output: 'Matrix' },
       ],
     },
     {
       id: 3,
-      title: 'AI Prediction Engine',
+      title: 'AI Engine',
       Icon: BrainIcon,
       gradient: 'from-indigo-500 to-purple-500',
       components: [
-        { name: 'Branch A: Snapshot', desc: 'XGBoost / Random Forest', input: 'Single vector', output: 'Snapshot pred' },
-        { name: 'Branch B: Longitudinal', desc: 'LSTM / Transformer', input: 'Sequence', output: 'Temporal pred' },
-        { name: 'Fusion Layer', desc: 'Attention-weighted ensemble', input: 'Both preds', output: 'Final output' },
+        { name: 'Snapshot', desc: 'XGBoost / RF', input: 'Vector', output: 'Pred' },
+        { name: 'Longitudinal', desc: 'LSTM / Transformer', input: 'Sequence', output: 'Pred' },
+        { name: 'Fusion', desc: 'Ensemble', input: 'Both', output: 'Final' },
       ],
     },
     {
@@ -1744,18 +1630,17 @@ function ArchitecturePage() {
       Icon: HospitalIcon,
       gradient: 'from-amber-500 to-orange-500',
       components: [
-        { name: 'Risk Stratification', desc: 'Low/Moderate/High risk levels', input: 'Predictions', output: 'Risk category' },
-        { name: 'Explainability (SHAP)', desc: 'Feature-level explanations', input: 'Model internals', output: 'SHAP values' },
-        { name: 'Confidence Intervals', desc: 'Uncertainty quantification', input: 'Ensemble variance', output: 'CI bounds' },
+        { name: 'Stratification', desc: 'Risk levels', input: 'Pred', output: 'Category' },
+        { name: 'SHAP', desc: 'Explainability', input: 'Model', output: 'SHAP' },
+        { name: 'Confidence', desc: 'Uncertainty', input: 'Variance', output: 'CI' },
       ],
     },
   ];
 
   return (
     <div className="space-y-6">
-      <PageHeader title="System Architecture" subtitle="Complete pipeline from patient blood samples to predictions" />
+      <PageHeader title="System Architecture" subtitle="Pipeline from blood samples to predictions" />
 
-      {/* Flow Diagram */}
       <div className="bg-white/80 backdrop-blur-sm border border-slate-200/60 rounded-2xl shadow-lg shadow-slate-200/50 p-6">
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-4 bg-gradient-to-r from-slate-50 to-blue-50 border border-slate-200/60 rounded-2xl px-6 py-4 shadow-md">
@@ -1769,34 +1654,30 @@ function ArchitecturePage() {
           </div>
         </div>
 
-        <div className="flex justify-center mb-6">
-          <div className="w-px h-10 bg-gradient-to-b from-slate-300 via-slate-200 to-transparent" />
-        </div>
-
         <div className="space-y-5">
           {modules.map((mod, i) => (
             <div key={mod.id}>
-              <div className="bg-gradient-to-br from-slate-50 to-white border border-slate-200/60 rounded-2xl p-6 shadow-md hover:shadow-lg transition-shadow">
+              <div className="bg-gradient-to-br from-slate-50 to-white border border-slate-200/60 rounded-2xl p-6 shadow-md">
                 <div className="flex items-center gap-4 mb-5">
                   <div className={`w-12 h-12 bg-gradient-to-br ${mod.gradient} rounded-xl flex items-center justify-center shadow-lg`}>
                     <mod.Icon className="w-6 h-6 text-white" />
                   </div>
-                  <div>
+                  <div className="flex-1 min-w-0">
                     <p className="text-xs text-slate-500 uppercase tracking-wider font-semibold">Module {mod.id}</p>
                     <h3 className="text-lg font-bold text-slate-900">{mod.title}</h3>
                   </div>
                 </div>
                 <div className="grid sm:grid-cols-3 gap-4">
                   {mod.components.map((comp, j) => (
-                    <div key={j} className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-slate-200/40 hover:border-slate-300 hover:shadow-md transition-all">
+                    <div key={j} className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-slate-200/40">
                       <p className="text-sm font-bold text-slate-800 mb-2">{comp.name}</p>
                       <p className="text-xs text-slate-600 mb-3">{comp.desc}</p>
                       <div className="flex items-center gap-2 text-xs mb-1">
-                        <span className="text-slate-400 font-medium">Input:</span>
+                        <span className="text-slate-400 font-medium">In:</span>
                         <span className="text-blue-600 font-semibold">{comp.input}</span>
                       </div>
                       <div className="flex items-center gap-2 text-xs">
-                        <span className="text-slate-400 font-medium">Output:</span>
+                        <span className="text-slate-400 font-medium">Out:</span>
                         <span className="text-emerald-600 font-semibold">{comp.output}</span>
                       </div>
                     </div>
@@ -1805,37 +1686,12 @@ function ArchitecturePage() {
               </div>
               {i < modules.length - 1 && (
                 <div className="flex justify-center py-3">
-                  <div className="flex flex-col items-center">
-                    <div className="w-px h-6 bg-gradient-to-b from-slate-300 to-slate-200" />
-                    <ChevronDownIcon className="w-4 h-4 text-slate-400" />
-                  </div>
+                  <ChevronDownIcon className="w-5 h-5 text-slate-400" />
                 </div>
               )}
             </div>
           ))}
         </div>
-      </div>
-
-      {/* Tech Stack */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {[
-          { title: 'Data Processing', items: ['pysam', 'cyvcf2', 'pandas', 'pyranges', 'bedtools'] },
-          { title: 'Variant Calling', items: ['GATK/MuTect2', 'VarDict', 'ichorCNA', 'methylKit'] },
-          { title: 'ML/DL Models', items: ['PyTorch', 'XGBoost', 'scikit-learn', 'tsai', 'lifelines'] },
-          { title: 'Explainability', items: ['SHAP', 'LIME', 'captum', 'matplotlib', 'plotly'] },
-        ].map((cat) => (
-          <div key={cat.title} className="bg-white/80 backdrop-blur-sm border border-slate-200/60 rounded-2xl shadow-lg shadow-slate-200/50 p-5">
-            <p className="text-sm font-bold text-slate-700 mb-4">{cat.title}</p>
-            <div className="space-y-2">
-              {cat.items.map((item) => (
-                <div key={item} className="text-xs text-slate-600 flex items-center gap-2 font-medium">
-                  <div className="w-1.5 h-1.5 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-full shrink-0" />
-                  {item}
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
       </div>
     </div>
   );
@@ -1861,31 +1717,6 @@ function ChartCard({ title, subtitle, children }) {
       {subtitle && <p className="text-xs text-slate-500 mb-5">{subtitle}</p>}
       {!subtitle && <div className="mb-5" />}
       {children}
-    </div>
-  );
-}
-
-function ToolSection({ title, color, tools }) {
-  const colorClass = color === 'blue' ? 'from-blue-500 to-cyan-500' : color === 'indigo' ? 'from-indigo-500 to-purple-500' : 'from-emerald-500 to-teal-500';
-
-  return (
-    <div className="space-y-3">
-      <h4 className="font-bold text-slate-800 flex items-center gap-2">
-        <div className={`w-1 h-4 bg-gradient-to-b ${colorClass} rounded-full`} />
-        {title}
-      </h4>
-      {tools.map((tool) => (
-        <a
-          key={tool.name}
-          href={tool.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="block p-4 bg-slate-50/50 rounded-xl hover:bg-slate-100/50 border border-slate-200/60 hover:border-slate-300 hover:shadow-md transition-all"
-        >
-          <p className={`font-bold text-slate-800 mb-1`}>{tool.name}</p>
-          <p className="text-xs text-slate-600">{tool.desc}</p>
-        </a>
-      ))}
     </div>
   );
 }
