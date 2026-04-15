@@ -84,12 +84,9 @@ export default function LiquidBiopsyMonitoring({ onNavigate }) {
           -webkit-font-smoothing: antialiased;
           -moz-osx-font-smoothing: grayscale;
         }
-        .lb-section {
-          font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
-        }
       `}</style>
 
-      <div className="lb-section">
+      <div className="lb-section bg-white">
         {/* Navigation - Internal only, shown when standalone */}
         <nav
           className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 pointer-events-none ${
@@ -116,24 +113,16 @@ export default function LiquidBiopsyMonitoring({ onNavigate }) {
         </nav>
 
         {/* Hero Section */}
-        <section className="relative pt-8 sm:pt-12 pb-8 sm:pb-12 overflow-hidden">
+        <section className="relative pt-8 sm:pt-12 pb-8 sm:pb-12 overflow-hidden bg-white">
           <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 items-center">
               {/* Left: Content */}
               <Reveal>
                 <div className="order-2 lg:order-1">
-                  {/* R&D Badge */}
-                  <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 border border-blue-100 rounded-full mb-4 sm:mb-6">
-                    <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse flex-shrink-0"></span>
-                    <span className="text-xs font-medium text-blue-600 whitespace-nowrap">
-                      R&D Phase — In Development
-                    </span>
-                  </div>
-
                   <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-semibold tracking-tight text-gray-900 mb-3 sm:mb-4 leading-[1.05]">
-                    Real-time cancer
+                    Real-time monitoring using
                     <br />
-                    <span className="text-blue-600">monitoring.</span>
+                    <span className="text-blue-600">Liquid Biopsy.</span>
                   </h1>
                   <p className="text-sm sm:text-base lg:text-lg text-gray-600 mb-5 sm:mb-6 leading-relaxed max-w-lg">
                     Non-invasive liquid biopsy combined with AI for continuous
@@ -173,33 +162,9 @@ export default function LiquidBiopsyMonitoring({ onNavigate }) {
           </div>
         </section>
 
-        {/* Stats Strip */}
-        <section className="py-6 bg-white border-y border-gray-100">
-          <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
-              {[
-                { value: "ctDNA", label: "Biomarker source" },
-                { value: "NGS", label: "Sequencing method" },
-                { value: "AI", label: "Analysis engine" },
-                { value: "R&D", label: "Current phase" },
-              ].map((stat, i) => (
-                <Reveal key={i} delay={i * 0.05}>
-                  <div className="text-center py-2">
-                    <p className="text-xl sm:text-2xl font-bold text-blue-600 mb-0.5">
-                      {stat.value}
-                    </p>
-                    <p className="text-xs text-gray-500 font-medium">
-                      {stat.label}
-                    </p>
-                  </div>
-                </Reveal>
-              ))}
-            </div>
-          </div>
-        </section>
 
         {/* Technology Section */}
-        <section id="lb-technology" className="py-10 sm:py-14 bg-gray-50">
+        <section id="lb-technology" className="py-10 sm:py-14 bg-white">
           <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 items-center mb-8 sm:mb-12">
               {/* Left: NGS Image */}
@@ -218,11 +183,6 @@ export default function LiquidBiopsyMonitoring({ onNavigate }) {
               {/* Right: Content */}
               <Reveal delay={0.1}>
                 <div>
-                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 border border-blue-100 rounded-full mb-4">
-                    <span className="text-xs font-semibold text-blue-600 uppercase tracking-wider">
-                      Technology
-                    </span>
-                  </div>
                   <h2 className="text-2xl sm:text-3xl lg:text-4xl font-semibold tracking-tight text-gray-900 mb-3 sm:mb-4 leading-tight">
                     Next-generation sequencing at the core.
                   </h2>

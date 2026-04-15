@@ -15,22 +15,12 @@ function useWindowWidth() {
 }
 
 export default function Footer() {
-  const [email, setEmail] = useState("");
-  const [sent, setSent] = useState(false);
   const [copied, setCopied] = useState(false);
   const width = useWindowWidth();
 
-  const isMobile = width < 640;
-  const isTablet = width >= 640 && width < 1024;
+  const isMobile = width < 768;
+  const isTablet = width >= 768 && width < 1024;
   const isDesktop = width >= 1024;
-
-  const handleSend = useCallback(() => {
-    if (email) {
-      setSent(true);
-      setTimeout(() => setSent(false), 2500);
-      setEmail("");
-    }
-  }, [email]);
 
   const handleCopy = useCallback(() => {
     if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -40,249 +30,145 @@ export default function Footer() {
     setTimeout(() => setCopied(false), 2000);
   }, []);
 
-  const outerPadding = isMobile ? "16px 10px" : isTablet ? "24px 16px" : "32px 24px";
-  
-  const colPadding = isMobile
-    ? "28px 20px 24px"
-    : isTablet
-    ? "36px 28px 28px"
-    : "48px 44px 40px";
+  const handleScheduleCall = useCallback(() => {
+    const ctaSection = document.getElementById("cta");
+    if (ctaSection) {
+      const offset = 108 + 8;
+      const top = ctaSection.getBoundingClientRect().top + window.scrollY - offset;
+      window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+    }
+  }, []);
 
-  const col2Padding = isMobile
-    ? "28px 20px 24px"
-    : isTablet
-    ? "36px 28px 28px"
-    : "48px 40px 40px";
+  const navigationLinks = [
+    { label: "How It Works", href: "#mammogram" },
+    { label: "Benefits", href: "#liquid-biopsy" },
+    { label: "Features", href: "#case-study" },
+    { label: "Team", href: "#team" },
+  ];
 
-  const col3Padding = col2Padding;
+  const legalLinks = [
+    { label: "Terms of Service", href: "#" },
+    { label: "Privacy Policy", href: "#" },
+    { label: "Cookies Settings", href: "#" },
+  ];
 
-  const headingSize = isMobile
-    ? "20px"
-    : isTablet
-    ? "24px"
-    : "clamp(22px, 2.6vw, 36px)";
-
-  const gridStyle = isDesktop
-    ? {
-        display: "grid",
-        gridTemplateColumns: "1.2fr 1px 0.9fr 1px 0.9fr",
-        minHeight: "360px",
-      }
-    : isTablet
-    ? {
-        display: "grid",
-        gridTemplateColumns: "1fr 1px 1fr",
-        minHeight: "auto",
-      }
-    : {
-        display: "flex",
-        flexDirection: "column",
-      };
-
-  const bottomBarStyle = isMobile
-    ? {
-        padding: "16px 20px 20px",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: "12px",
-        textAlign: "center",
-      }
-    : {
-        padding: "16px 44px 22px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        gap: "16px",
-        flexWrap: "wrap",
-      };
-
-  const navGap = isMobile ? "24px" : "40px";
-
-  const HorizontalDivider = () => (
-    <div
-      style={{
-        margin: isMobile ? "0 20px" : "0 28px",
-        height: "1px",
-        background:
-          "linear-gradient(90deg,transparent,rgba(59,130,246,0.26) 30%,rgba(59,130,246,0.26) 70%,transparent)",
-      }}
-    />
-  );
-
-  const VerticalDivider = () => (
-    <div
-      style={{
-        background: "rgba(59,130,246,0.15)",
-        margin: "32px 0",
-      }}
-    />
-  );
+  const socialLinks = [
+    { name: "LinkedIn", handle: "oncotraceai", icon: LinkedInIcon },
+    { name: "Call", handle: "+1 408.850.2243", icon: PhoneIcon },
+  ];
 
   return (
     <footer
+      className="relative overflow-hidden"
       style={{
-        position: "relative",
-        overflow: "hidden",
-        padding: outerPadding,
-        fontFamily: "'Inter','Helvetica Neue',Arial,sans-serif",
-        boxSizing: "border-box",
+        fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', 'Inter', 'Helvetica Neue', Arial, sans-serif",
       }}
     >
-      {/* Background image */}
+      {/* Background image layer */}
       <div
+        className="absolute inset-0 z-0"
         style={{
-          position: "absolute",
-          inset: 0,
           backgroundImage: `url(${MOUNTAIN_IMAGE_URL})`,
           backgroundSize: "cover",
           backgroundPosition: "center 40%",
-          filter: "brightness(0.68) saturate(1.3)",
-          transform: "scale(1.08)",
-          zIndex: 0,
-        }}
-      />
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          background:
-            "linear-gradient(160deg,rgba(10,22,70,0.52) 0%,rgba(29,78,216,0.28) 50%,rgba(10,22,70,0.62) 100%)",
-          zIndex: 1,
+          filter: "brightness(0.65) saturate(1.2)",
+          transform: "scale(1.05)",
         }}
       />
 
+      {/* Gradient overlay */}
       <div
+        className="absolute inset-0 z-[1]"
         style={{
-          position: "relative",
-          zIndex: 10,
-          maxWidth: "1200px",
-          margin: "0 auto",
+          background:
+            "linear-gradient(160deg, rgba(10,22,70,0.55) 0%, rgba(29,78,216,0.32) 50%, rgba(10,22,70,0.65) 100%)",
         }}
+      />
+
+      {/* Main content */}
+      <div
+        className="relative z-10 px-4 sm:px-6 lg:px-8 py-6 lg:py-8"
+        style={{ maxWidth: "1400px", margin: "0 auto" }}
       >
+        {/* Glassmorphic container */}
         <div
+          className="backdrop-blur-xl rounded-3xl overflow-hidden"
           style={{
-            background: "rgba(255,255,255,0.97)",
-            borderRadius: isMobile ? "14px" : "18px",
+            background: "rgba(255, 255, 255, 0.12)",
+            border: "1px solid rgba(255, 255, 255, 0.18)",
             boxShadow:
-              "0 8px 48px rgba(29,78,216,0.18),0 2px 12px rgba(0,0,0,0.10)",
-            border: "1px solid rgba(59,130,246,0.18)",
-            overflow: "hidden",
+              "0 8px 32px 0 rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(255, 255, 255, 0.05) inset, 0 2px 4px 0 rgba(0, 0, 0, 0.05)",
           }}
         >
-          {/* ── UPPER GRID ── */}
-          <div style={gridStyle}>
-            {/* COL 1 — Headline + CTA + Email */}
-            <div
-              style={{
-                padding: colPadding,
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
-                gap: "24px",
-              }}
-            >
+          {/* Grid layout */}
+          <div
+            className={`
+              grid gap-6 p-5 sm:p-6 lg:p-8
+              ${
+                isMobile
+                  ? "grid-cols-1"
+                  : isTablet
+                  ? "grid-cols-2"
+                  : "grid-cols-3"
+              }
+            `}
+          >
+            {/* Column 1: Brand & Contact */}
+            <div className="flex flex-col gap-5">
+              {/* Logo & Tagline */}
               <div>
-                <p
+                <h2
+                  className="text-white font-bold tracking-tight mb-3"
                   style={{
-                    fontSize: "10px",
-                    fontWeight: "700",
-                    letterSpacing: "0.15em",
-                    textTransform: "uppercase",
-                    color: "#3b82f6",
-                    marginBottom: "14px",
-                    marginTop: 0,
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "5px",
+                    fontSize: isMobile ? "26px" : "30px",
+                    letterSpacing: "-0.5px",
                   }}
                 >
-                  <span>✦</span> Contact Us
+                  OncoTrace-<span style={{ color: "#60a5fa" }}>AI</span>
+                </h2>
+                <p
+                  className="text-blue-100 leading-relaxed"
+                  style={{
+                    fontSize: isMobile ? "15px" : "16px",
+                    fontWeight: "400",
+                    opacity: 0.95,
+                    lineHeight: "1.6",
+                  }}
+                >
+                  Precision oncology intelligence that is open, accessible, and
+                  built for every community.
                 </p>
-                <h2
-                  style={{
-                    fontSize: headingSize,
-                    fontWeight: "700",
-                    lineHeight: "1.2",
-                    color: "#0f1e50",
-                    margin: "0 0 6px 0",
-                    letterSpacing: "-0.4px",
-                  }}
-                >
-                  Interested in exploring OncoTrace-AI,
-                </h2>
-                <h2
-                  style={{
-                    fontSize: headingSize,
-                    fontWeight: "700",
-                    lineHeight: "1.2",
-                    color: "#93c5fd",
-                    margin: "0 0 24px 0",
-                    letterSpacing: "-0.4px",
-                  }}
-                >
-                  collaborating on research or joining the open ecosystem?
-                </h2>
-                <a
-                  href="#"
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: "8px",
-                    background: "transparent",
-                    color: "#0f1e50",
-                    borderRadius: "999px",
-                    padding: isMobile ? "10px 20px" : "12px 26px",
-                    fontSize: isMobile ? "13px" : "14px",
-                    fontWeight: "600",
-                    textDecoration: "none",
-                    border: "1.5px solid rgba(15,30,80,0.22)",
-                    marginBottom: "24px",
-                    transition: "all 0.2s",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background =
-                      "linear-gradient(135deg,#1d4ed8,#3b82f6)";
-                    e.currentTarget.style.color = "#fff";
-                    e.currentTarget.style.borderColor = "transparent";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = "transparent";
-                    e.currentTarget.style.color = "#0f1e50";
-                    e.currentTarget.style.borderColor = "rgba(15,30,80,0.22)";
-                  }}
-                >
-                  Schedule a call now →
-                </a>
               </div>
+
+              {/* Contact Email */}
               <div>
                 <p
+                  className="text-blue-200 uppercase tracking-wider mb-3"
                   style={{
-                    fontSize: "10px",
-                    fontWeight: "700",
-                    letterSpacing: "0.14em",
-                    textTransform: "uppercase",
-                    color: "#9ca3af",
-                    marginBottom: "9px",
-                    marginTop: 0,
+                    fontSize: "12px",
+                    fontWeight: "600",
+                    opacity: 0.85,
+                    letterSpacing: "0.5px",
                   }}
                 >
-                  Or email us at
+                  Contact Us
                 </p>
                 <div
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: "8px",
-                    background: "#1e2a4a",
-                    borderRadius: "999px",
-                    padding: "10px 18px",
-                    cursor: "pointer",
-                    maxWidth: "100%",
-                    flexWrap: "wrap",
-                  }}
                   onClick={handleCopy}
+                  className="group inline-flex items-center gap-2 px-4 py-3 rounded-xl cursor-pointer transition-all duration-200"
+                  style={{
+                    background: "rgba(255, 255, 255, 0.1)",
+                    border: "1px solid rgba(255, 255, 255, 0.15)",
+                    backdropFilter: "blur(10px)",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = "rgba(255, 255, 255, 0.15)";
+                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.25)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = "rgba(255, 255, 255, 0.1)";
+                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.15)";
+                  }}
                   role="button"
                   tabIndex={0}
                   onKeyDown={(e) => {
@@ -290,554 +176,400 @@ export default function Footer() {
                   }}
                   aria-label="Copy email address"
                 >
+                  <EmailIcon />
                   <a
                     href="mailto:info@oncotraceai.org"
+                    className="text-white font-medium"
                     style={{
-                      fontSize: isMobile ? "11px" : "13px",
-                      fontWeight: "600",
-                      color: "#e8f0fe",
+                      fontSize: "14px",
                       textDecoration: "none",
-                      wordBreak: "break-all",
                     }}
                     onClick={(e) => e.stopPropagation()}
                   >
                     info@oncotraceai.org
                   </a>
-                  <span style={{ fontSize: "12px", color: "#93c5fd" }}>
+                  <span
+                    className="text-blue-300 transition-opacity duration-200 ml-auto"
+                    style={{ fontSize: "16px" }}
+                  >
                     {copied ? "✓" : "⎘"}
                   </span>
                 </div>
               </div>
+
+              {/* CTA Button */}
+              <button
+                onClick={handleScheduleCall}
+                className="group inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl font-semibold transition-all duration-200 self-start"
+                style={{
+                  fontSize: "15px",
+                  background: "rgba(59, 130, 246, 0.2)",
+                  border: "1px solid rgba(59, 130, 246, 0.3)",
+                  color: "#fff",
+                  backdropFilter: "blur(10px)",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background =
+                    "linear-gradient(135deg, #3b82f6, #1d4ed8)";
+                  e.currentTarget.style.borderColor = "transparent";
+                  e.currentTarget.style.transform = "translateY(-2px)";
+                  e.currentTarget.style.boxShadow =
+                    "0 8px 20px rgba(59, 130, 246, 0.4)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "rgba(59, 130, 246, 0.2)";
+                  e.currentTarget.style.borderColor = "rgba(59, 130, 246, 0.3)";
+                  e.currentTarget.style.transform = "translateY(0)";
+                  e.currentTarget.style.boxShadow = "none";
+                }}
+              >
+                <CalendarIcon />
+                Schedule a call now
+                <ArrowRightIcon />
+              </button>
             </div>
 
-            {/* Divider between col1 and col2 */}
-            {isDesktop && <VerticalDivider />}
-            {isTablet && <VerticalDivider />}
-            {isMobile && <HorizontalDivider />}
-
-            {/* COL 2 — Nav links */}
-            <div
-              style={{
-                padding: col2Padding,
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
-                gap: "24px",
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  gap: navGap,
-                  flexWrap: "wrap",
-                }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "12px",
-                    minWidth: isMobile ? "120px" : "auto",
-                  }}
-                >
-                  <p
-                    style={{
-                      fontSize: "10px",
-                      fontWeight: "700",
-                      letterSpacing: "0.13em",
-                      textTransform: "uppercase",
-                      color: "#9ca3af",
-                      margin: "0 0 4px 0",
-                    }}
-                  >
-                    Quick Links
-                  </p>
-                  {["How It Works", "Benefits", "Features", "Team"].map(
-                    (item) => (
-                      <a
-                        key={item}
-                        href="#"
-                        style={{
-                          fontSize: "13px",
-                          color: "#4b5563",
-                          textDecoration: "none",
-                          transition: "color 0.2s",
-                        }}
-                        onMouseEnter={(e) =>
-                          (e.currentTarget.style.color = "#1d4ed8")
-                        }
-                        onMouseLeave={(e) =>
-                          (e.currentTarget.style.color = "#4b5563")
-                        }
-                      >
-                        {item}
-                      </a>
-                    )
-                  )}
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "12px",
-                    minWidth: isMobile ? "120px" : "auto",
-                  }}
-                >
-                  <p
-                    style={{
-                      fontSize: "10px",
-                      fontWeight: "700",
-                      letterSpacing: "0.13em",
-                      textTransform: "uppercase",
-                      color: "#9ca3af",
-                      margin: "0 0 4px 0",
-                    }}
-                  >
-                    Information
-                  </p>
-                  {["Terms of Service", "Privacy Policy", "Cookies Settings"].map(
-                    (item) => (
-                      <a
-                        key={item}
-                        href="#"
-                        style={{
-                          fontSize: "13px",
-                          color: "#4b5563",
-                          textDecoration: "none",
-                          transition: "color 0.2s",
-                        }}
-                        onMouseEnter={(e) =>
-                          (e.currentTarget.style.color = "#1d4ed8")
-                        }
-                        onMouseLeave={(e) =>
-                          (e.currentTarget.style.color = "#4b5563")
-                        }
-                      >
-                        {item}
-                      </a>
-                    )
-                  )}
-                </div>
-              </div>
-
-              {/* Brand tagline block */}
-              <div
-                style={{
-                  background: "#f0f6ff",
-                  borderRadius: "12px",
-                  border: "1.5px solid rgba(59,130,246,0.15)",
-                  padding: isMobile ? "16px 18px" : "20px 22px",
-                }}
-              >
-                <div
-                  style={{
-                    fontSize: "28px",
-                    color: "#3b82f6",
-                    fontWeight: "700",
-                    lineHeight: "1",
-                    marginBottom: "10px",
-                  }}
-                >
-                  "
-                </div>
+            {/* Column 2: Navigation Links */}
+            <div className="flex flex-col gap-5">
+              {/* Quick Links */}
+              <div>
                 <p
+                  className="text-blue-200 uppercase tracking-wider mb-3"
                   style={{
-                    fontSize: "13px",
-                    color: "#0f1e50",
-                    lineHeight: "1.65",
-                    margin: "0 0 12px 0",
-                    fontWeight: "500",
-                  }}
-                >
-                  From AI-based risk prediction to liquid biopsy-powered
-                  real-time monitoring — precision oncology intelligence that is
-                  open, accessible, and built for every community.
-                </p>
-                <p
-                  style={{
-                    fontSize: "11px",
-                    color: "#3b82f6",
+                    fontSize: "12px",
                     fontWeight: "600",
-                    margin: 0,
-                    letterSpacing: "0.02em",
+                    opacity: 0.85,
+                    letterSpacing: "0.5px",
                   }}
                 >
-                  — OncoTrace-AI
+                  Quick Links
                 </p>
-              </div>
-            </div>
-
-            {/* Divider between col2 and col3 */}
-            {isDesktop && <VerticalDivider />}
-            {isMobile && <HorizontalDivider />}
-
-            {/* COL 3 — Newsletter + Social links */}
-            {!isTablet && (
-              <div
-                style={{
-                  padding: col3Padding,
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "space-between",
-                  gap: "24px",
-                }}
-              >
-                <div>
-                  <p
-                    style={{
-                      fontSize: "10px",
-                      fontWeight: "700",
-                      letterSpacing: "0.13em",
-                      textTransform: "uppercase",
-                      color: "#9ca3af",
-                      margin: "0 0 8px 0",
-                    }}
-                  >
-                    Newsletter
-                  </p>
-                  <p
-                    style={{
-                      fontSize: "13px",
-                      color: "#4b5563",
-                      lineHeight: "1.55",
-                      margin: "0 0 14px 0",
-                    }}
-                  >
-                    Get the latest updates on AI-driven cancer prediction,
-                    real-time monitoring, and open-source oncology.
-                  </p>
-                  <div
-                    style={{
-                      display: "flex",
-                      overflow: "hidden",
-                      borderRadius: "10px",
-                      border: "1.5px solid rgba(59,130,246,0.26)",
-                      background: "#f0f6ff",
-                    }}
-                  >
-                    <input
-                      type="email"
-                      placeholder="you@example.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      onKeyDown={(e) => e.key === "Enter" && handleSend()}
-                      aria-label="Email address for newsletter"
+                <nav className="flex flex-col gap-2">
+                  {navigationLinks.map((link) => (
+                    <a
+                      key={link.label}
+                      href={link.href}
+                      className="text-white transition-all duration-200 inline-flex items-center gap-2 group"
                       style={{
-                        flex: 1,
-                        background: "transparent",
-                        border: "none",
-                        outline: "none",
-                        padding: "11px 14px",
-                        fontSize: "13px",
-                        color: "#1a1a1a",
-                        fontFamily: "inherit",
-                        minWidth: 0,
+                        fontSize: "15px",
+                        fontWeight: "400",
+                        opacity: 0.9,
+                        textDecoration: "none",
                       }}
-                    />
-                    <button
-                      onClick={handleSend}
-                      aria-label={sent ? "Email sent" : "Send newsletter signup"}
-                      style={{
-                        background: sent
-                          ? "linear-gradient(135deg,#16a34a,#15803d)"
-                          : "linear-gradient(135deg,#3b82f6,#1d4ed8)",
-                        border: "none",
-                        padding: "11px 18px",
-                        fontSize: "13px",
-                        fontWeight: "600",
-                        color: "#fff",
-                        cursor: "pointer",
-                        fontFamily: "inherit",
-                        whiteSpace: "nowrap",
-                        transition: "background 0.3s",
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.opacity = "1";
+                        e.currentTarget.style.paddingLeft = "8px";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.opacity = "0.9";
+                        e.currentTarget.style.paddingLeft = "0";
                       }}
                     >
-                      {sent ? "✓ Sent!" : "Send"}
-                    </button>
-                  </div>
+                      <span
+                        className="opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                        style={{ color: "#60a5fa", fontSize: "14px" }}
+                      >
+                        →
+                      </span>
+                      {link.label}
+                    </a>
+                  ))}
+                </nav>
+              </div>
+
+              {/* Legal Links */}
+              <div>
+                <p
+                  className="text-blue-200 uppercase tracking-wider mb-3"
+                  style={{
+                    fontSize: "12px",
+                    fontWeight: "600",
+                    opacity: 0.85,
+                    letterSpacing: "0.5px",
+                  }}
+                >
+                  Information
+                </p>
+                <nav className="flex flex-col gap-2">
+                  {legalLinks.map((link) => (
+                    <a
+                      key={link.label}
+                      href={link.href}
+                      className="text-white transition-all duration-200 inline-flex items-center gap-2 group"
+                      style={{
+                        fontSize: "15px",
+                        fontWeight: "400",
+                        opacity: 0.9,
+                        textDecoration: "none",
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.opacity = "1";
+                        e.currentTarget.style.paddingLeft = "8px";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.opacity = "0.9";
+                        e.currentTarget.style.paddingLeft = "0";
+                      }}
+                    >
+                      <span
+                        className="opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                        style={{ color: "#60a5fa", fontSize: "14px" }}
+                      >
+                        →
+                      </span>
+                      {link.label}
+                    </a>
+                  ))}
+                </nav>
+              </div>
+
+              {/* Social Links */}
+              <div>
+                <p
+                  className="text-blue-200 uppercase tracking-wider mb-3"
+                  style={{
+                    fontSize: "12px",
+                    fontWeight: "600",
+                    opacity: 0.85,
+                    letterSpacing: "0.5px",
+                  }}
+                >
+                  Reach Us
+                </p>
+                <div className="flex flex-col gap-2">
+                  {socialLinks.map((social) => (
+                    <a
+                      key={social.name}
+                      href="#"
+                      className="group flex items-center justify-between px-4 py-3 rounded-lg transition-all duration-200"
+                      style={{
+                        background: "rgba(255, 255, 255, 0.08)",
+                        border: "1px solid rgba(255, 255, 255, 0.12)",
+                        textDecoration: "none",
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background =
+                          "rgba(255, 255, 255, 0.12)";
+                        e.currentTarget.style.borderColor =
+                          "rgba(255, 255, 255, 0.2)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background =
+                          "rgba(255, 255, 255, 0.08)";
+                        e.currentTarget.style.borderColor =
+                          "rgba(255, 255, 255, 0.12)";
+                      }}
+                    >
+                      <span
+                        className="flex items-center gap-2.5 text-white font-medium"
+                        style={{ fontSize: "14px" }}
+                      >
+                        <social.icon />
+                        {social.name}
+                      </span>
+                      <span
+                        className="text-blue-300"
+                        style={{ fontSize: "13px", opacity: 0.85 }}
+                      >
+                        {social.handle}
+                      </span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Column 3: Map & Address */}
+            <div className={`flex flex-col gap-5 ${isTablet ? "col-span-2" : ""}`}>
+              <div>
+                <p
+                  className="text-blue-200 uppercase tracking-wider mb-3"
+                  style={{
+                    fontSize: "12px",
+                    fontWeight: "600",
+                    opacity: 0.85,
+                    letterSpacing: "0.5px",
+                  }}
+                >
+                  Our Location
+                </p>
+
+                {/* Map */}
+                <div
+                  className="rounded-2xl overflow-hidden mb-4"
+                  style={{
+                    border: "1px solid rgba(255, 255, 255, 0.15)",
+                    boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2)",
+                    height: isMobile ? "220px" : isTablet ? "240px" : "200px",
+                    maxWidth: isMobile ? "100%" : isTablet ? "400px" : "100%",
+                  }}
+                >
+                  <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3916.566960307229!2d76.98685017639728!3d10.996022489166432!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba859fb5b93f923%3A0x8dad57dab1d7cae9!2sVisolve!5e1!3m2!1sen!2sin!4v1775796154311!5m2!1sen!2sin"
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0 }}
+                    allowFullScreen=""
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    title="OncoTrace AI Location"
+                  />
                 </div>
 
-                {/* Social links */}
-                <div>
-                  <p
-                    style={{
-                      fontSize: "10px",
-                      fontWeight: "700",
-                      letterSpacing: "0.13em",
-                      textTransform: "uppercase",
-                      color: "#9ca3af",
-                      margin: "0 0 12px 0",
-                    }}
-                  >
-                    Follow Us
-                  </p>
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "8px",
-                    }}
-                  >
-                    {[
-                      { name: "LinkedIn", handle: "/oncotraceai" },
-                      { name: "Twitter", handle: "@oncotraceai" },
-                      { name: "GitHub", handle: "oncotraceai" },
-                      { name: "Instagram", handle: "@oncotraceai" },
-                    ].map((s) => (
-                      <a
-                        key={s.name}
-                        href="#"
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                          padding: "8px 12px",
-                          borderRadius: "8px",
-                          background: "#f8faff",
-                          border: "1px solid rgba(59,130,246,0.12)",
-                          textDecoration: "none",
-                          transition: "background 0.2s",
-                        }}
-                        onMouseEnter={(e) =>
-                          (e.currentTarget.style.background = "#e8f0fe")
-                        }
-                        onMouseLeave={(e) =>
-                          (e.currentTarget.style.background = "#f8faff")
-                        }
+                {/* Address */}
+                <div
+                  className="px-5 py-4 rounded-xl"
+                  style={{
+                    background: "rgba(255, 255, 255, 0.1)",
+                    border: "1px solid rgba(255, 255, 255, 0.15)",
+                    backdropFilter: "blur(10px)",
+                  }}
+                >
+                  <div className="flex items-start gap-3">
+                    <LocationIcon />
+                    <div>
+                      <p
+                        className="text-white font-semibold mb-1.5"
+                        style={{ fontSize: "15px" }}
                       >
-                        <span
-                          style={{
-                            fontSize: "12px",
-                            fontWeight: "600",
-                            color: "#0f1e50",
-                          }}
-                        >
-                          {s.name}
-                        </span>
-                        <span style={{ fontSize: "11px", color: "#3b82f6" }}>
-                          {s.handle}
-                        </span>
-                      </a>
-                    ))}
+                        Visolve
+                      </p>
+                      <p
+                        className="text-blue-100 leading-relaxed"
+                        style={{ fontSize: "14px", opacity: 0.9, lineHeight: "1.6" }}
+                      >
+                        Olymbus, Rukmani Nagar,
+                        <br />
+                        Ramanathapuram, Coimbatore,
+                        <br />
+                        Tamil Nadu 641045
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
-            )}
+            </div>
           </div>
 
-          {/* Tablet: Col 3 rendered below the 2-col grid */}
-          {isTablet && (
-            <>
-              <div
-                style={{
-                  margin: "0 28px",
-                  height: "1px",
-                  background:
-                    "linear-gradient(90deg,transparent,rgba(59,130,246,0.26) 30%,rgba(59,130,246,0.26) 70%,transparent)",
-                }}
-              />
-              <div
-                style={{
-                  padding: col3Padding,
-                  display: "grid",
-                  gridTemplateColumns: "1fr 1fr",
-                  gap: "28px",
-                }}
-              >
-                <div>
-                  <p
-                    style={{
-                      fontSize: "10px",
-                      fontWeight: "700",
-                      letterSpacing: "0.13em",
-                      textTransform: "uppercase",
-                      color: "#9ca3af",
-                      margin: "0 0 8px 0",
-                    }}
-                  >
-                    Newsletter
-                  </p>
-                  <p
-                    style={{
-                      fontSize: "13px",
-                      color: "#4b5563",
-                      lineHeight: "1.55",
-                      margin: "0 0 14px 0",
-                    }}
-                  >
-                    Get the latest updates on AI-driven cancer prediction,
-                    real-time monitoring, and open-source oncology.
-                  </p>
-                  <div
-                    style={{
-                      display: "flex",
-                      overflow: "hidden",
-                      borderRadius: "10px",
-                      border: "1.5px solid rgba(59,130,246,0.26)",
-                      background: "#f0f6ff",
-                    }}
-                  >
-                    <input
-                      type="email"
-                      placeholder="you@example.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      onKeyDown={(e) => e.key === "Enter" && handleSend()}
-                      aria-label="Email address for newsletter"
-                      style={{
-                        flex: 1,
-                        background: "transparent",
-                        border: "none",
-                        outline: "none",
-                        padding: "11px 14px",
-                        fontSize: "13px",
-                        color: "#1a1a1a",
-                        fontFamily: "inherit",
-                        minWidth: 0,
-                      }}
-                    />
-                    <button
-                      onClick={handleSend}
-                      aria-label={sent ? "Email sent" : "Send newsletter signup"}
-                      style={{
-                        background: sent
-                          ? "linear-gradient(135deg,#16a34a,#15803d)"
-                          : "linear-gradient(135deg,#3b82f6,#1d4ed8)",
-                        border: "none",
-                        padding: "11px 18px",
-                        fontSize: "13px",
-                        fontWeight: "600",
-                        color: "#fff",
-                        cursor: "pointer",
-                        fontFamily: "inherit",
-                        whiteSpace: "nowrap",
-                        transition: "background 0.3s",
-                      }}
-                    >
-                      {sent ? "✓ Sent!" : "Send"}
-                    </button>
-                  </div>
-                </div>
-
-                <div>
-                  <p
-                    style={{
-                      fontSize: "10px",
-                      fontWeight: "700",
-                      letterSpacing: "0.13em",
-                      textTransform: "uppercase",
-                      color: "#9ca3af",
-                      margin: "0 0 12px 0",
-                    }}
-                  >
-                    Follow Us
-                  </p>
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "8px",
-                    }}
-                  >
-                    {[
-                      { name: "LinkedIn", handle: "/oncotraceai" },
-                      { name: "Twitter", handle: "@oncotraceai" },
-                      { name: "GitHub", handle: "oncotraceai" },
-                      { name: "Instagram", handle: "@oncotraceai" },
-                    ].map((s) => (
-                      <a
-                        key={s.name}
-                        href="#"
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "space-between",
-                          padding: "8px 12px",
-                          borderRadius: "8px",
-                          background: "#f8faff",
-                          border: "1px solid rgba(59,130,246,0.12)",
-                          textDecoration: "none",
-                          transition: "background 0.2s",
-                        }}
-                        onMouseEnter={(e) =>
-                          (e.currentTarget.style.background = "#e8f0fe")
-                        }
-                        onMouseLeave={(e) =>
-                          (e.currentTarget.style.background = "#f8faff")
-                        }
-                      >
-                        <span
-                          style={{
-                            fontSize: "12px",
-                            fontWeight: "600",
-                            color: "#0f1e50",
-                          }}
-                        >
-                          {s.name}
-                        </span>
-                        <span style={{ fontSize: "11px", color: "#3b82f6" }}>
-                          {s.handle}
-                        </span>
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </>
-          )}
-
-          {/* ── Divider ── */}
+          {/* Divider */}
           <div
             style={{
-              margin: isMobile ? "0 20px" : "0 44px",
               height: "1px",
               background:
-                "linear-gradient(90deg,transparent,rgba(59,130,246,0.26) 30%,rgba(59,130,246,0.26) 70%,transparent)",
+                "linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15) 30%, rgba(255, 255, 255, 0.15) 70%, transparent)",
+              margin: "0 20px",
             }}
           />
 
-          {/* ── BOTTOM BAR ── */}
-          <div style={bottomBarStyle}>
+          {/* Bottom bar */}
+          <div
+            className={`
+              flex items-center justify-between gap-4 px-5 sm:px-6 lg:px-8 py-5
+              ${isMobile ? "flex-col text-center" : "flex-row"}
+            `}
+          >
+            {/* Brand badge */}
             <div
+              className="inline-flex items-center px-5 py-2.5 rounded-lg"
               style={{
-                background: "#f0f6ff",
-                border: "1.5px solid rgba(59,130,246,0.2)",
-                borderRadius: "8px",
-                padding: "6px 22px",
-                display: "inline-flex",
-                alignItems: "center",
-                flexShrink: 0,
+                background: "rgba(255, 255, 255, 0.1)",
+                border: "1px solid rgba(255, 255, 255, 0.15)",
+                backdropFilter: "blur(10px)",
               }}
             >
               <span
+                className="font-bold tracking-tight"
                 style={{
-                  fontSize: isMobile ? "17px" : "20px",
-                  fontWeight: "900",
-                  letterSpacing: "-0.5px",
-                  color: "#64748b",
-                  userSelect: "none",
-                  lineHeight: "1",
-                  fontFamily: "'Inter','Helvetica Neue',Arial,sans-serif",
-                  whiteSpace: "nowrap",
+                  fontSize: isMobile ? "17px" : "19px",
+                  color: "#e2e8f0",
+                  letterSpacing: "-0.3px",
                 }}
               >
-                OncoTrace-<span style={{ color: "#3b82f6" }}>AI</span>
+                OncoTrace-<span style={{ color: "#60a5fa" }}>AI</span>
               </span>
             </div>
+
+            {/* Copyright */}
             <p
+              className="text-blue-200"
               style={{
-                fontSize: "12px",
-                color: "#9ca3af",
+                fontSize: "13px",
+                opacity: 0.8,
                 margin: 0,
-                flex: isMobile ? "none" : "1 1 180px",
-                textAlign: isMobile ? "center" : "left",
               }}
             >
-              © 2025 OncoTrace-AI • v2026.04.07 
+              © 2026 OncoTrace-AI • All rights reserved • v2026.04.10
             </p>
           </div>
         </div>
       </div>
     </footer>
+  );
+}
+
+// Icon components
+function LinkedInIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-300">
+      <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+      <rect x="2" y="9" width="4" height="12"></rect>
+      <circle cx="4" cy="4" r="2"></circle>
+    </svg>
+  );
+}
+
+function PhoneIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-300">
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+    </svg>
+  );
+}
+
+function EmailIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-300">
+      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+      <polyline points="22,6 12,13 2,6"></polyline>
+    </svg>
+  );
+}
+
+function LocationIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0 mt-0.5 text-blue-300">
+      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+      <circle cx="12" cy="10" r="3"></circle>
+    </svg>
+  );
+}
+
+function CalendarIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+      <line x1="16" y1="2" x2="16" y2="6"></line>
+      <line x1="8" y1="2" x2="8" y2="6"></line>
+      <line x1="3" y1="10" x2="21" y2="10"></line>
+    </svg>
+  );
+}
+
+function ArrowRightIcon() {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="transition-transform duration-200 group-hover:translate-x-1"
+    >
+      <line x1="5" y1="12" x2="19" y2="12"></line>
+      <polyline points="12 5 19 12 12 19"></polyline>
+    </svg>
   );
 }

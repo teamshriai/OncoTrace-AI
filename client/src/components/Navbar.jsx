@@ -46,9 +46,28 @@ const PRODUCT_LINKS = [
     ),
   },
   {
-    label:    'AI-Powered Mammogram',
-    subtitle: 'Analysis Platform',
-    action:   'mammo',
+    label:    'Book a Demo',
+    subtitle: 'MammoAI Risk Analysis',
+    action:   'book-mammo',
+    featured: false,
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <rect x="3" y="2" width="14" height="16" rx="2"
+          stroke="currentColor" strokeWidth="1.5" />
+        <path d="M7 1v3M13 1v3M3 7h14"
+          stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        <circle cx="7"  cy="11" r="1" fill="currentColor" />
+        <circle cx="10" cy="11" r="1" fill="currentColor" />
+        <circle cx="13" cy="11" r="1" fill="currentColor" />
+        <circle cx="7"  cy="14" r="1" fill="currentColor" />
+        <circle cx="10" cy="14" r="1" fill="currentColor" />
+      </svg>
+    ),
+  },
+  {
+    label:    'View a Demo',
+    subtitle: 'MammoAI Risk Analysis',
+    action:   'view-mammo',
     featured: false,
     icon: (
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
@@ -259,7 +278,7 @@ function DesktopDropdown({ onAction, onClose, triggerRef }) {
       className="
         nb-animate-dropdown
         absolute top-[calc(100%+10px)] right-0
-        min-w-[300px] z-[10001]
+        min-w-[320px] z-[10001]
         bg-white rounded-2xl
         border border-blue-100
         shadow-[0_4px_6px_-1px_rgba(0,0,0,0.07),0_20px_50px_rgba(37,99,235,0.13)]
@@ -356,7 +375,7 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
 
   const ddTriggerRef = useRef(null);
   const rafRef       = useRef(null);
-  const isDemoPage   = currentPage === 'demo';
+  const isDemoPage   = currentPage === 'demo' || currentPage === 'mammo' || currentPage === 'lb';
 
   // ── Body scroll lock (iOS-safe) ──────────────────────────────────────────
   useBodyScrollLock(menuOpen);
@@ -438,11 +457,10 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
     });
   }, [currentPage]);
 
-  // ── Navigation handler (FIXED: Don't close dropdown here) ───────────────
+  // ── Navigation handler ──────────────────────────────────────────────────
   const handleNavClick = useCallback((href) => {
     const id = href.slice(1);
     closeMenu();
-    // REMOVED: setDdOpen(false) — dropdown should only close on outside click or escape
     if (isDemoPage) {
       navigate('home');
       if (id !== 'home') sessionStorage.setItem('nb-scroll-target', id);
@@ -451,10 +469,9 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
     }
   }, [isDemoPage, navigate, closeMenu]);
 
-  // ── Logo handler (FIXED: Don't close dropdown here) ─────────────────────
+  // ── Logo handler ─────────────────────────────────────────────────────────
   const handleLogo = useCallback(() => {
     closeMenu();
-    // REMOVED: setDdOpen(false) — dropdown should only close on outside click or escape
     if (isDemoPage) {
       navigate('home');
     } else {
@@ -467,10 +484,15 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
     setDdOpen(false);
     closeMenu();
     setTimeout(() => {
-      if (action === 'book-lb')      navigate('lb');
-      else if (action === 'view-lb') navigate('demo');
-      else if (action === 'mammo')
+      if (action === 'book-lb') {
+        navigate('lb');
+      } else if (action === 'view-lb') {
+        navigate('demo');
+      } else if (action === 'book-mammo') {
+        navigate('mammo');
+      } else if (action === 'view-mammo') {
         window.open('https://oncotraceai.org/mammo-demo/ui', '_blank', 'noopener,noreferrer');
+      }
     }, 50);
   }, [navigate, closeMenu]);
 
@@ -501,6 +523,14 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
   , [prefersReducedMotion]);
 
   const showDrawer = menuOpen || menuClosing;
+
+  // Get appropriate page label for demo mode badge
+  const getDemoLabel = () => {
+    if (currentPage === 'demo') return 'LB Demo Mode';
+    if (currentPage === 'lb') return 'LB Booking';
+    if (currentPage === 'mammo') return 'Mammo Booking';
+    return 'Demo Mode';
+  };
 
   // ─── Render ───────────────────────────────────────────────────────────────
   return (
@@ -540,7 +570,7 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
               </span>
             ) : (
               <img
-                src="/Logo.png"
+                src="/logo.png"
                 alt="OncoTrace AI"
                 draggable={false}
                 onError={() => setLogoError(true)}
@@ -565,7 +595,7 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
                       px-4 py-1.5 rounded-full whitespace-nowrap
                     "
                   >
-                    Demo Mode
+                    {getDemoLabel()}
                   </span>
                 </li>
               ) : (
@@ -754,7 +784,7 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
                 px-3 py-1 rounded-full
               ">
                 <span className="nb-badge-dot w-1.5 h-1.5 rounded-full bg-blue-500 flex-shrink-0" />
-                {isDemoPage ? 'Demo Mode' : 'Navigate'}
+                {isDemoPage ? getDemoLabel() : 'Navigate'}
               </span>
             </div>
 
@@ -878,7 +908,6 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
                     </button>
                   ))}
                 </div>
-
                 <div className="h-2" />
               </>
             )}

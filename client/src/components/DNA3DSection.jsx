@@ -292,13 +292,7 @@ export default function DNA3DSection() {
             </span>{" "}
             Monitoring
           </h2>
-          <p
-            className="mx-auto mt-1 max-w-md text-xs text-slate-400
-                       sm:mt-2 sm:text-sm"
-          >
-            Transforming cancer care through Liquid Biopsy and AI — enabling
-            continuous, real-time precision monitoring of cancer progression
-          </p>
+
         </div>
 
         {/* ── scroll hint ── */}
@@ -453,4 +447,4 @@ export default function DNA3DSection() {
   );
 }
 
-useGLTF.preload("/DNA_STRAND_NEW.glb");
+useGLTF.preload("/DNA_STRAND_NEW.glb"); 

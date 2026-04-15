@@ -15,6 +15,7 @@ import Footer             from './components/Footer';
 import LiquidBiopsySection from './components/LiquidBiopsySection';
 import Demo               from './components/Demo';
 import LBdemo             from './components/Lbdemo';
+import Mammodemo          from './components/Mammodemo';
 
 /* ── Navbar height token — change once here ── */
 const NAV_H = 108; // px  (matches .nb-bar height: 108px in Navbar.jsx)
@@ -130,8 +131,9 @@ function AppInner() {
   const location = useLocation();
 
   const currentPage =
-    location.pathname === '/Book-LB' ? 'lb'   :
-    location.pathname === '/demo'    ? 'demo' : 'home';
+    location.pathname === '/Book-LB'    ? 'lb'    :
+    location.pathname === '/demo'       ? 'demo'  :
+    location.pathname === '/mammo-demo' ? 'mammo' : 'home';
 
   const handleNavigate = (to) => {
     switch (to) {
@@ -141,6 +143,10 @@ function AppInner() {
         break;
       case 'lb':
         navigate('/Book-LB');
+        window.scrollTo({ top: 0, behavior: 'auto' });
+        break;
+      case 'mammo':
+        navigate('/mammo-demo');
         window.scrollTo({ top: 0, behavior: 'auto' });
         break;
       case 'home':
@@ -189,6 +195,15 @@ function AppInner() {
           element={
             <div style={{ paddingTop: NAV_H }}>
               <LBdemo onBack={() => handleNavigate('home')} />
+            </div>
+          }
+        />
+
+        <Route
+          path="/mammo-demo"
+          element={
+            <div style={{ paddingTop: NAV_H }}>
+              <Mammodemo onBack={() => handleNavigate('home')} />
             </div>
           }
         />

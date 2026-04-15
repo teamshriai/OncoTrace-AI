@@ -137,10 +137,7 @@ export default function ProblemSection() {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
-
         .ps-root {
-          font-family: 'Inter', sans-serif;
           background: linear-gradient(160deg, #f8fafc 0%, #f1f5f9 50%, #e8f0fe 100%);
           min-height: 100vh;
           width: 100%;
@@ -334,9 +331,7 @@ export default function ProblemSection() {
                 <div className="px-4 pt-3 pb-5 flex flex-col flex-1">
                   {/* Stat */}
                   <div className="mb-3">
-                    <div
-                      className="stat-num text-2xl xl:text-3xl font-extrabold tracking-tight leading-none tabular-nums mb-1"
-                    >
+                    <div className="stat-num text-2xl xl:text-3xl font-extrabold tracking-tight leading-none tabular-nums mb-1">
                       {p.stat}
                     </div>
                     <div
