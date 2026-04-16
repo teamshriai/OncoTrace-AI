@@ -10,7 +10,6 @@ import ProblemSection     from './components/ProblemSection';
 import SolutionSection    from './components/SolutionSection';
 import CaseStudySection   from './components/CaseStudySection';
 import TeamSection        from './components/TeamSection';
-import CTASection         from './components/CTASection';
 import Footer             from './components/Footer';
 import LiquidBiopsySection from './components/LiquidBiopsySection';
 import Demo               from './components/Demo';
@@ -113,11 +112,6 @@ function HomePage({ onNavigate }) {
       <Section id="team">
         <TeamSection />
       </Section>
-
-      <Section id="cta">
-        <CTASection onNavigate={onNavigate} />
-      </Section>
-
       <Footer />
     </main>
   );

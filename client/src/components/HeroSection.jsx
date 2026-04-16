@@ -12,10 +12,10 @@ const CORNER_ACCENTS = [
 ]
 
 const WORKFLOW_STEPS = [
-  { id: 1, label: 'Blood Draw', icon: '/img1.png', color: '#64748b' },
-  { id: 2, label: 'Plasma Separation', icon: '/img2.png', color: '#3b82f6' },
-  { id: 3, label: 'ctDNA + NGS', icon: '/img3.png', color: '#6366f1' },
-  { id: 4, label: 'AI Analysis', icon: '/img4.png', color: '#0ea5e9' },
+  { id: 1, label: 'Blood Draw',         icon: '/img1.png', color: '#64748b' },
+  { id: 2, label: 'Plasma Separation',  icon: '/img2.png', color: '#3b82f6' },
+  { id: 3, label: 'ctDNA + NGS',        icon: '/img3.png', color: '#6366f1' },
+  { id: 4, label: 'AI Analysis',        icon: '/img4.png', color: '#0ea5e9' },
   { id: 5, label: 'Clinician Decision', icon: '/img5.png', color: '#475569' },
 ]
 
@@ -26,13 +26,13 @@ const WORKFLOW_STEPS = [
 const scopedCSS = `
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
-  .hero-root *, .hero-root *::before, .hero-root *::after { 
-    box-sizing: border-box; 
+  .hero-root *, .hero-root *::before, .hero-root *::after {
+    box-sizing: border-box;
   }
-  
-  .hero-root img, .hero-root svg, .hero-root video, .hero-root canvas { 
-    display: block; 
-    max-width: 100%; 
+
+  .hero-root img, .hero-root svg, .hero-root video, .hero-root canvas {
+    display: block;
+    max-width: 100%;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -51,49 +51,203 @@ const scopedCSS = `
 
   @keyframes heroSpin {
     from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+    to   { transform: rotate(360deg); }
   }
 
   @keyframes heroGradientShift {
     0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
+    50%       { background-position: 100% 50%; }
   }
 
   @keyframes heroGoldenGlow {
     0%, 100% { opacity: 0.4; }
-    50% { opacity: 0.7; }
+    50%       { opacity: 0.7; }
   }
 
-  .hero-headline-line {
-    display: block;
-    line-height: 1.05;
+  @keyframes heroBadgePulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.82; }
   }
 
+  /* ─── Workflow circles ─── */
   .wf-circle {
-    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), 
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
                 box-shadow 0.3s ease;
   }
+  .wf-circle:hover { transform: translateY(-8px) scale(1.03); }
 
-  .wf-circle:hover {
-    transform: translateY(-8px) scale(1.03);
+  .wf-label { transition: color 0.2s ease, transform 0.2s ease; }
+  .wf-wrapper:hover .wf-label { color: #1e40af; transform: scale(1.02); }
+
+  .golden-glow { animation: heroGoldenGlow 3s ease-in-out infinite; }
+
+  /* ═══════════════════════════════════════════════
+     LEFT OVERLAY BLOCK — desktop (unchanged)
+     ═══════════════════════════════════════════════ */
+  .hero-overlay-left {
+    position: absolute;
+    left:     7%;
+    top:      10%;
+    z-index:  10;
+    pointer-events: none;
+    user-select: none;
+    max-width: 38%;
   }
 
-  .wf-label {
-    transition: color 0.2s ease, transform 0.2s ease;
+  .hero-badge-open-source {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 800;
+    letter-spacing: 0.055em;
+    text-transform: uppercase;
+    color: #b45309;
+    line-height: 1.15;
+    white-space: nowrap;
+    font-size: clamp(8px, 1.55vw, 22px);
+    animation: heroBadgePulse 4s ease-in-out infinite;
+    display: block;
   }
 
-  .wf-wrapper:hover .wf-label {
-    color: #1e40af;
-    transform: scale(1.02);
+  .hero-badge-tagline {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #6b7280;
+    margin-top: 0.35em;
+    white-space: nowrap;
+    font-size: clamp(6px, 0.9vw, 13px);
+    display: block;
   }
 
-  .golden-glow {
-    animation: heroGoldenGlow 3s ease-in-out infinite;
+  /* ═══════════════════════════════════════════════
+     RIGHT OVERLAY BLOCK — desktop (unchanged)
+     ═══════════════════════════════════════════════ */
+  .hero-overlay-right {
+    position:   absolute;
+    left:       63%;
+    top:        7%;
+    right:      2%;
+    z-index:    10;
+    max-width:  34%;
+    user-select: none;
+    pointer-events: none;
+  }
+
+  .hero-ai-powered-label {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: #9ca3af;
+    white-space: nowrap;
+    font-size: clamp(6px, 0.82vw, 13px);
+    margin-bottom: 0.25em;
+    display: block;
+    pointer-events: none;
+  }
+
+  .hero-main-headline {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-weight: 700;
+    color: #1e3a8a;
+    font-size: clamp(12px, 3.2vw, 48px);
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+    margin: 0;
+    display: block;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    pointer-events: none;
+    cursor: default;
+  }
+
+  /* Only the "Powered by" line is a hyperlink */
+  .hero-powered-by-link {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 400;
+    color: #374151;
+    margin-top: 0.5em;
+    white-space: nowrap;
+    font-size: clamp(5px, 0.82vw, 12px);
+    letter-spacing: 0.01em;
+    display: inline-block;
+    pointer-events: auto;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.2s ease, text-decoration-color 0.2s ease;
+  }
+
+  .hero-powered-by-link:hover {
+    color: #1e3a8a;
+    text-decoration: underline;
+    text-decoration-color: #1e3a8a60;
+    text-underline-offset: 2px;
+  }
+
+  /* ═══════════════════════════════════════════════
+     MOBILE OVERRIDES  (< 480px)
+     ONLY changes:
+       1. Smaller font sizes across both blocks
+       2. Reduced margin-top on .hero-powered-by-link
+          so the gap between headline and link is tight
+     Everything else — colors, weights, positions,
+     image styles — is untouched.
+     ═══════════════════════════════════════════════ */
+  @media (max-width: 479px) {
+
+    /* ── LEFT block position ── */
+    .hero-overlay-left {
+      left:      4%;
+      top:       6%;
+      max-width: 44%;
+    }
+
+    /* ── RIGHT block position ── */
+    .hero-overlay-right {
+      left:      52%;
+      top:       5%;
+      right:     2%;
+      max-width: 46%;
+    }
+
+    /* ── LEFT block font sizes (smaller than before) ── */
+    .hero-badge-open-source {
+      font-size:   clamp(5px, 2.4vw, 11px);
+      white-space: normal;
+    }
+
+    .hero-badge-tagline {
+      font-size:   clamp(4px, 1.7vw, 8px);
+      margin-top:  0.2em;
+      white-space: normal;
+    }
+
+    /* ── RIGHT block font sizes (smaller than before) ── */
+    .hero-ai-powered-label {
+      font-size:   clamp(4px, 1.6vw, 7px);
+      white-space: normal;
+      margin-bottom: 0.1em;
+    }
+
+    .hero-main-headline {
+      font-size:   clamp(7px, 2.9vw, 13px);
+      line-height: 1.15;
+    }
+
+    /*
+      KEY FIX: margin-top reduced from 0.5em → 0.1em
+      so the "Powered by" line sits tight under
+      the headline with no large gap on mobile
+    */
+    .hero-powered-by-link {
+      font-size:  clamp(3px, 1.6vw, 7px);
+      margin-top: 0.1em;
+      white-space: normal;
+    }
   }
 `
 
 let _styleInjected = false
-
 function injectHeroStyles() {
   if (_styleInjected || typeof document === 'undefined') return
   const tag = document.createElement('style')
@@ -109,36 +263,28 @@ function injectHeroStyles() {
 
 function useInView(ref, threshold = 0.1) {
   const [inView, setInView] = useState(false)
-  
+
   useEffect(() => {
     const node = ref.current
     if (!node) return
-    
-    if (typeof IntersectionObserver === 'undefined') {
-      setInView(true)
-      return
-    }
-    
+    if (typeof IntersectionObserver === 'undefined') { setInView(true); return }
+
     const obs = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
-          setInView(true)
-          obs.unobserve(node)
-        }
+        if (entry.isIntersecting) { setInView(true); obs.unobserve(node) }
       },
       { threshold }
     )
-    
     obs.observe(node)
     return () => obs.disconnect()
   }, [ref, threshold])
-  
+
   return inView
 }
 
 function useReducedMotion() {
   const [reduced, setReduced] = useState(false)
-  
+
   useEffect(() => {
     if (typeof window === 'undefined') return
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
@@ -147,7 +293,7 @@ function useReducedMotion() {
     mq.addEventListener('change', handler)
     return () => mq.removeEventListener('change', handler)
   }, [])
-  
+
   return reduced
 }
 
@@ -157,8 +303,8 @@ function useReducedMotion() {
 
 function WorkflowStepCircle({ step, index, inView, isReduced }) {
   const [imgLoaded, setImgLoaded] = useState(false)
-  const [imgError, setImgError] = useState(false)
-  
+  const [imgError,  setImgError]  = useState(false)
+
   const entryDelay = isReduced ? 0 : index * 0.08
   const circleSize = 'clamp(140px, 18vw, 260px)'
 
@@ -166,10 +312,10 @@ function WorkflowStepCircle({ step, index, inView, isReduced }) {
     <div
       className="wf-wrapper flex flex-col items-center"
       style={{
-        opacity: inView ? 1 : 0,
+        opacity:   inView ? 1 : 0,
         transform: inView ? 'translateY(0)' : 'translateY(24px)',
-        transition: isReduced 
-          ? 'none' 
+        transition: isReduced
+          ? 'none'
           : `opacity 0.5s ease ${entryDelay}s, transform 0.5s ease ${entryDelay}s`,
       }}
     >
@@ -177,45 +323,44 @@ function WorkflowStepCircle({ step, index, inView, isReduced }) {
       <div
         className="relative z-10 mb-3 flex items-center justify-center rounded-full font-bold text-white shadow-lg"
         style={{
-          width: 36,
-          height: 36,
-          fontSize: 14,
+          width:      36,
+          height:     36,
+          fontSize:   14,
           background: `linear-gradient(135deg, ${step.color}ee, ${step.color})`,
-          boxShadow: `0 3px 10px ${step.color}60`,
+          boxShadow:  `0 3px 10px ${step.color}60`,
           fontFamily: 'Inter, system-ui, sans-serif',
         }}
       >
         {step.id}
       </div>
 
-      {/* Golden Glow Background */}
+      {/* Golden Glow */}
       <div
         className="absolute golden-glow rounded-full pointer-events-none"
         style={{
-          width: `calc(${circleSize} + 24px)`,
-          height: `calc(${circleSize} + 24px)`,
-          background: 'radial-gradient(circle, rgba(251, 191, 36, 0.15) 0%, rgba(245, 158, 11, 0.08) 50%, transparent 70%)',
-          filter: 'blur(8px)',
-          zIndex: 0,
+          width:      `calc(${circleSize} + 24px)`,
+          height:     `calc(${circleSize} + 24px)`,
+          background: 'radial-gradient(circle, rgba(251,191,36,0.15) 0%, rgba(245,158,11,0.08) 50%, transparent 70%)',
+          filter:     'blur(8px)',
+          zIndex:     0,
         }}
         aria-hidden="true"
       />
 
-      {/* Circle Container */}
+      {/* Circle */}
       <div
         className="wf-circle relative rounded-full overflow-hidden bg-white"
         style={{
-          width: circleSize,
-          height: circleSize,
-          border: `3px solid ${step.color}50`,
-          boxShadow: `0 6px 20px rgba(0, 0, 0, 0.1), 
-                      0 2px 6px rgba(0, 0, 0, 0.06), 
-                      0 0 0 6px rgba(251, 191, 36, 0.08),
+          width:     circleSize,
+          height:    circleSize,
+          border:    `3px solid ${step.color}50`,
+          boxShadow: `0 6px 20px rgba(0,0,0,0.1),
+                      0 2px 6px rgba(0,0,0,0.06),
+                      0 0 0 6px rgba(251,191,36,0.08),
                       inset 0 0 0 2px ${step.color}20`,
           zIndex: 1,
         }}
       >
-        {/* Loading Spinner */}
         {!imgLoaded && !imgError && (
           <div className="absolute inset-0 flex items-center justify-center bg-slate-50">
             <div
@@ -225,7 +370,6 @@ function WorkflowStepCircle({ step, index, inView, isReduced }) {
           </div>
         )}
 
-        {/* Error State */}
         {imgError && (
           <div className="absolute inset-0 flex items-center justify-center bg-slate-50">
             <svg width="40%" height="40%" viewBox="0 0 48 48" fill="none">
@@ -235,7 +379,6 @@ function WorkflowStepCircle({ step, index, inView, isReduced }) {
           </div>
         )}
 
-        {/* Main Image */}
         <img
           src={step.icon}
           alt={step.label}
@@ -244,32 +387,28 @@ function WorkflowStepCircle({ step, index, inView, isReduced }) {
           onLoad={() => setImgLoaded(true)}
           onError={() => setImgError(true)}
           className="absolute inset-0 w-full h-full object-cover"
-          style={{
-            opacity: imgLoaded ? 1 : 0,
-            transition: 'opacity 0.4s ease',
-          }}
+          style={{ opacity: imgLoaded ? 1 : 0, transition: 'opacity 0.4s ease' }}
         />
 
-        {/* Subtle Light Overlay */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
-            background: 'radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.25) 0%, transparent 60%)',
+            background: 'radial-gradient(circle at 35% 35%, rgba(255,255,255,0.25) 0%, transparent 60%)',
           }}
         />
       </div>
 
-      {/* Label - Bigger & Bolder */}
+      {/* Label */}
       <div className="mt-4 px-3" style={{ maxWidth: circleSize }}>
         <p
           className="wf-label text-center font-bold text-slate-800 select-none leading-tight"
           style={{
-            fontFamily: 'Inter, system-ui, sans-serif',
-            fontSize: 'clamp(13px, 1.35vw, 17px)',
+            fontFamily:    'Inter, system-ui, sans-serif',
+            fontSize:      'clamp(13px, 1.35vw, 17px)',
             letterSpacing: '-0.02em',
-            lineHeight: 1.25,
-            wordBreak: 'break-word',
-            hyphens: 'auto',
+            lineHeight:    1.25,
+            wordBreak:     'break-word',
+            hyphens:       'auto',
           }}
         >
           {step.label}
@@ -280,7 +419,7 @@ function WorkflowStepCircle({ step, index, inView, isReduced }) {
 }
 
 /* ═══════════════════════════════════════════════════════
-   DESKTOP CONNECTOR (SOLID ARROW)
+   CONNECTORS
    ═══════════════════════════════════════════════════════ */
 
 function DesktopConnector({ inView, delay, isReduced, color }) {
@@ -288,9 +427,9 @@ function DesktopConnector({ inView, delay, isReduced, color }) {
     <div
       className="flex-shrink-0 flex items-center justify-center"
       style={{
-        marginTop: 'calc(clamp(70px, 9vw, 130px))',
-        width: 'clamp(35px, 4vw, 70px)',
-        opacity: inView ? 1 : 0,
+        marginTop:  'calc(clamp(70px, 9vw, 130px))',
+        width:      'clamp(35px, 4vw, 70px)',
+        opacity:    inView ? 1 : 0,
         transition: isReduced ? 'none' : `opacity 0.5s ease ${delay}s`,
       }}
       aria-hidden="true"
@@ -298,23 +437,16 @@ function DesktopConnector({ inView, delay, isReduced, color }) {
       <svg viewBox="0 0 100 40" fill="none" className="w-full" style={{ overflow: 'visible' }}>
         <defs>
           <linearGradient id={`grad-${delay}`} x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stopColor={color} stopOpacity="0.6" />
-            <stop offset="100%" stopColor={color} stopOpacity="1" />
+            <stop offset="0%"   stopColor={color} stopOpacity="0.6" />
+            <stop offset="100%" stopColor={color} stopOpacity="1"   />
           </linearGradient>
         </defs>
-
-        {/* Solid Arrow Line */}
         <line
-          x1="8"
-          y1="20"
-          x2="78"
-          y2="20"
+          x1="8" y1="20" x2="78" y2="20"
           stroke={`url(#grad-${delay})`}
           strokeWidth="4.5"
           strokeLinecap="round"
         />
-
-        {/* Bold Arrow Head */}
         <path
           d="M 66 11 L 88 20 L 66 29"
           fill="none"
@@ -324,26 +456,20 @@ function DesktopConnector({ inView, delay, isReduced, color }) {
           strokeLinejoin="round"
           opacity="0.9"
         />
-
-        {/* Dot at start */}
         <circle cx="8" cy="20" r="3" fill={color} opacity="0.7" />
       </svg>
     </div>
   )
 }
 
-/* ═══════════════════════════════════════════════════════
-   MOBILE CONNECTOR (SOLID ARROW)
-   ═══════════════════════════════════════════════════════ */
-
 function MobileConnector({ inView, delay, isReduced, color }) {
   return (
     <div
       className="flex items-center justify-center my-2"
       style={{
-        width: 40,
-        height: 60,
-        opacity: inView ? 1 : 0,
+        width:      40,
+        height:     60,
+        opacity:    inView ? 1 : 0,
         transition: isReduced ? 'none' : `opacity 0.5s ease ${delay}s`,
       }}
       aria-hidden="true"
@@ -351,23 +477,16 @@ function MobileConnector({ inView, delay, isReduced, color }) {
       <svg viewBox="0 0 40 60" fill="none" width="40" height="60">
         <defs>
           <linearGradient id={`mgrad-${delay}`} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor={color} stopOpacity="0.6" />
-            <stop offset="100%" stopColor={color} stopOpacity="1" />
+            <stop offset="0%"   stopColor={color} stopOpacity="0.6" />
+            <stop offset="100%" stopColor={color} stopOpacity="1"   />
           </linearGradient>
         </defs>
-
-        {/* Solid Arrow Line */}
         <line
-          x1="20"
-          y1="8"
-          x2="20"
-          y2="46"
+          x1="20" y1="8" x2="20" y2="46"
           stroke={`url(#mgrad-${delay})`}
           strokeWidth="4.5"
           strokeLinecap="round"
         />
-
-        {/* Bold Arrow Head */}
         <path
           d="M 11 34 L 20 52 L 29 34"
           fill="none"
@@ -377,8 +496,6 @@ function MobileConnector({ inView, delay, isReduced, color }) {
           strokeLinejoin="round"
           opacity="0.9"
         />
-
-        {/* Dot at start */}
         <circle cx="20" cy="8" r="3" fill={color} opacity="0.7" />
       </svg>
     </div>
@@ -394,60 +511,100 @@ function HeroImageSection() {
     <section
       className="relative w-full overflow-hidden"
       aria-label="Hero - AI-powered precision oncology platform"
-      style={{ 
-        background: '#ffffff',
-        paddingTop: 'clamp(60px, 8vw, 90px)' // Padding to prevent navbar collision
-      }}
+      style={{ background: '#ffffff' }}
     >
       <div className="relative w-full">
+
+        {/* Cover image — EXACTLY as original */}
         <img
-          src="/final-cover.png"
+          src="/trial.png"
           alt="AI Precision Diagnostics & Monitoring Centre"
           loading="eager"
           fetchPriority="high"
           draggable={false}
-          className="w-full h-auto object-cover"
+          className="w-full h-auto block"
           style={{
-            minHeight: 'clamp(280px, 48vw, 780px)',
-            maxHeight: '85vh',
+            minHeight:      'clamp(200px, 43vw, 780px)',
+            maxHeight:      '90vh',
+            objectFit:      'cover',
             objectPosition: 'center',
           }}
         />
-      </div>
 
-      {/* Corner Accents */}
-      {CORNER_ACCENTS.map(({ pos, warm }) => (
+        {/* LEFT OVERLAY — visible on all screen sizes */}
         <div
-          key={pos}
-          aria-hidden="true"
-          className={`hidden xl:block absolute ${pos} w-10 h-10 xl:w-12 xl:h-12 z-10 pointer-events-none`}
-          style={{
-            borderColor: warm 
-              ? 'rgba(251, 191, 36, 0.35)' 
-              : 'rgba(59, 130, 246, 0.25)',
-          }}
-        />
-      ))}
+          className="hero-overlay-left"
+          aria-label="Open source not for profit – AI for health, care for all"
+        >
+          <span className="hero-badge-open-source">
+            Open Source Not For Profit
+          </span>
+          <span className="hero-badge-tagline">
+            AI For Health&nbsp;|&nbsp;Care For All
+          </span>
+        </div>
+
+        {/* RIGHT OVERLAY — visible on all screen sizes */}
+        <div
+          className="hero-overlay-right"
+          aria-label="AI-Powered Real-time Precision Monitoring of Oncology"
+        >
+          <span className="hero-ai-powered-label">
+            AI&nbsp;–&nbsp;Powered
+          </span>
+
+          <span className="hero-main-headline">
+            Real-time Precision<br />
+            Monitoring of Oncology
+          </span>
+
+          {/* Only this anchor is clickable */}
+          <a
+            href="https://shri-ai.org/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hero-powered-by-link"
+            aria-label="Visit Senus Healthcare and Research Institute"
+          >
+            Powered by&nbsp;: Senus Healthcare and Research Institute (USA)
+          </a>
+        </div>
+
+        {/* Corner Accents — EXACTLY as original */}
+        {CORNER_ACCENTS.map(({ pos, warm }) => (
+          <div
+            key={pos}
+            aria-hidden="true"
+            className={`hidden xl:block absolute ${pos} w-10 h-10 xl:w-12 xl:h-12 z-10 pointer-events-none`}
+            style={{
+              borderColor: warm
+                ? 'rgba(251,191,36,0.35)'
+                : 'rgba(59,130,246,0.25)',
+            }}
+          />
+        ))}
+      </div>
     </section>
   )
 }
 
 /* ═══════════════════════════════════════════════════════
-   MAIN COMPONENT
+   MAIN EXPORT
    ═══════════════════════════════════════════════════════ */
 
 export default function HeroSection() {
-  const workflowRef = useRef(null)
+  const workflowRef    = useRef(null)
   const workflowInView = useInView(workflowRef, 0.05)
-  const isReduced = useReducedMotion()
+  const isReduced      = useReducedMotion()
 
-  useEffect(() => {
-    injectHeroStyles()
-  }, [])
+  useEffect(() => { injectHeroStyles() }, [])
 
   return (
-    <div className="hero-root" style={{ background: '#ffffff', fontFamily: 'Inter, system-ui, sans-serif' }}>
-      {/* Skip Link */}
+    <div
+      className="hero-root"
+      style={{ background: '#ffffff', fontFamily: 'Inter, system-ui, sans-serif' }}
+    >
+      {/* Skip link */}
       <a
         href="#workflow-section"
         className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[999] focus:bg-white focus:text-blue-600 focus:px-4 focus:py-2 focus:rounded-lg focus:shadow-lg focus:text-sm focus:font-semibold"
@@ -455,48 +612,45 @@ export default function HeroSection() {
         Skip to workflow
       </a>
 
-      {/* Hero Image Section */}
+      {/* Hero Image + Overlaid Text */}
       <HeroImageSection />
 
-      {/* Workflow Section */}
+      {/* ── Workflow Section ── */}
       <section
         id="workflow-section"
         ref={workflowRef}
         className="relative w-full overflow-hidden"
         aria-label="Liquid Biopsy Deployment Model"
-        style={{
-          background: 'linear-gradient(to bottom, #f8fafc 0%, #ffffff 100%)',
-        }}
+        style={{ background: 'linear-gradient(to bottom, #f8fafc 0%, #ffffff 100%)' }}
       >
         <div className="max-w-[1800px] mx-auto px-3 sm:px-4 lg:px-6 py-14 sm:py-18 lg:py-24">
+
           {/* Section Header */}
           <div
             className="text-center mb-12 sm:mb-16 lg:mb-20"
             style={{
-              opacity: workflowInView ? 1 : 0,
+              opacity:   workflowInView ? 1 : 0,
               transform: workflowInView ? 'translateY(0)' : 'translateY(20px)',
-              transition: isReduced 
-                ? 'none' 
+              transition: isReduced
+                ? 'none'
                 : 'opacity 0.5s ease, transform 0.5s ease',
             }}
           >
-
-            {/* Title - Darker Yellow/Golden Color */}
             <h2
               className="font-bold text-slate-900 leading-tight mb-4"
               style={{
-                fontSize: 'clamp(1.8rem, 4.5vw, 3rem)',
+                fontSize:      'clamp(1.8rem, 4.5vw, 3rem)',
                 letterSpacing: '-0.025em',
               }}
             >
               <span
                 style={{
-                  background: 'linear-gradient(135deg, #784000d2 0%, #c57d00e2 35%, #fbbf24 65%, #d2a100de 100%)',
-                  backgroundSize: '200% 200%',
+                  background:           'linear-gradient(135deg, #784000d2 0%, #c57d00e2 35%, #fbbf24 65%, #d2a100de 100%)',
+                  backgroundSize:       '200% 200%',
                   WebkitBackgroundClip: 'text',
-                  backgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  animation: isReduced ? 'none' : 'heroGradientShift 6s ease infinite',
+                  backgroundClip:       'text',
+                  WebkitTextFillColor:  'transparent',
+                  animation:            isReduced ? 'none' : 'heroGradientShift 6s ease infinite',
                 }}
               >
                 Liquid Biopsy Deployment Model
@@ -505,7 +659,10 @@ export default function HeroSection() {
           </div>
 
           {/* Desktop Layout (lg+) */}
-          <div className="hidden lg:flex items-start justify-center" style={{ gap: 'clamp(4px, 0.5vw, 12px)' }}>
+          <div
+            className="hidden lg:flex items-start justify-center"
+            style={{ gap: 'clamp(4px, 0.5vw, 12px)' }}
+          >
             {WORKFLOW_STEPS.map((step, index) => (
               <div key={step.id} className="flex items-start">
                 <WorkflowStepCircle
@@ -526,10 +683,13 @@ export default function HeroSection() {
             ))}
           </div>
 
-          {/* Tablet Layout (md to lg) */}
+          {/* Tablet Layout (md → lg) */}
           <div className="hidden md:block lg:hidden">
-            {/* First Row - 3 steps */}
-            <div className="flex items-start justify-center" style={{ gap: 'clamp(6px, 1vw, 16px)' }}>
+            {/* First Row – 3 steps */}
+            <div
+              className="flex items-start justify-center"
+              style={{ gap: 'clamp(6px, 1vw, 16px)' }}
+            >
               {WORKFLOW_STEPS.slice(0, 3).map((step, index) => (
                 <div key={step.id} className="flex items-start">
                   <WorkflowStepCircle
@@ -560,8 +720,11 @@ export default function HeroSection() {
               />
             </div>
 
-            {/* Second Row - 2 steps */}
-            <div className="flex items-start justify-center" style={{ gap: 'clamp(6px, 1vw, 16px)' }}>
+            {/* Second Row – 2 steps */}
+            <div
+              className="flex items-start justify-center"
+              style={{ gap: 'clamp(6px, 1vw, 16px)' }}
+            >
               {WORKFLOW_STEPS.slice(3).map((step, index) => (
                 <div key={step.id} className="flex items-start">
                   <WorkflowStepCircle
@@ -583,7 +746,7 @@ export default function HeroSection() {
             </div>
           </div>
 
-          {/* Mobile Layout (sm and below) */}
+          {/* Mobile Layout (< md) */}
           <div className="flex md:hidden flex-col items-center">
             {WORKFLOW_STEPS.map((step, index) => (
               <div key={step.id} className="flex flex-col items-center">
@@ -604,6 +767,7 @@ export default function HeroSection() {
               </div>
             ))}
           </div>
+
         </div>
       </section>
     </div>

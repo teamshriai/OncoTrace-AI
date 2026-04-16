@@ -147,10 +147,10 @@ export default function LiquidBiopsyMonitoring({ onNavigate }) {
 
               {/* Right: Hero Image */}
               <Reveal delay={0.1}>
-                <div className="order-1 lg:order-2 relative overflow-hidden rounded-xl sm:rounded-2xl shadow-xl">
-                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-transparent z-10 pointer-events-none"></div>
+                <div className="order-1 lg:order-2 relative overflow-hidden rounded-xl sm:rounded-2xl">
+                  <div className="absolute inset-0 z-10 pointer-events-none"></div>
                   <img
-                    src="/liquid-biopsy-hero.png"
+                    src="/lb-hero.png"
                     alt="Liquid biopsy visualization"
                     loading="eager"
                     className="w-full h-auto object-cover block"
@@ -169,9 +169,9 @@ export default function LiquidBiopsyMonitoring({ onNavigate }) {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 items-center mb-8 sm:mb-12">
               {/* Left: NGS Image */}
               <Reveal>
-                <div className="relative overflow-hidden rounded-xl sm:rounded-2xl shadow-lg">
+                <div className="relative overflow-hidden rounded-xl sm:rounded-2xl">
                   <img
-                    src="/ngs-machine.png"
+                    src="/ngs.png"
                     alt="Next Generation Sequencing machine"
                     loading="lazy"
                     className="w-full h-auto object-cover block"

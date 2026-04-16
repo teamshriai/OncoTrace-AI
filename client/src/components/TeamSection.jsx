@@ -165,13 +165,6 @@ function TeamCard({ m, delay, inView }) {
         <p className="mt-3 text-xs leading-relaxed text-slate-500 whitespace-pre-line">
           {m.bio}
         </p>
-
-        {/* Click hint text */}
-        {m.detail && (
-          <p className="mt-3 text-[11px] font-medium text-blue-500 group-hover:text-blue-700 transition-colors">
-            Click to learn more →
-          </p>
-        )}
       </div>
     </>
   );
