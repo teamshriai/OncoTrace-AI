@@ -1,9 +1,4 @@
-// HeroSection.jsx
 import { useEffect, useRef, useState } from 'react'
-
-/* ═══════════════════════════════════════════════════════
-   MODULE-LEVEL CONSTANTS
-   ═══════════════════════════════════════════════════════ */
 
 const CORNER_ACCENTS = [
   { pos: 'top-5 left-5 xl:top-7 xl:left-7 border-l border-t', warm: true },
