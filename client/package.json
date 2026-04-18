@@ -14,8 +14,11 @@
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.6.0",
     "@tailwindcss/vite": "^4.2.1",
+    "framer-motion": "^12.38.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-error-boundary": "^6.1.1",
+    "react-intersection-observer": "^10.0.3",
     "react-router-dom": "^7.13.2",
     "recharts": "^3.8.1",
     "three": "^0.160.1"

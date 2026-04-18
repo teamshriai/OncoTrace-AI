@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from "react";
- 
+
 const SPRING = "cubic-bezier(0.16, 1, 0.3, 1)";
- 
-/* ═══ useInView hook ═══ */
-function useInView(threshold = 0.15) {
+const EASE_OUT = "cubic-bezier(0.25, 0.46, 0.45, 0.94)";
+
+/* ═══ useInView ═══ */
+function useInView(threshold = 0.12) {
   const ref = useRef(null);
   const [inView, setInView] = useState(false);
   useEffect(() => {
@@ -16,580 +17,856 @@ function useInView(threshold = 0.15) {
           observer.unobserve(el);
         }
       },
-      { threshold, rootMargin: "0px 0px -50px 0px" }
+      { threshold, rootMargin: "0px 0px -30px 0px" }
     );
     observer.observe(el);
     return () => observer.disconnect();
   }, [threshold]);
   return [ref, inView];
 }
- 
-/* ═══ Parallax Hook ═══ */
-function useParallax(speed = 0.1) {
-  const [offset, setOffset] = useState(0);
+
+/* ═══ useScrollProgress ═══ */
+function useScrollProgress() {
+  const [progress, setProgress] = useState(0);
+  useEffect(() => {
+    const update = () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      setProgress(max > 0 ? window.scrollY / max : 0);
+    };
+    window.addEventListener("scroll", update, { passive: true });
+    update();
+    return () => window.removeEventListener("scroll", update);
+  }, []);
+  return progress;
+}
+
+/* ═══ useParallax ═══ */
+function useParallax(speed = 0.06) {
+  const [y, setY] = useState(0);
   const ref = useRef(null);
   useEffect(() => {
-    const handleScroll = () => {
-      if (ref.current) {
-        const rect = ref.current.getBoundingClientRect();
-        const center = rect.top + rect.height / 2 - window.innerHeight / 2;
-        setOffset(center * speed);
-      }
+    const onScroll = () => {
+      if (!ref.current) return;
+      const rect = ref.current.getBoundingClientRect();
+      const center = rect.top + rect.height / 2 - window.innerHeight / 2;
+      setY(center * speed);
     };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
   }, [speed]);
-  return [ref, offset];
+  return [ref, y];
 }
- 
-/* ═══ Data ═══ */
-const audiences = [
-  { role: "Clinicians",       desc: "Access predictive risk insights and real-time monitoring data for faster, more informed clinical decisions." },
-  { role: "Patients",         desc: "Gain clarity from early risk prediction through continuous, transparent precision monitoring of cancer progression." },
-  { role: "Researchers",      desc: "Build, test, and collaborate using open-source oncology tools spanning prediction and real-time monitoring." },
-  { role: "Pharma Companies", desc: "Track treatment effectiveness through continuous monitoring and longitudinal data across the disease lifecycle." },
-];
- 
-/* ═══ Icons ═══ */
-function ScanIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="3" y="3" width="18" height="18" rx="2" />
-      <path d="M3 12h18M12 3v18" />
-      <circle cx="12" cy="12" r="3" />
-    </svg>
-  );
-}
- 
-function DropletIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" />
-    </svg>
-  );
-}
- 
-function PulseIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
-    </svg>
-  );
-}
- 
-function GlobeIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10" />
-      <path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" />
-    </svg>
-  );
-}
- 
-/* ═══ Floating Particles ═══ */
-function FloatingParticles({ count = 6, color = "blue" }) {
-  const particles = Array.from({ length: count }, (_, i) => ({
-    id: i,
-    size: Math.random() * 3 + 1.5,
-    x: Math.random() * 100,
-    y: Math.random() * 100,
-    duration: Math.random() * 8 + 12,
-    delay: Math.random() * 5,
-  }));
- 
+
+/* ═══ FloatingOrbs ═══ */
+function FloatingOrbs({ dark = false }) {
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden">
-      {particles.map((p) => (
+      {[
+        { w: 180, h: 180, x: "75%", y: "10%", dur: 14, del: 0 },
+        { w: 120, h: 120, x: "10%", y: "60%", dur: 18, del: 2 },
+        { w: 80,  h: 80,  x: "50%", y: "80%", dur: 11, del: 1 },
+      ].map((o, i) => (
         <div
-          key={p.id}
+          key={i}
           className="absolute rounded-full"
           style={{
-            width: p.size,
-            height: p.size,
-            left: `${p.x}%`,
-            top: `${p.y}%`,
-            background:
-              color === "blue"
-                ? `rgba(59,130,246,${0.08 + Math.random() * 0.12})`
-                : `rgba(255,255,255,${0.04 + Math.random() * 0.08})`,
-            animation: `floatParticle${p.id % 3} ${p.duration}s ease-in-out ${p.delay}s infinite`,
+            width: o.w,
+            height: o.h,
+            left: o.x,
+            top: o.y,
+            transform: "translate(-50%,-50%)",
+            background: dark
+              ? `radial-gradient(circle, rgba(59,130,246,${0.07 + i * 0.02}) 0%, transparent 70%)`
+              : `radial-gradient(circle, rgba(37,99,235,${0.05 + i * 0.02}) 0%, transparent 70%)`,
+            animation: `orbFloat${i} ${o.dur}s ease-in-out ${o.del}s infinite`,
           }}
         />
       ))}
     </div>
   );
 }
- 
-/* ═══ Bento Hero ═══ */
-function BentoHero({ inView }) {
-  const t = (delay = 0) => ({
-    transitionTimingFunction: SPRING,
-    transitionDelay: inView ? `${delay}ms` : "0ms",
-  });
- 
+
+/* ═══ GlowDot ═══ */
+function GlowDot({ color = "#3b82f6", size = 6 }) {
   return (
-    <div className="grid grid-cols-12 gap-2.5 sm:gap-3 lg:gap-3.5 auto-rows-min">
-      {/* ── Main hero card ── */}
-      <div
-        className={`col-span-12 lg:col-span-8 row-span-2 relative rounded-[1.75rem] overflow-hidden transition-all duration-[1600ms] ${
-          inView
-            ? "opacity-100 translate-x-0 translate-y-0 scale-100"
-            : "opacity-0 -translate-x-[100px] translate-y-6 scale-[0.94]"
-        }`}
+    <span className="relative inline-flex" style={{ width: size, height: size }}>
+      <span
+        className="absolute inline-flex rounded-full opacity-75"
         style={{
-          ...t(0),
-          background: "linear-gradient(155deg, #f2f7ff 0%, #e4efff 40%, #d8e6ff 100%)",
+          width: size, height: size,
+          background: color,
+          animation: "pingAnim 2s cubic-bezier(0,0,0.2,1) infinite",
         }}
-      >
-        <FloatingParticles count={6} />
+      />
+      <span className="relative inline-flex rounded-full" style={{ width: size, height: size, background: color }} />
+    </span>
+  );
+}
+
+/* ═══ Pill badge ═══ */
+function Pill({ children, color = "blue" }) {
+  const styles = {
+    blue:  "bg-blue-500/10 text-blue-600 border-blue-500/20",
+    green: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20",
+    amber: "bg-amber-500/10 text-amber-600 border-amber-500/20",
+    white: "bg-white/15 text-white border-white/25",
+  };
+  return (
+    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-[0.1em] uppercase border ${styles[color]}`}>
+      {children}
+    </span>
+  );
+}
+
+/* ═══ AnimCard wrapper ═══ */
+function AnimCard({ inView, fromX = 0, fromY = 0, delay = 0, duration = 1400, scale = 0.91, className = "", style = {}, children }) {
+  return (
+    <div
+      className={className}
+      style={{
+        transitionProperty: "opacity, transform",
+        transitionDuration: `${duration}ms`,
+        transitionTimingFunction: SPRING,
+        transitionDelay: inView ? `${delay}ms` : "0ms",
+        opacity: inView ? 1 : 0,
+        transform: inView
+          ? "translate(0,0) scale(1)"
+          : `translate(${fromX}px, ${fromY}px) scale(${scale})`,
+        willChange: "opacity, transform",
+        ...style,
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
+/* ═══ WaveBar (replaces numeric charts) ═══ */
+function WaveBar({ inView, delay = 0 }) {
+  const bars = [40, 65, 50, 80, 60, 90, 70, 85, 55, 75, 88, 95];
+  return (
+    <div className="flex items-end gap-[3px] h-10">
+      {bars.map((h, i) => (
         <div
-          className="pointer-events-none absolute inset-0 opacity-[0.025]"
+          key={i}
+          className="flex-1 rounded-sm"
           style={{
-            backgroundImage:
-              "linear-gradient(rgba(37,99,235,1) 1px, transparent 1px), linear-gradient(90deg, rgba(37,99,235,1) 1px, transparent 1px)",
-            backgroundSize: "36px 36px",
+            height: inView ? `${h}%` : "4%",
+            background: `rgba(59,130,246,${0.3 + (i / bars.length) * 0.55})`,
+            transitionProperty: "height",
+            transitionDuration: "900ms",
+            transitionTimingFunction: SPRING,
+            transitionDelay: inView ? `${delay + i * 45}ms` : "0ms",
           }}
         />
-        <div className="relative p-6 sm:p-8 lg:p-10 flex flex-col justify-between min-h-[300px] sm:min-h-[340px] lg:min-h-[380px]">
-          <div
-            className={`transition-all duration-[1100ms] ${inView ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-6"}`}
-            style={t(200)}
-          >
-            <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[10px] font-bold tracking-[0.14em] uppercase text-blue-700 bg-blue-600/[0.07] border border-blue-600/[0.14]">
-              <span className="h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse" />
-              OncoTrace-AI · Open-Source · Not-for-Profit
-            </span>
-          </div>
-          <div className="mt-auto">
-            <h1
-              className={`text-[1.95rem] sm:text-[2.6rem] md:text-[2.9rem] lg:text-[3.1rem] font-[800] leading-[1.06] tracking-[-0.035em] transition-all duration-[1600ms] ${
-                inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-12"
-              }`}
-              style={t(300)}
-            >
-              <span className="text-neutral-900">Real-Time Precision</span>
-              <br />
-              <span
-                style={{
-                  background: "linear-gradient(135deg, #1d4ed8 0%, #3b82f6 50%, #60a5fa 100%)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  backgroundClip: "text",
-                }}
-              >
-                Monitoring
-              </span>
-              <span className="text-neutral-900"> in Oncology</span>
-            </h1>
-            <p
-              className={`mt-3.5 text-[14px] sm:text-[15px] text-neutral-600 leading-[1.7] max-w-[32rem] transition-all duration-[1400ms] ${
-                inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-              }`}
-              style={t(450)}
-            >
-              AI-driven cancer intelligence across the entire disease lifecycle — from predicting breast cancer
-              risk using imaging data to real-time progression monitoring powered by Liquid Biopsy.
-            </p>
-          </div>
-        </div>
-      </div>
- 
-      {/* ── Card 01: AI Risk Prediction ── */}
+      ))}
+    </div>
+  );
+}
+
+/* ═══ PulsingRing ═══ */
+function PulsingRing({ inView, delay = 0 }) {
+  return (
+    <div className="relative flex items-center justify-center w-16 h-16">
+      {[0, 1, 2].map((i) => (
+        <div
+          key={i}
+          className="absolute rounded-full border border-blue-400/30"
+          style={{
+            width: 24 + i * 16,
+            height: 24 + i * 16,
+            opacity: inView ? 1 : 0,
+            transitionProperty: "opacity",
+            transitionDuration: "600ms",
+            transitionDelay: inView ? `${delay + i * 150}ms` : "0ms",
+            animation: inView ? `ringPulse 2.5s ease-in-out ${i * 0.5}s infinite` : "none",
+          }}
+        />
+      ))}
+      <div className="relative w-4 h-4 rounded-full bg-blue-500"
+        style={{ boxShadow: "0 0 12px rgba(59,130,246,0.6)" }} />
+    </div>
+  );
+}
+
+/* ═══ FlowLine ═══ */
+function FlowLine({ inView, delay = 0 }) {
+  return (
+    <div className="relative w-full h-1 rounded-full overflow-hidden bg-white/10 mt-3">
       <div
-        className={`col-span-6 lg:col-span-4 relative rounded-[1.75rem] overflow-hidden transition-all duration-[1400ms] ${
-          inView
-            ? "opacity-100 translate-x-0 translate-y-0 scale-100"
-            : "opacity-0 translate-x-[80px] -translate-y-[60px] scale-[0.9]"
-        }`}
+        className="absolute inset-y-0 left-0 rounded-full"
         style={{
-          ...t(150),
-          background: "linear-gradient(145deg, #1e3a5f 0%, #172554 50%, #0f172a 100%)",
+          width: inView ? "100%" : "0%",
+          background: "linear-gradient(90deg, #3b82f6, #60a5fa, #93c5fd)",
+          transitionProperty: "width",
+          transitionDuration: "1200ms",
+          transitionTimingFunction: SPRING,
+          transitionDelay: inView ? `${delay}ms` : "0ms",
         }}
-      >
-        <FloatingParticles count={4} color="white" />
-        <div className="relative h-full p-5 sm:p-6 flex flex-col justify-between min-h-[175px] sm:min-h-[185px]">
-          <div className="flex items-start justify-between">
-            <div
-              className={`flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-blue-300 transition-all duration-[1000ms] ${
-                inView ? "scale-100 opacity-100" : "scale-75 opacity-0"
-              }`}
-              style={t(400)}
-            >
-              <ScanIcon />
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span
-                className={`px-2 py-0.5 rounded-md text-[9px] font-bold tracking-[0.12em] uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/25 transition-all duration-[900ms] ${
-                  inView ? "opacity-100 scale-100" : "opacity-0 scale-75"
-                }`}
-                style={t(500)}
-              >
-                LIVE
+      />
+    </div>
+  );
+}
+
+/* ═══ ScanLines overlay ═══ */
+function ScanLines() {
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden opacity-[0.05]">
+      {[0, 1, 2].map((i) => (
+        <div key={i} className="absolute w-full h-px bg-blue-300"
+          style={{ top: `${20 + i * 28}%`, animation: `scanLine 4.5s ease-in-out ${i * 1.1}s infinite` }} />
+      ))}
+    </div>
+  );
+}
+
+/* ═══ TAG chips ═══ */
+function TagChip({ children, dark = false }) {
+  return (
+    <span className={`px-2 py-0.5 rounded-md text-[9.5px] font-bold tracking-wide border ${
+      dark
+        ? "text-blue-300 bg-blue-400/10 border-blue-400/15"
+        : "text-blue-700 bg-blue-600/10 border-blue-600/15"
+    }`}>
+      {children}
+    </span>
+  );
+}
+
+/* ═══ BENTO HERO ═══ */
+function BentoHero({ inView }) {
+  const dark = {
+    backdropFilter: "blur(20px)",
+    WebkitBackdropFilter: "blur(20px)",
+    border: "1px solid rgba(255,255,255,0.08)",
+  };
+  const light = {
+    backdropFilter: "blur(20px)",
+    WebkitBackdropFilter: "blur(20px)",
+    border: "1px solid rgba(255,255,255,0.9)",
+    boxShadow: "0 2px 40px rgba(37,99,235,0.08)",
+  };
+  const blue = {
+    backdropFilter: "blur(20px)",
+    WebkitBackdropFilter: "blur(20px)",
+    border: "1px solid rgba(255,255,255,0.14)",
+  };
+
+  const fadeIn = (delay = 0, extra = {}) => ({
+    style: {
+      transitionProperty: "opacity, transform",
+      transitionDuration: "900ms",
+      transitionTimingFunction: SPRING,
+      transitionDelay: inView ? `${delay}ms` : "0ms",
+      opacity: inView ? 1 : 0,
+      ...extra,
+    },
+  });
+
+  return (
+    <div className="w-full">
+      <div className="grid grid-cols-12 gap-2 sm:gap-2.5 lg:gap-3">
+
+        {/* ═══ CARD A · HERO (col 8) ─ slides from LEFT ══ */}
+        <AnimCard
+          inView={inView} fromX={-160} fromY={20} delay={0} duration={1600} scale={0.92}
+          className="col-span-12 lg:col-span-8 relative rounded-2xl sm:rounded-[1.75rem] overflow-hidden"
+          style={{
+            background: "linear-gradient(150deg,rgba(240,246,255,0.92) 0%,rgba(224,237,255,0.86) 50%,rgba(212,229,255,0.82) 100%)",
+            ...light,
+          }}
+        >
+          <FloatingOrbs />
+          {/* subtle grid */}
+          <div className="pointer-events-none absolute inset-0 opacity-[0.02]"
+            style={{
+              backgroundImage: "linear-gradient(rgba(37,99,235,1) 1px,transparent 1px),linear-gradient(90deg,rgba(37,99,235,1) 1px,transparent 1px)",
+              backgroundSize: "40px 40px",
+            }} />
+
+          <div className="relative p-5 sm:p-7 lg:p-10 flex flex-col justify-between min-h-[280px] sm:min-h-[320px] lg:min-h-[420px]">
+            {/* badge */}
+            <div {...fadeIn(200, { transform: inView ? "translateY(0)" : "translateY(-20px)" })}>
+              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[9.5px] sm:text-[10px] font-bold tracking-[0.14em] uppercase text-blue-700 bg-blue-600/[0.09] border border-blue-600/[0.16]">
+                <GlowDot size={5} />
+                OncoTrace-AI · Open-Source · Not-for-Profit
               </span>
-              <span className="text-[1.75rem] font-bold text-white/10 leading-none font-mono select-none">01</span>
             </div>
-          </div>
-          <div>
-            <h3 className="text-[0.9rem] font-bold text-white mb-1.5">AI-Based Risk Prediction</h3>
-            <p className="text-[11.5px] leading-[1.65] text-blue-200/65">
-              X-ray imaging + AI to predict breast cancer risk over 5 years — live.
-            </p>
-          </div>
-        </div>
-      </div>
- 
-      {/* ── Card 02: Liquid Biopsy ── */}
-      <div
-        className={`col-span-6 lg:col-span-4 relative rounded-[1.75rem] overflow-hidden transition-all duration-[1400ms] ${
-          inView
-            ? "opacity-100 translate-x-0 translate-y-0 scale-100"
-            : "opacity-0 translate-x-[70px] translate-y-[70px] scale-[0.88]"
-        }`}
-        style={{
-          ...t(250),
-          background: "linear-gradient(145deg, #0c1a3a 0%, #1e3a5f 100%)",
-        }}
-      >
-        <div className="absolute inset-0 flex items-center justify-center opacity-[0.18]">
-          <div className="relative w-[100px] h-[100px]">
-            <div className="absolute inset-0 rounded-full border border-blue-400/30">
-              <div className="absolute inset-0 rounded-full animate-spin" style={{ animationDuration: "18s" }}>
-                <div className="absolute -top-[3px] left-1/2 -translate-x-1/2 h-1.5 w-1.5 rounded-full bg-blue-400" />
+
+            <div className="mt-auto pt-5">
+              <div {...fadeIn(340, { transform: inView ? "translateY(0)" : "translateY(30px)" })}>
+                <h1 className="text-[1.72rem] sm:text-[2.5rem] md:text-[2.9rem] lg:text-[3.15rem] font-[800] leading-[1.06] tracking-[-0.035em]">
+                  <span className="text-neutral-900">Real-Time Precision</span>
+                  <br />
+                  <span style={{
+                    background: "linear-gradient(135deg,#1d4ed8 0%,#3b82f6 55%,#60a5fa 100%)",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    backgroundClip: "text",
+                  }}>
+                    Monitoring
+                  </span>
+                  <span className="text-neutral-900"> in Oncology</span>
+                </h1>
+              </div>
+
+              <div {...fadeIn(480, { transform: inView ? "translateY(0)" : "translateY(20px)" })}>
+                <p className="mt-3 text-[13px] sm:text-[14.5px] text-neutral-600 leading-[1.75] max-w-[34rem]">
+                  AI-driven cancer intelligence across the entire disease lifecycle —
+                  from early risk prediction using imaging data to continuous
+                  progression monitoring powered by liquid biopsy.
+                </p>
+              </div>
+
+              <div {...fadeIn(600, { transform: inView ? "translateY(0)" : "translateY(14px)" })}>
+                <div className="mt-5 flex flex-wrap gap-2">
+                  <Pill color="blue">Early Risk Detection</Pill>
+                  <Pill color="blue">24 / 7 Monitoring</Pill>
+                  <Pill color="green">Open Source</Pill>
+                  <Pill color="blue">Non-Invasive</Pill>
+                </div>
               </div>
             </div>
-            <div className="absolute inset-[22%] rounded-full border border-blue-300/25">
-              <div className="absolute inset-0 rounded-full animate-spin" style={{ animationDuration: "12s", animationDirection: "reverse" }}>
-                <div className="absolute -bottom-[2.5px] left-1/2 -translate-x-1/2 h-[5px] w-[5px] rounded-full bg-sky-300" />
+          </div>
+        </AnimCard>
+
+        {/* ═══ CARD B · AI RISK (col 4) ─ slides from TOP-RIGHT ══ */}
+        <AnimCard
+          inView={inView} fromX={140} fromY={-80} delay={80} duration={1550} scale={0.88}
+          className="col-span-12 lg:col-span-4 relative rounded-2xl sm:rounded-[1.75rem] overflow-hidden"
+          style={{
+            background: "linear-gradient(145deg,rgba(15,28,65,0.97) 0%,rgba(23,37,84,0.95) 55%,rgba(10,18,45,0.97) 100%)",
+            ...dark,
+          }}
+        >
+          <FloatingOrbs dark />
+          <ScanLines />
+
+          <div className="relative h-full p-5 sm:p-6 lg:p-7 flex flex-col justify-between min-h-[240px] sm:min-h-[260px] lg:min-h-[420px]">
+            <div className="flex items-start justify-between">
+              <div {...fadeIn(400)}>
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-500/15 border border-blue-400/20">
+                  {/* scan icon */}
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#93c5fd" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                    <path d="M3 12h18M12 3v18" /><circle cx="12" cy="12" r="3" />
+                  </svg>
+                </div>
+              </div>
+              <Pill color="white">LIVE</Pill>
+            </div>
+
+            <div className="flex flex-col gap-4">
+              <div {...fadeIn(520)}>
+                <PulsingRing inView={inView} delay={560} />
+              </div>
+              <div {...fadeIn(560, { transform: inView ? "translateY(0)" : "translateY(12px)" })}>
+                <FlowLine inView={inView} delay={620} />
               </div>
             </div>
-          </div>
-        </div>
-        <div className="relative h-full p-5 sm:p-6 flex flex-col justify-between min-h-[175px] sm:min-h-[185px]">
-          <div className="flex items-start justify-between">
-            <div
-              className={`flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-blue-300 transition-all duration-[1000ms] ${
-                inView ? "scale-100 opacity-100" : "scale-75 opacity-0"
-              }`}
-              style={t(450)}
-            >
-              <DropletIcon />
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span
-                className={`px-2 py-0.5 rounded-md text-[9px] font-bold tracking-[0.12em] uppercase bg-amber-500/15 text-amber-300 border border-amber-500/22 transition-all duration-[900ms] ${
-                  inView ? "opacity-100 scale-100" : "opacity-0 scale-75"
-                }`}
-                style={t(550)}
-              >
-                R&D
-              </span>
-              <span className="text-[1.75rem] font-bold text-white/10 leading-none font-mono select-none">02</span>
+
+            <div {...fadeIn(480, { transform: inView ? "translateY(0)" : "translateY(14px)" })}>
+              <h3 className="text-[0.88rem] sm:text-[0.95rem] font-bold text-white mb-1.5">
+                AI-Based Risk Prediction
+              </h3>
+              <p className="text-[11.5px] leading-[1.65] text-blue-200/65">
+                Imaging data analysed by AI to surface early cancer risk signals with explainable confidence.
+              </p>
             </div>
           </div>
-          <div>
-            <h3 className="text-[0.9rem] font-bold text-white mb-1.5">Liquid Biopsy Monitoring</h3>
-            <p className="text-[11.5px] leading-[1.65] text-blue-200/65">
-              ctDNA, proteins & biomarkers for continuous cancer progression tracking.
-            </p>
-          </div>
-        </div>
-      </div>
- 
-      {/* ── Card 03: Real-Time Monitoring ── */}
-      <div
-        className={`col-span-12 sm:col-span-6 lg:col-span-4 rounded-[1.75rem] overflow-hidden transition-all duration-[1300ms] ${
-          inView ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-[50px] scale-[0.92]"
-        }`}
-        style={{
-          ...t(320),
-          background: "linear-gradient(145deg, #ffffff 0%, #f3f8ff 100%)",
-          border: "1px solid rgba(37,99,235,0.09)",
-        }}
-      >
-        <div className="p-5 sm:p-6 flex flex-col justify-between h-full min-h-[175px]">
-          <div className="flex items-start justify-between">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
-              <PulseIcon />
-            </div>
-            <span className="text-[1.75rem] font-bold text-blue-100 leading-none font-mono select-none">03</span>
-          </div>
-          <div className="pt-3">
-            <h3 className="text-[0.9rem] font-bold text-neutral-800 mb-1.5">Real-Time Precision Monitoring</h3>
-            <p className="text-[11.5px] leading-[1.65] text-neutral-500">
-              Continuous tracking across the entire disease lifecycle — actionable insights as cancer evolves.
-            </p>
-          </div>
-        </div>
-      </div>
- 
-      {/* ── Platform stats card ── */}
-      <div
-        className={`col-span-12 sm:col-span-6 lg:col-span-5 rounded-[1.75rem] overflow-hidden transition-all duration-[1300ms] ${
-          inView ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-[70px] scale-[0.9]"
-        }`}
-        style={{
-          ...t(280),
-          background: "linear-gradient(135deg, #1e40af 0%, #2563eb 50%, #3b82f6 100%)",
-        }}
-      >
-        <FloatingParticles count={3} color="white" />
-        <div className="relative p-5 sm:p-6 min-h-[175px] flex flex-col justify-between">
-          <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-blue-200/75 mb-3">
-            Platform at a Glance
-          </p>
-          <div className="grid grid-cols-2 gap-3.5">
-            {[
-              { value: "5yr",  label: "Risk Window" },
-              { value: "24/7", label: "Monitoring"  },
-              { value: "100%", label: "Open Source" },
-              { value: "Zero", label: "Invasive"    },
-            ].map((m, i) => (
-              <div
-                key={m.label}
-                className={`transition-all duration-[900ms] ${inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
-                style={t(420 + i * 90)}
-              >
-                <div className="text-[1.35rem] font-black text-white leading-none tracking-tight">{m.value}</div>
-                <div className="text-[10px] text-blue-200/65 mt-0.5 font-medium">{m.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
- 
-      {/* ── Card 04: Open Source ── */}
-      <div
-        className={`col-span-12 lg:col-span-3 rounded-[1.75rem] overflow-hidden transition-all duration-[1300ms] ${
-          inView ? "opacity-100 translate-x-0 scale-100" : "opacity-0 translate-x-[90px] scale-[0.88]"
-        }`}
-        style={{
-          ...t(380),
-          background: "linear-gradient(160deg, #f9fbff 0%, #e8f0ff 100%)",
-          border: "1px solid rgba(37,99,235,0.07)",
-        }}
-      >
-        <div className="p-5 sm:p-6 min-h-[175px] flex flex-col justify-between">
-          <div className="flex items-start justify-between mb-2.5">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
-              <GlobeIcon />
-            </div>
-            <span className="text-[1.75rem] font-bold text-blue-100 leading-none font-mono select-none">04</span>
-          </div>
-          <div>
-            <h3 className="text-[0.875rem] font-bold text-neutral-800 mb-1">Open Source Platform</h3>
-            <p className="text-[11px] leading-[1.6] text-neutral-500 mb-3">
-              Not-for-profit, open & globally collaborative.
-            </p>
-            <div className="flex flex-wrap gap-1.5">
-              {["ctDNA", "Proteins", "cfRNA", "CTC"].map((tag, i) => (
-                <span
-                  key={tag}
-                  className={`px-2 py-0.5 rounded-lg text-[9.5px] font-bold tracking-wide transition-all duration-[800ms] ${
-                    inView ? "opacity-100 scale-100" : "opacity-0 scale-80"
-                  }`}
+        </AnimCard>
+
+        {/* ═══ CARD C · LIQUID BIOPSY (col 6) ─ slides from BOTTOM-LEFT ══ */}
+        <AnimCard
+          inView={inView} fromX={-120} fromY={110} delay={160} duration={1450} scale={0.88}
+          className="col-span-6 lg:col-span-4 relative rounded-2xl sm:rounded-[1.75rem] overflow-hidden"
+          style={{
+            background: "linear-gradient(145deg,rgba(10,22,52,0.97) 0%,rgba(25,48,90,0.94) 100%)",
+            ...dark,
+          }}
+        >
+          {/* orbital rings deco */}
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-end pr-4 opacity-[0.12]">
+            <div className="relative w-24 h-24">
+              {[0, 1].map((i) => (
+                <div key={i}
+                  className="absolute rounded-full border border-blue-400/50"
                   style={{
-                    ...t(600 + i * 50),
-                    background: i === 0 ? "rgba(37,99,235,0.11)" : "rgba(255,255,255,0.85)",
-                    color:      i === 0 ? "#1d4ed8"              : "#64748b",
-                    border:     `1px solid ${i === 0 ? "rgba(37,99,235,0.18)" : "rgba(0,0,0,0.045)"}`,
-                  }}
-                >
-                  {tag}
-                </span>
+                    inset: i === 0 ? 0 : "24%",
+                    animation: `spin ${i === 0 ? 16 : 10}s linear infinite ${i === 1 ? "reverse" : ""}`,
+                  }}>
+                  <div className={`absolute rounded-full bg-blue-${i === 0 ? "400" : "300"}`}
+                    style={{ width: 5, height: 5, top: i === 0 ? -2.5 : "auto", bottom: i === 1 ? -2.5 : "auto", left: "50%", transform: "translateX(-50%)" }} />
+                </div>
               ))}
             </div>
           </div>
-        </div>
+          <FloatingOrbs dark />
+
+          <div className="relative h-full p-4 sm:p-5 lg:p-6 flex flex-col justify-between min-h-[200px] sm:min-h-[220px]">
+            <div className="flex items-start justify-between">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-500/15 border border-blue-400/20">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#93c5fd" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" />
+                </svg>
+              </div>
+              <Pill color="amber">R &amp; D</Pill>
+            </div>
+
+            <div>
+              <h3 className="text-[0.83rem] sm:text-[0.9rem] font-bold text-white mb-1.5">Liquid Biopsy</h3>
+              <p className="text-[11px] sm:text-[11.5px] leading-[1.65] text-blue-200/65 mb-3">
+                Continuous cancer progression tracking through blood-based biomarker analysis.
+              </p>
+              <div {...fadeIn(700)}>
+                <div className="flex flex-wrap gap-1.5">
+                  {["ctDNA", "cfRNA", "CTC", "Proteins"].map((t) => (
+                    <TagChip key={t} dark>{t}</TagChip>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </AnimCard>
+
+        {/* ═══ CARD D · BIOMARKER TREND (col 6/4) ─ slides from BOTTOM ══ */}
+        <AnimCard
+          inView={inView} fromX={0} fromY={140} delay={240} duration={1400} scale={0.89}
+          className="col-span-6 lg:col-span-4 rounded-2xl sm:rounded-[1.75rem] overflow-hidden"
+          style={{ background: "rgba(248,251,255,0.82)", ...light }}
+        >
+          <div className="p-4 sm:p-5 lg:p-6 min-h-[200px] sm:min-h-[220px] flex flex-col justify-between h-full">
+            <div className="flex items-start justify-between">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-50 border border-blue-100">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+                </svg>
+              </div>
+              <div {...fadeIn(580)}>
+                <GlowDot color="#10b981" size={7} />
+              </div>
+            </div>
+
+            <div className="flex-1 flex flex-col justify-end pt-3">
+              <h3 className="text-[0.83rem] sm:text-[0.9rem] font-bold text-neutral-800 mb-1">
+                Biomarker Trends
+              </h3>
+              <p className="text-[11px] sm:text-[11.5px] leading-[1.65] text-neutral-500 mb-3">
+                Longitudinal visualisation of biomarker levels across treatment cycles.
+              </p>
+              <WaveBar inView={inView} delay={480} />
+            </div>
+          </div>
+        </AnimCard>
+
+        {/* ═══ CARD E · REAL-TIME MONITORING (col 12/4) ─ slides from BOTTOM-RIGHT ══ */}
+        <AnimCard
+          inView={inView} fromX={140} fromY={100} delay={320} duration={1450} scale={0.88}
+          className="col-span-12 lg:col-span-4 rounded-2xl sm:rounded-[1.75rem] overflow-hidden"
+          style={{
+            background: "linear-gradient(135deg,rgba(29,62,175,0.94) 0%,rgba(37,99,235,0.91) 55%,rgba(56,116,239,0.91) 100%)",
+            ...blue,
+          }}
+        >
+          <FloatingOrbs dark />
+          <div className="pointer-events-none absolute top-0 right-0 w-44 h-44 rounded-full opacity-20"
+            style={{ background: "radial-gradient(circle,rgba(147,197,253,0.5) 0%,transparent 70%)" }} />
+
+          <div className="relative p-4 sm:p-5 lg:p-6 min-h-[200px] sm:min-h-[220px] flex flex-col justify-between h-full">
+            <div className="flex items-start justify-between">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/15 border border-white/20">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+                </svg>
+              </div>
+              <Pill color="white">ACTIVE</Pill>
+            </div>
+
+            <div>
+              <h3 className="text-[0.83rem] sm:text-[0.9rem] font-bold text-white mb-1.5">
+                Real-Time Monitoring
+              </h3>
+              <p className="text-[11px] sm:text-[11.5px] leading-[1.65] text-blue-100/75 mb-3">
+                Continuous tracking across the entire disease lifecycle with actionable insights as cancer evolves.
+              </p>
+              <div {...fadeIn(720)}>
+                <div className="flex items-center gap-2">
+                  <GlowDot color="#34d399" size={6} />
+                  <span className="text-[10.5px] text-blue-100/75 font-medium">All systems operational</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </AnimCard>
+
+        {/* ═══ CARD F · PRIVACY (col 6) ─ slides from LEFT ══ */}
+        <AnimCard
+          inView={inView} fromX={-140} fromY={50} delay={400} duration={1450} scale={0.88}
+          className="col-span-6 lg:col-span-6 relative rounded-2xl sm:rounded-[1.75rem] overflow-hidden"
+          style={{
+            background: "linear-gradient(145deg,rgba(10,22,52,0.97) 0%,rgba(20,35,80,0.95) 100%)",
+            ...dark,
+          }}
+        >
+          <div className="pointer-events-none absolute bottom-0 right-0 w-48 h-48 rounded-full opacity-15"
+            style={{ background: "radial-gradient(circle,rgba(52,211,153,0.7) 0%,transparent 70%)" }} />
+          <FloatingOrbs dark />
+
+          <div className="relative p-4 sm:p-5 lg:p-6 min-h-[190px] sm:min-h-[210px] flex flex-col justify-between h-full">
+            <div className="flex items-start justify-between">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-500/15 border border-emerald-400/20">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6ee7b7" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                  <path d="M9 12l2 2 4-4" />
+                </svg>
+              </div>
+              <Pill color="green">Compliant</Pill>
+            </div>
+
+            <div>
+              <h3 className="text-[0.83rem] sm:text-[0.9rem] font-bold text-white mb-1.5">Privacy & Compliance</h3>
+              <p className="text-[11px] sm:text-[11.5px] leading-[1.65] text-blue-200/65 mb-3">
+                End-to-end de-identification, audit trails, and privacy-first data pipelines by design.
+              </p>
+              <div {...fadeIn(780)}>
+                <div className="flex flex-wrap gap-1.5">
+                  {["HIPAA", "GDPR", "ISO 27001", "SOC 2"].map((b) => (
+                    <span key={b} className="px-2 py-0.5 rounded-md text-[9px] font-bold tracking-[0.1em] uppercase bg-emerald-500/15 text-emerald-300 border border-emerald-500/20">{b}</span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </AnimCard>
+
+        {/* ═══ CARD G · MISSION (col 6) ─ slides from RIGHT ══ */}
+        <AnimCard
+          inView={inView} fromX={140} fromY={50} delay={480} duration={1450} scale={0.88}
+          className="col-span-6 lg:col-span-6 relative rounded-2xl sm:rounded-[1.75rem] overflow-hidden"
+          style={{
+            background: "linear-gradient(135deg,rgba(29,62,175,0.96) 0%,rgba(37,99,235,0.93) 55%,rgba(59,130,246,0.91) 100%)",
+            ...blue,
+          }}
+        >
+          <FloatingOrbs dark />
+          <div className="pointer-events-none absolute top-3 right-6 text-[6rem] leading-none font-black text-white/[0.04] select-none">"</div>
+
+          <div className="relative p-4 sm:p-5 lg:p-6 min-h-[190px] sm:min-h-[210px] flex flex-col justify-between h-full">
+            <p className="text-[9.5px] font-bold tracking-[0.22em] uppercase text-blue-200/65">Our Mission</p>
+
+            <div {...fadeIn(760, { transform: inView ? "translateY(0)" : "translateY(16px)" })}>
+              <blockquote className="text-[12.5px] sm:text-[14px] font-[640] text-white leading-[1.62] tracking-[-0.01em]">
+                Making precision oncology intelligence accessible, transparent,
+                and globally collaborative — from first risk signal to real-time
+                progression tracking.
+              </blockquote>
+            </div>
+
+            <div {...fadeIn(860)}>
+              <div className="flex items-center gap-3">
+                <div className="h-px flex-1 bg-white/15" />
+                <span className="text-[10px] font-bold text-blue-200/55 uppercase tracking-widest">OncoTrace-AI</span>
+                <div className="h-px flex-1 bg-white/15" />
+              </div>
+            </div>
+          </div>
+        </AnimCard>
+
       </div>
     </div>
   );
 }
- 
-/* ═══ About Section ═══ */
+
+/* ═══ ABOUT SECTION ═══ */
 function AboutSection() {
-  const [aboutRef, aboutIn] = useInView(0.12);
-  const [parallaxAbout, aboutOffset] = useParallax(0.04);
- 
-  const t = (inView, delay = 0) => ({
-    transitionTimingFunction: SPRING,
-    transitionDelay: inView ? `${delay}ms` : "0ms",
+  const [ref, inView] = useInView(0.1);
+  const [pRef, pY] = useParallax(0.035);
+
+  const slide = (fromX = 0, fromY = 0, delay = 0, dur = 1200) => ({
+    style: {
+      transitionProperty: "opacity, transform",
+      transitionDuration: `${dur}ms`,
+      transitionTimingFunction: SPRING,
+      transitionDelay: inView ? `${delay}ms` : "0ms",
+      opacity: inView ? 1 : 0,
+      transform: inView ? "translate(0,0) scale(1)" : `translate(${fromX}px,${fromY}px) scale(0.95)`,
+    },
   });
- 
+
   return (
-    <section className="relative py-14 sm:py-16 lg:py-20">
-      <div className="absolute top-0 right-0 w-[320px] h-[320px] bg-blue-50/25 blur-[90px] rounded-full pointer-events-none" />
-      <div ref={aboutRef} className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
-        <div ref={parallaxAbout} className="grid lg:grid-cols-12 gap-6 lg:gap-10 items-start">
-          <div
-            className={`lg:col-span-4 transition-all duration-[1400ms] ${aboutIn ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-12"}`}
-            style={{ ...t(aboutIn), transform: aboutIn ? `translateY(${aboutOffset * 0.6}px)` : undefined }}
-          >
-            <p
-              className={`text-[10.5px] font-bold tracking-[0.22em] uppercase text-blue-600 mb-2.5 transition-all duration-[900ms] ${aboutIn ? "opacity-100" : "opacity-0"}`}
-              style={t(aboutIn, 80)}
-            >
-              About OncoTrace-AI
-            </p>
-            <h2
-              className={`text-[1.55rem] sm:text-[1.85rem] lg:text-[2rem] font-[750] tracking-[-0.022em] leading-[1.14] transition-all duration-[1200ms] ${
-                aboutIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-              }`}
-              style={t(aboutIn, 150)}
-            >
-              From risk prediction
-              <br className="hidden lg:block" /> to real-time tracking
-            </h2>
-            <div
-              className={`mt-4 h-[2.5px] w-9 rounded-full bg-blue-600 origin-left transition-transform duration-[1000ms] ${aboutIn ? "scale-x-100" : "scale-x-0"}`}
-              style={t(aboutIn, 300)}
-            />
-          </div>
- 
-          <div
-            className={`lg:col-span-8 transition-all duration-[1400ms] ${aboutIn ? "opacity-100 translate-x-0" : "opacity-0 translate-x-12"}`}
-            style={t(aboutIn, 120)}
-          >
-            <div className="space-y-4">
-              <p
-                className={`text-neutral-600 text-[14.5px] leading-[1.75] transition-all duration-[1200ms] ${aboutIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"}`}
-                style={t(aboutIn, 200)}
-              >
-                OncoTrace-AI is a platform designed to enable AI-driven cancer intelligence across the entire disease lifecycle.
-                It brings together two complementary approaches — AI-based cancer risk prediction using imaging data, and liquid
-                biopsy-powered real-time monitoring — into a unified system for continuous, data-driven insights in oncology.
-              </p>
+    <section className="relative py-16 sm:py-20 lg:py-24 overflow-hidden">
+      <div className="pointer-events-none absolute top-0 right-0 w-[400px] h-[400px] rounded-full opacity-30"
+        style={{ background: "radial-gradient(circle, rgba(219,234,254,0.6) 0%, transparent 70%)", transform: "translate(30%,-30%)" }} />
+
+      <div ref={ref} className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div ref={pRef} className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-start"
+          style={{ transform: `translateY(${pY}px)` }}>
+
+          {/* left col */}
+          <div className="lg:col-span-5 xl:col-span-4">
+            <div {...slide(-70, 0, 0)}>
+              <span className="inline-block text-[10px] font-bold tracking-[0.24em] uppercase text-blue-600 mb-3">
+                About OncoTrace-AI
+              </span>
+              <h2 className="text-[1.5rem] sm:text-[1.85rem] lg:text-[2.1rem] font-[780] tracking-[-0.025em] leading-[1.12] text-neutral-900">
+                From risk prediction<br className="hidden sm:block" /> to real-time tracking
+              </h2>
               <div
-                className={`relative py-3 pl-5 rounded-r-xl border-l-[2.5px] border-blue-600 bg-blue-50/40 transition-all duration-[1300ms] ${
-                  aboutIn ? "opacity-100 translate-x-0" : "opacity-0 translate-x-8"
-                }`}
-                style={t(aboutIn, 280)}
-              >
-                <p className="text-[15px] font-[600] text-neutral-800 leading-[1.5] tracking-[-0.008em]">
-                  We focus on data, monitoring, and intelligence — connecting prediction with progression tracking to empower
-                  better decision-making through accurate, real-time insights.
+                className="mt-5 h-[3px] w-10 rounded-full bg-blue-600 origin-left"
+                style={{
+                  transitionProperty: "transform",
+                  transitionDuration: "1000ms",
+                  transitionTimingFunction: SPRING,
+                  transitionDelay: inView ? "320ms" : "0ms",
+                  transform: inView ? "scaleX(1)" : "scaleX(0)",
+                }}
+              />
+            </div>
+          </div>
+
+          {/* right col */}
+          <div className="lg:col-span-7 xl:col-span-8 space-y-5">
+            <div {...slide(70, 0, 100)}>
+              <p className="text-[14px] sm:text-[15px] text-neutral-600 leading-[1.78]">
+                OncoTrace-AI brings together two complementary approaches — AI-based cancer risk prediction
+                using imaging data, and liquid biopsy-powered real-time monitoring — into a unified system
+                for continuous, data-driven oncology insights.
+              </p>
+            </div>
+
+            <div {...slide(70, 0, 200)}>
+              <div className="relative py-4 pl-5 rounded-r-2xl border-l-[3px] border-blue-600 bg-gradient-to-r from-blue-50/60 to-transparent">
+                <p className="text-[14.5px] sm:text-[15.5px] font-[620] text-neutral-800 leading-[1.56] tracking-[-0.01em]">
+                  We focus on data, monitoring, and intelligence — connecting prediction with progression
+                  tracking to empower better clinical decision-making.
                 </p>
               </div>
-              <p
-                className={`text-neutral-500 text-[14.5px] leading-[1.75] transition-all duration-[1200ms] ${aboutIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"}`}
-                style={t(aboutIn, 360)}
-              >
-                We do not provide treatments or prescribe medications. Built as an open-source, not-for-profit initiative,
-                OncoTrace-AI encourages global collaboration across research institutions, healthcare providers, and technology
-                communities — ensuring innovation in oncology is accessible, transparent, and collaborative.
+            </div>
+
+            <div {...slide(70, 0, 300)}>
+              <p className="text-[13.5px] sm:text-[14.5px] text-neutral-500 leading-[1.78]">
+                Built as an open-source, not-for-profit initiative, OncoTrace-AI encourages global collaboration
+                across research institutions, healthcare providers, and technology communities — ensuring
+                oncology innovation remains accessible and transparent.
               </p>
             </div>
           </div>
+
         </div>
       </div>
     </section>
   );
 }
- 
-/* ═══ Audience Section ═══ */
+
+/* ═══ AUDIENCE SECTION ═══ */
 function AudienceSection() {
-  const [audRef, audIn] = useInView(0.1);
- 
-  const t = (inView, delay = 0) => ({
-    transitionTimingFunction: SPRING,
-    transitionDelay: inView ? `${delay}ms` : "0ms",
-  });
- 
+  const [ref, inView] = useInView(0.08);
+
+  const audiences = [
+    {
+      role: "Clinicians",
+      icon: (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" />
+        </svg>
+      ),
+      desc: "Predictive risk insights and real-time monitoring data for faster, more informed decisions.",
+      entrance: { fromX: -80, fromY: 60 },
+    },
+    {
+      role: "Patients",
+      icon: (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+        </svg>
+      ),
+      desc: "Clarity through early risk signals and transparent, continuous precision monitoring.",
+      entrance: { fromX: -20, fromY: 90 },
+    },
+    {
+      role: "Researchers",
+      icon: (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
+      ),
+      desc: "Open-source oncology tools to build, test, and collaborate across prediction and monitoring.",
+      entrance: { fromX: 20, fromY: 90 },
+    },
+    {
+      role: "Pharma",
+      icon: (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" /><line x1="2" y1="20" x2="22" y2="20" />
+        </svg>
+      ),
+      desc: "Longitudinal monitoring and continuous data across the full disease and treatment lifecycle.",
+      entrance: { fromX: 80, fromY: 60 },
+    },
+  ];
+
   return (
-    <section className="relative py-14 sm:py-16 lg:py-20 bg-gradient-to-b from-transparent via-blue-50/10 to-transparent">
-      <div className="absolute bottom-0 left-1/4 w-[420px] h-[340px] bg-blue-50/18 blur-[100px] rounded-full pointer-events-none" />
-      <div ref={audRef} className="relative max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="relative py-16 sm:py-20 lg:py-24 bg-gradient-to-b from-transparent via-blue-50/[0.08] to-transparent overflow-hidden">
+      <div className="pointer-events-none absolute bottom-0 left-1/3 w-[500px] h-[400px] rounded-full opacity-20"
+        style={{ background: "radial-gradient(circle, rgba(219,234,254,0.7) 0%, transparent 70%)", transform: "translate(-50%, 40%)" }} />
+
+      <div ref={ref} className="relative max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
+
+        {/* heading */}
         <div
-          className={`mb-8 lg:mb-10 transition-all duration-[1300ms] ${audIn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
-          style={t(audIn)}
+          style={{
+            transitionProperty: "opacity, transform",
+            transitionDuration: "1200ms",
+            transitionTimingFunction: SPRING,
+            transitionDelay: inView ? "0ms" : "0ms",
+            opacity: inView ? 1 : 0,
+            transform: inView ? "translateY(0) scale(1)" : "translateY(40px) scale(0.97)",
+          }}
+          className="mb-10 lg:mb-12"
         >
-          <p className="text-[10.5px] font-bold tracking-[0.22em] uppercase text-blue-600 mb-2">Who It's For</p>
-          <h2 className="text-[1.55rem] sm:text-[1.85rem] lg:text-[2rem] font-[750] tracking-[-0.022em] leading-[1.14] max-w-lg">
+          <span className="inline-block text-[10px] font-bold tracking-[0.24em] uppercase text-blue-600 mb-2">
+            Who It's For
+          </span>
+          <h2 className="text-[1.5rem] sm:text-[1.85rem] lg:text-[2.1rem] font-[780] tracking-[-0.025em] leading-[1.12] max-w-lg text-neutral-900">
             Built for the entire oncology ecosystem
           </h2>
         </div>
- 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-3.5">
+
+        {/* cards */}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {audiences.map((a, i) => (
             <div
               key={a.role}
-              className={`group relative overflow-hidden rounded-2xl border border-neutral-200/70 bg-white p-5 transition-all duration-[1200ms] hover:shadow-lg hover:shadow-blue-600/[0.06] hover:border-blue-200/80 hover:-translate-y-1 ${
-                audIn ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-10 scale-[0.94]"
-              }`}
-              style={t(audIn, 120 + i * 90)}
+              className="group relative overflow-hidden rounded-2xl border border-neutral-200/70 bg-white p-5 cursor-default"
+              style={{
+                transitionProperty: "opacity, transform, box-shadow, border-color",
+                transitionDuration: `1300ms, 1300ms, 280ms, 280ms`,
+                transitionTimingFunction: `${SPRING}, ${SPRING}, ease, ease`,
+                transitionDelay: inView ? `${120 + i * 110}ms, ${120 + i * 110}ms, 0ms, 0ms` : "0ms",
+                opacity: inView ? 1 : 0,
+                transform: inView
+                  ? "translate(0,0) scale(1)"
+                  : `translate(${a.entrance.fromX}px,${a.entrance.fromY}px) scale(0.90)`,
+                willChange: "opacity, transform",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.boxShadow = "0 8px 40px rgba(37,99,235,0.10)";
+                e.currentTarget.style.borderColor = "rgba(147,197,253,0.8)";
+                e.currentTarget.style.transform = "translateY(-4px) scale(1)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.boxShadow = "";
+                e.currentTarget.style.borderColor = "";
+                e.currentTarget.style.transform = "translate(0,0) scale(1)";
+              }}
             >
-              <div className="absolute left-0 top-6 bottom-6 w-[2.5px] rounded-full bg-blue-600 scale-y-0 group-hover:scale-y-100 transition-transform duration-[400ms] origin-top" />
-              <div className="flex items-start justify-between mb-2.5">
-                <h3 className="text-[15.5px] font-[700] tracking-[-0.01em] group-hover:text-blue-600 transition-colors">
-                  {a.role}
-                </h3>
-                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-neutral-100 group-hover:bg-blue-50 transition-colors">
-                  <svg
-                    className="w-3.5 h-3.5 text-neutral-400 group-hover:text-blue-500 group-hover:translate-x-0.5 transition-all"
-                    viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"
-                  >
-                    <path d="M5 10h10M10 6l4 4-4 4" />
-                  </svg>
+              {/* left accent bar */}
+              <div className="absolute left-0 top-5 bottom-5 w-[3px] rounded-full bg-blue-600 origin-top transition-transform duration-[350ms] ease-out scale-y-0 group-hover:scale-y-100" />
+
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">
+                  {a.icon}
                 </div>
+                <svg className="w-4 h-4 text-neutral-300 group-hover:text-blue-400 group-hover:translate-x-1 transition-all duration-300"
+                  viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
+                  <path d="M5 10h10M10 6l4 4-4 4" />
+                </svg>
               </div>
-              <p className="text-[13px] text-neutral-600 leading-[1.65] font-[450]">{a.desc}</p>
+
+              <h3 className="text-[14.5px] sm:text-[15px] font-[720] text-neutral-900 mb-2 group-hover:text-blue-700 transition-colors duration-300">
+                {a.role}
+              </h3>
+              <p className="text-[12.5px] sm:text-[13px] text-neutral-500 leading-[1.65]">
+                {a.desc}
+              </p>
             </div>
           ))}
         </div>
+
       </div>
     </section>
   );
 }
- 
-/* ═══ Global keyframes ═══ */
+
+/* ═══ GLOBAL STYLES ═══ */
 const globalStyles = `
-  @keyframes floatParticle0 {
-    0%,100% { transform: translate(0,0) scale(1);       opacity: 0.28; }
-    25%      { transform: translate(12px,-16px) scale(1.25); opacity: 0.5;  }
-    50%      { transform: translate(-8px,-28px) scale(0.85); opacity: 0.35; }
-    75%      { transform: translate(16px,-12px) scale(1.1);  opacity: 0.42; }
+  @keyframes orbFloat0 {
+    0%,100%{ transform:translate(-50%,-50%) scale(1);     opacity:.6; }
+    50%    { transform:translate(-50%,-50%) scale(1.18) translate(8px,-12px); opacity:.85; }
   }
-  @keyframes floatParticle1 {
-    0%,100% { transform: translate(0,0) scale(1);        opacity: 0.22; }
-    33%      { transform: translate(-16px,-20px) scale(1.18); opacity: 0.44; }
-    66%      { transform: translate(12px,-32px) scale(0.92);  opacity: 0.28; }
+  @keyframes orbFloat1 {
+    0%,100%{ transform:translate(-50%,-50%) scale(1);     opacity:.5; }
+    50%    { transform:translate(-50%,-50%) scale(1.22) translate(-10px,14px); opacity:.75; }
   }
-  @keyframes floatParticle2 {
-    0%,100% { transform: translate(0,0) scale(1);      opacity: 0.32; }
-    50%      { transform: translate(20px,-24px) scale(1.32); opacity: 0.52; }
+  @keyframes orbFloat2 {
+    0%,100%{ transform:translate(-50%,-50%) scale(1);     opacity:.55; }
+    50%    { transform:translate(-50%,-50%) scale(1.15) translate(14px,-8px); opacity:.8; }
   }
-  * { font-optical-sizing: auto; }
+  @keyframes pingAnim {
+    0%,100%{ transform:scale(1);   opacity:.7; }
+    60%    { transform:scale(2.4); opacity:0;  }
+  }
+  @keyframes ringPulse {
+    0%,100%{ transform:scale(1);   opacity:.5; }
+    50%    { transform:scale(1.12); opacity:.25; }
+  }
+  @keyframes scanLine {
+    0%,100%{ opacity:0; transform:scaleX(.25) translateX(-60%); }
+    15%,85%{ opacity:1; }
+    50%    { transform:scaleX(1) translateX(0); }
+  }
+  @keyframes spin {
+    from{ transform:rotate(0deg); }
+    to  { transform:rotate(360deg); }
+  }
+  *{ font-optical-sizing:auto; }
 `;
- 
-/* ═══ HeroSection (default export) ═══ */
+
+/* ═══ HERO SECTION (default export) ═══ */
 export default function HeroSection({ onNavigate }) {
-  const [heroRef, heroIn] = useInView(0.08);
- 
+  const [heroRef, heroIn] = useInView(0.04);
+
   return (
     <div
       className="bg-[#fefefe] text-neutral-900 antialiased selection:bg-blue-600 selection:text-white overflow-x-hidden"
       style={{ fontFamily: "'DM Sans', system-ui, -apple-system, sans-serif" }}
     >
       <style>{globalStyles}</style>
- 
-      {/* ── Hero ── */}
-      <section className="relative min-h-[100svh] flex items-center py-8 sm:py-10">
+
+      {/* ── HERO ── */}
+      <section
+        className="relative min-h-[100svh] flex items-center py-6 sm:py-8 lg:py-10"
+        style={{
+          backgroundImage: 'url("/ocean2.png")',
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
+      >
+        {/* dark overlay */}
+        <div className="pointer-events-none absolute inset-0"
+          style={{ background: "linear-gradient(170deg,rgba(6,14,44,0.56) 0%,rgba(10,22,56,0.40) 45%,rgba(5,13,40,0.54) 100%)" }} />
+        {/* blue tint */}
+        <div className="pointer-events-none absolute inset-0"
+          style={{ background: "radial-gradient(ellipse 78% 56% at 70% 26%,rgba(37,99,235,0.20) 0%,transparent 64%),radial-gradient(ellipse 52% 46% at 16% 74%,rgba(59,130,246,0.13) 0%,transparent 58%)" }} />
+        {/* glow blobs */}
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                "radial-gradient(ellipse 75% 55% at 72% 28%, rgba(219,234,254,0.45) 0%, transparent 62%), radial-gradient(ellipse 50% 45% at 18% 72%, rgba(191,219,254,0.28) 0%, transparent 58%)",
-            }}
-          />
-          <div className="absolute -top-24 right-[-4%] w-[520px] h-[520px] rounded-full bg-blue-200/18 blur-[120px]" />
-          <div className="absolute bottom-[-12%] left-[-6%] w-[440px] h-[440px] rounded-full bg-blue-100/22 blur-[105px]" />
+          <div className="absolute -top-28 right-[-5%] w-[520px] h-[520px] rounded-full bg-blue-400/10 blur-[140px]" />
+          <div className="absolute bottom-[12%] left-[-7%] w-[440px] h-[440px] rounded-full bg-blue-300/[0.07] blur-[120px]" />
         </div>
-        <div ref={heroRef} className="relative w-full max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
+        {/* bottom dissolve into page bg */}
+        <div className="pointer-events-none absolute bottom-0 left-0 right-0"
+          style={{
+            height: "48%",
+            background: "linear-gradient(to bottom,transparent 0%,rgba(254,254,254,0.14) 28%,rgba(254,254,254,0.52) 50%,rgba(254,254,254,0.80) 66%,rgba(254,254,254,0.95) 82%,#fefefe 100%)",
+          }} />
+
+        <div ref={heroRef} className="relative z-10 w-full max-w-[1280px] mx-auto px-3 sm:px-5 lg:px-8">
           <BentoHero inView={heroIn} />
         </div>
       </section>
- 
+
       <AboutSection />
       <AudienceSection />
     </div>

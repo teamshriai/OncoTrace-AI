@@ -74,15 +74,25 @@ const scopedCSS = `
     transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
                 box-shadow 0.3s ease;
   }
-  .wf-circle:hover { transform: translateY(-8px) scale(1.03); }
+  .wf-circle:hover { 
+    transform: translateY(-8px) scale(1.03); 
+  }
 
-  .wf-label { transition: color 0.2s ease, transform 0.2s ease; }
-  .wf-wrapper:hover .wf-label { color: #1e40af; transform: scale(1.02); }
+  .wf-label { 
+    transition: color 0.2s ease, transform 0.2s ease; 
+  }
+  
+  .wf-wrapper:hover .wf-label { 
+    color: #1e40af; 
+    transform: scale(1.02); 
+  }
 
-  .golden-glow { animation: heroGoldenGlow 3s ease-in-out infinite; }
+  .golden-glow { 
+    animation: heroGoldenGlow 3s ease-in-out infinite; 
+  }
 
   /* ═══════════════════════════════════════════════
-     LEFT OVERLAY BLOCK — desktop (unchanged)
+     LEFT OVERLAY BLOCK — desktop
      ═══════════════════════════════════════════════ */
   .hero-overlay-left {
     position: absolute;
@@ -120,7 +130,7 @@ const scopedCSS = `
   }
 
   /* ═══════════════════════════════════════════════
-     RIGHT OVERLAY BLOCK — desktop (unchanged)
+     RIGHT OVERLAY BLOCK — desktop
      ═══════════════════════════════════════════════ */
   .hero-overlay-right {
     position:   absolute;
@@ -138,7 +148,7 @@ const scopedCSS = `
     font-weight: 500;
     letter-spacing: 0.25em;
     text-transform: uppercase;
-    color: #9ca3af;
+    color: #dc2626;
     white-space: nowrap;
     font-size: clamp(6px, 0.82vw, 13px);
     margin-bottom: 0.25em;
@@ -161,11 +171,10 @@ const scopedCSS = `
     cursor: default;
   }
 
-  /* Only the "Powered by" line is a hyperlink */
   .hero-powered-by-link {
     font-family: 'Inter', system-ui, sans-serif;
     font-weight: 400;
-    color: #374151;
+    color: #dc2626;
     margin-top: 0.5em;
     white-space: nowrap;
     font-size: clamp(5px, 0.82vw, 12px);
@@ -178,31 +187,23 @@ const scopedCSS = `
   }
 
   .hero-powered-by-link:hover {
-    color: #1e3a8a;
+    color: #991b1b;
     text-decoration: underline;
-    text-decoration-color: #1e3a8a60;
+    text-decoration-color: #991b1b60;
     text-underline-offset: 2px;
   }
 
   /* ═══════════════════════════════════════════════
      MOBILE OVERRIDES  (< 480px)
-     ONLY changes:
-       1. Smaller font sizes across both blocks
-       2. Reduced margin-top on .hero-powered-by-link
-          so the gap between headline and link is tight
-     Everything else — colors, weights, positions,
-     image styles — is untouched.
      ═══════════════════════════════════════════════ */
   @media (max-width: 479px) {
 
-    /* ── LEFT block position ── */
     .hero-overlay-left {
       left:      4%;
       top:       6%;
       max-width: 44%;
     }
 
-    /* ── RIGHT block position ── */
     .hero-overlay-right {
       left:      52%;
       top:       5%;
@@ -210,7 +211,6 @@ const scopedCSS = `
       max-width: 46%;
     }
 
-    /* ── LEFT block font sizes (smaller than before) ── */
     .hero-badge-open-source {
       font-size:   clamp(5px, 2.4vw, 11px);
       white-space: normal;
@@ -222,7 +222,6 @@ const scopedCSS = `
       white-space: normal;
     }
 
-    /* ── RIGHT block font sizes (smaller than before) ── */
     .hero-ai-powered-label {
       font-size:   clamp(4px, 1.6vw, 7px);
       white-space: normal;
@@ -234,15 +233,25 @@ const scopedCSS = `
       line-height: 1.15;
     }
 
-    /*
-      KEY FIX: margin-top reduced from 0.5em → 0.1em
-      so the "Powered by" line sits tight under
-      the headline with no large gap on mobile
-    */
     .hero-powered-by-link {
       font-size:  clamp(3px, 1.6vw, 7px);
       margin-top: 0.1em;
       white-space: normal;
+    }
+  }
+
+  /* Tablet specific adjustments */
+  @media (min-width: 768px) and (max-width: 1023px) {
+    .hero-overlay-left {
+      left:      5%;
+      top:       8%;
+      max-width: 40%;
+    }
+
+    .hero-overlay-right {
+      left:      58%;
+      top:       6%;
+      max-width: 38%;
     }
   }
 `
@@ -267,11 +276,17 @@ function useInView(ref, threshold = 0.1) {
   useEffect(() => {
     const node = ref.current
     if (!node) return
-    if (typeof IntersectionObserver === 'undefined') { setInView(true); return }
+    if (typeof IntersectionObserver === 'undefined') { 
+      setInView(true)
+      return 
+    }
 
     const obs = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) { setInView(true); obs.unobserve(node) }
+        if (entry.isIntersecting) { 
+          setInView(true)
+          obs.unobserve(node) 
+        }
       },
       { threshold }
     )
@@ -321,7 +336,7 @@ function WorkflowStepCircle({ step, index, inView, isReduced }) {
     >
       {/* Step Number Badge */}
       <div
-        className="relative z-10 mb-3 flex items-center justify-center rounded-full font-bold text-white shadow-lg"
+        className="relative z-10 mb-3 flex items-center justify-center rounded-full font-bold text-white shadow-lg flex-shrink-0"
         style={{
           width:      36,
           height:     36,
@@ -334,68 +349,71 @@ function WorkflowStepCircle({ step, index, inView, isReduced }) {
         {step.id}
       </div>
 
-      {/* Golden Glow */}
-      <div
-        className="absolute golden-glow rounded-full pointer-events-none"
-        style={{
-          width:      `calc(${circleSize} + 24px)`,
-          height:     `calc(${circleSize} + 24px)`,
-          background: 'radial-gradient(circle, rgba(251,191,36,0.15) 0%, rgba(245,158,11,0.08) 50%, transparent 70%)',
-          filter:     'blur(8px)',
-          zIndex:     0,
-        }}
-        aria-hidden="true"
-      />
-
-      {/* Circle */}
-      <div
-        className="wf-circle relative rounded-full overflow-hidden bg-white"
-        style={{
-          width:     circleSize,
-          height:    circleSize,
-          border:    `3px solid ${step.color}50`,
-          boxShadow: `0 6px 20px rgba(0,0,0,0.1),
-                      0 2px 6px rgba(0,0,0,0.06),
-                      0 0 0 6px rgba(251,191,36,0.08),
-                      inset 0 0 0 2px ${step.color}20`,
-          zIndex: 1,
-        }}
-      >
-        {!imgLoaded && !imgError && (
-          <div className="absolute inset-0 flex items-center justify-center bg-slate-50">
-            <div
-              className="w-10 h-10 border-4 border-slate-200 border-t-slate-400 rounded-full"
-              style={{ animation: 'heroSpin 0.8s linear infinite' }}
-            />
-          </div>
-        )}
-
-        {imgError && (
-          <div className="absolute inset-0 flex items-center justify-center bg-slate-50">
-            <svg width="40%" height="40%" viewBox="0 0 48 48" fill="none">
-              <circle cx="24" cy="24" r="20" stroke={step.color} strokeWidth="2" opacity="0.3" />
-              <path d="M16 24h16M24 16v16" stroke={step.color} strokeWidth="2.5" strokeLinecap="round" />
-            </svg>
-          </div>
-        )}
-
-        <img
-          src={step.icon}
-          alt={step.label}
-          loading="lazy"
-          draggable={false}
-          onLoad={() => setImgLoaded(true)}
-          onError={() => setImgError(true)}
-          className="absolute inset-0 w-full h-full object-cover"
-          style={{ opacity: imgLoaded ? 1 : 0, transition: 'opacity 0.4s ease' }}
-        />
-
+      {/* Container for glow + circle - helps with alignment */}
+      <div className="relative flex items-center justify-center">
+        {/* Golden Glow */}
         <div
-          className="absolute inset-0 pointer-events-none"
+          className="absolute golden-glow rounded-full pointer-events-none"
           style={{
-            background: 'radial-gradient(circle at 35% 35%, rgba(255,255,255,0.25) 0%, transparent 60%)',
+            width:      `calc(${circleSize} + 24px)`,
+            height:     `calc(${circleSize} + 24px)`,
+            background: 'radial-gradient(circle, rgba(251,191,36,0.15) 0%, rgba(245,158,11,0.08) 50%, transparent 70%)',
+            filter:     'blur(8px)',
+            zIndex:     0,
           }}
+          aria-hidden="true"
         />
+
+        {/* Circle */}
+        <div
+          className="wf-circle relative rounded-full overflow-hidden bg-white flex-shrink-0"
+          style={{
+            width:     circleSize,
+            height:    circleSize,
+            border:    `3px solid ${step.color}50`,
+            boxShadow: `0 6px 20px rgba(0,0,0,0.1),
+                        0 2px 6px rgba(0,0,0,0.06),
+                        0 0 0 6px rgba(251,191,36,0.08),
+                        inset 0 0 0 2px ${step.color}20`,
+            zIndex: 1,
+          }}
+        >
+          {!imgLoaded && !imgError && (
+            <div className="absolute inset-0 flex items-center justify-center bg-slate-50">
+              <div
+                className="w-10 h-10 border-4 border-slate-200 border-t-slate-400 rounded-full"
+                style={{ animation: 'heroSpin 0.8s linear infinite' }}
+              />
+            </div>
+          )}
+
+          {imgError && (
+            <div className="absolute inset-0 flex items-center justify-center bg-slate-50">
+              <svg width="40%" height="40%" viewBox="0 0 48 48" fill="none">
+                <circle cx="24" cy="24" r="20" stroke={step.color} strokeWidth="2" opacity="0.3" />
+                <path d="M16 24h16M24 16v16" stroke={step.color} strokeWidth="2.5" strokeLinecap="round" />
+              </svg>
+            </div>
+          )}
+
+          <img
+            src={step.icon}
+            alt={step.label}
+            loading="lazy"
+            draggable={false}
+            onLoad={() => setImgLoaded(true)}
+            onError={() => setImgError(true)}
+            className="absolute inset-0 w-full h-full object-cover"
+            style={{ opacity: imgLoaded ? 1 : 0, transition: 'opacity 0.4s ease' }}
+          />
+
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background: 'radial-gradient(circle at 35% 35%, rgba(255,255,255,0.25) 0%, transparent 60%)',
+            }}
+          />
+        </div>
       </div>
 
       {/* Label */}
@@ -419,53 +437,44 @@ function WorkflowStepCircle({ step, index, inView, isReduced }) {
 }
 
 /* ═══════════════════════════════════════════════════════
-   CONNECTORS
+   CONNECTORS - Perfectly centered arrows
    ═══════════════════════════════════════════════════════ */
 
-function DesktopConnector({ inView, delay, isReduced, color }) {
+const ARROW_FILL = 'rgba(147, 197, 253, 0.55)'
+
+function DesktopConnector({ inView, delay, isReduced }) {
   return (
     <div
-      className="flex-shrink-0 flex items-center justify-center"
+      className="flex-shrink-0 flex items-center justify-center self-start"
       style={{
-        marginTop:  'calc(clamp(70px, 9vw, 130px))',
+        // Align arrow to center of circle:
+        // Badge height (36px) + badge margin-bottom (12px) + half of circle
+        marginTop: 'calc(36px + 12px + clamp(70px, 9vw, 130px))',
         width:      'clamp(35px, 4vw, 70px)',
         opacity:    inView ? 1 : 0,
         transition: isReduced ? 'none' : `opacity 0.5s ease ${delay}s`,
       }}
       aria-hidden="true"
     >
-      <svg viewBox="0 0 100 40" fill="none" className="w-full" style={{ overflow: 'visible' }}>
-        <defs>
-          <linearGradient id={`grad-${delay}`} x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%"   stopColor={color} stopOpacity="0.6" />
-            <stop offset="100%" stopColor={color} stopOpacity="1"   />
-          </linearGradient>
-        </defs>
-        <line
-          x1="8" y1="20" x2="78" y2="20"
-          stroke={`url(#grad-${delay})`}
-          strokeWidth="4.5"
-          strokeLinecap="round"
-        />
+      <svg
+        viewBox="0 0 100 40"
+        fill="none"
+        className="w-full h-auto"
+        style={{ display: 'block' }}
+      >
         <path
-          d="M 66 11 L 88 20 L 66 29"
-          fill="none"
-          stroke={color}
-          strokeWidth="4.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          opacity="0.9"
+          d="M 0 15 L 72 15 L 72 6 L 98 20 L 72 34 L 72 25 L 0 25 Z"
+          fill={ARROW_FILL}
         />
-        <circle cx="8" cy="20" r="3" fill={color} opacity="0.7" />
       </svg>
     </div>
   )
 }
 
-function MobileConnector({ inView, delay, isReduced, color }) {
+function MobileConnector({ inView, delay, isReduced }) {
   return (
     <div
-      className="flex items-center justify-center my-2"
+      className="flex items-center justify-center my-2 flex-shrink-0"
       style={{
         width:      40,
         height:     60,
@@ -474,29 +483,17 @@ function MobileConnector({ inView, delay, isReduced, color }) {
       }}
       aria-hidden="true"
     >
-      <svg viewBox="0 0 40 60" fill="none" width="40" height="60">
-        <defs>
-          <linearGradient id={`mgrad-${delay}`} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%"   stopColor={color} stopOpacity="0.6" />
-            <stop offset="100%" stopColor={color} stopOpacity="1"   />
-          </linearGradient>
-        </defs>
-        <line
-          x1="20" y1="8" x2="20" y2="46"
-          stroke={`url(#mgrad-${delay})`}
-          strokeWidth="4.5"
-          strokeLinecap="round"
-        />
+      <svg 
+        viewBox="0 0 40 60" 
+        fill="none" 
+        width="40" 
+        height="60"
+        style={{ display: 'block' }}
+      >
         <path
-          d="M 11 34 L 20 52 L 29 34"
-          fill="none"
-          stroke={color}
-          strokeWidth="4.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          opacity="0.9"
+          d="M 15 0 L 25 0 L 25 38 L 34 38 L 20 58 L 6 38 L 15 38 Z"
+          fill={ARROW_FILL}
         />
-        <circle cx="20" cy="8" r="3" fill={color} opacity="0.7" />
       </svg>
     </div>
   )
@@ -507,6 +504,8 @@ function MobileConnector({ inView, delay, isReduced, color }) {
    ═══════════════════════════════════════════════════════ */
 
 function HeroImageSection() {
+  const [imageLoaded, setImageLoaded] = useState(false)
+
   return (
     <section
       className="relative w-full overflow-hidden"
@@ -515,23 +514,39 @@ function HeroImageSection() {
     >
       <div className="relative w-full">
 
-        {/* Cover image — EXACTLY as original */}
+        {/* Loading state */}
+        {!imageLoaded && (
+          <div 
+            className="absolute inset-0 bg-slate-100 flex items-center justify-center"
+            style={{ minHeight: '400px' }}
+          >
+            <div
+              className="w-16 h-16 border-4 border-slate-300 border-t-slate-600 rounded-full"
+              style={{ animation: 'heroSpin 1s linear infinite' }}
+            />
+          </div>
+        )}
+
+        {/* Cover image */}
         <img
           src="/trial.png"
           alt="AI Precision Diagnostics & Monitoring Centre"
           loading="eager"
           fetchPriority="high"
           draggable={false}
+          onLoad={() => setImageLoaded(true)}
           className="w-full h-auto block"
           style={{
             minHeight:      'clamp(200px, 43vw, 780px)',
             maxHeight:      '90vh',
             objectFit:      'cover',
             objectPosition: 'center',
+            opacity:        imageLoaded ? 1 : 0,
+            transition:     'opacity 0.5s ease',
           }}
         />
 
-        {/* LEFT OVERLAY — visible on all screen sizes */}
+        {/* LEFT OVERLAY */}
         <div
           className="hero-overlay-left"
           aria-label="Open source not for profit – AI for health, care for all"
@@ -544,7 +559,7 @@ function HeroImageSection() {
           </span>
         </div>
 
-        {/* RIGHT OVERLAY — visible on all screen sizes */}
+        {/* RIGHT OVERLAY */}
         <div
           className="hero-overlay-right"
           aria-label="AI-Powered Real-time Precision Monitoring of Oncology"
@@ -558,7 +573,6 @@ function HeroImageSection() {
             Monitoring of Oncology
           </span>
 
-          {/* Only this anchor is clickable */}
           <a
             href="https://shri-ai.org/"
             target="_blank"
@@ -566,11 +580,11 @@ function HeroImageSection() {
             className="hero-powered-by-link"
             aria-label="Visit Senus Healthcare and Research Institute"
           >
-            Powered by&nbsp;: Senus Healthcare and Research Institute (USA)
+            Powered by  : Senus Healthcare and Research Institute (USA)
           </a>
         </div>
 
-        {/* Corner Accents — EXACTLY as original */}
+        {/* Corner Accents */}
         {CORNER_ACCENTS.map(({ pos, warm }) => (
           <div
             key={pos}
@@ -597,12 +611,19 @@ export default function HeroSection() {
   const workflowInView = useInView(workflowRef, 0.05)
   const isReduced      = useReducedMotion()
 
-  useEffect(() => { injectHeroStyles() }, [])
+  useEffect(() => { 
+    injectHeroStyles() 
+  }, [])
 
   return (
     <div
       className="hero-root"
-      style={{ background: '#ffffff', fontFamily: 'Inter, system-ui, sans-serif' }}
+      style={{ 
+        background: '#ffffff', 
+        fontFamily: 'Inter, system-ui, sans-serif',
+        minHeight: '100vh',
+        width: '100%',
+      }}
     >
       {/* Skip link */}
       <a
@@ -658,9 +679,9 @@ export default function HeroSection() {
             </h2>
           </div>
 
-          {/* Desktop Layout (lg+) */}
+          {/* Desktop Layout (lg+) - Horizontal row */}
           <div
-            className="hidden lg:flex items-start justify-center"
+            className="hidden lg:flex items-start justify-center flex-wrap"
             style={{ gap: 'clamp(4px, 0.5vw, 12px)' }}
           >
             {WORKFLOW_STEPS.map((step, index) => (
@@ -676,18 +697,17 @@ export default function HeroSection() {
                     inView={workflowInView}
                     delay={isReduced ? 0 : 0.08 + index * 0.08 + 0.25}
                     isReduced={isReduced}
-                    color={step.color}
                   />
                 )}
               </div>
             ))}
           </div>
 
-          {/* Tablet Layout (md → lg) */}
+          {/* Tablet Layout (md → lg) - 3 top, 2 bottom */}
           <div className="hidden md:block lg:hidden">
             {/* First Row – 3 steps */}
             <div
-              className="flex items-start justify-center"
+              className="flex items-start justify-center flex-wrap"
               style={{ gap: 'clamp(6px, 1vw, 16px)' }}
             >
               {WORKFLOW_STEPS.slice(0, 3).map((step, index) => (
@@ -703,7 +723,6 @@ export default function HeroSection() {
                       inView={workflowInView}
                       delay={isReduced ? 0 : 0.08 + index * 0.08 + 0.25}
                       isReduced={isReduced}
-                      color={step.color}
                     />
                   )}
                 </div>
@@ -716,13 +735,12 @@ export default function HeroSection() {
                 inView={workflowInView}
                 delay={isReduced ? 0 : 0.5}
                 isReduced={isReduced}
-                color={WORKFLOW_STEPS[2].color}
               />
             </div>
 
             {/* Second Row – 2 steps */}
             <div
-              className="flex items-start justify-center"
+              className="flex items-start justify-center flex-wrap"
               style={{ gap: 'clamp(6px, 1vw, 16px)' }}
             >
               {WORKFLOW_STEPS.slice(3).map((step, index) => (
@@ -738,7 +756,6 @@ export default function HeroSection() {
                       inView={workflowInView}
                       delay={isReduced ? 0 : 0.75}
                       isReduced={isReduced}
-                      color={step.color}
                     />
                   )}
                 </div>
@@ -746,10 +763,10 @@ export default function HeroSection() {
             </div>
           </div>
 
-          {/* Mobile Layout (< md) */}
+          {/* Mobile Layout (< md) - Vertical stack */}
           <div className="flex md:hidden flex-col items-center">
             {WORKFLOW_STEPS.map((step, index) => (
-              <div key={step.id} className="flex flex-col items-center">
+              <div key={step.id} className="flex flex-col items-center w-full max-w-md">
                 <WorkflowStepCircle
                   step={step}
                   index={index}
@@ -761,7 +778,6 @@ export default function HeroSection() {
                     inView={workflowInView}
                     delay={isReduced ? 0 : 0.08 + index * 0.08 + 0.25}
                     isReduced={isReduced}
-                    color={step.color}
                   />
                 )}
               </div>

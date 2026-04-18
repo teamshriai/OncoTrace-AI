@@ -592,6 +592,18 @@ const HospitalIcon = ({ className = '' }) => (
   </svg>
 );
 
+const MenuIcon = ({ className = '' }) => (
+  <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+  </svg>
+);
+
+const XIcon = ({ className = '' }) => (
+  <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+  </svg>
+);
+
 // ─── Navigation Items ──────────────────────────────────────────────
 const navItems = [
   { id: 'dashboard', label: 'Dashboard', Icon: DashboardIcon },
@@ -599,7 +611,7 @@ const navItems = [
   { id: 'predictions', label: 'AI Predictions', Icon: BrainIcon },
   { id: 'clinical', label: 'Clinical View', Icon: ShieldIcon },
   { id: 'datasets', label: 'Datasets & Resources', Icon: DatabaseIcon },
-  { id: 'architecture', label: 'System Architecture', Icon: ArchitectureIcon },
+  { id: 'architecture', label: 'How it works', Icon: ArchitectureIcon },
 ];
 
 // ─── Chart Colors ──────────────────────────────────────────────────
@@ -609,54 +621,63 @@ const chartColors = ['#3b82f6', '#6366f1', '#f59e0b', '#ef4444', '#ec4899', '#8b
 const tooltipStyle = {
   backgroundColor: 'rgba(255, 255, 255, 0.98)',
   border: '1px solid #e5e7eb',
-  borderRadius: 8,
+  borderRadius: 12,
   fontSize: 12,
   color: '#374151',
-  boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-  padding: '8px 12px',
+  boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+  padding: '12px 16px',
 };
 
 // ─── Main Demo Component ───────────────────────────────────────────
 export default function Demo() {
   const [page, setPage] = useState('dashboard');
   const [selectedPatientId, setSelectedPatientId] = useState(patients[0].id);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const patient = patients.find((p) => p.id === selectedPatientId) || patients[0];
 
   const getRiskBadgeClass = (category) => {
     switch (category) {
       case 'high':
-        return 'bg-gradient-to-r from-red-500/10 to-red-600/10 text-red-700 border border-red-200/50';
+        return 'bg-gradient-to-r from-red-500/10 to-red-600/10 text-red-700 border border-red-200/50 shadow-lg shadow-red-100/50';
       case 'moderate':
-        return 'bg-gradient-to-r from-amber-500/10 to-amber-600/10 text-amber-700 border border-amber-200/50';
+        return 'bg-gradient-to-r from-amber-500/10 to-amber-600/10 text-amber-700 border border-amber-200/50 shadow-lg shadow-amber-100/50';
       default:
-        return 'bg-gradient-to-r from-emerald-500/10 to-emerald-600/10 text-emerald-700 border border-emerald-200/50';
+        return 'bg-gradient-to-r from-emerald-500/10 to-emerald-600/10 text-emerald-700 border border-emerald-200/50 shadow-lg shadow-emerald-100/50';
     }
   };
 
   const getRiskDot = (category) => {
     switch (category) {
       case 'high':
-        return 'bg-red-500';
+        return 'bg-red-500 shadow-lg shadow-red-400/50';
       case 'moderate':
-        return 'bg-amber-500';
+        return 'bg-amber-500 shadow-lg shadow-amber-400/50';
       default:
-        return 'bg-emerald-500';
+        return 'bg-emerald-500 shadow-lg shadow-emerald-400/50';
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/20">
       {/* Header */}
-      <header className="bg-white/80 backdrop-blur-xl border-b border-slate-200/60 sticky top-0 z-50 shadow-sm">
-        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <header className="lg:ml-72 bg-white/90 backdrop-blur-xl border-b border-slate-200/60 sticky top-0 z-40 shadow-sm">
+        <div className="px-4 sm:px-6 lg:px-8">
           <div className="h-16 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20">
-                <DNAIcon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-              </div>
-              <div className="text-lg sm:text-xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent tracking-tight">
-                OncoTrace AI
+              <button
+                onClick={() => setIsSidebarOpen(true)}
+                className="lg:hidden w-10 h-10 bg-white/80 backdrop-blur-sm border border-slate-200/60 rounded-xl flex items-center justify-center hover:bg-slate-50/80 transition-colors shadow-lg"
+              >
+                <MenuIcon className="w-5 h-5 text-slate-600" />
+              </button>
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-xl shadow-blue-500/25">
+                  <DNAIcon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                </div>
+                <div className="text-lg sm:text-xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent tracking-tight">
+                  OncoTrace AI
+                </div>
               </div>
             </div>
 
@@ -664,7 +685,7 @@ export default function Demo() {
               <select
                 value={selectedPatientId}
                 onChange={(e) => setSelectedPatientId(e.target.value)}
-                className="bg-slate-50/50 backdrop-blur-sm border border-slate-200/60 rounded-lg px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all cursor-pointer hover:bg-slate-100/50"
+                className="bg-white/80 backdrop-blur-sm border border-slate-200/60 rounded-xl px-4 py-2.5 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all cursor-pointer hover:bg-slate-50/80 shadow-lg"
               >
                 {patients.map((p) => (
                   <option key={p.id} value={p.id}>
@@ -673,8 +694,8 @@ export default function Demo() {
                 ))}
               </select>
 
-              <div className={`px-3 py-1.5 rounded-lg text-xs font-semibold backdrop-blur-sm flex items-center gap-2 ${getRiskBadgeClass(patient.riskCategory)}`}>
-                <span className={`w-2 h-2 rounded-full ${getRiskDot(patient.riskCategory)} animate-pulse`} />
+              <div className={`px-4 py-2 rounded-xl text-xs font-bold backdrop-blur-sm flex items-center gap-2 ${getRiskBadgeClass(patient.riskCategory)}`}>
+                <span className={`w-2.5 h-2.5 rounded-full ${getRiskDot(patient.riskCategory)} animate-pulse`} />
                 <span className="uppercase tracking-wide">{patient.riskCategory}</span>
               </div>
             </div>
@@ -682,54 +703,121 @@ export default function Demo() {
         </div>
       </header>
 
-      <div className="w-full max-w-7xl mx-auto flex">
+      <div className="flex">
         {/* Desktop Sidebar */}
-        <nav className="w-64 shrink-0 min-h-[calc(100vh-4rem)] bg-white/60 backdrop-blur-xl border-r border-slate-200/60 sticky top-16 self-start hidden lg:block">
-          <div className="p-4 space-y-2">
-            {navItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => setPage(item.id)}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
-                  page === item.id
-                    ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-lg shadow-blue-500/25'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/60'
-                }`}
-              >
-                <item.Icon className={`w-5 h-5 ${page === item.id ? 'text-white' : 'text-slate-400'}`} />
-                <span>{item.label}</span>
-              </button>
-            ))}
+        <nav className="hidden lg:flex lg:w-72 lg:fixed lg:inset-y-0 lg:z-50">
+          <div className="flex flex-col w-full bg-gradient-to-b from-white via-slate-50/50 to-white backdrop-blur-xl border-r border-slate-200/60 shadow-2xl">
+            <div className="flex items-center gap-3 h-16 px-6 border-b border-slate-200/60 bg-gradient-to-r from-blue-50/50 to-indigo-50/30">
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-xl shadow-blue-500/25">
+                <DNAIcon className="w-6 h-6 text-white" />
+              </div>
+              <div className="text-xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent tracking-tight">
+                OncoTrace AI
+              </div>
+            </div>
+            <div className="flex-1 px-4 py-6">
+              <div className="space-y-2">
+                {navItems.map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => setPage(item.id)}
+                    className={`w-full flex items-center gap-4 px-4 py-4 rounded-xl text-sm font-semibold transition-all duration-200 ${
+                      page === item.id
+                        ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-xl shadow-blue-500/30 transform scale-[1.02]'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-gradient-to-r hover:from-slate-50 hover:to-blue-50/50 hover:shadow-lg hover:shadow-slate-200/50'
+                    }`}
+                  >
+                    <item.Icon className={`w-5 h-5 ${page === item.id ? 'text-white' : 'text-slate-500'}`} />
+                    <span>{item.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="p-4 border-t border-slate-200/60 bg-gradient-to-r from-slate-50/50 to-blue-50/30">
+              <div className="text-xs text-slate-500 text-center">
+                Powered by Advanced AI
+              </div>
+            </div>
           </div>
         </nav>
 
-        {/* Mobile Bottom Navigation */}
-        <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-xl border-t border-slate-200/60 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-50 safe-area-inset-bottom">
-          <div className="grid grid-cols-6 h-16">
-            {navItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => setPage(item.id)}
-                className={`flex flex-col items-center justify-center gap-1 transition-all ${
-                  page === item.id ? 'text-blue-600' : 'text-slate-400'
-                }`}
-              >
-                <item.Icon className="w-5 h-5" />
-                <span className="text-[10px] font-medium leading-tight text-center px-1">{item.label.split(' ')[0]}</span>
-              </button>
-            ))}
+        {/* Mobile Sidebar Overlay */}
+        {isSidebarOpen && (
+          <div className="lg:hidden fixed inset-0 z-50">
+            <div className="fixed inset-0 bg-black/30 backdrop-blur-sm" onClick={() => setIsSidebarOpen(false)} />
+            <div className="fixed left-0 top-0 bottom-0 w-72 bg-gradient-to-b from-white via-slate-50/50 to-white backdrop-blur-xl border-r border-slate-200/60 shadow-2xl">
+              <div className="flex items-center justify-between h-16 px-6 border-b border-slate-200/60 bg-gradient-to-r from-blue-50/50 to-indigo-50/30">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-xl shadow-blue-500/25">
+                    <DNAIcon className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="text-xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent tracking-tight">
+                    OncoTrace AI
+                  </div>
+                </div>
+                <button
+                  onClick={() => setIsSidebarOpen(false)}
+                  className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100/50 transition-colors"
+                >
+                  <XIcon className="w-5 h-5 text-slate-600" />
+                </button>
+              </div>
+              <div className="flex-1 px-4 py-6">
+                <div className="space-y-2">
+                  {navItems.map((item) => (
+                    <button
+                      key={item.id}
+                      onClick={() => {
+                        setPage(item.id);
+                        setIsSidebarOpen(false);
+                      }}
+                      className={`w-full flex items-center gap-4 px-4 py-4 rounded-xl text-sm font-semibold transition-all duration-200 ${
+                        page === item.id
+                          ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-xl shadow-blue-500/30 transform scale-[1.02]'
+                          : 'text-slate-600 hover:text-slate-900 hover:bg-gradient-to-r hover:from-slate-50 hover:to-blue-50/50 hover:shadow-lg hover:shadow-slate-200/50'
+                      }`}
+                    >
+                      <item.Icon className={`w-5 h-5 ${page === item.id ? 'text-white' : 'text-slate-500'}`} />
+                      <span>{item.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Main Content */}
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 pb-24 lg:pb-8">
-          {page === 'dashboard' && <DashboardPage patient={patient} onNavigate={setPage} />}
-          {page === 'dynamics' && <DynamicsPage patient={patient} />}
-          {page === 'predictions' && <PredictionsPage patient={patient} />}
-          {page === 'clinical' && <ClinicalPage patient={patient} />}
-          {page === 'datasets' && <DatasetsPage />}
-          {page === 'architecture' && <ArchitecturePage />}
+        <main className="flex-1 lg:ml-72">
+          <div className="p-4 sm:p-6 lg:p-8 pb-24 lg:pb-8">
+            {page === 'dashboard' && <DashboardPage patient={patient} onNavigate={setPage} />}
+            {page === 'dynamics' && <DynamicsPage patient={patient} />}
+            {page === 'predictions' && <PredictionsPage patient={patient} />}
+            {page === 'clinical' && <ClinicalPage patient={patient} />}
+            {page === 'datasets' && <DatasetsPage />}
+            {page === 'architecture' && <ArchitecturePage />}
+          </div>
         </main>
+      </div>
+
+      {/* Mobile Bottom Navigation */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-xl border-t border-slate-200/60 shadow-2xl z-40 safe-area-inset-bottom">
+        <div className="grid grid-cols-6 h-16">
+          {navItems.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => setPage(item.id)}
+              className={`flex flex-col items-center justify-center gap-1 transition-all duration-200 ${
+                page === item.id 
+                  ? 'text-blue-600 transform scale-110' 
+                  : 'text-slate-400 hover:text-slate-600'
+              }`}
+            >
+              <item.Icon className="w-5 h-5" />
+              <span className="text-[10px] font-medium leading-tight text-center px-1">{item.label.split(' ')[0]}</span>
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -770,45 +858,45 @@ function DashboardPage({ patient, onNavigate }) {
   return (
     <div className="space-y-6">
       {/* Patient Header */}
-      <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-slate-200/60 shadow-xl shadow-slate-200/50 p-6">
+      <div className="bg-gradient-to-r from-white via-blue-50/20 to-white backdrop-blur-sm rounded-2xl border border-slate-200/60 shadow-xl shadow-slate-200/50 p-6">
         <div className="flex flex-col lg:flex-row gap-6">
           <div className="flex-1">
             <div className="flex items-start gap-4 mb-4">
-              <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/25 shrink-0">
-                <UserIcon className="w-7 h-7 text-white" />
+              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 via-indigo-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-xl shadow-blue-500/30 shrink-0">
+                <UserIcon className="w-8 h-8 text-white" />
               </div>
               <div className="flex-1 min-w-0">
-                <h2 className="text-2xl font-bold text-slate-900">
+                <h2 className="text-2xl font-bold text-slate-900 mb-1">
                   {patient.id} — {patient.name}
                 </h2>
-                <p className="text-slate-500 text-sm mt-1">
+                <p className="text-slate-600 text-sm">
                   {patient.cancerType} • {patient.stage}
                 </p>
               </div>
             </div>
-            <div className="flex flex-wrap gap-6 mt-4 text-sm text-slate-600">
-              <span className="flex items-center gap-2">
-                <span className="text-slate-400">Age:</span>
-                <span className="text-slate-900 font-semibold">{patient.age}</span>
-              </span>
-              <span className="flex items-center gap-2">
-                <span className="text-slate-400">Sex:</span>
-                <span className="text-slate-900 font-semibold">{patient.sex}</span>
-              </span>
-              <span className="flex items-center gap-2">
-                <span className="text-slate-400">Diagnosis:</span>
-                <span className="text-slate-900 font-semibold">{patient.diagnosisDate}</span>
-              </span>
-              <span className="flex items-center gap-2">
-                <span className="text-slate-400">Therapy:</span>
-                <span className="text-slate-900 font-semibold">{patient.currentTherapy}</span>
-              </span>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 text-sm text-slate-600">
+              <div className="bg-slate-50/50 rounded-xl p-3">
+                <span className="text-slate-500 block text-xs">Age</span>
+                <span className="text-slate-900 font-bold text-lg">{patient.age}</span>
+              </div>
+              <div className="bg-slate-50/50 rounded-xl p-3">
+                <span className="text-slate-500 block text-xs">Sex</span>
+                <span className="text-slate-900 font-bold text-lg">{patient.sex}</span>
+              </div>
+              <div className="bg-slate-50/50 rounded-xl p-3">
+                <span className="text-slate-500 block text-xs">Diagnosis</span>
+                <span className="text-slate-900 font-bold text-lg">{patient.diagnosisDate}</span>
+              </div>
+              <div className="bg-slate-50/50 rounded-xl p-3">
+                <span className="text-slate-500 block text-xs">Therapy</span>
+                <span className="text-slate-900 font-bold text-lg">{patient.currentTherapy}</span>
+              </div>
             </div>
           </div>
           <div className="flex items-center justify-center lg:justify-end">
-            <div className="flex flex-col items-center gap-2">
-              <div className={`text-5xl font-black ${getRiskColorClass(patient.riskCategory)}`}>{patient.riskScore}</div>
-              <span className="text-xs text-slate-400 uppercase tracking-wider font-medium">Risk Score</span>
+            <div className="bg-gradient-to-br from-slate-50 to-white rounded-2xl p-6 text-center border border-slate-200/60 shadow-lg min-w-[200px]">
+              <div className={`text-5xl font-black ${getRiskColorClass(patient.riskCategory)} mb-2`}>{patient.riskScore}</div>
+              <span className="text-xs text-slate-500 uppercase tracking-wider font-semibold">Risk Score</span>
             </div>
           </div>
         </div>
@@ -819,24 +907,24 @@ function DashboardPage({ patient, onNavigate }) {
         {stats.map((s, i) => (
           <div
             key={i}
-            className="bg-white/80 backdrop-blur-sm border border-slate-200/60 rounded-2xl p-5 shadow-lg shadow-slate-200/50 hover:shadow-xl hover:shadow-slate-300/50 hover:-translate-y-0.5 transition-all duration-200"
+            className="bg-gradient-to-br from-white via-blue-50/10 to-white backdrop-blur-sm border border-slate-200/60 rounded-2xl p-6 shadow-xl shadow-slate-200/50 hover:shadow-2xl hover:shadow-slate-300/50 hover:-translate-y-1 transition-all duration-300 group"
           >
-            <div className="flex items-center justify-between mb-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-slate-100 to-slate-200/50 rounded-xl flex items-center justify-center">
-                <s.Icon className="w-5 h-5 text-slate-600" />
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-12 h-12 bg-gradient-to-br from-slate-100 via-blue-50 to-slate-100 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                <s.Icon className="w-6 h-6 text-slate-600" />
               </div>
               {s.change !== 0 && (
                 <span
-                  className={`text-xs font-bold px-2 py-1 rounded-lg ${
-                    (s.isCount ? s.change > 0 : s.change > 0) ? 'bg-red-50 text-red-600' : 'bg-emerald-50 text-emerald-600'
+                  className={`text-xs font-bold px-3 py-1.5 rounded-xl shadow-lg ${
+                    (s.isCount ? s.change > 0 : s.change > 0) ? 'bg-red-50 text-red-600 shadow-red-100/50' : 'bg-emerald-50 text-emerald-600 shadow-emerald-100/50'
                   }`}
                 >
                   {s.change > 0 ? '↑' : '↓'} {s.isCount ? Math.abs(s.change) : `${Math.abs(s.change).toFixed(0)}%`}
                 </span>
               )}
             </div>
-            <div className="text-2xl font-bold text-slate-900 mb-1">{s.value}</div>
-            <div className="text-xs text-slate-500 font-medium">{s.label}</div>
+            <div className="text-3xl font-bold text-slate-900 mb-2">{s.value}</div>
+            <div className="text-xs text-slate-500 font-semibold uppercase tracking-wide">{s.label}</div>
           </div>
         ))}
       </div>
@@ -844,37 +932,53 @@ function DashboardPage({ patient, onNavigate }) {
       {/* Charts */}
       <div className="grid lg:grid-cols-2 gap-6">
         <ChartCard title="Tumor Fraction Over Time" subtitle="Serial monitoring of circulating tumor DNA">
-          <ResponsiveContainer width="100%" height={220}>
+          <ResponsiveContainer width="100%" height={240}>
             <AreaChart data={chartData}>
               <defs>
                 <linearGradient id="tfGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.2} />
+                  <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
                   <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
-              <XAxis dataKey="name" tick={{ fontSize: 11, fill: '#64748b' }} tickLine={false} />
-              <YAxis tick={{ fontSize: 11, fill: '#64748b' }} unit="%" tickLine={false} axisLine={false} />
+              <XAxis dataKey="name" tick={{ fontSize: 12, fill: '#64748b' }} tickLine={false} />
+              <YAxis tick={{ fontSize: 12, fill: '#64748b' }} unit="%" tickLine={false} axisLine={false} />
               <Tooltip contentStyle={tooltipStyle} />
-              <Area type="monotone" dataKey="Tumor Fraction" stroke="#3b82f6" fill="url(#tfGradient)" strokeWidth={2.5} dot={{ fill: '#3b82f6', r: 4, strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 5 }} />
+              <Area 
+                type="monotone" 
+                dataKey="Tumor Fraction" 
+                stroke="#3b82f6" 
+                fill="url(#tfGradient)" 
+                strokeWidth={3} 
+                dot={{ fill: '#3b82f6', r: 5, strokeWidth: 3, stroke: '#fff' }} 
+                activeDot={{ r: 6, stroke: '#3b82f6', strokeWidth: 2, fill: '#fff' }} 
+              />
             </AreaChart>
           </ResponsiveContainer>
         </ChartCard>
 
         <ChartCard title="cfDNA Concentration" subtitle="Total cell-free DNA quantification">
-          <ResponsiveContainer width="100%" height={220}>
+          <ResponsiveContainer width="100%" height={240}>
             <AreaChart data={chartData}>
               <defs>
                 <linearGradient id="cfGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#6366f1" stopOpacity={0.2} />
+                  <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3} />
                   <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
-              <XAxis dataKey="name" tick={{ fontSize: 11, fill: '#64748b' }} tickLine={false} />
-              <YAxis tick={{ fontSize: 11, fill: '#64748b' }} unit=" ng" tickLine={false} axisLine={false} />
+              <XAxis dataKey="name" tick={{ fontSize: 12, fill: '#64748b' }} tickLine={false} />
+              <YAxis tick={{ fontSize: 12, fill: '#64748b' }} unit=" ng" tickLine={false} axisLine={false} />
               <Tooltip contentStyle={tooltipStyle} />
-              <Area type="monotone" dataKey="cfDNA (ng/mL)" stroke="#6366f1" fill="url(#cfGradient)" strokeWidth={2.5} dot={{ fill: '#6366f1', r: 4, strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 5 }} />
+              <Area 
+                type="monotone" 
+                dataKey="cfDNA (ng/mL)" 
+                stroke="#6366f1" 
+                fill="url(#cfGradient)" 
+                strokeWidth={3} 
+                dot={{ fill: '#6366f1', r: 5, strokeWidth: 3, stroke: '#fff' }} 
+                activeDot={{ r: 6, stroke: '#6366f1', strokeWidth: 2, fill: '#fff' }} 
+              />
             </AreaChart>
           </ResponsiveContainer>
         </ChartCard>
@@ -883,9 +987,9 @@ function DashboardPage({ patient, onNavigate }) {
       {/* Timeline & Mutations */}
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Timeline */}
-        <div className="lg:col-span-1 bg-white/80 backdrop-blur-sm border border-slate-200/60 rounded-2xl shadow-lg shadow-slate-200/50 p-6">
+        <div className="lg:col-span-1 bg-gradient-to-br from-white via-blue-50/10 to-white backdrop-blur-sm border border-slate-200/60 rounded-2xl shadow-xl shadow-slate-200/50 p-6">
           <h3 className="text-sm font-bold text-slate-700 mb-5 flex items-center gap-2">
-            <div className="w-1 h-4 bg-gradient-to-b from-blue-500 to-indigo-500 rounded-full" />
+            <div className="w-1 h-5 bg-gradient-to-b from-blue-500 to-indigo-500 rounded-full" />
             Collection Timeline
           </h3>
           <div className="space-y-0">
@@ -893,22 +997,22 @@ function DashboardPage({ patient, onNavigate }) {
               <div key={tp.id} className="flex gap-3">
                 <div className="flex flex-col items-center">
                   <div
-                    className={`w-3 h-3 rounded-full shrink-0 transition-all ${
+                    className={`w-4 h-4 rounded-full shrink-0 transition-all ${
                       i === patient.timepoints.length - 1
-                        ? 'bg-gradient-to-br from-blue-500 to-indigo-500 ring-4 ring-blue-500/20 shadow-lg shadow-blue-500/50'
+                        ? 'bg-gradient-to-br from-blue-500 to-indigo-500 ring-4 ring-blue-500/20 shadow-xl shadow-blue-500/50'
                         : 'bg-slate-300'
                     }`}
                   />
-                  {i < patient.timepoints.length - 1 && <div className="w-px flex-1 bg-slate-200 my-1.5 min-h-[24px]" />}
+                  {i < patient.timepoints.length - 1 && <div className="w-px flex-1 bg-slate-200 my-2 min-h-[32px]" />}
                 </div>
-                <div className="pb-5 flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-slate-900">{tp.label}</p>
-                  <p className="text-xs text-slate-500 mt-0.5">
+                <div className="pb-6 flex-1 min-w-0">
+                  <p className="text-sm font-bold text-slate-900">{tp.label}</p>
+                  <p className="text-xs text-slate-500 mt-1">
                     {tp.date} • Day {tp.dayFromBaseline}
                   </p>
                   {tp.imagingResult && (
-                    <div className="mt-2 flex items-start gap-1.5 text-xs text-blue-600">
-                      <CameraIcon className="w-3.5 h-3.5 mt-0.5 shrink-0" />
+                    <div className="mt-3 flex items-start gap-2 text-xs text-blue-600 bg-blue-50/50 rounded-lg p-2">
+                      <CameraIcon className="w-4 h-4 mt-0.5 shrink-0" />
                       <span>{tp.imagingResult}</span>
                     </div>
                   )}
@@ -919,42 +1023,46 @@ function DashboardPage({ patient, onNavigate }) {
         </div>
 
         {/* Mutations Table */}
-        <div className="lg:col-span-2 bg-white/80 backdrop-blur-sm border border-slate-200/60 rounded-2xl shadow-lg shadow-slate-200/50 p-6">
+        <div className="lg:col-span-2 bg-gradient-to-br from-white via-blue-50/10 to-white backdrop-blur-sm border border-slate-200/60 rounded-2xl shadow-xl shadow-slate-200/50 p-6">
           <h3 className="text-sm font-bold text-slate-700 mb-5 flex items-center gap-2">
-            <div className="w-1 h-4 bg-gradient-to-b from-indigo-500 to-purple-500 rounded-full" />
+            <div className="w-1 h-5 bg-gradient-to-b from-indigo-500 to-purple-500 rounded-full" />
             Latest Mutations — {latest.label}
           </h3>
           <div className="overflow-x-auto">
             <table className="w-full text-sm min-w-[500px]">
               <thead>
-                <tr className="text-left text-xs font-semibold text-slate-500 border-b border-slate-200">
-                  <th className="pb-3 pr-4">Gene</th>
-                  <th className="pb-3 pr-4">Variant</th>
-                  <th className="pb-3 pr-4">VAF</th>
-                  <th className="pb-3 pr-4">Type</th>
-                  <th className="pb-3">Path.</th>
+                <tr className="text-left text-xs font-bold text-slate-500 border-b border-slate-200">
+                  <th className="pb-4 pr-4">Gene</th>
+                  <th className="pb-4 pr-4">Variant</th>
+                  <th className="pb-4 pr-4">VAF</th>
+                  <th className="pb-4 pr-4">Type</th>
+                  <th className="pb-4">Path.</th>
                 </tr>
               </thead>
               <tbody>
                 {latest.mutations.map((m, i) => (
                   <tr key={i} className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors">
-                    <td className="py-3 pr-4 font-bold text-blue-600">{m.gene}</td>
-                    <td className="py-3 pr-4 font-mono text-xs text-slate-600 bg-slate-50/50 rounded px-2">{m.variant}</td>
-                    <td className="py-3 pr-4">
-                      <div className="flex items-center gap-2">
-                        <div className="w-16 h-2 bg-slate-200 rounded-full overflow-hidden">
+                    <td className="py-4 pr-4 font-bold text-blue-600">{m.gene}</td>
+                    <td className="py-4 pr-4">
+                      <span className="font-mono text-xs text-slate-600 bg-slate-100/50 rounded-lg px-3 py-1 shadow-sm">
+                        {m.variant}
+                      </span>
+                    </td>
+                    <td className="py-4 pr-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-20 h-3 bg-slate-200 rounded-full overflow-hidden">
                           <div
                             className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full transition-all"
                             style={{ width: `${Math.min(m.vaf * 500, 100)}%` }}
                           />
                         </div>
-                        <span className="text-xs text-slate-600 font-semibold">{(m.vaf * 100).toFixed(1)}%</span>
+                        <span className="text-xs text-slate-600 font-bold">{(m.vaf * 100).toFixed(1)}%</span>
                       </div>
                     </td>
-                    <td className="py-3 pr-4 text-xs text-slate-500 font-medium">{m.type}</td>
-                    <td className="py-3">
+                    <td className="py-4 pr-4 text-xs text-slate-500 font-semibold">{m.type}</td>
+                    <td className="py-4">
                       <span
-                        className={`text-xs font-semibold px-2.5 py-1 rounded-lg ${
+                        className={`text-xs font-bold px-3 py-1.5 rounded-lg ${
                           m.pathogenicity === 'Pathogenic' ? 'bg-red-50 text-red-600' : 'bg-amber-50 text-amber-600'
                         }`}
                       >
@@ -970,7 +1078,7 @@ function DashboardPage({ patient, onNavigate }) {
       </div>
 
       {/* Quick Navigation */}
-      <div className="grid sm:grid-cols-3 gap-4">
+      <div className="grid sm:grid-cols-3 gap-6">
         {[
           { page: 'dynamics', title: 'ctDNA Dynamics', desc: 'Track VAF, tumor fraction, and molecular changes', gradient: 'from-blue-500 to-cyan-500', Icon: ChartIcon },
           { page: 'predictions', title: 'AI Predictions', desc: 'View progression risk, RECIST prediction, explainability', gradient: 'from-indigo-500 to-purple-500', Icon: BrainIcon },
@@ -979,15 +1087,15 @@ function DashboardPage({ patient, onNavigate }) {
           <button
             key={card.page}
             onClick={() => onNavigate(card.page)}
-            className="group bg-white/80 backdrop-blur-sm border border-slate-200/60 rounded-2xl p-6 text-left hover:shadow-xl hover:shadow-slate-300/50 hover:-translate-y-1 transition-all duration-200"
+            className="group bg-gradient-to-br from-white via-blue-50/10 to-white backdrop-blur-sm border border-slate-200/60 rounded-2xl p-6 text-left hover:shadow-2xl hover:shadow-slate-300/50 hover:-translate-y-2 transition-all duration-300"
           >
-            <div className={`w-12 h-12 bg-gradient-to-br ${card.gradient} rounded-xl flex items-center justify-center shadow-lg mb-4 group-hover:scale-110 transition-transform`}>
-              <card.Icon className="w-6 h-6 text-white" />
+            <div className={`w-14 h-14 bg-gradient-to-br ${card.gradient} rounded-xl flex items-center justify-center shadow-xl mb-4 group-hover:scale-110 transition-transform duration-300`}>
+              <card.Icon className="w-7 h-7 text-white" />
             </div>
-            <h4 className="font-bold text-slate-900 mb-1.5">{card.title}</h4>
-            <p className="text-xs text-slate-500 mb-4">{card.desc}</p>
-            <div className="text-xs text-blue-600 flex items-center gap-1.5 font-semibold group-hover:gap-2.5 transition-all">
-              Explore <ArrowIcon className="w-3.5 h-3.5" />
+            <h4 className="font-bold text-slate-900 mb-2 text-lg">{card.title}</h4>
+            <p className="text-sm text-slate-500 mb-4">{card.desc}</p>
+            <div className="text-sm text-blue-600 flex items-center gap-2 font-bold group-hover:gap-3 transition-all">
+              Explore <ArrowIcon className="w-4 h-4" />
             </div>
           </button>
         ))}
@@ -1034,28 +1142,28 @@ function DynamicsPage({ patient }) {
 
       {/* VAF Tracking */}
       <ChartCard title="Variant Allele Frequency (VAF) Tracking" subtitle="Each line tracks a specific mutation across serial blood draws">
-        <ResponsiveContainer width="100%" height={280}>
+        <ResponsiveContainer width="100%" height={300}>
           <LineChart data={vafData}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
-            <XAxis dataKey="name" tick={{ fontSize: 11, fill: '#64748b' }} tickLine={false} />
+            <XAxis dataKey="name" tick={{ fontSize: 12, fill: '#64748b' }} tickLine={false} />
             <YAxis
-              tick={{ fontSize: 11, fill: '#64748b' }}
+              tick={{ fontSize: 12, fill: '#64748b' }}
               unit="%"
-              label={{ value: 'VAF (%)', angle: -90, position: 'insideLeft', fill: '#64748b', fontSize: 11 }}
+              label={{ value: 'VAF (%)', angle: -90, position: 'insideLeft', fill: '#64748b', fontSize: 12 }}
               tickLine={false}
               axisLine={false}
             />
             <Tooltip contentStyle={tooltipStyle} />
-            <Legend wrapperStyle={{ fontSize: 11, paddingTop: 15 }} />
+            <Legend wrapperStyle={{ fontSize: 12, paddingTop: 15 }} />
             {allGenes.map((gene, i) => (
               <Line
                 key={gene}
                 type="monotone"
                 dataKey={gene}
                 stroke={chartColors[i % chartColors.length]}
-                strokeWidth={2.5}
-                dot={{ r: 4, fill: chartColors[i % chartColors.length], strokeWidth: 2, stroke: '#fff' }}
-                activeDot={{ r: 5 }}
+                strokeWidth={3}
+                dot={{ r: 5, fill: chartColors[i % chartColors.length], strokeWidth: 3, stroke: '#fff' }}
+                activeDot={{ r: 6, strokeWidth: 2, fill: '#fff' }}
                 connectNulls
               />
             ))}
@@ -1066,52 +1174,52 @@ function DynamicsPage({ patient }) {
       <div className="grid lg:grid-cols-2 gap-6">
         {/* Radar Chart */}
         <ChartCard title="Multi-Analyte Profile (Latest)" subtitle="Normalized feature values for the most recent timepoint">
-          <ResponsiveContainer width="100%" height={260}>
+          <ResponsiveContainer width="100%" height={280}>
             <RadarChart data={radarData}>
               <PolarGrid stroke="#e2e8f0" />
-              <PolarAngleAxis dataKey="metric" tick={{ fontSize: 10, fill: '#475569' }} />
-              <PolarRadiusAxis tick={{ fontSize: 9, fill: '#94a3b8' }} domain={[0, 100]} />
-              <Radar name="Current" dataKey="value" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.2} strokeWidth={2} />
+              <PolarAngleAxis dataKey="metric" tick={{ fontSize: 11, fill: '#475569' }} />
+              <PolarRadiusAxis tick={{ fontSize: 10, fill: '#94a3b8' }} domain={[0, 100]} />
+              <Radar name="Current" dataKey="value" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.3} strokeWidth={3} />
             </RadarChart>
           </ResponsiveContainer>
         </ChartCard>
 
         {/* Feature Trends */}
         <ChartCard title="Feature Trends" subtitle="All biomarker channels over time">
-          <ResponsiveContainer width="100%" height={260}>
+          <ResponsiveContainer width="100%" height={280}>
             <LineChart data={trendData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
-              <XAxis dataKey="name" tick={{ fontSize: 10, fill: '#64748b' }} tickLine={false} />
-              <YAxis tick={{ fontSize: 10, fill: '#64748b' }} tickLine={false} axisLine={false} />
+              <XAxis dataKey="name" tick={{ fontSize: 11, fill: '#64748b' }} tickLine={false} />
+              <YAxis tick={{ fontSize: 11, fill: '#64748b' }} tickLine={false} axisLine={false} />
               <Tooltip contentStyle={tooltipStyle} />
-              <Legend wrapperStyle={{ fontSize: 10, paddingTop: 15 }} />
-              <Line type="monotone" dataKey="Tumor Fraction (%)" stroke="#3b82f6" strokeWidth={2} dot={{ r: 3, strokeWidth: 2, stroke: '#fff' }} />
-              <Line type="monotone" dataKey="Methylation Score" stroke="#f59e0b" strokeWidth={2} dot={{ r: 3, strokeWidth: 2, stroke: '#fff' }} />
-              <Line type="monotone" dataKey="Genome Instability" stroke="#ef4444" strokeWidth={2} dot={{ r: 3, strokeWidth: 2, stroke: '#fff' }} />
-              <Line type="monotone" dataKey="Fragment Ratio (×100)" stroke="#6366f1" strokeWidth={2} dot={{ r: 3, strokeWidth: 2, stroke: '#fff' }} />
+              <Legend wrapperStyle={{ fontSize: 11, paddingTop: 15 }} />
+              <Line type="monotone" dataKey="Tumor Fraction (%)" stroke="#3b82f6" strokeWidth={3} dot={{ r: 4, strokeWidth: 3, stroke: '#fff' }} />
+              <Line type="monotone" dataKey="Methylation Score" stroke="#f59e0b" strokeWidth={3} dot={{ r: 4, strokeWidth: 3, stroke: '#fff' }} />
+              <Line type="monotone" dataKey="Genome Instability" stroke="#ef4444" strokeWidth={3} dot={{ r: 4, strokeWidth: 3, stroke: '#fff' }} />
+              <Line type="monotone" dataKey="Fragment Ratio (×100)" stroke="#6366f1" strokeWidth={3} dot={{ r: 4, strokeWidth: 3, stroke: '#fff' }} />
             </LineChart>
           </ResponsiveContainer>
         </ChartCard>
       </div>
 
       {/* Mutation Heatmap */}
-      <div className="bg-white/80 backdrop-blur-sm border border-slate-200/60 rounded-2xl shadow-lg shadow-slate-200/50 p-6">
+      <div className="bg-gradient-to-br from-white via-blue-50/10 to-white backdrop-blur-sm border border-slate-200/60 rounded-2xl shadow-xl shadow-slate-200/50 p-6">
         <h3 className="text-sm font-bold text-slate-700 mb-5 flex items-center gap-2">
-          <div className="w-1 h-4 bg-gradient-to-b from-purple-500 to-pink-500 rounded-full" />
+          <div className="w-1 h-5 bg-gradient-to-b from-purple-500 to-pink-500 rounded-full" />
           Mutation Heatmap (VAF % across timepoints)
         </h3>
         <div className="overflow-x-auto">
           <table className="w-full text-sm min-w-[600px]">
             <thead>
-              <tr className="text-left text-xs font-semibold text-slate-500 border-b border-slate-200">
-                <th className="pb-3 pr-4 sticky left-0 bg-white/80 backdrop-blur-sm z-10">Gene</th>
-                <th className="pb-3 pr-4">Variant</th>
+              <tr className="text-left text-xs font-bold text-slate-500 border-b-2 border-slate-200">
+                <th className="pb-4 pr-4 sticky left-0 bg-white/80 backdrop-blur-sm z-10">Gene</th>
+                <th className="pb-4 pr-4">Variant</th>
                 {patient.timepoints.map((tp) => (
-                  <th key={tp.id} className="pb-3 px-2 text-center">
+                  <th key={tp.id} className="pb-4 px-2 text-center">
                     {tp.id}
                   </th>
                 ))}
-                <th className="pb-3 px-2 text-center">Trend</th>
+                <th className="pb-4 px-2 text-center">Trend</th>
               </tr>
             </thead>
             <tbody>
@@ -1133,16 +1241,20 @@ function DynamicsPage({ patient }) {
 
                   return (
                     <tr key={`${gene}-${variant}`} className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors">
-                      <td className="py-3 pr-4 font-bold text-blue-600 sticky left-0 bg-white/80 backdrop-blur-sm z-10">{gene}</td>
-                      <td className="py-3 pr-4 font-mono text-xs text-slate-600 bg-slate-50/50 rounded px-2">{variant}</td>
+                      <td className="py-4 pr-4 font-bold text-blue-600 sticky left-0 bg-white/80 backdrop-blur-sm z-10">{gene}</td>
+                      <td className="py-4 pr-4">
+                        <span className="font-mono text-xs text-slate-600 bg-slate-100/50 rounded-lg px-3 py-1 shadow-sm">
+                          {variant}
+                        </span>
+                      </td>
                       {vafs.map((vaf, i) => {
                         const intensity = maxVaf > 0 ? vaf / maxVaf : 0;
                         return (
-                          <td key={i} className="py-3 px-2 text-center">
+                          <td key={i} className="py-4 px-2 text-center">
                             <span
-                              className="inline-block px-2.5 py-1 rounded-lg text-xs font-mono font-semibold transition-all"
+                              className="inline-block px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition-all"
                               style={{
-                                backgroundColor: vaf > 0 ? `rgba(239, 68, 68, ${0.1 + intensity * 0.3})` : 'transparent',
+                                backgroundColor: vaf > 0 ? `rgba(239, 68, 68, ${0.1 + intensity * 0.4})` : 'transparent',
                                 color: vaf > 0 ? '#dc2626' : '#cbd5e1',
                               }}
                             >
@@ -1151,7 +1263,7 @@ function DynamicsPage({ patient }) {
                           </td>
                         );
                       })}
-                      <td className={`py-3 px-2 text-center text-lg font-bold ${trendColor}`}>{trend}</td>
+                      <td className={`py-4 px-2 text-center text-xl font-bold ${trendColor}`}>{trend}</td>
                     </tr>
                   );
                 });
@@ -1237,22 +1349,22 @@ function PredictionsPage({ patient }) {
       <PageHeader title="AI Prediction Engine" subtitle={`Multi-head prediction with explainability for ${patient.id}`} />
 
       {/* Prediction Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
         {predictionHeads.map((head, i) => (
-          <div key={i} className="bg-white/80 backdrop-blur-sm border border-slate-200/60 rounded-2xl shadow-lg shadow-slate-200/50 p-5 hover:shadow-xl hover:shadow-slate-300/50 transition-all">
-            <div className={`w-10 h-10 bg-gradient-to-br ${head.gradient} rounded-xl flex items-center justify-center shadow-lg mb-3`}>
-              <BrainIcon className="w-5 h-5 text-white" />
+          <div key={i} className="bg-gradient-to-br from-white via-blue-50/10 to-white backdrop-blur-sm border border-slate-200/60 rounded-2xl shadow-xl shadow-slate-200/50 p-6 hover:shadow-2xl hover:shadow-slate-300/50 transition-all duration-300 group">
+            <div className={`w-12 h-12 bg-gradient-to-br ${head.gradient} rounded-xl flex items-center justify-center shadow-xl mb-4 group-hover:scale-110 transition-transform duration-300`}>
+              <BrainIcon className="w-6 h-6 text-white" />
             </div>
-            <p className="text-xs text-slate-500 uppercase tracking-wider font-semibold mb-3">{head.title}</p>
-            <p className={`text-2xl font-black ${head.color} mb-2`}>{head.value}</p>
+            <p className="text-xs text-slate-500 uppercase tracking-wider font-bold mb-4">{head.title}</p>
+            <p className={`text-3xl font-black ${head.color} mb-3`}>{head.value}</p>
             {head.probability !== null && (
-              <div className="mt-3">
-                <div className="flex justify-between text-xs text-slate-400 mb-1.5 font-medium">
+              <div className="mt-4">
+                <div className="flex justify-between text-xs text-slate-400 mb-2 font-semibold">
                   <span>0%</span>
                   <span className="text-slate-600 font-bold">{(head.probability * 100).toFixed(0)}%</span>
                   <span>100%</span>
                 </div>
-                <div className="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden">
+                <div className="w-full h-3 bg-slate-200 rounded-full overflow-hidden">
                   <div
                     className={`h-full rounded-full transition-all bg-gradient-to-r ${head.gradient}`}
                     style={{ width: `${head.probability * 100}%` }}
@@ -1260,25 +1372,25 @@ function PredictionsPage({ patient }) {
                 </div>
               </div>
             )}
-            <p className="text-xs text-slate-500 mt-3">{head.desc}</p>
+            <p className="text-sm text-slate-500 mt-4">{head.desc}</p>
           </div>
         ))}
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6">
         {/* SHAP Feature Importance */}
-        <div className="bg-white/80 backdrop-blur-sm border border-slate-200/60 rounded-2xl shadow-lg shadow-slate-200/50 p-6">
+        <div className="bg-gradient-to-br from-white via-blue-50/10 to-white backdrop-blur-sm border border-slate-200/60 rounded-2xl shadow-xl shadow-slate-200/50 p-6">
           <h3 className="text-sm font-bold text-slate-700 mb-1 flex items-center gap-2">
-            <div className="w-1 h-4 bg-gradient-to-b from-blue-500 to-indigo-500 rounded-full" />
+            <div className="w-1 h-5 bg-gradient-to-b from-blue-500 to-indigo-500 rounded-full" />
             Feature Importance
           </h3>
-          <p className="text-xs text-slate-500 mb-5">Driving the prediction</p>
-          <div className="space-y-3">
+          <p className="text-xs text-slate-500 mb-6">Driving the prediction</p>
+          <div className="space-y-4">
             {features.map((f, i) => (
-              <div key={i} className="flex items-center gap-3">
-                <div className="w-32 shrink-0 text-xs text-slate-600 text-right font-medium">{f.feature}</div>
-                <div className="flex-1 flex items-center gap-2">
-                  <div className="flex-1 h-5 bg-slate-100 rounded-full overflow-hidden">
+              <div key={i} className="flex items-center gap-4">
+                <div className="w-36 shrink-0 text-sm text-slate-600 text-right font-semibold">{f.feature}</div>
+                <div className="flex-1 flex items-center gap-3">
+                  <div className="flex-1 h-6 bg-slate-100 rounded-full overflow-hidden">
                     <div
                       className={`h-full rounded-full transition-all ${
                         f.direction === 'positive' ? 'bg-gradient-to-r from-red-500 to-rose-600' : 'bg-gradient-to-r from-blue-500 to-indigo-600'
@@ -1286,7 +1398,7 @@ function PredictionsPage({ patient }) {
                       style={{ width: `${(f.importance / maxImportance) * 100}%` }}
                     />
                   </div>
-                  <span className={`text-xs font-mono font-bold w-20 shrink-0 ${f.direction === 'positive' ? 'text-red-600' : 'text-blue-600'}`}>
+                  <span className={`text-sm font-mono font-bold w-24 shrink-0 ${f.direction === 'positive' ? 'text-red-600' : 'text-blue-600'}`}>
                     {f.value}
                   </span>
                 </div>
@@ -1297,16 +1409,16 @@ function PredictionsPage({ patient }) {
 
         {/* Model Comparison */}
         <ChartCard title="Model Performance" subtitle="Cross-validated metrics">
-          <ResponsiveContainer width="100%" height={260}>
+          <ResponsiveContainer width="100%" height={280}>
             <BarChart data={modelComparison} layout="vertical">
               <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" horizontal={true} vertical={false} />
-              <XAxis type="number" domain={[0, 1]} tick={{ fontSize: 10, fill: '#64748b' }} tickLine={false} axisLine={false} />
-              <YAxis type="category" dataKey="model" tick={{ fontSize: 10, fill: '#475569' }} width={80} tickLine={false} axisLine={false} />
+              <XAxis type="number" domain={[0, 1]} tick={{ fontSize: 11, fill: '#64748b' }} tickLine={false} axisLine={false} />
+              <YAxis type="category" dataKey="model" tick={{ fontSize: 11, fill: '#475569' }} width={80} tickLine={false} axisLine={false} />
               <Tooltip contentStyle={tooltipStyle} />
-              <Legend wrapperStyle={{ fontSize: 10, paddingTop: 15 }} />
-              <Bar dataKey="AUC" fill="#3b82f6" radius={[0, 4, 4, 0]} />
-              <Bar dataKey="Sensitivity" fill="#6366f1" radius={[0, 4, 4, 0]} />
-              <Bar dataKey="Specificity" fill="#f59e0b" radius={[0, 4, 4, 0]} />
+              <Legend wrapperStyle={{ fontSize: 11, paddingTop: 15 }} />
+              <Bar dataKey="AUC" fill="#3b82f6" radius={[0, 6, 6, 0]} />
+              <Bar dataKey="Sensitivity" fill="#6366f1" radius={[0, 6, 6, 0]} />
+              <Bar dataKey="Specificity" fill="#f59e0b" radius={[0, 6, 6, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </ChartCard>
@@ -1364,11 +1476,11 @@ function ClinicalPage({ patient }) {
   const getRiskDot = (category) => {
     switch (category) {
       case 'high':
-        return 'bg-red-500';
+        return 'bg-red-500 shadow-lg shadow-red-400/50';
       case 'moderate':
-        return 'bg-amber-500';
+        return 'bg-amber-500 shadow-lg shadow-amber-400/50';
       default:
-        return 'bg-emerald-500';
+        return 'bg-emerald-500 shadow-lg shadow-emerald-400/50';
     }
   };
 
@@ -1377,63 +1489,63 @@ function ClinicalPage({ patient }) {
       <PageHeader title="Clinical View" subtitle={`Monitoring for ${patient.id}`} />
 
       {/* Risk Overview */}
-      <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-slate-200/60 shadow-xl shadow-slate-200/50 p-6">
+      <div className="bg-gradient-to-r from-white via-blue-50/20 to-white rounded-2xl border border-slate-200/60 shadow-xl shadow-slate-200/50 p-6">
         <div className="flex flex-col lg:flex-row gap-6">
           <div className="flex-1">
-            <h3 className="text-lg font-bold text-slate-900 mb-3 flex items-center gap-2">
-              <ShieldIcon className="w-5 h-5 text-slate-600" />
+            <h3 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-3">
+              <ShieldIcon className="w-6 h-6 text-slate-600" />
               Risk Assessment
             </h3>
-            <div className="flex flex-wrap items-center gap-6 text-sm text-slate-600">
-              <span className="flex items-center gap-2">
-                <span className="text-slate-400">Score:</span>
-                <span className={`font-black ${getRiskColorClass(patient.riskCategory)}`}>{patient.riskScore}/100</span>
-              </span>
-              <span className="flex items-center gap-2">
-                <span className="text-slate-400">Probability:</span>
-                <span className="font-bold text-slate-900">{(patient.progressionProbability * 100).toFixed(0)}%</span>
-              </span>
-              <span className="flex items-center gap-2">
-                <span className="text-slate-400">Confidence:</span>
-                <span className="font-bold text-slate-900">{(patient.confidenceScore * 100).toFixed(0)}%</span>
-              </span>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm text-slate-600">
+              <div className="bg-slate-50/50 rounded-xl p-4">
+                <span className="text-slate-500 block text-xs font-semibold mb-1">Score</span>
+                <span className={`font-black text-2xl ${getRiskColorClass(patient.riskCategory)}`}>{patient.riskScore}/100</span>
+              </div>
+              <div className="bg-slate-50/50 rounded-xl p-4">
+                <span className="text-slate-500 block text-xs font-semibold mb-1">Probability</span>
+                <span className="font-bold text-slate-900 text-2xl">{(patient.progressionProbability * 100).toFixed(0)}%</span>
+              </div>
+              <div className="bg-slate-50/50 rounded-xl p-4">
+                <span className="text-slate-500 block text-xs font-semibold mb-1">Confidence</span>
+                <span className="font-bold text-slate-900 text-2xl">{(patient.confidenceScore * 100).toFixed(0)}%</span>
+              </div>
             </div>
           </div>
-          <div className={`px-6 py-4 rounded-2xl text-center bg-gradient-to-br ${getRiskGradient(patient.riskCategory)}/10 border border-slate-200/60 min-w-[200px]`}>
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <span className={`w-3 h-3 rounded-full ${getRiskDot(patient.riskCategory)} animate-pulse`} />
+          <div className={`px-8 py-6 rounded-2xl text-center bg-gradient-to-br ${getRiskGradient(patient.riskCategory)}/10 border border-slate-200/60 min-w-[200px] shadow-lg`}>
+            <div className="flex items-center justify-center gap-3 mb-3">
+              <span className={`w-4 h-4 rounded-full ${getRiskDot(patient.riskCategory)} animate-pulse`} />
               <div className={`text-sm font-bold uppercase ${getRiskColorClass(patient.riskCategory)} tracking-wide`}>{patient.riskCategory} Risk</div>
             </div>
-            <div className={`text-3xl font-black ${getRiskColorClass(patient.riskCategory)}`}>{patient.riskScore}</div>
+            <div className={`text-4xl font-black ${getRiskColorClass(patient.riskCategory)}`}>{patient.riskScore}</div>
           </div>
         </div>
       </div>
 
       {/* Observations */}
       {observations.length > 0 && (
-        <div className="space-y-3">
+        <div className="space-y-4">
           <h3 className="text-sm font-bold text-slate-700 flex items-center gap-2">
-            <div className="w-1 h-4 bg-gradient-to-b from-amber-500 to-orange-500 rounded-full" />
+            <div className="w-1 h-5 bg-gradient-to-b from-amber-500 to-orange-500 rounded-full" />
             Key Observations
           </h3>
           {observations.map((obs, i) => (
             <div
               key={i}
-              className={`rounded-2xl p-4 border flex items-start gap-3 backdrop-blur-sm ${
+              className={`rounded-2xl p-5 border flex items-start gap-4 backdrop-blur-sm shadow-lg ${
                 obs.severity === 'critical'
-                  ? 'bg-red-50/80 border-red-200/60'
-                  : 'bg-amber-50/80 border-amber-200/60'
+                  ? 'bg-red-50/80 border-red-200/60 shadow-red-100/50'
+                  : 'bg-amber-50/80 border-amber-200/60 shadow-amber-100/50'
               }`}
             >
-              <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
                 obs.severity === 'critical' ? 'bg-red-100' : 'bg-amber-100'
               }`}>
-                <obs.Icon className={`w-4 h-4 ${
+                <obs.Icon className={`w-5 h-5 ${
                   obs.severity === 'critical' ? 'text-red-600' : 'text-amber-600'
                 }`} />
               </div>
               <span
-                className={`text-sm font-medium ${
+                className={`text-sm font-semibold ${
                   obs.severity === 'critical' ? 'text-red-800' : 'text-amber-800'
                 }`}
               >
@@ -1445,36 +1557,36 @@ function ClinicalPage({ patient }) {
       )}
 
       {/* Monitoring History */}
-      <div className="bg-white/80 backdrop-blur-sm border border-slate-200/60 rounded-2xl shadow-lg shadow-slate-200/50 p-6">
-        <h3 className="text-sm font-bold text-slate-700 mb-5 flex items-center gap-2">
-          <div className="w-1 h-4 bg-gradient-to-b from-indigo-500 to-purple-500 rounded-full" />
+      <div className="bg-gradient-to-br from-white via-blue-50/10 to-white backdrop-blur-sm border border-slate-200/60 rounded-2xl shadow-xl shadow-slate-200/50 p-6">
+        <h3 className="text-sm font-bold text-slate-700 mb-6 flex items-center gap-2">
+          <div className="w-1 h-5 bg-gradient-to-b from-indigo-500 to-purple-500 rounded-full" />
           Monitoring History
         </h3>
         <div className="overflow-x-auto">
           <table className="w-full text-sm min-w-[600px]">
             <thead>
-              <tr className="text-left text-xs font-semibold text-slate-500 border-b border-slate-200">
-                <th className="pb-3 pr-4">Timepoint</th>
-                <th className="pb-3 pr-4">Date</th>
-                <th className="pb-3 pr-4">Phase</th>
-                <th className="pb-3 pr-4">TF</th>
-                <th className="pb-3 pr-4">cfDNA</th>
-                <th className="pb-3 pr-4">Mutations</th>
-                <th className="pb-3">Imaging</th>
+              <tr className="text-left text-xs font-bold text-slate-500 border-b-2 border-slate-200">
+                <th className="pb-4 pr-4">Timepoint</th>
+                <th className="pb-4 pr-4">Date</th>
+                <th className="pb-4 pr-4">Phase</th>
+                <th className="pb-4 pr-4">TF</th>
+                <th className="pb-4 pr-4">cfDNA</th>
+                <th className="pb-4 pr-4">Mutations</th>
+                <th className="pb-4">Imaging</th>
               </tr>
             </thead>
             <tbody>
               {patient.timepoints.map((tp, i) => (
                 <tr key={tp.id} className={`border-b border-slate-100 transition-colors ${i === patient.timepoints.length - 1 ? 'bg-blue-50/50' : 'hover:bg-slate-50/50'}`}>
-                  <td className="py-3 pr-4 font-bold text-slate-900">{tp.id}</td>
-                  <td className="py-3 pr-4 text-slate-600 font-medium text-sm">{tp.date}</td>
-                  <td className="py-3 pr-4">
-                    <span className="px-2 py-1 bg-slate-100 rounded-lg text-xs text-slate-700 font-semibold">{tp.treatmentPhase}</span>
+                  <td className="py-4 pr-4 font-bold text-slate-900 text-base">{tp.id}</td>
+                  <td className="py-4 pr-4 text-slate-600 font-semibold">{tp.date}</td>
+                  <td className="py-4 pr-4">
+                    <span className="px-3 py-1.5 bg-slate-100 rounded-xl text-xs text-slate-700 font-bold">{tp.treatmentPhase}</span>
                   </td>
-                  <td className="py-3 pr-4 font-mono text-slate-700 font-semibold">{(tp.tumorFraction * 100).toFixed(1)}%</td>
-                  <td className="py-3 pr-4 font-mono text-slate-700 font-semibold">{tp.totalCfDNA.toFixed(1)}</td>
-                  <td className="py-3 pr-4 text-slate-700 font-semibold">{tp.mutations.length}</td>
-                  <td className="py-3 text-xs text-slate-500">{tp.imagingResult || '—'}</td>
+                  <td className="py-4 pr-4 font-mono text-slate-700 font-bold text-base">{(tp.tumorFraction * 100).toFixed(1)}%</td>
+                  <td className="py-4 pr-4 font-mono text-slate-700 font-bold text-base">{tp.totalCfDNA.toFixed(1)}</td>
+                  <td className="py-4 pr-4 text-slate-700 font-bold text-base">{tp.mutations.length}</td>
+                  <td className="py-4 text-sm text-slate-500">{tp.imagingResult || '—'}</td>
                 </tr>
               ))}
             </tbody>
@@ -1490,9 +1602,9 @@ function DatasetsPage() {
   const [expandedIdx, setExpandedIdx] = useState(null);
 
   const getAccessBadge = (access) => {
-    if (access.startsWith('Open')) return { class: 'bg-emerald-50 text-emerald-700 border border-emerald-200/60', icon: 'Open', IconComponent: CheckCircleIcon };
-    if (access.startsWith('Controlled')) return { class: 'bg-amber-50 text-amber-700 border border-amber-200/60', icon: 'Controlled', IconComponent: ShieldIcon };
-    return { class: 'bg-red-50 text-red-700 border border-red-200/60', icon: 'Restricted', IconComponent: AlertIcon };
+    if (access.startsWith('Open')) return { class: 'bg-emerald-50 text-emerald-700 border border-emerald-200/60 shadow-lg shadow-emerald-100/50', icon: 'Open', IconComponent: CheckCircleIcon };
+    if (access.startsWith('Controlled')) return { class: 'bg-amber-50 text-amber-700 border border-amber-200/60 shadow-lg shadow-amber-100/50', icon: 'Controlled', IconComponent: ShieldIcon };
+    return { class: 'bg-red-50 text-red-700 border border-red-200/60 shadow-lg shadow-red-100/50', icon: 'Restricted', IconComponent: AlertIcon };
   };
 
   return (
@@ -1500,20 +1612,20 @@ function DatasetsPage() {
       <PageHeader title="Datasets & Resources" subtitle="Real liquid biopsy and ctDNA datasets" />
 
       {/* Quick Start Guide */}
-      <div className="bg-gradient-to-br from-blue-50 via-indigo-50/50 to-blue-50 border border-blue-200/60 rounded-2xl p-6">
-        <h3 className="text-lg font-bold text-blue-700 mb-5 flex items-center gap-2">
-          <BoltIcon className="w-5 h-5" />
+      <div className="bg-gradient-to-br from-blue-50 via-indigo-50/50 to-blue-50 border border-blue-200/60 rounded-2xl p-8 shadow-xl shadow-blue-100/50">
+        <h3 className="text-xl font-bold text-blue-700 mb-6 flex items-center gap-3">
+          <BoltIcon className="w-6 h-6" />
           Quick Start Pipeline
         </h3>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {quickStartSteps.map((step) => (
-            <div key={step.step} className="flex gap-3 bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-white/60">
-              <div className="w-8 h-8 shrink-0 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-lg flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-blue-500/20">
+            <div key={step.step} className="flex gap-4 bg-white/70 backdrop-blur-sm rounded-xl p-5 border border-white/60 shadow-lg hover:shadow-xl transition-all duration-300 group">
+              <div className="w-10 h-10 shrink-0 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-xl flex items-center justify-center text-white font-bold shadow-xl shadow-blue-500/25 group-hover:scale-110 transition-transform duration-300">
                 {step.step}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-bold text-slate-800">{step.title}</p>
-                <p className="text-xs text-slate-600 mt-1">{step.description}</p>
+                <p className="text-sm font-bold text-slate-800 mb-1">{step.title}</p>
+                <p className="text-xs text-slate-600">{step.description}</p>
               </div>
             </div>
           ))}
@@ -1521,49 +1633,49 @@ function DatasetsPage() {
       </div>
 
       {/* Dataset Cards */}
-      <div className="space-y-4">
+      <div className="space-y-6">
         {datasets.map((ds, i) => {
           const badge = getAccessBadge(ds.access);
           return (
             <div
               key={i}
-              className="bg-white/80 backdrop-blur-sm border border-slate-200/60 rounded-2xl shadow-lg shadow-slate-200/50 overflow-hidden hover:shadow-xl hover:shadow-slate-300/50 transition-all"
+              className="bg-gradient-to-br from-white via-blue-50/10 to-white backdrop-blur-sm border border-slate-200/60 rounded-2xl shadow-xl shadow-slate-200/50 overflow-hidden hover:shadow-2xl hover:shadow-slate-300/50 transition-all duration-300"
             >
               <button
                 onClick={() => setExpandedIdx(expandedIdx === i ? null : i)}
-                className="w-full p-6 text-left flex items-start justify-between gap-4 hover:bg-slate-50/50 transition-colors"
+                className="w-full p-8 text-left flex items-start justify-between gap-6 hover:bg-slate-50/50 transition-colors"
               >
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-3 flex-wrap mb-2">
-                    <h4 className="text-base font-bold text-slate-900">{ds.name}</h4>
-                    <span className={`text-xs px-3 py-1 rounded-lg font-semibold flex items-center gap-1.5 ${badge.class}`}>
-                      <badge.IconComponent className="w-3.5 h-3.5" />
+                  <div className="flex items-center gap-4 flex-wrap mb-3">
+                    <h4 className="text-lg font-bold text-slate-900">{ds.name}</h4>
+                    <span className={`text-sm px-4 py-2 rounded-xl font-bold flex items-center gap-2 ${badge.class}`}>
+                      <badge.IconComponent className="w-4 h-4" />
                       {badge.icon}
                     </span>
                   </div>
                   <p className="text-sm text-slate-600">{ds.description}</p>
                 </div>
-                <ChevronDownIcon className={`w-5 h-5 text-slate-400 transition-transform shrink-0 ${expandedIdx === i ? 'rotate-180' : ''}`} />
+                <ChevronDownIcon className={`w-6 h-6 text-slate-400 transition-transform shrink-0 ${expandedIdx === i ? 'rotate-180' : ''}`} />
               </button>
 
               {expandedIdx === i && (
-                <div className="px-6 pb-6 space-y-5 border-t border-slate-200 pt-5 bg-slate-50/30">
-                  <div className="grid sm:grid-cols-2 gap-5">
+                <div className="px-8 pb-8 space-y-6 border-t border-slate-200 pt-6 bg-slate-50/30">
+                  <div className="grid sm:grid-cols-2 gap-6">
                     <div>
-                      <p className="text-xs text-slate-500 uppercase tracking-wider font-semibold mb-2">Data Types</p>
+                      <p className="text-xs text-slate-500 uppercase tracking-wider font-bold mb-3">Data Types</p>
                       <div className="flex flex-wrap gap-2">
                         {ds.dataTypes.map((dt) => (
-                          <span key={dt} className="px-2.5 py-1 bg-slate-100 rounded-lg text-xs text-slate-700 font-medium">
+                          <span key={dt} className="px-3 py-1.5 bg-slate-100 rounded-xl text-xs text-slate-700 font-semibold shadow-sm">
                             {dt}
                           </span>
                         ))}
                       </div>
                     </div>
                     <div>
-                      <p className="text-xs text-slate-500 uppercase tracking-wider font-semibold mb-2">Cancer Types</p>
+                      <p className="text-xs text-slate-500 uppercase tracking-wider font-bold mb-3">Cancer Types</p>
                       <div className="flex flex-wrap gap-2">
                         {ds.cancerTypes.map((ct) => (
-                          <span key={ct} className="px-2.5 py-1 bg-purple-50 rounded-lg text-xs text-purple-700 font-medium">
+                          <span key={ct} className="px-3 py-1.5 bg-purple-50 rounded-xl text-xs text-purple-700 font-semibold shadow-sm">
                             {ct}
                           </span>
                         ))}
@@ -1574,9 +1686,9 @@ function DatasetsPage() {
                     href={ds.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white rounded-xl text-sm font-semibold transition-all shadow-lg shadow-blue-500/25"
+                    className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white rounded-xl font-bold transition-all shadow-xl shadow-blue-500/30 hover:shadow-2xl hover:shadow-blue-500/40 hover:-translate-y-0.5"
                   >
-                    Visit Resource <ExternalIcon className="w-4 h-4" />
+                    Visit Resource <ExternalIcon className="w-5 h-5" />
                   </a>
                 </div>
               )}
@@ -1641,52 +1753,52 @@ function ArchitecturePage() {
     <div className="space-y-6">
       <PageHeader title="System Architecture" subtitle="Pipeline from blood samples to predictions" />
 
-      <div className="bg-white/80 backdrop-blur-sm border border-slate-200/60 rounded-2xl shadow-lg shadow-slate-200/50 p-6">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-4 bg-gradient-to-r from-slate-50 to-blue-50 border border-slate-200/60 rounded-2xl px-6 py-4 shadow-md">
-            <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-rose-600 rounded-xl flex items-center justify-center shadow-lg shadow-red-500/20">
-              <BloodIcon className="w-6 h-6 text-white" />
+      <div className="bg-gradient-to-br from-white via-blue-50/10 to-white backdrop-blur-sm border border-slate-200/60 rounded-2xl shadow-xl shadow-slate-200/50 p-8">
+        <div className="text-center mb-10">
+          <div className="inline-flex items-center gap-6 bg-gradient-to-r from-slate-50 to-blue-50 border border-slate-200/60 rounded-2xl px-8 py-6 shadow-xl">
+            <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-rose-600 rounded-2xl flex items-center justify-center shadow-xl shadow-red-500/25">
+              <BloodIcon className="w-8 h-8 text-white" />
             </div>
             <div className="text-left">
-              <p className="text-sm font-bold text-slate-900">Patient Blood Samples</p>
-              <p className="text-xs text-slate-500 mt-0.5">Serial Liquid Biopsies: T1 → T2 → T3 → T4 → T5</p>
+              <p className="text-base font-bold text-slate-900 mb-1">Patient Blood Samples</p>
+              <p className="text-sm text-slate-500">Serial Liquid Biopsies: T1 → T2 → T3 → T4 → T5</p>
             </div>
           </div>
         </div>
 
-        <div className="space-y-5">
+        <div className="space-y-8">
           {modules.map((mod, i) => (
             <div key={mod.id}>
-              <div className="bg-gradient-to-br from-slate-50 to-white border border-slate-200/60 rounded-2xl p-6 shadow-md">
-                <div className="flex items-center gap-4 mb-5">
-                  <div className={`w-12 h-12 bg-gradient-to-br ${mod.gradient} rounded-xl flex items-center justify-center shadow-lg`}>
-                    <mod.Icon className="w-6 h-6 text-white" />
+              <div className="bg-gradient-to-br from-slate-50 to-white border border-slate-200/60 rounded-2xl p-8 shadow-xl">
+                <div className="flex items-center gap-6 mb-8">
+                  <div className={`w-16 h-16 bg-gradient-to-br ${mod.gradient} rounded-2xl flex items-center justify-center shadow-xl`}>
+                    <mod.Icon className="w-8 h-8 text-white" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs text-slate-500 uppercase tracking-wider font-semibold">Module {mod.id}</p>
-                    <h3 className="text-lg font-bold text-slate-900">{mod.title}</h3>
+                    <p className="text-sm text-slate-500 uppercase tracking-wider font-bold">Module {mod.id}</p>
+                    <h3 className="text-2xl font-bold text-slate-900">{mod.title}</h3>
                   </div>
                 </div>
-                <div className="grid sm:grid-cols-3 gap-4">
+                <div className="grid sm:grid-cols-3 gap-6">
                   {mod.components.map((comp, j) => (
-                    <div key={j} className="bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-slate-200/40">
-                      <p className="text-sm font-bold text-slate-800 mb-2">{comp.name}</p>
-                      <p className="text-xs text-slate-600 mb-3">{comp.desc}</p>
-                      <div className="flex items-center gap-2 text-xs mb-1">
-                        <span className="text-slate-400 font-medium">In:</span>
-                        <span className="text-blue-600 font-semibold">{comp.input}</span>
+                    <div key={j} className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 border border-slate-200/40 shadow-lg hover:shadow-xl transition-all duration-300 group">
+                      <p className="text-base font-bold text-slate-800 mb-3 group-hover:text-blue-600 transition-colors">{comp.name}</p>
+                      <p className="text-sm text-slate-600 mb-4">{comp.desc}</p>
+                      <div className="flex items-center gap-3 text-sm mb-2">
+                        <span className="text-slate-500 font-semibold">In:</span>
+                        <span className="text-blue-600 font-bold bg-blue-50 px-2 py-1 rounded-lg">{comp.input}</span>
                       </div>
-                      <div className="flex items-center gap-2 text-xs">
-                        <span className="text-slate-400 font-medium">Out:</span>
-                        <span className="text-emerald-600 font-semibold">{comp.output}</span>
+                      <div className="flex items-center gap-3 text-sm">
+                        <span className="text-slate-500 font-semibold">Out:</span>
+                        <span className="text-emerald-600 font-bold bg-emerald-50 px-2 py-1 rounded-lg">{comp.output}</span>
                       </div>
                     </div>
                   ))}
                 </div>
               </div>
               {i < modules.length - 1 && (
-                <div className="flex justify-center py-3">
-                  <ChevronDownIcon className="w-5 h-5 text-slate-400" />
+                <div className="flex justify-center py-6">
+                  <ChevronDownIcon className="w-8 h-8 text-slate-400" />
                 </div>
               )}
             </div>
@@ -1700,22 +1812,22 @@ function ArchitecturePage() {
 // ─── Reusable Components ───────────────────────────────────────────
 function PageHeader({ title, subtitle }) {
   return (
-    <div className="mb-2">
-      <h2 className="text-2xl font-black text-slate-900 mb-1.5">{title}</h2>
-      <p className="text-slate-600 text-sm">{subtitle}</p>
+    <div className="mb-4">
+      <h2 className="text-3xl font-black text-slate-900 mb-2">{title}</h2>
+      <p className="text-slate-600">{subtitle}</p>
     </div>
   );
 }
 
 function ChartCard({ title, subtitle, children }) {
   return (
-    <div className="bg-white/80 backdrop-blur-sm border border-slate-200/60 rounded-2xl shadow-lg shadow-slate-200/50 p-6">
-      <h3 className="text-sm font-bold text-slate-700 mb-1 flex items-center gap-2">
-        <div className="w-1 h-4 bg-gradient-to-b from-blue-500 to-indigo-500 rounded-full" />
+    <div className="bg-gradient-to-br from-white via-blue-50/10 to-white backdrop-blur-sm border border-slate-200/60 rounded-2xl shadow-xl shadow-slate-200/50 p-6">
+      <h3 className="text-base font-bold text-slate-700 mb-1 flex items-center gap-2">
+        <div className="w-1 h-5 bg-gradient-to-b from-blue-500 to-indigo-500 rounded-full" />
         {title}
       </h3>
-      {subtitle && <p className="text-xs text-slate-500 mb-5">{subtitle}</p>}
-      {!subtitle && <div className="mb-5" />}
+      {subtitle && <p className="text-sm text-slate-500 mb-6">{subtitle}</p>}
+      {!subtitle && <div className="mb-6" />}
       {children}
     </div>
   );
