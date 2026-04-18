@@ -757,8 +757,7 @@ export default function Footer() {
                 <p
                   className="text-blue-200"
                   style={{ fontSize: "13px", opacity: 0.8, margin: 0 }}
-                >
-                  © 2026 OncoTrace-AI • All rights reserved • v2026.04.10
+                >                  © 2026 OncoTrace-AI • All rights reserved • v18.04.2026
                 </p>
               </div>
             </div>
