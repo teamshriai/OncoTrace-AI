@@ -575,7 +575,7 @@ function HeroImageSection() {
             className="hero-powered-by-link"
             aria-label="Visit Senus Healthcare and Research Institute"
           >
-            Powered by  : Senus Healthcare and Research Institute (USA)
+            Powered by  : Senus Healthcare Research Institute (USA)
           </a>
         </div>
 

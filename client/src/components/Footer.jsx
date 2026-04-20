@@ -677,7 +677,7 @@ export default function Footer() {
                       />
                     </div>
 
-                    {/* Address */}
+                    {/* Address  India*/}
                     <div
                       className="px-5 py-4 rounded-xl"
                       style={{
@@ -708,6 +708,42 @@ export default function Footer() {
                             Ramanathapuram, Coimbatore,
                             <br />
                             Tamil Nadu 641045
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Address USA*/}
+                    <div
+                      className="px-5 py-4 rounded-xl mt-4"
+                      style={{
+                        background: "rgba(255, 255, 255, 0.1)",
+                        border: "1px solid rgba(255, 255, 255, 0.15)",
+                        backdropFilter: "blur(10px)",
+                      }}
+                    >
+                      <div className="flex items-start gap-3">
+                        <LocationIcon />
+                        <div>
+                          <p
+                            className="text-white font-semibold mb-1.5"
+                            style={{ fontSize: "15px" }}
+                          >
+                            Visolve
+                          </p>
+                          <p
+                            className="text-blue-100 leading-relaxed"
+                            style={{
+                              fontSize: "14px",
+                              opacity: 0.9,
+                              lineHeight: "1.6",
+                            }}
+                          >
+                            6559 Springpath lane                                                   
+                            <br />
+                            San Jose, 
+                            <br />
+                            California
                           </p>
                         </div>
                       </div>

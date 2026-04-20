@@ -147,7 +147,7 @@ function injectMinimalStyles() {
       height: 2px;
       border-radius: 2px;
       background: #2563eb;
-      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
     }
     .nb-nav-btn:hover::after,
     .nb-nav-btn.nb-active::after {
@@ -155,16 +155,16 @@ function injectMinimalStyles() {
     }
 
     @keyframes nbDropdownIn {
-      from { opacity: 0; transform: scale(0.95) translateY(-8px); }
-      to   { opacity: 1; transform: scale(1)    translateY(0);    }
+      from { opacity: 0; transform: scale(0.96) translateY(-6px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
     }
     @keyframes nbDrawerIn {
-      from { opacity: 0; transform: translateY(-10px) scale(0.97); }
-      to   { opacity: 1; transform: translateY(0)     scale(1);    }
+      from { opacity: 0; transform: translateY(-12px) scale(0.98); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
     }
     @keyframes nbDrawerOut {
-      from { opacity: 1; transform: translateY(0)    scale(1);    }
-      to   { opacity: 0; transform: translateY(-8px) scale(0.97); }
+      from { opacity: 1; transform: translateY(0) scale(1); }
+      to   { opacity: 0; transform: translateY(-8px) scale(0.98); }
     }
     @keyframes nbFadeIn  { from { opacity: 0; } to { opacity: 1; } }
     @keyframes nbFadeOut { from { opacity: 1; } to { opacity: 0; } }
@@ -173,11 +173,11 @@ function injectMinimalStyles() {
       50%      { opacity: 0.5; transform: scale(0.7); }
     }
 
-    .nb-animate-dropdown   { animation: nbDropdownIn  0.2s  cubic-bezier(0.16,1,0.3,1) both; }
-    .nb-animate-drawer     { animation: nbDrawerIn    0.28s cubic-bezier(0.16,1,0.3,1) both; }
-    .nb-animate-drawer-out { animation: nbDrawerOut   0.2s  cubic-bezier(0.4,0,1,1)   both; }
-    .nb-animate-fade-in    { animation: nbFadeIn      0.25s ease both; }
-    .nb-animate-fade-out   { animation: nbFadeOut     0.2s  ease both; }
+    .nb-animate-dropdown   { animation: nbDropdownIn  0.3s  cubic-bezier(0.16, 1, 0.3, 1) both; will-change: transform, opacity; }
+    .nb-animate-drawer     { animation: nbDrawerIn    0.35s cubic-bezier(0.2, 0.8, 0.2, 1) both; will-change: transform, opacity; }
+    .nb-animate-drawer-out { animation: nbDrawerOut   0.25s cubic-bezier(0.4, 0, 0.2, 1) both; will-change: transform, opacity; }
+    .nb-animate-fade-in    { animation: nbFadeIn      0.3s cubic-bezier(0.2, 0.8, 0.2, 1) both; will-change: opacity; }
+    .nb-animate-fade-out   { animation: nbFadeOut     0.25s cubic-bezier(0.4, 0, 0.2, 1) both; will-change: opacity; }
     .nb-badge-dot          { animation: nbPulse       2s    ease infinite; }
 
     .nb-drawer-scroll {
@@ -224,7 +224,7 @@ function Chevron({ open }) {
       fill="none" viewBox="0 0 24 24"
       strokeWidth="2" stroke="currentColor"
       width="13" height="13" aria-hidden="true"
-      className={`transition-transform duration-200 flex-shrink-0 ${open ? 'rotate-180' : 'rotate-0'}`}
+      className={`transition-transform duration-300 ease-out flex-shrink-0 ${open ? 'rotate-180' : 'rotate-0'}`}
     >
       <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
     </svg>
@@ -238,7 +238,7 @@ function ArrowRight() {
       fill="none" viewBox="0 0 24 24"
       strokeWidth="1.5" stroke="currentColor"
       width="16" height="16" aria-hidden="true"
-      className="opacity-30 flex-shrink-0 transition-opacity duration-150 group-hover:opacity-60"
+      className="opacity-30 flex-shrink-0 transition-opacity duration-250 ease-out group-hover:opacity-60"
     >
       <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
     </svg>
@@ -312,7 +312,7 @@ function DesktopDropdown({ onAction, onClose, triggerRef }) {
               className={`
                 group flex items-start gap-3 w-full px-4 py-3.5
                 rounded-xl border text-left cursor-pointer outline-none
-                transition-all duration-200
+                transition-all duration-250 ease-out
                 focus-visible:ring-2 focus-visible:ring-blue-400/50
                 ${p.featured
                   ? 'bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 hover:from-blue-100 hover:to-blue-200'
@@ -321,7 +321,7 @@ function DesktopDropdown({ onAction, onClose, triggerRef }) {
               `}
             >
               <span className={`
-                flex-shrink-0 mt-0.5 transition-all duration-200 group-hover:scale-110
+                flex-shrink-0 mt-0.5 transition-transform duration-250 ease-out group-hover:scale-110
                 ${p.featured ? 'text-blue-600' : 'text-blue-500 group-hover:text-blue-700'}
               `}>
                 {p.icon}
@@ -329,7 +329,7 @@ function DesktopDropdown({ onAction, onClose, triggerRef }) {
               <span className="flex flex-col">
                 <span className={`
                   text-[0.9375rem] font-semibold leading-snug mb-0.5
-                  transition-colors duration-200
+                  transition-colors duration-250 ease-out
                   ${p.featured ? 'text-blue-700' : 'text-slate-800 group-hover:text-blue-700'}
                 `}>
                   {p.label}
@@ -394,12 +394,13 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
   }, [onNavigate]);
 
   const closeMenu = useCallback(() => {
+    if (!menuOpen) return;
     setMenuClosing(true);
     setTimeout(() => {
       setMenuOpen(false);
       setMenuClosing(false);
-    }, 220);
-  }, []);
+    }, 260); // extended slightly to match smoother exit animations seamlessly
+  }, [menuOpen]);
 
   // rAF-throttled scroll
   useEffect(() => {
@@ -508,7 +509,7 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
   }, []);
 
   const staggerStyle = useCallback((i) =>
-    prefersReducedMotion ? {} : { animationDelay: `${i * 35}ms` }
+    prefersReducedMotion ? {} : { animationDelay: `${i * 40}ms` }
   , [prefersReducedMotion]);
 
   const showDrawer = menuOpen || menuClosing;
@@ -531,7 +532,8 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
             relative flex items-center justify-between
             h-[108px] px-[clamp(1rem,4vw,2.5rem)]
             bg-white/[0.97] backdrop-blur-xl
-            border-b transition-all duration-300
+            border-b transition-all duration-400 ease-out
+            will-change-[box-shadow,border-color]
             ${scrolled
               ? 'border-blue-100 shadow-[0_4px_24px_rgba(37,99,235,0.10),0_1px_4px_rgba(37,99,235,0.06)]'
               : 'border-gray-200 shadow-[0_1px_8px_rgba(0,0,0,0.05)]'
@@ -549,7 +551,7 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
               bg-transparent border-none p-0 cursor-pointer
               rounded-lg outline-none
               opacity-100 hover:opacity-85 active:opacity-70
-              transition-opacity duration-200
+              transition-opacity duration-300 ease-out
               focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2
             "
           >
@@ -600,7 +602,7 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
                         text-[0.8125rem] px-2.5 py-[7px] rounded-lg
                         outline-none whitespace-nowrap
                         inline-flex items-center gap-1.5
-                        transition-colors duration-200
+                        transition-all duration-250 ease-out
                         focus-visible:ring-2 focus-visible:ring-blue-400/50
                         ${activeHref === href
                           ? 'nb-active text-blue-700 font-semibold bg-blue-50'
@@ -608,9 +610,8 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
                         }
                       `}
                     >
-                      {/* Icon — inherits button colour automatically */}
                       <span className={`
-                        flex-shrink-0 transition-colors duration-200
+                        flex-shrink-0 transition-colors duration-250 ease-out
                         ${activeHref === href
                           ? 'text-blue-600'
                           : 'text-blue-400/80'
@@ -643,7 +644,7 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
                   shadow-[0_2px_12px_rgba(37,99,235,0.28)]
                   hover:shadow-[0_6px_22px_rgba(37,99,235,0.40)] hover:-translate-y-px
                   active:translate-y-0 active:scale-[0.98]
-                  transition-all duration-200
+                  transition-all duration-300 ease-out
                   focus-visible:ring-2 focus-visible:ring-blue-400
                 "
               >
@@ -667,7 +668,7 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
                     shadow-[0_2px_12px_rgba(37,99,235,0.30)]
                     hover:shadow-[0_6px_22px_rgba(37,99,235,0.42)] hover:-translate-y-px
                     active:translate-y-0 active:scale-[0.98]
-                    transition-all duration-200
+                    transition-all duration-300 ease-out
                     focus-visible:ring-2 focus-visible:ring-blue-400
                   "
                 >
@@ -697,7 +698,7 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
               lg:hidden flex flex-col items-center justify-center gap-[5px]
               w-11 h-11 rounded-xl border cursor-pointer p-0 outline-none
               flex-shrink-0 relative z-[10001]
-              transition-all duration-200
+              transition-all duration-300 ease-out
               focus-visible:ring-2 focus-visible:ring-blue-400/50
               ${menuOpen
                 ? 'border-blue-200 bg-blue-50 shadow-[0_4px_16px_rgba(37,99,235,0.12)]'
@@ -711,7 +712,7 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
                 aria-hidden="true"
                 className={`
                   block w-[18px] h-0.5 rounded bg-blue-600
-                  transition-all duration-300 origin-center
+                  transition-all duration-300 ease-out origin-center
                   ${menuOpen && n === 1 ? 'translate-y-[7px] rotate-45'  : ''}
                   ${menuOpen && n === 2 ? 'opacity-0 scale-x-0'           : ''}
                   ${menuOpen && n === 3 ? '-translate-y-[7px] -rotate-45' : ''}
@@ -813,7 +814,7 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
                       text-[0.9375rem] font-semibold text-center outline-none
                       bg-gray-50 text-gray-700 border-gray-200
                       hover:bg-gray-100 active:bg-gray-200 active:scale-[0.99]
-                      transition-all duration-150
+                      transition-all duration-250 ease-out
                       focus-visible:ring-2 focus-visible:ring-blue-400/50
                     "
                   >
@@ -840,7 +841,7 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
                         w-full px-3.5 py-3.5 rounded-xl
                         border-none cursor-pointer font-medium
                         text-[0.9375rem] text-left outline-none
-                        transition-all duration-150
+                        transition-all duration-250 ease-out
                         focus-visible:ring-2 focus-visible:ring-blue-400/50
                         ${activeHref === href
                           ? 'bg-blue-50 text-blue-700 font-semibold'
@@ -850,7 +851,7 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
                     >
                       <span className="flex items-center gap-3">
                         <span className={`
-                          flex-shrink-0 transition-colors duration-150
+                          flex-shrink-0 transition-colors duration-250 ease-out
                           ${activeHref === href
                             ? 'text-blue-600'
                             : 'text-blue-400/80 group-hover:text-blue-500'
@@ -893,7 +894,7 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
                         group flex items-start gap-3 w-full
                         px-3.5 py-3 mb-1 rounded-xl
                         border cursor-pointer text-left outline-none
-                        transition-all duration-150
+                        transition-all duration-250 ease-out
                         focus-visible:ring-2 focus-visible:ring-blue-400/50
                         ${p.featured
                           ? 'bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 hover:from-blue-100 hover:to-blue-200'
