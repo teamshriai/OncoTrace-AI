@@ -838,7 +838,7 @@ export default function HeroSection({ onNavigate }) {
       <section
         className="relative min-h-[100svh] flex items-center py-6 sm:py-8 lg:py-10"
         style={{
-          backgroundImage: 'url("/ocean2.png")',
+          backgroundImage: 'url("/ocean2.webp")',
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",

@@ -85,7 +85,7 @@ const Mammogram = () => {
             <div className="w-full overflow-hidden bg-gray-100 shadow-lg"
                  style={{ aspectRatio: "4/3" }}>
               <img
-                src="/mammogram_1.png"
+                src="/mammogram_1.webp"
                 alt="AI mammogram risk analysis process"
                 className="w-full h-full object-cover"
                 loading="lazy"
@@ -181,7 +181,7 @@ const Mammogram = () => {
             <div className="w-full overflow-hidden bg-gray-100 shadow-lg"
                  style={{ aspectRatio: "4/3" }}>
               <img
-                src="/mammogram_3.png"
+                src="/mammogram_3.webp"
                 alt="AI mammogram 5-year risk prediction output"
                 className="w-full h-full object-cover"
                 loading="lazy"

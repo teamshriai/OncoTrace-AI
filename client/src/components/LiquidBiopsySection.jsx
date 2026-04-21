@@ -150,7 +150,7 @@ export default function LiquidBiopsyMonitoring({ onNavigate }) {
                 <div className="order-1 lg:order-2 relative overflow-hidden rounded-xl sm:rounded-2xl">
                   <div className="absolute inset-0 z-10 pointer-events-none"></div>
                   <img
-                    src="/lb-hero.png"
+                    src="/lb-hero.webp"
                     alt="Liquid biopsy visualization"
                     loading="eager"
                     className="w-full h-auto object-cover block"
@@ -171,7 +171,7 @@ export default function LiquidBiopsyMonitoring({ onNavigate }) {
               <Reveal>
                 <div className="relative overflow-hidden rounded-xl sm:rounded-2xl">
                   <img
-                    src="/ngs.png"
+                    src="/ngs.webp"
                     alt="Next Generation Sequencing machine"
                     loading="lazy"
                     className="w-full h-auto object-cover block"

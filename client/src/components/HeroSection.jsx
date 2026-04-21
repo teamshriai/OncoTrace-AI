@@ -7,11 +7,11 @@ const CORNER_ACCENTS = [
 ]
 
 const WORKFLOW_STEPS = [
-  { id: 1, label: 'Blood Draw',         icon: '/img1.png', color: '#64748b' },
-  { id: 2, label: 'Plasma Separation',  icon: '/img2.png', color: '#3b82f6' },
-  { id: 3, label: 'ctDNA + NGS',        icon: '/img3.png', color: '#6366f1' },
-  { id: 4, label: 'AI Analysis',        icon: '/img4.png', color: '#0ea5e9' },
-  { id: 5, label: 'Clinician Decision', icon: '/img5.png', color: '#475569' },
+  { id: 1, label: 'Blood Draw',         icon: '/img1.webp', color: '#64748b' },
+  { id: 2, label: 'Plasma Separation',  icon: '/img2.webp', color: '#3b82f6' },
+  { id: 3, label: 'ctDNA + NGS',        icon: '/img3.webp', color: '#6366f1' },
+  { id: 4, label: 'AI Analysis',        icon: '/img4.webp', color: '#0ea5e9' },
+  { id: 5, label: 'Clinician Decision', icon: '/img5.webp', color: '#475569' },
 ]
 
 /* ═══════════════════════════════════════════════════════
@@ -524,7 +524,7 @@ function HeroImageSection() {
 
         {/* Cover image */}
         <img
-          src="/trial.png"
+          src="/trial.webp"
           alt="AI Precision Diagnostics & Monitoring Centre"
           loading="eager"
           fetchPriority="high"

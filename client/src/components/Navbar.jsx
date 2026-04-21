@@ -185,6 +185,11 @@ function injectMinimalStyles() {
       overscroll-behavior: contain;
     }
 
+    .nb-drawer-scroll button,
+    .nb-drawer-scroll a {
+      touch-action: manipulation;
+    }
+
     body.nb-locked {
       overflow: hidden !important;
     }
@@ -358,7 +363,6 @@ function DesktopDropdown({ onAction, onClose, triggerRef }) {
 function useBodyScrollLock(active) {
   useEffect(() => {
     if (!active) return;
-    const scrollY    = window.scrollY;
     const prevOver   = document.body.style.overflow;
     const prevPR     = document.body.style.paddingRight;
     const scrollbarW = window.innerWidth - document.documentElement.clientWidth;
@@ -367,7 +371,6 @@ function useBodyScrollLock(active) {
     return () => {
       document.body.style.overflow     = prevOver;
       document.body.style.paddingRight = prevPR;
-      window.scrollTo({ top: scrollY, behavior: 'instant' });
     };
   }, [active]);
 }
@@ -383,9 +386,15 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
   const [activeHref,  setActiveHref]  = useState('#home');
   const [logoError,   setLogoError]   = useState(false);
 
-  const ddTriggerRef = useRef(null);
-  const rafRef       = useRef(null);
-  const isDemoPage   = currentPage === 'demo' || currentPage === 'mammo' || currentPage === 'lb';
+  const ddTriggerRef  = useRef(null);
+  const rafRef        = useRef(null);
+  const menuOpenRef   = useRef(false);
+  const closingTimerRef = useRef(null);
+
+  const isDemoPage = currentPage === 'demo' || currentPage === 'mammo' || currentPage === 'lb';
+
+  // Keep ref in sync with state
+  menuOpenRef.current = menuOpen;
 
   useBodyScrollLock(menuOpen);
 
@@ -393,14 +402,27 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
     if (typeof onNavigate === 'function') onNavigate(page);
   }, [onNavigate]);
 
+  // Stable closeMenu using ref — prevents stale closures and unnecessary callback churn
   const closeMenu = useCallback(() => {
-    if (!menuOpen) return;
+    if (!menuOpenRef.current) return;
+    if (closingTimerRef.current) return; // prevent double-close
     setMenuClosing(true);
-    setTimeout(() => {
+    closingTimerRef.current = setTimeout(() => {
       setMenuOpen(false);
       setMenuClosing(false);
-    }, 260); // extended slightly to match smoother exit animations seamlessly
-  }, [menuOpen]);
+      closingTimerRef.current = null;
+    }, 280);
+  }, []);
+
+  // Cleanup closing timer on unmount
+  useEffect(() => {
+    return () => {
+      if (closingTimerRef.current) {
+        clearTimeout(closingTimerRef.current);
+        closingTimerRef.current = null;
+      }
+    };
+  }, []);
 
   // rAF-throttled scroll
   useEffect(() => {
@@ -434,6 +456,10 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
   }, []);
 
   useEffect(() => {
+    if (closingTimerRef.current) {
+      clearTimeout(closingTimerRef.current);
+      closingTimerRef.current = null;
+    }
     setMenuOpen(false);
     setMenuClosing(false);
     setDdOpen(false);
@@ -466,7 +492,8 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
       navigate('home');
       if (id !== 'home') sessionStorage.setItem('nb-scroll-target', id);
     } else {
-      setTimeout(() => smoothScrollToId(id), 30);
+      // Delay scroll until after menu closing animation + body scroll unlock completes
+      setTimeout(() => smoothScrollToId(id), 320);
     }
   }, [isDemoPage, navigate, closeMenu]);
 
@@ -475,7 +502,7 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
     if (isDemoPage) {
       navigate('home');
     } else {
-      setTimeout(() => smoothScrollToId('home'), 30);
+      setTimeout(() => smoothScrollToId('home'), 320);
     }
   }, [isDemoPage, navigate, closeMenu]);
 
@@ -495,13 +522,13 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
   }, []);
 
   const toggleMenu = useCallback(() => {
-    if (menuOpen) {
+    if (menuOpenRef.current) {
       closeMenu();
     } else {
       setMenuOpen(true);
       setDdOpen(false);
     }
-  }, [menuOpen, closeMenu]);
+  }, [closeMenu]);
 
   const prefersReducedMotion = useMemo(() => {
     if (typeof window === 'undefined') return false;
@@ -561,7 +588,7 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
               </span>
             ) : (
               <img
-                src="/oncotraceai.png"
+                src="/oncotraceai.webp"
                 alt="OncoTrace AI"
                 draggable={false}
                 onError={() => setLogoError(true)}
@@ -807,7 +834,7 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
                 <div className="p-1 pt-0" style={staggerStyle(3)}>
                   <button
                     type="button"
-                    onClick={() => { closeMenu(); setTimeout(() => navigate('home'), 50); }}
+                    onClick={() => { closeMenu(); setTimeout(() => navigate('home'), 320); }}
                     className="
                       flex items-center justify-center gap-2
                       w-full py-3.5 px-4 rounded-xl border cursor-pointer
