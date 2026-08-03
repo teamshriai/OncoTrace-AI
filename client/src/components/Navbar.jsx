@@ -32,26 +32,22 @@ const NAV_LINKS = [
       </svg>
     ),
   },
-  {
-    label: 'Research',
-    href: '#case-study',
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" width="17" height="17" aria-hidden="true">
-        <path d="M6 18h8" />
-        <path d="M3 22h18" />
-        <path d="M14 22a7 7 0 1 0 0-14h-1" />
-        <path d="M9 14h2" />
-        <path d="M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2Z" />
-        <path d="M12 6V3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3" />
-      </svg>
-    ),
-  },
+
   {
     label: 'Team',
     href: '#team',
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" width="17" height="17" aria-hidden="true">
         <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
+      </svg>
+    ),
+  },
+  {
+    label: 'Blog',
+    href: '#blog-page',
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" width="17" height="17" aria-hidden="true">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 01-2.25 2.25M16.5 7.5V18a2.25 2.25 0 002.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 002.25 2.25h13.5M6 7.5h3v3H6v-3z" />
       </svg>
     ),
   },
@@ -392,6 +388,7 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
   const closingTimerRef = useRef(null);
 
   const isDemoPage = currentPage === 'demo' || currentPage === 'mammo' || currentPage === 'lb';
+  const isBlogPage = currentPage === 'blog';
 
   // Keep ref in sync with state
   menuOpenRef.current = menuOpen;
@@ -434,17 +431,23 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
         const max = document.documentElement.scrollHeight - window.innerHeight;
         setScrolled(top > 8);
         setProgress(max > 0 ? Math.min((top / max) * 100, 100) : 0);
-        let cur = '#home';
-        for (let i = NAV_LINKS.length - 1; i >= 0; i--) {
-          const { href } = NAV_LINKS[i];
-          if (href === '#home') continue;
-          const el = document.getElementById(href.slice(1));
-          if (el && el.getBoundingClientRect().top <= SCROLL_OFFSET + 20) {
-            cur = href;
-            break;
+        
+        // Only track active section on home page
+        if (currentPage === 'home') {
+          let cur = '#home';
+          for (let i = NAV_LINKS.length - 1; i >= 0; i--) {
+            const { href } = NAV_LINKS[i];
+            if (href === '#home' || href === '#blog-page') continue;
+            const el = document.getElementById(href.slice(1));
+            if (el && el.getBoundingClientRect().top <= SCROLL_OFFSET + 20) {
+              cur = href;
+              break;
+            }
           }
+          setActiveHref(cur);
+        } else if (isBlogPage) {
+          setActiveHref('#blog-page');
         }
-        setActiveHref(cur);
       });
     };
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -453,7 +456,7 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
       window.removeEventListener('scroll', onScroll);
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-  }, []);
+  }, [currentPage, isBlogPage]);
 
   useEffect(() => {
     if (closingTimerRef.current) {
@@ -488,23 +491,30 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
   const handleNavClick = useCallback((href) => {
     const id = href.slice(1);
     closeMenu();
-    if (isDemoPage) {
+    
+    // Special handling for blog
+    if (id === 'blog-page') {
+      navigate('blog');
+      return;
+    }
+    
+    if (isDemoPage || isBlogPage) {
       navigate('home');
       if (id !== 'home') sessionStorage.setItem('nb-scroll-target', id);
     } else {
       // Delay scroll until after menu closing animation + body scroll unlock completes
       setTimeout(() => smoothScrollToId(id), 320);
     }
-  }, [isDemoPage, navigate, closeMenu]);
+  }, [isDemoPage, isBlogPage, navigate, closeMenu]);
 
   const handleLogo = useCallback(() => {
     closeMenu();
-    if (isDemoPage) {
+    if (isDemoPage || isBlogPage) {
       navigate('home');
     } else {
       setTimeout(() => smoothScrollToId('home'), 320);
     }
-  }, [isDemoPage, navigate, closeMenu]);
+  }, [isDemoPage, isBlogPage, navigate, closeMenu]);
 
   const handleProduct = useCallback((action) => {
     setDdOpen(false);
@@ -545,6 +555,7 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
     if (currentPage === 'demo')  return 'LB Demo Mode';
     if (currentPage === 'lb')    return 'LB Booking';
     if (currentPage === 'mammo') return 'Mammo Booking';
+    if (currentPage === 'blog')  return 'Blog';
     return 'Demo Mode';
   };
 
@@ -588,7 +599,7 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
               </span>
             ) : (
               <img
-                src="/oncotraceai.webp"
+                src="/logo.webp"
                 alt="OncoTrace AI"
                 draggable={false}
                 onError={() => setLogoError(true)}
@@ -603,7 +614,7 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
             className="hidden lg:flex items-center flex-1 justify-center"
           >
             <ul role="list" className="flex items-center gap-0.5 list-none m-0 p-0">
-              {isDemoPage ? (
+              {(isDemoPage || isBlogPage) ? (
                 <li>
                   <span
                     aria-live="polite"
@@ -659,7 +670,7 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
             aria-label="Product actions"
             className="hidden lg:flex items-center gap-2 flex-shrink-0"
           >
-            {isDemoPage ? (
+            {(isDemoPage || isBlogPage) ? (
               <button
                 type="button"
                 onClick={() => navigate('home')}
@@ -812,17 +823,19 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
                 px-3 py-1 rounded-full
               ">
                 <span className="nb-badge-dot w-1.5 h-1.5 rounded-full bg-blue-500 flex-shrink-0" />
-                {isDemoPage ? getDemoLabel() : 'Navigate'}
+                {(isDemoPage || isBlogPage) ? getDemoLabel() : 'Navigate'}
               </span>
             </div>
 
-            {isDemoPage ? (
+            {(isDemoPage || isBlogPage) ? (
               <>
                 <p
                   className="text-[0.8125rem] text-gray-500 leading-relaxed px-3.5 py-1.5 pb-3"
                   style={staggerStyle(1)}
                 >
-                  You're currently viewing the OncoTrace platform demo.
+                  {isBlogPage 
+                    ? "You're currently viewing the OncoTrace research blog."
+                    : "You're currently viewing the OncoTrace platform demo."}
                 </p>
 
                 <div

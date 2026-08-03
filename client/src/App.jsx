@@ -15,6 +15,8 @@ import LiquidBiopsySection from './components/LiquidBiopsySection';
 import Demo               from './components/Demo';
 import LBdemo             from './components/Lbdemo';
 import Mammodemo          from './components/Mammodemo';
+import Blog               from './pages/Blog/Blog';
+import BlogPost           from './pages/Blog/BlogPost';
 
 /* ── Navbar height token — change once here ── */
 const NAV_H = 108; // px  (matches .nb-bar height: 108px in Navbar.jsx)
@@ -125,9 +127,11 @@ function AppInner() {
   const location = useLocation();
 
   const currentPage =
-    location.pathname === '/Book-LB'    ? 'lb'    :
-    location.pathname === '/demo'       ? 'demo'  :
-    location.pathname === '/mammo-demo' ? 'mammo' : 'home';
+    location.pathname === '/Book-LB'              ? 'lb'    :
+    location.pathname === '/demo'                 ? 'demo'  :
+    location.pathname === '/mammo-demo'           ? 'mammo' :
+    location.pathname === '/blog'                 ? 'blog'  :
+    location.pathname.startsWith('/blog/')        ? 'blog'  : 'home';
 
   const handleNavigate = (to) => {
     switch (to) {
@@ -141,6 +145,10 @@ function AppInner() {
         break;
       case 'mammo':
         navigate('/mammo-demo');
+        window.scrollTo({ top: 0, behavior: 'auto' });
+        break;
+      case 'blog':
+        navigate('/blog');
         window.scrollTo({ top: 0, behavior: 'auto' });
         break;
       case 'home':
@@ -200,6 +208,17 @@ function AppInner() {
               <Mammodemo onBack={() => handleNavigate('home')} />
             </div>
           }
+        />
+
+        {/* Blog Routes */}
+        <Route
+          path="/blog"
+          element={<Blog />}
+        />
+
+        <Route
+          path="/blog/:slug"
+          element={<BlogPost />}
         />
 
         <Route
