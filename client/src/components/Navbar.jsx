@@ -523,7 +523,7 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
       if      (action === 'book-lb')    navigate('lb');
       else if (action === 'view-lb')    navigate('demo');
       else if (action === 'book-mammo') navigate('mammo');
-      else if (action === 'view-mammo') window.open('https://oncotraceai.org/mammo-demo/ui', '_blank', 'noopener,noreferrer');
+      else if (action === 'view-mammo') window.open('https://oncotraceai.org/mammodemo/ui', '_blank', 'noopener,noreferrer');
     }, 50);
   }, [navigate, closeMenu]);
 
