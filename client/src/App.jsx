@@ -12,8 +12,7 @@ import CaseStudySection   from './components/CaseStudySection';
 import TeamSection        from './components/TeamSection';
 import Footer             from './components/Footer';
 import LiquidBiopsySection from './components/LiquidBiopsySection';
-import Demo               from './components/Demo';
-import LBdemo             from './components/Lbdemo';
+import LiquidBiopsyDemo   from './components/liquidbiopsy';
 import Mammodemo          from './components/Mammodemo';
 import Blog               from './pages/Blog/Blog';
 import BlogPost           from './pages/Blog/BlogPost';
@@ -187,7 +186,7 @@ function AppInner() {
               className="min-h-screen bg-gray-50"
               style={{ paddingTop: NAV_H }}
             >
-              <Demo />
+              <LiquidBiopsyDemo onBack={() => handleNavigate('home')} />
             </div>
           }
         />
@@ -196,7 +195,7 @@ function AppInner() {
           path="/Book-LB"
           element={
             <div style={{ paddingTop: NAV_H }}>
-              <LBdemo onBack={() => handleNavigate('home')} />
+              <LiquidBiopsyDemo onBack={() => handleNavigate('home')} />
             </div>
           }
         />
