@@ -1,51 +1,86 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import FileUpload from "./File";
+import AnalyzingPanel from "./AnalyzingPanel";
+import ErrorPanel from "./ErrorPanel";
 import Dashboard from "./Dashboard";
+import { analyzeVcf } from "./api";
+import "./tokens.css";
 
 export default function LiquidBiopsyDemo({ onBack }) {
   const [theme, setTheme] = useState("dark");
-  const [analyzed, setAnalyzed] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState("idle"); // idle | analyzing | done | error
   const [file, setFile] = useState(null);
+  const [buildHint, setBuildHint] = useState(undefined);
+  const [data, setData] = useState(null);
+  const [error, setError] = useState(null);
+  const abortRef = useRef(null);
 
   const toggleTheme = useCallback(() => {
     setTheme((prev) => (prev === "dark" ? "light" : "dark"));
   }, []);
 
-  const handleAnalyze = useCallback((selectedFile) => {
+  const runAnalysis = useCallback((selectedFile, referenceBuildHint) => {
     setFile(selectedFile);
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      setAnalyzed(true);
-    }, 1000);
+    setBuildHint(referenceBuildHint);
+    setError(null);
+    setStatus("analyzing");
+
+    const controller = new AbortController();
+    abortRef.current = controller;
+
+    analyzeVcf(selectedFile, { signal: controller.signal, referenceBuildHint })
+      .then((result) => {
+        setData(result);
+        setStatus("done");
+      })
+      .catch((err) => {
+        if (err.name === "AbortError") {
+          setStatus("idle");
+          return;
+        }
+        setError({ kind: err.kind || "annotation_failure", message: err.message });
+        setStatus("error");
+      });
   }, []);
 
-  const handleReset = useCallback(() => {
-    setAnalyzed(false);
-    setLoading(false);
+  const handleCancel = useCallback(() => {
+    abortRef.current?.abort();
+  }, []);
+
+  const handleRetry = useCallback(() => {
+    if (file) runAnalysis(file, buildHint);
+  }, [file, buildHint, runAnalysis]);
+
+  const handleStartOver = useCallback(() => {
+    setStatus("idle");
     setFile(null);
+    setBuildHint(undefined);
+    setData(null);
+    setError(null);
   }, []);
-
-  if (analyzed) {
-    return (
-      <Dashboard
-        onReset={handleReset}
-        fileName={file?.name || "Sample_S5.vcf"}
-        theme={theme}
-        toggleTheme={toggleTheme}
-        onBack={onBack}
-      />
-    );
-  }
 
   return (
-    <FileUpload
-      onAnalyze={handleAnalyze}
-      loading={loading}
-      theme={theme}
-      toggleTheme={toggleTheme}
-      onBack={onBack}
-    />
+    <div data-lb-theme={theme}>
+      {status === "idle" && (
+        <FileUpload onAnalyze={runAnalysis} theme={theme} toggleTheme={toggleTheme} onBack={onBack} />
+      )}
+      {status === "analyzing" && (
+        <AnalyzingPanel fileName={file?.name} theme={theme} toggleTheme={toggleTheme} onCancel={handleCancel} onBack={onBack} />
+      )}
+      {status === "error" && (
+        <ErrorPanel
+          kind={error?.kind}
+          message={error?.message}
+          theme={theme}
+          toggleTheme={toggleTheme}
+          onRetry={handleRetry}
+          onStartOver={handleStartOver}
+          onBack={onBack}
+        />
+      )}
+      {status === "done" && data && (
+        <Dashboard data={data} onReset={handleStartOver} onBack={onBack} theme={theme} toggleTheme={toggleTheme} />
+      )}
+    </div>
   );
 }

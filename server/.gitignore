@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Reference databases (SnpEff, ClinVar, CIViC, genome FASTAs) — multi-GB,
+# never committed. Populated locally via scripts/download_references.sh.
+resources/*
+!resources/.gitkeep

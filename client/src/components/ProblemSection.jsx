@@ -441,7 +441,7 @@ export default function ProblemSection() {
                   textTransform: "uppercase",
                 }}
               >
-                OncoTrace
+                OncoTrace-AI
               </span>
               <span
                 style={{

@@ -1,0 +1,130 @@
+/* Design tokens for the liquid biopsy feature, scoped via [data-lb-theme] on the
+   feature root so this never leaks into the rest of the (light, pastel-blue) site. */
+
+[data-lb-theme] {
+  --lb-radius-sm: 8px;
+  --lb-radius-md: 12px;
+  --lb-radius-lg: 16px;
+  --lb-radius-xl: 24px;
+
+  --lb-text-2xs: 10px;
+  --lb-text-xs: 11px;
+  --lb-text-sm: 12px;
+  --lb-text-base: 14px;
+  --lb-text-lg: 17px;
+  --lb-text-xl: 24px;
+  --lb-text-2xl: clamp(2rem, 5vw, 3.25rem);
+
+  --lb-accent-from: #3b82f6;
+  --lb-accent-to: #6366f1;
+  --lb-accent-gradient: linear-gradient(135deg, var(--lb-accent-from), var(--lb-accent-to));
+
+  --lb-font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --lb-font-display: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Dark — default. Restrained "clinical instrument" palette: cool slate/cyan/indigo
+   for chrome and neutral data, with red/amber reserved for real QC flags and
+   genuinely high VAF rather than decorating the whole page. */
+[data-lb-theme="dark"] {
+  --lb-bg-page: #0a0e14;
+  --lb-bg-surface: #121722;
+  --lb-bg-surface-raised: #0d1119;
+  --lb-bg-overlay: rgba(6, 8, 12, 0.72);
+
+  --lb-border: rgba(148, 163, 184, 0.12);
+  --lb-border-strong: rgba(148, 163, 184, 0.22);
+
+  --lb-text-primary: #e7edf6;
+  --lb-text-secondary: #8f9bb0;
+  --lb-text-muted: #576073;
+
+  --lb-status-low: #34d399;
+  --lb-status-low-bg: color-mix(in srgb, var(--lb-status-low) 14%, transparent);
+  --lb-status-low-border: color-mix(in srgb, var(--lb-status-low) 32%, transparent);
+
+  --lb-status-moderate: #f0b429;
+  --lb-status-moderate-bg: color-mix(in srgb, var(--lb-status-moderate) 14%, transparent);
+  --lb-status-moderate-border: color-mix(in srgb, var(--lb-status-moderate) 32%, transparent);
+
+  --lb-status-high: #f56565;
+  --lb-status-high-bg: color-mix(in srgb, var(--lb-status-high) 14%, transparent);
+  --lb-status-high-border: color-mix(in srgb, var(--lb-status-high) 32%, transparent);
+
+  --lb-status-info: #818cf8;
+  --lb-status-info-bg: color-mix(in srgb, var(--lb-status-info) 14%, transparent);
+  --lb-status-info-border: color-mix(in srgb, var(--lb-status-info) 32%, transparent);
+
+  --lb-status-neutral: #8f9bb0;
+  --lb-status-neutral-bg: color-mix(in srgb, var(--lb-status-neutral) 14%, transparent);
+  --lb-status-neutral-border: color-mix(in srgb, var(--lb-status-neutral) 32%, transparent);
+
+  --lb-row-hover: rgba(148, 163, 184, 0.05);
+  --lb-track: rgba(148, 163, 184, 0.12);
+  --lb-input-bg: rgba(148, 163, 184, 0.08);
+  --lb-card-shadow: none;
+
+  /* Categorical (non-severity) chart series — distinct from the status colors
+     above so a category breakdown never reads as a risk signal. */
+  --lb-chart-1: #60a5fa;
+  --lb-chart-2: #a78bfa;
+  --lb-chart-3: #2dd4bf;
+  --lb-chart-4: #f472b6;
+  --lb-chart-5: #94a3b8;
+}
+
+/* Light */
+[data-lb-theme="light"] {
+  --lb-bg-page: #f0f2f5;
+  --lb-bg-surface: #ffffff;
+  --lb-bg-surface-raised: #ffffff;
+  --lb-bg-overlay: rgba(15, 23, 42, 0.45);
+
+  --lb-border: rgba(15, 23, 42, 0.08);
+  --lb-border-strong: rgba(15, 23, 42, 0.16);
+
+  --lb-text-primary: #1d1d1f;
+  --lb-text-secondary: #6e6e73;
+  --lb-text-muted: #9a9aa2;
+
+  --lb-status-low: #059669;
+  --lb-status-low-bg: color-mix(in srgb, var(--lb-status-low) 10%, white);
+  --lb-status-low-border: color-mix(in srgb, var(--lb-status-low) 28%, white);
+
+  --lb-status-moderate: #b45309;
+  --lb-status-moderate-bg: color-mix(in srgb, var(--lb-status-moderate) 10%, white);
+  --lb-status-moderate-border: color-mix(in srgb, var(--lb-status-moderate) 28%, white);
+
+  --lb-status-high: #dc2626;
+  --lb-status-high-bg: color-mix(in srgb, var(--lb-status-high) 8%, white);
+  --lb-status-high-border: color-mix(in srgb, var(--lb-status-high) 24%, white);
+
+  --lb-status-info: #4f46e5;
+  --lb-status-info-bg: color-mix(in srgb, var(--lb-status-info) 8%, white);
+  --lb-status-info-border: color-mix(in srgb, var(--lb-status-info) 24%, white);
+
+  --lb-status-neutral: #6e6e73;
+  --lb-status-neutral-bg: rgba(15, 23, 42, 0.05);
+  --lb-status-neutral-border: rgba(15, 23, 42, 0.1);
+
+  --lb-row-hover: rgba(15, 23, 42, 0.03);
+  --lb-track: rgba(15, 23, 42, 0.08);
+  --lb-input-bg: #f8fafc;
+  --lb-card-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+
+  --lb-chart-1: #2563eb;
+  --lb-chart-2: #7c3aed;
+  --lb-chart-3: #0d9488;
+  --lb-chart-4: #db2777;
+  --lb-chart-5: #6e6e73;
+}
+
+@keyframes lb-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+@keyframes lb-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

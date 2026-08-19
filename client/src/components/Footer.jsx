@@ -673,7 +673,7 @@ export default function Footer() {
                         allowFullScreen=""
                         loading="lazy"
                         referrerPolicy="no-referrer-when-downgrade"
-                        title="OncoTrace AI Location"
+                        title="OncoTrace-AI Location"
                       />
                     </div>
 

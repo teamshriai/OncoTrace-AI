@@ -676,7 +676,7 @@ export default function Demo() {
                   <DNAIcon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 </div>
                 <div className="text-lg sm:text-xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent tracking-tight">
-                  OncoTrace AI
+                  OncoTrace-AI
                 </div>
               </div>
             </div>
@@ -712,7 +712,7 @@ export default function Demo() {
                 <DNAIcon className="w-6 h-6 text-white" />
               </div>
               <div className="text-xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent tracking-tight">
-                OncoTrace AI
+                OncoTrace-AI
               </div>
             </div>
             <div className="flex-1 px-4 py-6">
@@ -752,7 +752,7 @@ export default function Demo() {
                     <DNAIcon className="w-6 h-6 text-white" />
                   </div>
                   <div className="text-xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent tracking-tight">
-                    OncoTrace AI
+                    OncoTrace-AI
                   </div>
                 </div>
                 <button

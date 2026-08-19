@@ -91,7 +91,7 @@ export default function BlogPost() {
     setRelatedPosts(getRelatedPosts(slug));
 
     // SEO Meta tags
-    document.title = `${currentPost.title} | OncoTrace AI Blog`;
+    document.title = `${currentPost.title} | OncoTrace-AI Blog`;
     
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) {

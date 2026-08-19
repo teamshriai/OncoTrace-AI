@@ -12,15 +12,15 @@ export default function Blog() {
     window.scrollTo({ top: 0, behavior: 'auto' });
     
     // SEO Meta tags
-    document.title = 'Research Blog | OncoTrace AI - Precision Oncology Insights';
+    document.title = 'Research Blog | OncoTrace-AI - Precision Oncology Insights';
     
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) {
-      metaDesc.setAttribute('content', 'Explore cutting-edge research in AI-powered cancer detection, liquid biopsy, ctDNA analysis, and precision oncology from OncoTrace AI.');
+      metaDesc.setAttribute('content', 'Explore cutting-edge research in AI-powered cancer detection, liquid biopsy, ctDNA analysis, and precision oncology from OncoTrace-AI.');
     } else {
       const meta = document.createElement('meta');
       meta.name = 'description';
-      meta.content = 'Explore cutting-edge research in AI-powered cancer detection, liquid biopsy, ctDNA analysis, and precision oncology from OncoTrace AI.';
+      meta.content = 'Explore cutting-edge research in AI-powered cancer detection, liquid biopsy, ctDNA analysis, and precision oncology from OncoTrace-AI.';
       document.head.appendChild(meta);
     }
 
@@ -58,7 +58,7 @@ export default function Blog() {
             className="text-3xl md:text-5xl lg:text-6xl font-black text-slate-900 mb-4 md:mb-6 leading-tight tracking-tight px-2"
             style={{ fontFamily: "'Outfit', sans-serif" }}
           >
-            OncoTrace AI Blog
+            OncoTrace-AI Blog
           </h1>
           
           <p className="text-sm md:text-lg lg:text-xl text-slate-600 max-w-4xl mx-auto leading-relaxed px-4">

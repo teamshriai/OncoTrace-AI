@@ -583,7 +583,7 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
           <button
             type="button"
             onClick={handleLogo}
-            aria-label="OncoTrace AI — go to homepage"
+            aria-label="OncoTrace-AI — go to homepage"
             className="
               relative z-[10001] flex items-center flex-shrink-0
               bg-transparent border-none p-0 cursor-pointer
@@ -595,12 +595,12 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
           >
             {logoError ? (
               <span className="text-xl font-bold text-blue-700 tracking-tight">
-                OncoTrace AI
+                OncoTrace-AI
               </span>
             ) : (
               <img
                 src="/logo.webp"
-                alt="OncoTrace AI"
+                alt="OncoTrace-AI"
                 draggable={false}
                 onError={() => setLogoError(true)}
                 className="h-[88px] w-auto object-contain block pointer-events-none select-none"
@@ -834,8 +834,8 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
                   style={staggerStyle(1)}
                 >
                   {isBlogPage 
-                    ? "You're currently viewing the OncoTrace research blog."
-                    : "You're currently viewing the OncoTrace platform demo."}
+                    ? "You're currently viewing the OncoTrace-AI research blog."
+                    : "You're currently viewing the OncoTrace-AI platform demo."}
                 </p>
 
                 <div

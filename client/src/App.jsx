@@ -169,9 +169,17 @@ function AppInner() {
     }
   };
 
+  // The liquid biopsy dashboard is a full-screen app experience with its own
+  // fixed sidebar/header, not another marketing page — it owns its own chrome
+  // (including a working "back to site" button, wired via onBack) rather than
+  // sitting underneath the site Navbar. Keeping the global Navbar mounted here
+  // put a z-index:10001 element on top of the dashboard's own fixed sidebar,
+  // silently intercepting clicks on it.
+  const isFullScreenApp = currentPage === 'demo' || currentPage === 'lb';
+
   return (
     <>
-      <Navbar currentPage={currentPage} onNavigate={handleNavigate} />
+      {!isFullScreenApp && <Navbar currentPage={currentPage} onNavigate={handleNavigate} />}
 
       <Routes>
         <Route
@@ -181,23 +189,12 @@ function AppInner() {
 
         <Route
           path="/demo"
-          element={
-            <div
-              className="min-h-screen bg-gray-50"
-              style={{ paddingTop: NAV_H }}
-            >
-              <LiquidBiopsyDemo onBack={() => handleNavigate('home')} />
-            </div>
-          }
+          element={<LiquidBiopsyDemo onBack={() => handleNavigate('home')} />}
         />
 
         <Route
           path="/Book-LB"
-          element={
-            <div style={{ paddingTop: NAV_H }}>
-              <LiquidBiopsyDemo onBack={() => handleNavigate('home')} />
-            </div>
-          }
+          element={<LiquidBiopsyDemo onBack={() => handleNavigate('home')} />}
         />
 
         <Route

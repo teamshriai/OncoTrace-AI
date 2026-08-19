@@ -5,7 +5,7 @@ export const blogPosts = [
     slug: 'why-we-focus-on-ctdna',
     title: 'Why We Focus on ctDNA Over CTCs',
     subtitle: 'For AI-Powered Realtime Precision Monitoring of Oncology, circulating tumor DNA offers a scientifically validated and computationally robust foundation.',
-    author: 'OncoTrace AI Research Team',
+    author: 'OncoTrace-AI Research Team',
     date: '2024-01-15',
     readTime: 12,
     category: 'Research',

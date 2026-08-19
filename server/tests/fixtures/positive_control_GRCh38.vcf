@@ -1,0 +1,31 @@
+##fileformat=VCFv4.2
+##source=VarDict_v1.8.2
+##reference=file:///refs/GRCh38.fa
+##FILTER=<ID=PASS,Description="All filters passed">
+##INFO=<ID=SAMPLE,Number=1,Type=String,Description="Sample name">
+##INFO=<ID=TYPE,Number=1,Type=String,Description="Variant Type">
+##INFO=<ID=DP,Number=1,Type=Integer,Description="Total Depth">
+##INFO=<ID=VD,Number=1,Type=Integer,Description="Variant Depth">
+##INFO=<ID=AF,Number=A,Type=Float,Description="Allele Frequency">
+##INFO=<ID=SBF,Number=1,Type=Float,Description="Strand Bias Fisher p-value">
+##INFO=<ID=ODDRATIO,Number=1,Type=Float,Description="Strand Bias Odds ratio">
+##INFO=<ID=MQ,Number=1,Type=Float,Description="Mean Mapping Quality">
+##INFO=<ID=SN,Number=1,Type=Float,Description="Signal to noise">
+##INFO=<ID=HIAF,Number=1,Type=Float,Description="High-quality allele frequency">
+##INFO=<ID=MSI,Number=1,Type=Float,Description="MicroSatellite">
+##INFO=<ID=NM,Number=1,Type=Float,Description="Mean mismatches in reads">
+##INFO=<ID=PMEAN,Number=1,Type=Float,Description="Mean distance to nearest read end">
+##INFO=<ID=HICNT,Number=1,Type=Integer,Description="High quality variant reads">
+##INFO=<ID=HICOV,Number=1,Type=Integer,Description="High quality total reads">
+##INFO=<ID=GENE,Number=1,Type=String,Description="Gene name">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Total Depth">
+##FORMAT=<ID=VD,Number=1,Type=Integer,Description="Variant Depth">
+##FORMAT=<ID=AF,Number=A,Type=Float,Description="Allele Frequency">
+##contig=<ID=3>
+##contig=<ID=7>
+##contig=<ID=12>
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	TUMOR_ONLY
+12	25245350	.	C	T	350	PASS	SAMPLE=TUMOR_ONLY;TYPE=SNV;DP=1200;VD=180;AF=0.15;SBF=0.42;ODDRATIO=1.05;MQ=60;SN=90;HIAF=0.151;MSI=1;NM=0.8;PMEAN=35.0;HICNT=178;HICOV=1190;GENE=KRAS	GT:DP:VD:AF	0/1:1200:180:0.15
+3	179234297	.	A	G	345	PASS	SAMPLE=TUMOR_ONLY;TYPE=SNV;DP=1100;VD=143;AF=0.13;SBF=0.51;ODDRATIO=1.10;MQ=60;SN=85;HIAF=0.129;MSI=2;NM=0.9;PMEAN=38.0;HICNT=141;HICOV=1090;GENE=PIK3CA	GT:DP:VD:AF	0/1:1100:143:0.13
+7	140753336	.	A	T	340	PASS	SAMPLE=TUMOR_ONLY;TYPE=SNV;DP=1000;VD=150;AF=0.15;SBF=0.47;ODDRATIO=1.02;MQ=60;SN=88;HIAF=0.150;MSI=1;NM=0.7;PMEAN=36.0;HICNT=148;HICOV=990;GENE=BRAF	GT:DP:VD:AF	0/1:1000:150:0.15

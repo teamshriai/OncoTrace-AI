@@ -1,0 +1,33 @@
+# systemd unit for the OncoTrace-AI analysis backend.
+#
+# Install (one-time):
+#   sudo cp server/deploy/oncotrace-backend.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now oncotrace-backend
+#
+# EDIT THE PATHS AND USER BELOW to match the actual deploy account and clone
+# location on this host before installing -- the values here are placeholders.
+#
+# After any future `git pull` that touches server/, restart with:
+#   sudo systemctl restart oncotrace-backend
+#
+# Logs:
+#   journalctl -u oncotrace-backend -f
+
+[Unit]
+Description=OncoTrace-AI analysis backend (FastAPI/uvicorn)
+After=network.target
+
+[Service]
+Type=simple
+User=anand
+WorkingDirectory=/home/anand/OncoTrace-AI/server
+Environment="ONCOTRACE_PANEL_NAME=Targeted Oncology Panel (GeneMind SURFSeq5000)"
+# Bind to loopback only -- nginx is the only thing that should reach this
+# port. Never expose 8000 directly to the internet.
+ExecStart=/home/anand/OncoTrace-AI/server/.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000 --workers 2
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

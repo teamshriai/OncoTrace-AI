@@ -1,0 +1,268 @@
+import { useMemo, useState } from "react";
+import Card from "../primitives/Card";
+import SectionHeader from "../primitives/SectionHeader";
+import Badge from "../primitives/Badge";
+import DonutChart from "../charts/DonutChart";
+import BarChart from "../charts/BarChart";
+import VAFHistogram from "../charts/VAFHistogram";
+import { Icon } from "../icons";
+import { ICONS } from "../iconPaths";
+import { vafColor, depthColor, mqColor, snColor, msiColor, nmColor, filterPassColor, qualitativeColor, tierColor, TIER_SHORT_LABELS } from "../colors";
+
+export default function VariantsPage({ data }) {
+  const { variants, variant_type_distribution, chromosome_distribution, vaf_profile, structural_variants } = data;
+  const [search, setSearch] = useState("");
+  const [filterMode, setFilterMode] = useState("all");
+  const [sortField, setSortField] = useState("vaf");
+  const [sortDir, setSortDir] = useState("desc");
+
+  const typeDist = variant_type_distribution.map((d, i) => ({ label: d.type, value: d.count, color: qualitativeColor(i) }));
+  const chrDist = chromosome_distribution.map((d, i) => ({ ...d, color: qualitativeColor(i) }));
+  const total = variants.length;
+
+  const filtered = useMemo(() => {
+    return variants
+      .filter((v) => {
+        const isPass = v.filter.length === 1 && v.filter[0] === "PASS";
+        const matchSearch = !search || v.gene.toLowerCase().includes(search.toLowerCase()) || v.type.toLowerCase().includes(search.toLowerCase());
+        const qcFlagged = (v.qc?.flags || []).length > 0;
+        const matchFilter =
+          filterMode === "all" ? true
+          : filterMode === "pass" ? isPass
+          : filterMode === "nonpass" ? !isPass
+          : filterMode === "qc_flagged" ? qcFlagged
+          : filterMode === "qc_clean" ? !qcFlagged
+          : true;
+        return matchSearch && matchFilter;
+      })
+      .sort((a, b) => {
+        let va = a[sortField], vb = b[sortField];
+        if (typeof va === "string") va = va.toLowerCase();
+        if (typeof vb === "string") vb = vb.toLowerCase();
+        return sortDir === "asc" ? (va > vb ? 1 : -1) : (va < vb ? 1 : -1);
+      });
+  }, [variants, search, filterMode, sortField, sortDir]);
+
+  const handleSort = (field) => {
+    if (sortField === field) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    else { setSortField(field); setSortDir("desc"); }
+  };
+
+  return (
+    <div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))", gap: "16px", marginBottom: "16px" }}>
+        <Card style={{ padding: "20px" }}>
+          <SectionHeader title="By Variant Type" accent="var(--lb-chart-1)" />
+          <div style={{ display: "flex", alignItems: "center", gap: "16px", flexWrap: "wrap" }}>
+            <DonutChart data={typeDist} label={String(total)} sublabel="Total" />
+            <div style={{ flex: 1, minWidth: "120px" }}>
+              {typeDist.map((d, i) => (
+                <div key={i} style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "7px" }}>
+                  <span style={{ width: "8px", height: "8px", borderRadius: "2px", background: d.color, flexShrink: 0 }} />
+                  <span style={{ fontSize: "var(--lb-text-xs)", color: "var(--lb-text-secondary)", flex: 1 }}>{d.label}</span>
+                  <span style={{ fontSize: "var(--lb-text-xs)", fontWeight: 700, color: "var(--lb-text-primary)" }}>{d.value}</span>
+                  <span style={{ fontSize: "var(--lb-text-2xs)", color: "var(--lb-text-muted)" }}>({Math.round((d.value / total) * 100)}%)</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Card>
+
+        <Card style={{ padding: "20px" }}>
+          <SectionHeader title="By Filter Status" accent="var(--lb-status-low)" />
+          <div style={{ display: "flex", alignItems: "center", gap: "16px", flexWrap: "wrap" }}>
+            <DonutChart
+              data={[
+                { label: "Pass", value: data.qc_summary.pass_count, color: "var(--lb-status-low)" },
+                { label: "Non-pass", value: data.qc_summary.non_pass_count, color: "var(--lb-status-moderate)" },
+              ]}
+              label={String(total)}
+              sublabel="Variants"
+            />
+            <div style={{ flex: 1, minWidth: "120px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "7px" }}>
+                <span style={{ width: "8px", height: "8px", borderRadius: "2px", background: "var(--lb-status-low)" }} />
+                <span style={{ fontSize: "var(--lb-text-xs)", color: "var(--lb-text-secondary)", flex: 1 }}>Pass</span>
+                <span style={{ fontSize: "var(--lb-text-xs)", fontWeight: 700, color: "var(--lb-text-primary)" }}>{data.qc_summary.pass_count}</span>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <span style={{ width: "8px", height: "8px", borderRadius: "2px", background: "var(--lb-status-moderate)" }} />
+                <span style={{ fontSize: "var(--lb-text-xs)", color: "var(--lb-text-secondary)", flex: 1 }}>Non-pass</span>
+                <span style={{ fontSize: "var(--lb-text-xs)", fontWeight: 700, color: "var(--lb-text-primary)" }}>{data.qc_summary.non_pass_count}</span>
+              </div>
+            </div>
+          </div>
+        </Card>
+
+        <Card style={{ padding: "20px" }}>
+          <SectionHeader title="Variants per Chromosome" accent="var(--lb-chart-3)" />
+          <BarChart data={chrDist} xKey="chrom" yKey="count" colorKey="color" height={160} />
+        </Card>
+      </div>
+
+      <Card style={{ padding: "20px", marginBottom: "16px" }}>
+        <SectionHeader title={`VAF Distribution Across All ${total} Variants`} accent="var(--lb-status-info)" />
+        <VAFHistogram data={vaf_profile.histogram.map((d, i) => ({ ...d, color: qualitativeColor(i) }))} />
+      </Card>
+
+      <Card style={{ padding: "20px", marginBottom: "16px" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px", flexWrap: "wrap", gap: "10px" }}>
+          <span style={{ fontSize: "var(--lb-text-2xs)", fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.12em", color: "var(--lb-text-muted)" }}>
+            Complete Variant Table ({filtered.length}/{total})
+          </span>
+          <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+            <div style={{ position: "relative" }}>
+              <Icon d={ICONS.search} size={12} style={{ color: "var(--lb-text-muted)", position: "absolute", left: "9px", top: "50%", transform: "translateY(-50%)" }} />
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search gene or type..."
+                style={{
+                  paddingLeft: "28px", paddingRight: "10px", paddingTop: "7px", paddingBottom: "7px",
+                  borderRadius: "var(--lb-radius-md)", border: "1px solid var(--lb-border)", background: "var(--lb-input-bg)",
+                  color: "var(--lb-text-primary)", fontSize: "var(--lb-text-sm)", outline: "none", width: "160px",
+                }}
+              />
+            </div>
+            <select
+              value={filterMode}
+              onChange={(e) => setFilterMode(e.target.value)}
+              style={{ padding: "7px 12px", borderRadius: "var(--lb-radius-md)", border: "1px solid var(--lb-border)", background: "var(--lb-input-bg)", color: "var(--lb-text-primary)", fontSize: "var(--lb-text-sm)", outline: "none" }}
+            >
+              <option value="all">All Variants</option>
+              <option value="pass">Caller PASS only</option>
+              <option value="nonpass">Caller non-PASS only</option>
+              <option value="qc_flagged">QC-flagged only</option>
+              <option value="qc_clean">QC-clean only</option>
+            </select>
+          </div>
+        </div>
+
+        <div style={{ overflowX: "auto" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "var(--lb-text-xs)", minWidth: "1180px" }}>
+            <thead>
+              <tr style={{ borderBottom: "1px solid var(--lb-border)" }}>
+                {[
+                  { f: "gene", l: "Gene" }, { f: "chrom", l: "Chr" }, { f: "pos", l: "Position" },
+                  { f: "type", l: "Type" }, { f: "vaf", l: "VAF" }, { f: "depth", l: "Depth" },
+                  { f: "mq", l: "MQ" }, { f: "sn", l: "S/N" }, { f: "msi", l: "MSI" },
+                  { f: "nm", l: "NM" }, { f: "filter", l: "Filter" },
+                  { f: "tier", l: "Tier" }, { f: "qc", l: "QC Flags" },
+                ].map((h) => (
+                  <th
+                    key={h.f}
+                    onClick={() => handleSort(h.f)}
+                    style={{
+                      paddingBottom: "10px", paddingRight: "10px", textAlign: "left", cursor: "pointer", userSelect: "none",
+                      fontSize: "var(--lb-text-2xs)", fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.12em",
+                      color: sortField === h.f ? "var(--lb-status-info)" : "var(--lb-text-muted)",
+                    }}
+                  >
+                    {h.l} {sortField === h.f ? (sortDir === "asc" ? "↑" : "↓") : ""}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((v, i) => {
+                const isPass = v.filter.length === 1 && v.filter[0] === "PASS";
+                return (
+                  <tr key={i} style={{ borderBottom: "1px solid var(--lb-border)" }}>
+                    <td style={{ padding: "9px 10px 9px 0", fontWeight: 900, color: "var(--lb-status-info)", whiteSpace: "nowrap" }}>{v.gene}</td>
+                    <td style={{ padding: "9px 10px 9px 0", fontFamily: "monospace", color: "var(--lb-text-secondary)" }}>{v.chrom}</td>
+                    <td style={{ padding: "9px 10px 9px 0", fontFamily: "monospace", color: "var(--lb-text-secondary)", whiteSpace: "nowrap" }}>{v.pos.toLocaleString()}</td>
+                    <td style={{ padding: "9px 10px 9px 0" }}>
+                      <span style={{ padding: "2px 6px", borderRadius: "5px", background: "var(--lb-row-hover)", border: "1px solid var(--lb-border)", color: "var(--lb-text-secondary)", fontSize: "var(--lb-text-2xs)", whiteSpace: "nowrap" }}>{v.type}</span>
+                    </td>
+                    <td style={{ padding: "9px 10px 9px 0" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                        <div style={{ width: "36px", height: "4px", background: "var(--lb-track)", borderRadius: "99px", overflow: "hidden" }}>
+                          <div style={{ height: "100%", width: `${Math.min(v.vaf * 100, 100)}%`, background: vafColor(v.vaf), borderRadius: "99px" }} />
+                        </div>
+                        <span style={{ fontWeight: 700, color: vafColor(v.vaf), fontVariantNumeric: "tabular-nums" }}>{(v.vaf * 100).toFixed(1)}%</span>
+                      </div>
+                    </td>
+                    <td style={{ padding: "9px 10px 9px 0" }}><span style={{ color: depthColor(v.depth), fontWeight: 700 }}>{v.depth}×</span></td>
+                    <td style={{ padding: "9px 10px 9px 0" }}><span style={{ color: mqColor(v.mq), fontWeight: 700 }}>{v.mq}</span></td>
+                    <td style={{ padding: "9px 10px 9px 0" }}><span style={{ color: snColor(v.sn), fontWeight: 700 }}>{v.sn}</span></td>
+                    <td style={{ padding: "9px 10px 9px 0" }}><span style={{ color: msiColor(v.msi), fontWeight: 700 }}>{v.msi}</span></td>
+                    <td style={{ padding: "9px 10px 9px 0" }}><span style={{ color: nmColor(v.nm), fontWeight: 700 }}>{v.nm}</span></td>
+                    <td style={{ padding: "9px 10px 9px 0" }}><Badge label={v.filter.join(";")} color={filterPassColor(isPass)} small /></td>
+                    <td style={{ padding: "9px 10px 9px 0" }}>
+                      {v.tier?.tier && (
+                        <span title={(v.tier.reasons || []).join(" · ")}>
+                          <Badge label={TIER_SHORT_LABELS[v.tier.tier] || v.tier.tier} color={tierColor(v.tier.tier)} small />
+                        </span>
+                      )}
+                    </td>
+                    <td style={{ padding: "9px 0" }}>
+                      {(v.qc?.flags || []).length === 0 ? (
+                        <span style={{ fontSize: "var(--lb-text-2xs)", color: "var(--lb-text-muted)" }}>clean</span>
+                      ) : (
+                        <div style={{ display: "flex", flexWrap: "wrap", gap: "3px", maxWidth: "220px" }}>
+                          {v.qc.flags.map((f, fi) => (
+                            <span key={fi} title={f.reason}>
+                              <Badge
+                                label={f.flag.replace(/_/g, " ").replace("artifact contamination candidate", "contaminant")}
+                                color={
+                                  f.flag === "artifact_contamination_candidate" || f.flag === "duplicate_representation"
+                                    ? "var(--lb-status-high)" : "var(--lb-status-moderate)"
+                                }
+                                small
+                              />
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+
+        <div style={{ marginTop: "16px", paddingTop: "16px", borderTop: "1px solid var(--lb-border)" }}>
+          <p style={{ fontSize: "var(--lb-text-2xs)", color: "var(--lb-text-muted)" }}>
+            Depth: ≥500=good, ≥100=caution · MQ: ≥50=good, ≥30=caution · S/N: ≥10=good · MSI: ≥12=flag · NM: ≥5.25=flag
+          </p>
+        </div>
+      </Card>
+
+      {structural_variants.length > 0 ? (
+        <Card style={{ padding: "20px" }}>
+          <SectionHeader title="Structural Variants (Large Deletions)" accent="var(--lb-chart-2)" />
+          <div style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "var(--lb-text-sm)", minWidth: "600px" }}>
+              <thead>
+                <tr style={{ borderBottom: "1px solid var(--lb-border)" }}>
+                  {["Gene", "Chr", "Position", "SV Type", "SV Length", "VAF", "Split Reads", "Span Pairs"].map((h) => (
+                    <th key={h} style={{ paddingBottom: "10px", paddingRight: "12px", textAlign: "left", fontSize: "var(--lb-text-2xs)", fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.12em", color: "var(--lb-text-muted)" }}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {structural_variants.map((r, i) => (
+                  <tr key={i} style={{ borderBottom: "1px solid var(--lb-border)" }}>
+                    <td style={{ padding: "10px 12px 10px 0", fontWeight: 900, color: "var(--lb-status-info)" }}>{r.gene}</td>
+                    <td style={{ padding: "10px 12px 10px 0", fontFamily: "monospace", color: "var(--lb-text-secondary)" }}>{r.chrom}</td>
+                    <td style={{ padding: "10px 12px 10px 0", fontFamily: "monospace", color: "var(--lb-text-secondary)" }}>{r.pos.toLocaleString()}</td>
+                    <td style={{ padding: "10px 12px 10px 0" }}><Badge label={r.svtype} color="var(--lb-chart-2)" small /></td>
+                    <td style={{ padding: "10px 12px 10px 0", fontWeight: 700, color: "var(--lb-text-primary)" }}>{r.svlen.toLocaleString()} bp</td>
+                    <td style={{ padding: "10px 12px 10px 0", fontWeight: 700, color: vafColor(r.vaf) }}>{(r.vaf * 100).toFixed(1)}%</td>
+                    <td style={{ padding: "10px 12px 10px 0", color: "var(--lb-text-primary)" }}>{r.splitread}</td>
+                    <td style={{ padding: "10px 0", color: "var(--lb-text-primary)" }}>{r.spanpair}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Card>
+      ) : (
+        <Card style={{ padding: "20px", textAlign: "center", color: "var(--lb-text-muted)", fontSize: "var(--lb-text-sm)" }}>
+          No structural variants called in this file.
+        </Card>
+      )}
+    </div>
+  );
+}
