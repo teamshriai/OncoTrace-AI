@@ -59,16 +59,23 @@ Run from `~/OncoTrace-AI/server`:
 ./scripts/download_references.sh civic              # ~15 MB
 ./scripts/download_references.sh build-detection    # ~370 MB (both ClinVar builds)
 ./scripts/download_references.sh gene-spans-grch38  # ~10 MB
+./scripts/download_references.sh gene-spans-grch37  # ~10 MB
 ./scripts/download_references.sh snpeff-grch38       # ~1.5 GB — gene/consequence annotation
+./scripts/download_references.sh snpeff-grch37       # ~1.5 GB — same, for GRCh37 uploads
 ```
 
-**Expect this to be slow** — on a slow link, the ClinVar step alone took over
-15 minutes and SnpEff's database took over 30 in testing. Let each command
-finish before running the next; every step resumes cleanly if interrupted and
-skips anything already on disk, so it's safe to re-run if a connection drops.
+We need **both** builds live, not just GRCh38 — samples arrive in either, and
+the backend refuses to guess: an unresolved build returns a `422` rather than
+silently annotating against the wrong genome.
 
-`reference-grch38` (~3 GB, improves indel matching) is optional — skip it for
-the initial launch, add it later if needed.
+**Expect this to be slow** — on a slow link, one ClinVar build alone took over
+15 minutes and one SnpEff database took over 30 in testing, so budget real
+time for four large downloads, not one. Let each command finish before
+running the next; every step resumes cleanly if interrupted and skips
+anything already on disk, so it's safe to re-run if a connection drops.
+
+`reference-grch38` / `reference-grch37` (~3 GB each, improves indel matching)
+are optional — skip them for the initial launch, add them later if needed.
 
 Confirm what's live once done:
 
@@ -78,9 +85,10 @@ curl -s localhost:8000/api/v1/health | python3 -m json.tool
 kill %1
 ```
 
-You want at least `clinvar_GRCh37`, `clinvar_GRCh38`, and `civic_cache` to be
-`true` before going live; `snpeff_GRCh38` should also be `true` or gene names
-will show as "(unannotated)" in every result.
+You want `clinvar_GRCh37`, `clinvar_GRCh38`, `civic_cache`, `snpeff_GRCh37`,
+and `snpeff_GRCh38` **all** `true` before going live — any one of the
+`snpeff_*` pair missing means gene names show as "(unannotated)" for uploads
+of that build.
 
 ### 5. Install the backend as a systemd service
 
