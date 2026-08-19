@@ -241,7 +241,7 @@ export default function FileUpload({ onAnalyze, theme, toggleTheme, onBack }) {
               <div>
                 <p style={{ fontSize: "12px", fontWeight: 600, color: "var(--lb-status-low)" }}>How your file is handled</p>
                 <p style={{ fontSize: "11px", color: "var(--lb-text-secondary)", marginTop: "2px", lineHeight: 1.5 }}>
-                  Processed by a local analysis service · not persisted after analysis · not a substitute for clinical-grade compliance certification
+                  Processed by our own self-hosted analysis service (not sent to third-party APIs) · not persisted after analysis · not a substitute for clinical-grade compliance certification
                 </p>
               </div>
             </div>

@@ -25,7 +25,7 @@ export class AnalysisError extends Error {
 
 const MOCK_ERROR_MESSAGES = {
   malformed_vcf: "This file couldn't be parsed as a VCF — check that it includes a valid ##fileformat header line.",
-  network: "Can't reach the analysis service — make sure the local backend is running.",
+  network: "Can't reach the analysis service — it may be temporarily unavailable. Please try again in a moment.",
   annotation_failure: "The file parsed correctly, but the annotation step failed on our side. This isn't something wrong with your file.",
   timeout: "The analysis took too long and timed out. Try again, or try a smaller file.",
 };

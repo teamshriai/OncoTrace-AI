@@ -10,7 +10,7 @@ const COPY = {
   },
   network: {
     title: "Can't reach the analysis service",
-    fallback: "Make sure the local backend is running, then try again.",
+    fallback: "The analysis service didn't respond — it may be temporarily unavailable. Please try again in a moment.",
     primaryAction: "retry",
   },
   annotation_failure: {

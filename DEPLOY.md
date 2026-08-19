@@ -125,6 +125,20 @@ sudo nginx -t && sudo systemctl reload nginx
 This makes the API same-origin with the site (`oncotraceai.org/api/...`), so
 no CORS configuration is needed on the backend side.
 
+**While you're in that file**, confirm the existing `location /` block has an
+SPA fallback, e.g. `try_files $uri $uri/ /index.html;`. The React app uses
+client-side routing (`/demo`, `/Book-LB`, `/blog/:slug`, ...) — without that
+fallback, a direct link or a page refresh on any of those routes 404s at
+nginx before React ever loads, even though navigating there *from* `/` works
+fine. This should already be there since those routes predate this change,
+but it's worth a 10-second check since it's easy to miss and easy to verify:
+
+```bash
+curl -s -o /dev/null -w "%{http_code}\n" https://oncotraceai.org/demo
+```
+
+Anything other than `200` means the fallback is missing.
+
 ### 7. Build and deploy the frontend (same as before, one detail changed)
 
 ```bash
