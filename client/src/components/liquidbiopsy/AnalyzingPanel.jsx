@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import ThemeToggle from "./ThemeToggle";
-import { Icon } from "./icons";
+import { Icon, RibbonIcon } from "./icons";
 import { ICONS } from "./iconPaths";
 
 // Client-side staged pacing, not a live status feed from the backend (v1 is a
@@ -43,7 +43,7 @@ export default function AnalyzingPanel({ fileName, theme, toggleTheme, onCancel,
               </button>
             )}
             <div style={{ width: "28px", height: "28px", borderRadius: "8px", background: "var(--lb-accent-gradient)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-              <Icon d={ICONS.logo} size={16} style={{ color: "#fff" }} />
+              <RibbonIcon size={16} style={{ color: "#fff" }} />
             </div>
             <p style={{ fontSize: "14px", fontWeight: 600, color: "var(--lb-text-primary)" }}>OncoTrace-AI</p>
           </div>

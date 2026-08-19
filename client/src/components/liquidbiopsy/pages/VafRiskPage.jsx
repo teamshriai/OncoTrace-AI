@@ -13,10 +13,18 @@ const VAF_GUIDE = [
   { range: "90–100%", interp: "Homozygous / complete loss of heterozygosity", color: "var(--lb-status-high)" },
 ];
 
+// A real (non-demo-panel) VCF can carry thousands of variants -- rendering
+// one DOM node per variant in the bubble chart below is what makes this tab
+// freeze on open, so cap it to the highest-depth (most reliable) subset.
+const BUBBLE_CAP = 400;
+
 export default function VafRiskPage({ data, theme }) {
   const { gene_summary, variants } = data;
   const highVaf = variants.filter((v) => v.vaf >= 0.7).sort((a, b) => b.vaf - a.vaf);
-  const maxDepth = Math.max(...variants.map((v) => v.depth));
+  const maxDepth = variants.reduce((m, v) => Math.max(m, v.depth), 0);
+  const bubbleVariants = variants.length > BUBBLE_CAP
+    ? [...variants].sort((a, b) => b.depth - a.depth).slice(0, BUBBLE_CAP)
+    : variants;
   const vafPerGene = gene_summary.map((g) => ({ gene: g.gene, max_vaf: g.max_vaf })).sort((a, b) => b.max_vaf - a.max_vaf);
   const topHigh = vafPerGene.filter((g) => g.max_vaf >= 0.7).map((g) => `${g.gene} ${(g.max_vaf * 100).toFixed(1)}%`).join(", ");
   const topLow = gene_summary.filter((g) => g.max_vaf < 0.05).map((g) => g.gene).join(", ") || "none in this file";
@@ -99,9 +107,12 @@ export default function VafRiskPage({ data, theme }) {
 
         <Card style={{ padding: "20px" }}>
           <SectionHeader title="Depth vs VAF" accent="var(--lb-chart-2)" />
-          <p style={{ fontSize: "var(--lb-text-xs)", color: "var(--lb-text-secondary)", marginBottom: "12px" }}>Bubble size = read depth. High depth + moderate VAF (20–50%) are generally the most reliable calls.</p>
+          <p style={{ fontSize: "var(--lb-text-xs)", color: "var(--lb-text-secondary)", marginBottom: "12px" }}>
+            Bubble size = read depth. High depth + moderate VAF (20–50%) are generally the most reliable calls.
+            {variants.length > BUBBLE_CAP && ` Showing the ${BUBBLE_CAP} highest-depth of ${variants.length} variants; the full set is in Variant Analysis.`}
+          </p>
           <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
-            {variants.map((v, i) => (
+            {bubbleVariants.map((v, i) => (
               <div key={i} title={`${v.gene}: VAF=${(v.vaf * 100).toFixed(1)}%, Depth=${v.depth}×`} style={{ display: "inline-flex" }}>
                 <div style={{
                   width: `${Math.max(8, (v.depth / maxDepth) * 24)}px`,

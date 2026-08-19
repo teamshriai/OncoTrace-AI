@@ -32,3 +32,16 @@ export const LockIcon = ({ size = 16, style = {} }) => (
     <path d="M7 11V7a5 5 0 0110 0v4" />
   </svg>
 );
+
+// Cancer-awareness ribbon, used as the small logo badge next to the
+// OncoTrace-AI wordmark. Filled rather than stroked (unlike Icon) so the
+// bow and tails stay legible at the ~16px size those badges render at.
+export const RibbonIcon = ({ size = 16, style = {} }) => (
+  <svg style={{ width: size, height: size, flexShrink: 0, ...style }} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 11 C9.5 7 5 6.5 5.5 10 C6 12.5 9.5 12.5 12 11 Z" />
+    <path d="M12 11 C14.5 7 19 6.5 18.5 10 C18 12.5 14.5 12.5 12 11 Z" />
+    <path d="M10.7 11.5 L6.5 21 L9 19.3 L11 22 L11.5 12 Z" />
+    <path d="M13.3 11.5 L17.5 21 L15 19.3 L13 22 L12.5 12 Z" />
+    <circle cx="12" cy="10.5" r="1.6" />
+  </svg>
+);

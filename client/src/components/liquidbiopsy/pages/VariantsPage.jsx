@@ -9,12 +9,15 @@ import { Icon } from "../icons";
 import { ICONS } from "../iconPaths";
 import { vafColor, depthColor, mqColor, snColor, msiColor, nmColor, filterPassColor, qualitativeColor, tierColor, TIER_SHORT_LABELS } from "../colors";
 
+const PAGE_SIZE = 50;
+
 export default function VariantsPage({ data }) {
   const { variants, variant_type_distribution, chromosome_distribution, vaf_profile, structural_variants } = data;
   const [search, setSearch] = useState("");
   const [filterMode, setFilterMode] = useState("all");
   const [sortField, setSortField] = useState("vaf");
   const [sortDir, setSortDir] = useState("desc");
+  const [page, setPage] = useState(0);
 
   const typeDist = variant_type_distribution.map((d, i) => ({ label: d.type, value: d.count, color: qualitativeColor(i) }));
   const chrDist = chromosome_distribution.map((d, i) => ({ ...d, color: qualitativeColor(i) }));
@@ -46,7 +49,16 @@ export default function VariantsPage({ data }) {
   const handleSort = (field) => {
     if (sortField === field) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
     else { setSortField(field); setSortDir("desc"); }
+    setPage(0);
   };
+
+  // Rendering thousands of table rows at once (a real whole-panel or larger
+  // VCF, not just the ~30-gene demo fixture) is what makes this tab freeze on
+  // open -- paginate the DOM output while search/sort/filter still operate
+  // over the full `filtered` set.
+  const pageCount = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const clampedPage = Math.min(page, pageCount - 1);
+  const pageItems = filtered.slice(clampedPage * PAGE_SIZE, (clampedPage + 1) * PAGE_SIZE);
 
   return (
     <div>
@@ -115,7 +127,7 @@ export default function VariantsPage({ data }) {
               <Icon d={ICONS.search} size={12} style={{ color: "var(--lb-text-muted)", position: "absolute", left: "9px", top: "50%", transform: "translateY(-50%)" }} />
               <input
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={(e) => { setSearch(e.target.value); setPage(0); }}
                 placeholder="Search gene or type..."
                 style={{
                   paddingLeft: "28px", paddingRight: "10px", paddingTop: "7px", paddingBottom: "7px",
@@ -126,7 +138,7 @@ export default function VariantsPage({ data }) {
             </div>
             <select
               value={filterMode}
-              onChange={(e) => setFilterMode(e.target.value)}
+              onChange={(e) => { setFilterMode(e.target.value); setPage(0); }}
               style={{ padding: "7px 12px", borderRadius: "var(--lb-radius-md)", border: "1px solid var(--lb-border)", background: "var(--lb-input-bg)", color: "var(--lb-text-primary)", fontSize: "var(--lb-text-sm)", outline: "none" }}
             >
               <option value="all">All Variants</option>
@@ -164,7 +176,7 @@ export default function VariantsPage({ data }) {
               </tr>
             </thead>
             <tbody>
-              {filtered.map((v, i) => {
+              {pageItems.map((v, i) => {
                 const isPass = v.filter.length === 1 && v.filter[0] === "PASS";
                 return (
                   <tr key={i} style={{ borderBottom: "1px solid var(--lb-border)" }}>
@@ -221,6 +233,43 @@ export default function VariantsPage({ data }) {
             </tbody>
           </table>
         </div>
+
+        {pageCount > 1 && (
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "14px", flexWrap: "wrap", gap: "10px" }}>
+            <span style={{ fontSize: "var(--lb-text-2xs)", color: "var(--lb-text-muted)" }}>
+              Showing {clampedPage * PAGE_SIZE + 1}–{Math.min((clampedPage + 1) * PAGE_SIZE, filtered.length)} of {filtered.length}
+            </span>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <button
+                type="button"
+                onClick={() => setPage((p) => Math.max(0, p - 1))}
+                disabled={clampedPage === 0}
+                style={{
+                  padding: "6px 12px", borderRadius: "var(--lb-radius-md)", border: "1px solid var(--lb-border)",
+                  background: "var(--lb-input-bg)", color: "var(--lb-text-primary)", fontSize: "var(--lb-text-xs)",
+                  cursor: clampedPage === 0 ? "default" : "pointer", opacity: clampedPage === 0 ? 0.5 : 1,
+                }}
+              >
+                Previous
+              </button>
+              <span style={{ fontSize: "var(--lb-text-xs)", color: "var(--lb-text-secondary)" }}>
+                Page {clampedPage + 1} of {pageCount}
+              </span>
+              <button
+                type="button"
+                onClick={() => setPage((p) => Math.min(pageCount - 1, p + 1))}
+                disabled={clampedPage >= pageCount - 1}
+                style={{
+                  padding: "6px 12px", borderRadius: "var(--lb-radius-md)", border: "1px solid var(--lb-border)",
+                  background: "var(--lb-input-bg)", color: "var(--lb-text-primary)", fontSize: "var(--lb-text-xs)",
+                  cursor: clampedPage >= pageCount - 1 ? "default" : "pointer", opacity: clampedPage >= pageCount - 1 ? 0.5 : 1,
+                }}
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
 
         <div style={{ marginTop: "16px", paddingTop: "16px", borderTop: "1px solid var(--lb-border)" }}>
           <p style={{ fontSize: "var(--lb-text-2xs)", color: "var(--lb-text-muted)" }}>
