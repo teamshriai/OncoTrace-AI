@@ -63,39 +63,21 @@ const NAV_LINKS = [
 ];
 
 const PRODUCT_LINKS = [
+
   {
-    label: 'Book Liquid Biopsy Demo',
-    action: 'book-lb',
-    featured: true,
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" width="20" height="20" aria-hidden="true">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z" />
-      </svg>
-    ),
-  },
-  {
-    label: 'View Liquid Biopsy Demo',
+    label: 'Explore Liquid Biopsy AI',
     action: 'view-lb',
     featured: false,
     icon: (
-     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" width="20" height="20" aria-hidden="true">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" width="20" height="20" aria-hidden="true">
         <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
         <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
       </svg>
     ),
-  },
+  }, 
+
   {
-    label: 'Book MammoAI Demo',
-    action: 'book-mammo',
-    featured: false,
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" width="20" height="20" aria-hidden="true">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z" />
-      </svg>
-    ),
-  },
-  {
-    label: 'View MammoAI Demo',
+    label: 'Experience Mammo AI',
     action: 'view-mammo',
     featured: false,
     icon: (
@@ -269,7 +251,7 @@ function DesktopDropdown({ onAction, onClose, triggerRef }) {
     let timer;
 
     function onPointerDown(e) {
-      const inPanel   = panelRef.current   && panelRef.current.contains(e.target);
+      const inPanel = panelRef.current && panelRef.current.contains(e.target);
       const inTrigger = triggerRef.current && triggerRef.current.contains(e.target);
       if (!inPanel && !inTrigger) onClose();
     }
@@ -359,13 +341,13 @@ function DesktopDropdown({ onAction, onClose, triggerRef }) {
 function useBodyScrollLock(active) {
   useEffect(() => {
     if (!active) return;
-    const prevOver   = document.body.style.overflow;
-    const prevPR     = document.body.style.paddingRight;
+    const prevOver = document.body.style.overflow;
+    const prevPR = document.body.style.paddingRight;
     const scrollbarW = window.innerWidth - document.documentElement.clientWidth;
-    document.body.style.overflow     = 'hidden';
+    document.body.style.overflow = 'hidden';
     document.body.style.paddingRight = `${scrollbarW}px`;
     return () => {
-      document.body.style.overflow     = prevOver;
+      document.body.style.overflow = prevOver;
       document.body.style.paddingRight = prevPR;
     };
   }, [active]);
@@ -374,17 +356,17 @@ function useBodyScrollLock(active) {
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 export default function Navbar({ currentPage = 'home', onNavigate }) {
-  const [menuOpen,    setMenuOpen]    = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [menuClosing, setMenuClosing] = useState(false);
-  const [ddOpen,      setDdOpen]      = useState(false);
-  const [scrolled,    setScrolled]    = useState(false);
-  const [progress,    setProgress]    = useState(0);
-  const [activeHref,  setActiveHref]  = useState('#home');
-  const [logoError,   setLogoError]   = useState(false);
+  const [ddOpen, setDdOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [activeHref, setActiveHref] = useState('#home');
+  const [logoError, setLogoError] = useState(false);
 
-  const ddTriggerRef  = useRef(null);
-  const rafRef        = useRef(null);
-  const menuOpenRef   = useRef(false);
+  const ddTriggerRef = useRef(null);
+  const rafRef = useRef(null);
+  const menuOpenRef = useRef(false);
   const closingTimerRef = useRef(null);
 
   const isDemoPage = currentPage === 'demo' || currentPage === 'mammo' || currentPage === 'lb';
@@ -431,7 +413,7 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
         const max = document.documentElement.scrollHeight - window.innerHeight;
         setScrolled(top > 8);
         setProgress(max > 0 ? Math.min((top / max) * 100, 100) : 0);
-        
+
         // Only track active section on home page
         if (currentPage === 'home') {
           let cur = '#home';
@@ -471,8 +453,8 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
   useEffect(() => {
     const handler = (e) => {
       if (e.key !== 'Escape') return;
-      if (ddOpen)   { setDdOpen(false); return; }
-      if (menuOpen) { closeMenu();      return; }
+      if (ddOpen) { setDdOpen(false); return; }
+      if (menuOpen) { closeMenu(); return; }
     };
     document.addEventListener('keydown', handler);
     return () => document.removeEventListener('keydown', handler);
@@ -491,13 +473,13 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
   const handleNavClick = useCallback((href) => {
     const id = href.slice(1);
     closeMenu();
-    
+
     // Special handling for blog
     if (id === 'blog-page') {
       navigate('blog');
       return;
     }
-    
+
     if (isDemoPage || isBlogPage) {
       navigate('home');
       if (id !== 'home') sessionStorage.setItem('nb-scroll-target', id);
@@ -520,8 +502,8 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
     setDdOpen(false);
     closeMenu();
     setTimeout(() => {
-      if      (action === 'book-lb')    navigate('lb');
-      else if (action === 'view-lb')    navigate('demo');
+      if (action === 'book-lb') navigate('lb');
+      else if (action === 'view-lb') navigate('demo');
       else if (action === 'book-mammo') navigate('mammo');
       else if (action === 'view-mammo') window.open('https://oncotraceai.org/mammodemo/ui', '_blank', 'noopener,noreferrer');
     }, 50);
@@ -547,15 +529,15 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
 
   const staggerStyle = useCallback((i) =>
     prefersReducedMotion ? {} : { animationDelay: `${i * 40}ms` }
-  , [prefersReducedMotion]);
+    , [prefersReducedMotion]);
 
   const showDrawer = menuOpen || menuClosing;
 
   const getDemoLabel = () => {
-    if (currentPage === 'demo')  return 'LB Demo Mode';
-    if (currentPage === 'lb')    return 'LB Booking';
+    if (currentPage === 'demo') return 'LB Demo Mode';
+    if (currentPage === 'lb') return 'LB Booking';
     if (currentPage === 'mammo') return 'Mammo Booking';
-    if (currentPage === 'blog')  return 'Blog';
+    if (currentPage === 'blog') return 'Blog';
     return 'Demo Mode';
   };
 
@@ -751,8 +733,8 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
                 className={`
                   block w-[18px] h-0.5 rounded bg-blue-600
                   transition-all duration-300 ease-out origin-center
-                  ${menuOpen && n === 1 ? 'translate-y-[7px] rotate-45'  : ''}
-                  ${menuOpen && n === 2 ? 'opacity-0 scale-x-0'           : ''}
+                  ${menuOpen && n === 1 ? 'translate-y-[7px] rotate-45' : ''}
+                  ${menuOpen && n === 2 ? 'opacity-0 scale-x-0' : ''}
                   ${menuOpen && n === 3 ? '-translate-y-[7px] -rotate-45' : ''}
                 `}
               />
@@ -808,9 +790,9 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
             pb-[max(env(safe-area-inset-bottom,0px),12px)]
             ${menuClosing ? 'nb-animate-drawer-out' : 'nb-animate-drawer'}
           `}
-          onClick={(e)      => e.stopPropagation()}
+          onClick={(e) => e.stopPropagation()}
           onTouchStart={(e) => e.stopPropagation()}
-          onTouchMove={(e)  => e.stopPropagation()}
+          onTouchMove={(e) => e.stopPropagation()}
         >
           <div className="p-2.5 pb-1">
 
@@ -833,7 +815,7 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
                   className="text-[0.8125rem] text-gray-500 leading-relaxed px-3.5 py-1.5 pb-3"
                   style={staggerStyle(1)}
                 >
-                  {isBlogPage 
+                  {isBlogPage
                     ? "You're currently viewing the OncoTrace-AI research blog."
                     : "You're currently viewing the OncoTrace-AI platform demo."}
                 </p>
