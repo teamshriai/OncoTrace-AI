@@ -1,6 +1,6 @@
 import ThemeToggle from "../ThemeToggle";
 import PulseDot from "../primitives/PulseDot";
-import { Icon, RibbonIcon } from "../icons";
+import { Icon } from "../icons";
 import { ICONS } from "../iconPaths";
 import { NAV_PAGES } from "../nav";
 
@@ -30,7 +30,7 @@ export default function DashboardShell({ activePage, onNavigate, meta, tierSumma
         <div style={{ padding: "16px", borderBottom: "1px solid var(--lb-border)", flexShrink: 0 }}>
           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
             <div style={{ width: "32px", height: "32px", borderRadius: "9px", flexShrink: 0, background: "var(--lb-accent-gradient)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <RibbonIcon size={16} style={{ color: "#fff" }} />
+              <img src="/ribbon-logo.webp" alt="" style={{ width: 24, height: 24, objectFit: "contain" }} />
             </div>
             <div>
               <p style={{ fontSize: "13px", fontWeight: 700, color: "var(--lb-text-primary)", lineHeight: 1 }}>OncoTrace-AI</p>

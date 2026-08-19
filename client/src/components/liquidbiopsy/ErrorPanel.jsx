@@ -1,5 +1,5 @@
 import ThemeToggle from "./ThemeToggle";
-import { Icon, RibbonIcon } from "./icons";
+import { Icon } from "./icons";
 import { ICONS } from "./iconPaths";
 
 const COPY = {
@@ -54,7 +54,7 @@ export default function ErrorPanel({ kind, message, theme, toggleTheme, onRetry,
               </button>
             )}
             <div style={{ width: "28px", height: "28px", borderRadius: "8px", background: "var(--lb-accent-gradient)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-              <RibbonIcon size={16} style={{ color: "#fff" }} />
+              <img src="/ribbon-logo.webp" alt="" style={{ width: 22, height: 22, objectFit: "contain" }} />
             </div>
             <p style={{ fontSize: "14px", fontWeight: 600, color: "var(--lb-text-primary)" }}>OncoTrace-AI</p>
           </div>

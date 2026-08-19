@@ -1,8 +1,7 @@
 // SVG path data, keyed for use with the <Icon d={ICONS.x} /> component in ./icons.jsx.
 // Merges what used to be Dashboard.jsx's ICONS dict and File.jsx's standalone icon
 // components (several paths were identical, e.g. `close`/`x`). The logo badge uses
-// the dedicated RibbonIcon component in ./icons.jsx instead of an entry here, since
-// it needs a filled (not stroked) rendering to stay legible at small sizes.
+// /public/ribbon-logo.webp directly via <img>, not an entry here.
 export const ICONS = {
   back: "M11 17l-5-5m0 0l5-5m-5 5h12",
   download: "M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4",
