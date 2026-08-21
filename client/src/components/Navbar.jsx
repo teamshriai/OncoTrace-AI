@@ -89,6 +89,30 @@ const PRODUCT_LINKS = [
   },
 ];
 
+const BOOKING_LINKS = [
+  {
+    label: 'Book Liquid Biopsy Demo',
+    subtitle: 'Schedule a walkthrough with our team',
+    action: 'book-lb',
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" width="20" height="20" aria-hidden="true">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 3c0 0-6.5 6.8-6.5 11a6.5 6.5 0 0 0 13 0C18.5 9.8 12 3 12 3Z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M8.5 15.5a4 4 0 0 0 4 3" />
+      </svg>
+    ),
+  },
+  {
+    label: 'Book Mammo AI Demo',
+    subtitle: 'Schedule a walkthrough with our team',
+    action: 'book-mammo',
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" width="20" height="20" aria-hidden="true">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z" />
+      </svg>
+    ),
+  },
+];
+
 const NAVBAR_HEIGHT = 108;
 const SCROLL_OFFSET = NAVBAR_HEIGHT + 8;
 
@@ -243,7 +267,7 @@ function ArrowLeft() {
 
 // ─── Desktop Dropdown ─────────────────────────────────────────────────────────
 
-function DesktopDropdown({ onAction, onClose, triggerRef }) {
+function DesktopDropdown({ links, ariaLabel, panelId, onAction, onClose, triggerRef }) {
   const panelRef = useRef(null);
 
   useEffect(() => {
@@ -273,9 +297,9 @@ function DesktopDropdown({ onAction, onClose, triggerRef }) {
 
       <div
         ref={panelRef}
-        id="nb-dd-panel"
+        id={panelId}
         role="menu"
-        aria-label="Products"
+        aria-label={ariaLabel}
         className="
           nb-animate-dropdown
           absolute top-[calc(100%+10px)] right-0
@@ -286,7 +310,7 @@ function DesktopDropdown({ onAction, onClose, triggerRef }) {
           p-2
         "
       >
-        {PRODUCT_LINKS.map((p, i) => (
+        {links.map((p, i) => (
           <div key={p.action}>
             <button
               type="button"
@@ -323,7 +347,7 @@ function DesktopDropdown({ onAction, onClose, triggerRef }) {
               </span>
             </button>
 
-            {i < PRODUCT_LINKS.length - 1 && (
+            {i < links.length - 1 && (
               <div
                 aria-hidden="true"
                 className="h-px my-1.5 bg-gradient-to-r from-transparent via-blue-100 to-transparent"
@@ -359,12 +383,14 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuClosing, setMenuClosing] = useState(false);
   const [ddOpen, setDdOpen] = useState(false);
+  const [bookDdOpen, setBookDdOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [progress, setProgress] = useState(0);
   const [activeHref, setActiveHref] = useState('#home');
   const [logoError, setLogoError] = useState(false);
 
   const ddTriggerRef = useRef(null);
+  const bookDdTriggerRef = useRef(null);
   const rafRef = useRef(null);
   const menuOpenRef = useRef(false);
   const closingTimerRef = useRef(null);
@@ -448,17 +474,19 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
     setMenuOpen(false);
     setMenuClosing(false);
     setDdOpen(false);
+    setBookDdOpen(false);
   }, [currentPage]);
 
   useEffect(() => {
     const handler = (e) => {
       if (e.key !== 'Escape') return;
       if (ddOpen) { setDdOpen(false); return; }
+      if (bookDdOpen) { setBookDdOpen(false); return; }
       if (menuOpen) { closeMenu(); return; }
     };
     document.addEventListener('keydown', handler);
     return () => document.removeEventListener('keydown', handler);
-  }, [ddOpen, menuOpen, closeMenu]);
+  }, [ddOpen, bookDdOpen, menuOpen, closeMenu]);
 
   useEffect(() => {
     if (currentPage !== 'home') return;
@@ -510,7 +538,19 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
   }, [navigate, closeMenu]);
 
   const toggleDd = useCallback(() => {
-    setDdOpen((prev) => !prev);
+    setDdOpen((prev) => {
+      const next = !prev;
+      if (next) setBookDdOpen(false);
+      return next;
+    });
+  }, []);
+
+  const toggleBookDd = useCallback(() => {
+    setBookDdOpen((prev) => {
+      const next = !prev;
+      if (next) setDdOpen(false);
+      return next;
+    });
   }, []);
 
   const toggleMenu = useCallback(() => {
@@ -519,6 +559,7 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
     } else {
       setMenuOpen(true);
       setDdOpen(false);
+      setBookDdOpen(false);
     }
   }, [closeMenu]);
 
@@ -672,38 +713,79 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
                 Back to Home
               </button>
             ) : (
-              <div className="relative">
-                <button
-                  ref={ddTriggerRef}
-                  type="button"
-                  onClick={toggleDd}
-                  aria-expanded={ddOpen}
-                  aria-haspopup="menu"
-                  aria-controls="nb-dd-panel"
-                  className="
-                    flex items-center gap-2 border-none cursor-pointer
-                    text-[0.875rem] font-semibold text-white
-                    px-5 py-2.5 rounded-full outline-none whitespace-nowrap
-                    bg-gradient-to-br from-blue-700 to-blue-500
-                    shadow-[0_2px_12px_rgba(37,99,235,0.30)]
-                    hover:shadow-[0_6px_22px_rgba(37,99,235,0.42)] hover:-translate-y-px
-                    active:translate-y-0 active:scale-[0.98]
-                    transition-all duration-300 ease-out
-                    focus-visible:ring-2 focus-visible:ring-blue-400
-                  "
-                >
-                  <span>View Products</span>
-                  <Chevron open={ddOpen} />
-                </button>
+              <>
+                <div className="relative">
+                  <button
+                    ref={bookDdTriggerRef}
+                    type="button"
+                    onClick={toggleBookDd}
+                    aria-expanded={bookDdOpen}
+                    aria-haspopup="menu"
+                    aria-controls="nb-dd-panel-booking"
+                    className="
+                      flex items-center gap-2 border cursor-pointer
+                      text-[0.875rem] font-semibold text-blue-700
+                      px-5 py-2.5 rounded-full outline-none whitespace-nowrap
+                      bg-white border-blue-200
+                      shadow-[0_2px_12px_rgba(37,99,235,0.10)]
+                      hover:bg-blue-50 hover:border-blue-300 hover:-translate-y-px
+                      active:translate-y-0 active:scale-[0.98]
+                      transition-all duration-300 ease-out
+                      focus-visible:ring-2 focus-visible:ring-blue-400
+                    "
+                  >
+                    <span>Book Demo</span>
+                    <Chevron open={bookDdOpen} />
+                  </button>
 
-                {ddOpen && (
-                  <DesktopDropdown
-                    onAction={handleProduct}
-                    onClose={() => setDdOpen(false)}
-                    triggerRef={ddTriggerRef}
-                  />
-                )}
-              </div>
+                  {bookDdOpen && (
+                    <DesktopDropdown
+                      links={BOOKING_LINKS}
+                      ariaLabel="Book a demo"
+                      panelId="nb-dd-panel-booking"
+                      onAction={handleProduct}
+                      onClose={() => setBookDdOpen(false)}
+                      triggerRef={bookDdTriggerRef}
+                    />
+                  )}
+                </div>
+
+                <div className="relative">
+                  <button
+                    ref={ddTriggerRef}
+                    type="button"
+                    onClick={toggleDd}
+                    aria-expanded={ddOpen}
+                    aria-haspopup="menu"
+                    aria-controls="nb-dd-panel-products"
+                    className="
+                      flex items-center gap-2 border-none cursor-pointer
+                      text-[0.875rem] font-semibold text-white
+                      px-5 py-2.5 rounded-full outline-none whitespace-nowrap
+                      bg-gradient-to-br from-blue-700 to-blue-500
+                      shadow-[0_2px_12px_rgba(37,99,235,0.30)]
+                      hover:shadow-[0_6px_22px_rgba(37,99,235,0.42)] hover:-translate-y-px
+                      active:translate-y-0 active:scale-[0.98]
+                      transition-all duration-300 ease-out
+                      focus-visible:ring-2 focus-visible:ring-blue-400
+                    "
+                  >
+                    <span>View Products</span>
+                    <Chevron open={ddOpen} />
+                  </button>
+
+                  {ddOpen && (
+                    <DesktopDropdown
+                      links={PRODUCT_LINKS}
+                      ariaLabel="Products"
+                      panelId="nb-dd-panel-products"
+                      onAction={handleProduct}
+                      onClose={() => setDdOpen(false)}
+                      triggerRef={ddTriggerRef}
+                    />
+                  )}
+                </div>
+              </>
             )}
           </div>
 
@@ -895,10 +977,58 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
                   style={staggerStyle(NAV_LINKS.length + 1)}
                 />
 
-                {/* Products section */}
+                {/* Booking section */}
                 <div
                   className="nb-animate-drawer"
                   style={staggerStyle(NAV_LINKS.length + 2)}
+                >
+                  <span className="
+                    block text-[0.6875rem] font-bold tracking-[0.09em] uppercase
+                    text-gray-400 px-3.5 pt-3 pb-2
+                  ">
+                    Book a Demo
+                  </span>
+
+                  {BOOKING_LINKS.map((p) => (
+                    <button
+                      key={p.action}
+                      type="button"
+                      onClick={() => handleProduct(p.action)}
+                      className="
+                        group flex items-start gap-3 w-full
+                        px-3.5 py-3 mb-1 rounded-xl
+                        border cursor-pointer text-left outline-none
+                        transition-all duration-250 ease-out
+                        focus-visible:ring-2 focus-visible:ring-blue-400/50
+                        bg-transparent border-transparent hover:bg-blue-50
+                      "
+                    >
+                      <span className="flex-shrink-0 mt-0.5 text-blue-500">
+                        {p.icon}
+                      </span>
+                      <span className="flex flex-col min-w-0">
+                        <span className="text-[0.9375rem] font-semibold leading-snug mb-0.5 text-slate-800">
+                          {p.label}
+                        </span>
+                        <span className="text-[0.8125rem] font-normal text-slate-500 leading-snug">
+                          {p.subtitle}
+                        </span>
+                      </span>
+                    </button>
+                  ))}
+                </div>
+
+                {/* Separator */}
+                <div
+                  className="h-px mx-1 my-2 bg-gradient-to-r from-blue-100 to-transparent"
+                  aria-hidden="true"
+                  style={staggerStyle(NAV_LINKS.length + 3)}
+                />
+
+                {/* Products section */}
+                <div
+                  className="nb-animate-drawer"
+                  style={staggerStyle(NAV_LINKS.length + 4)}
                 >
                   <span className="
                     block text-[0.6875rem] font-bold tracking-[0.09em] uppercase
