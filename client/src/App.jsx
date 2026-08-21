@@ -13,6 +13,7 @@ import TeamSection        from './components/TeamSection';
 import Footer             from './components/Footer';
 import LiquidBiopsySection from './components/LiquidBiopsySection';
 import LiquidBiopsyDemo   from './components/liquidbiopsy';
+import LiquidBiopsyBooking from './components/LiquidBiopsyBooking';
 import Mammodemo          from './components/Mammodemo';
 import Blog               from './pages/Blog/Blog';
 import BlogPost           from './pages/Blog/BlogPost';
@@ -175,7 +176,7 @@ function AppInner() {
   // sitting underneath the site Navbar. Keeping the global Navbar mounted here
   // put a z-index:10001 element on top of the dashboard's own fixed sidebar,
   // silently intercepting clicks on it.
-  const isFullScreenApp = currentPage === 'demo' || currentPage === 'lb';
+  const isFullScreenApp = currentPage === 'demo';
 
   return (
     <>
@@ -194,7 +195,11 @@ function AppInner() {
 
         <Route
           path="/Book-LB"
-          element={<LiquidBiopsyDemo onBack={() => handleNavigate('home')} />}
+          element={
+            <div style={{ paddingTop: NAV_H }}>
+              <LiquidBiopsyBooking onBack={() => handleNavigate('home')} />
+            </div>
+          }
         />
 
         <Route
