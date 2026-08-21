@@ -18,6 +18,13 @@ const VAF_GUIDE = [
 // freeze on open, so cap it to the highest-depth (most reliable) subset.
 const BUBBLE_CAP = 400;
 
+// High-risk = clearly clonal on its own (>=50%), or moderately clonal AND
+// backed by variant-level actionable evidence -- not just "any red bar".
+function isHighRisk(g) {
+  const maxVaf = g.max_vaf || 0;
+  return maxVaf >= 0.5 || (maxVaf >= 0.2 && g.civic_variant_level_actionable);
+}
+
 export default function VafRiskPage({ data, theme }) {
   const { gene_summary, variants } = data;
   const highVaf = variants.filter((v) => v.vaf >= 0.7).sort((a, b) => b.vaf - a.vaf);
@@ -25,42 +32,66 @@ export default function VafRiskPage({ data, theme }) {
   const bubbleVariants = variants.length > BUBBLE_CAP
     ? [...variants].sort((a, b) => b.depth - a.depth).slice(0, BUBBLE_CAP)
     : variants;
-  const vafPerGene = gene_summary.map((g) => ({ gene: g.gene, max_vaf: g.max_vaf })).sort((a, b) => b.max_vaf - a.max_vaf);
-  const topHigh = vafPerGene.filter((g) => g.max_vaf >= 0.7).map((g) => `${g.gene} ${(g.max_vaf * 100).toFixed(1)}%`).join(", ");
-  const topLow = gene_summary.filter((g) => g.max_vaf < 0.05).map((g) => g.gene).join(", ") || "none in this file";
+
+  const genesSorted = [...gene_summary].sort((a, b) => (b.max_vaf || 0) - (a.max_vaf || 0));
+  const highRiskGenes = genesSorted.filter(isHighRisk);
+  const moderateLowGenes = genesSorted.filter((g) => !isHighRisk(g));
+  const highRiskChartData = highRiskGenes.map((g) => ({ gene: g.gene, max_vaf: g.max_vaf }));
 
   return (
     <div>
+      {/* High-risk genes listed first and on their own -- not mixed into a
+          single chart with every other gene in the panel. */}
       <Card style={{ padding: "20px", marginBottom: "16px" }}>
-        <SectionHeader
-          title="Variant Allele Frequency per Gene (Max VAF, High → Low)"
-          accent="var(--lb-status-high)"
-          right={
-            <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-              {[{ l: "Low (<20%)", c: "var(--lb-status-low)" }, { l: "Moderate (20–50%)", c: "var(--lb-status-moderate)" }, { l: "High (>50%)", c: "var(--lb-status-high)" }].map((r, i) => (
-                <div key={i} style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-                  <span style={{ width: "8px", height: "8px", borderRadius: "2px", background: r.c }} />
-                  <span style={{ fontSize: "var(--lb-text-2xs)", color: "var(--lb-text-secondary)" }}>{r.l}</span>
+        <SectionHeader title={`High-Risk / Highly Mutated Genes (${highRiskGenes.length})`} accent="var(--lb-status-high)" />
+        {highRiskGenes.length === 0 ? (
+          <p style={{ fontSize: "var(--lb-text-sm)", color: "var(--lb-text-muted)" }}>
+            No genes in this file reached the high-risk threshold (≥50% of DNA fragments altered, or ≥20% with
+            variant-level actionable evidence).
+          </p>
+        ) : (
+          <>
+            <VAFGeneChart data={highRiskChartData} theme={theme} />
+            <div style={{ marginTop: "14px", display: "flex", flexDirection: "column", gap: "8px" }}>
+              {highRiskGenes.map((g, i) => (
+                <div key={i} style={{
+                  display: "flex", alignItems: "center", gap: "12px", padding: "10px 12px", flexWrap: "wrap",
+                  borderRadius: "var(--lb-radius-md)", background: "var(--lb-status-high-bg)", border: "1px solid var(--lb-status-high-border)",
+                }}>
+                  <span style={{ fontSize: "var(--lb-text-sm)", fontWeight: 900, color: "var(--lb-text-primary)", width: "70px", flexShrink: 0 }}>{g.gene}</span>
+                  <span style={{ fontSize: "var(--lb-text-lg)", fontWeight: 900, color: "var(--lb-status-high)", width: "60px", flexShrink: 0 }}>{((g.max_vaf || 0) * 100).toFixed(1)}%</span>
+                  <span style={{ fontSize: "var(--lb-text-xs)", color: "var(--lb-text-secondary)", flex: 1 }}>{g.variant_count} variant{g.variant_count !== 1 ? "s" : ""}</span>
+                  {g.civic_variant_level_actionable && <Badge label="Variant-level evidence" color="var(--lb-status-high)" small />}
                 </div>
               ))}
             </div>
-          }
-        />
-        <VAFGeneChart data={vafPerGene} theme={theme} />
-        <div style={{ marginTop: "12px", display: "flex", flexWrap: "wrap", gap: "12px" }}>
-          {topHigh && (
-            <div style={{ padding: "10px 14px", borderRadius: "var(--lb-radius-md)", background: "var(--lb-status-high-bg)", border: "1px solid var(--lb-status-high-border)" }}>
-              <p style={{ fontSize: "var(--lb-text-2xs)", color: "var(--lb-status-high)", fontWeight: 600 }}>
-                General reference: VAF &gt;70% ({topHigh}) typically indicates clonal dominance or loss of heterozygosity at that locus
-              </p>
-            </div>
-          )}
-          <div style={{ padding: "10px 14px", borderRadius: "var(--lb-radius-md)", background: "var(--lb-status-low-bg)", border: "1px solid var(--lb-status-low-border)" }}>
-            <p style={{ fontSize: "var(--lb-text-2xs)", color: "var(--lb-status-low)", fontWeight: 600 }}>
-              General reference: VAF &lt;5% ({topLow}) typically indicates low-fraction or sub-clonal variants
-            </p>
+          </>
+        )}
+      </Card>
+
+      {/* Everything else, de-emphasized -- present for completeness, not
+          flagged for attention. */}
+      <Card style={{ padding: "20px", marginBottom: "16px" }}>
+        <SectionHeader title={`Moderate-to-Low Risk Genes (${moderateLowGenes.length})`} accent="var(--lb-status-low)" />
+        <p style={{ fontSize: "var(--lb-text-xs)", color: "var(--lb-text-secondary)", marginBottom: "12px" }}>
+          Below the high-risk threshold — typically sub-clonal variants, sequencing noise, or common background
+          findings.
+        </p>
+        {moderateLowGenes.length === 0 ? (
+          <p style={{ fontSize: "var(--lb-text-sm)", color: "var(--lb-text-muted)" }}>None — every gene with a finding in this file is listed above.</p>
+        ) : (
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))", gap: "6px" }}>
+            {moderateLowGenes.map((g, i) => (
+              <div key={i} style={{ display: "flex", alignItems: "center", gap: "8px", padding: "6px 8px" }}>
+                <span style={{ fontSize: "var(--lb-text-xs)", fontWeight: 700, color: "var(--lb-text-secondary)", width: "56px", flexShrink: 0, overflow: "hidden", textOverflow: "ellipsis" }}>{g.gene}</span>
+                <div style={{ flex: 1, height: "4px", background: "var(--lb-track)", borderRadius: "99px", overflow: "hidden" }}>
+                  <div style={{ height: "100%", width: `${Math.min((g.max_vaf || 0) * 100, 100)}%`, background: vafColor(g.max_vaf), borderRadius: "99px" }} />
+                </div>
+                <span style={{ fontSize: "var(--lb-text-2xs)", color: "var(--lb-text-muted)", width: "34px", textAlign: "right", flexShrink: 0 }}>{((g.max_vaf || 0) * 100).toFixed(0)}%</span>
+              </div>
+            ))}
           </div>
-        </div>
+        )}
       </Card>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: "16px", marginBottom: "16px" }}>

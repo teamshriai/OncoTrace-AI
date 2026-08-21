@@ -35,8 +35,8 @@
   --lb-border: rgba(148, 163, 184, 0.12);
   --lb-border-strong: rgba(148, 163, 184, 0.22);
 
-  --lb-text-primary: #e7edf6;
-  --lb-text-secondary: #8f9bb0;
+  --lb-text-primary: #f5f8fd;
+  --lb-text-secondary: #a7b2c7;
   --lb-text-muted: #576073;
 
   --lb-status-low: #34d399;
@@ -117,6 +117,18 @@
   --lb-chart-3: #0d9488;
   --lb-chart-4: #db2777;
   --lb-chart-5: #6e6e73;
+}
+
+/* Native <option> popups don't inherit theme tokens automatically, and this
+   rule must exist before DashboardShell ever mounts -- the upload screen's
+   own reference-build <select> renders before any analysis has run, so this
+   lived in DashboardShell's <style> block it would be missing there,
+   leaving light-theme-inherited text on the browser's native light dropdown
+   background (unreadable). Defined here instead so it's present from the
+   very first paint. */
+[data-lb-theme] select option {
+  background: var(--lb-bg-surface);
+  color: var(--lb-text-primary);
 }
 
 @keyframes lb-pulse {

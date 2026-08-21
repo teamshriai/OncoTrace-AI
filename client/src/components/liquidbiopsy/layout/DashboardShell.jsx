@@ -4,10 +4,18 @@ import { Icon } from "../icons";
 import { ICONS } from "../iconPaths";
 import { NAV_PAGES } from "../nav";
 
+// The uploaded filename, not a fabricated name -- there is no real
+// patient-identity field anywhere in the API response.
+function displayNameFromFilename(filename) {
+  if (!filename) return null;
+  return filename.replace(/\.vcf\.gz$/i, "").replace(/\.vcf$/i, "");
+}
+
 export default function DashboardShell({ activePage, onNavigate, meta, tierSummary, callerAdapterValidated = true, theme, toggleTheme, onReset, onBack, sidebarOpen, setSidebarOpen, children }) {
   const pageTitle = NAV_PAGES.find((p) => p.id === activePage)?.label || "Dashboard";
   const tier1 = tierSummary?.counts?.tier_1_actionable_somatic ?? 0;
   const tier2 = tierSummary?.counts?.tier_2_uncertain_needs_review ?? 0;
+  const patientName = displayNameFromFilename(meta.source_filename);
 
   return (
     <div style={{
@@ -34,7 +42,7 @@ export default function DashboardShell({ activePage, onNavigate, meta, tierSumma
             </div>
             <div>
               <p style={{ fontSize: "13px", fontWeight: 700, color: "var(--lb-text-primary)", lineHeight: 1 }}>OncoTrace-AI</p>
-              <p style={{ fontSize: "10px", color: "var(--lb-text-muted)", marginTop: "2px" }}>Sample {meta.sample_id}</p>
+              <p style={{ fontSize: "10px", color: "var(--lb-text-muted)", marginTop: "2px" }}>{patientName || `Sample ${meta.sample_id}`}</p>
             </div>
           </div>
         </div>
@@ -91,7 +99,7 @@ export default function DashboardShell({ activePage, onNavigate, meta, tierSumma
                   {pageTitle}
                 </p>
                 <p style={{ fontSize: "10px", color: "var(--lb-text-muted)", marginTop: "1px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                  {[meta.sample_id, meta.panel_name || meta.caller].filter(Boolean).join(" · ")}
+                  {[patientName, meta.sample_id].filter(Boolean).join(" · ")}
                 </p>
               </div>
 
@@ -140,7 +148,7 @@ export default function DashboardShell({ activePage, onNavigate, meta, tierSumma
                     whiteSpace: "nowrap",
                   }}>
                   <Icon d={ICONS.upload} size={13} style={{ color: "var(--lb-text-secondary)" }} />
-                  <span className="lb-hide-xs">New Analysis</span>
+                  <span className="lb-hide-xs">New Patient</span>
                 </button>
               </div>
             </div>
@@ -168,7 +176,6 @@ export default function DashboardShell({ activePage, onNavigate, meta, tierSumma
         [data-lb-theme] ::-webkit-scrollbar { width: 6px; height: 6px; }
         [data-lb-theme] ::-webkit-scrollbar-track { background: transparent; }
         [data-lb-theme] ::-webkit-scrollbar-thumb { background: rgba(128,128,128,0.3); border-radius: 99px; }
-        [data-lb-theme] select option { background: var(--lb-bg-surface); color: var(--lb-text-primary); }
         [data-lb-theme] input::placeholder { color: var(--lb-text-muted); }
         [data-lb-theme] button:hover { opacity: 0.85; }
       `}</style>

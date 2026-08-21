@@ -165,7 +165,7 @@ export default function FileUpload({ onAnalyze, theme, toggleTheme, onBack }) {
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "16px" }}>
                   <div style={{ position: "relative" }}>
                     <div style={{ width: "56px", height: "56px", borderRadius: "var(--lb-radius-lg)", background: "var(--lb-input-bg)", border: "1px solid var(--lb-border)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      <Icon d={ICONS.upload} size={24} style={{ color: "var(--lb-text-muted)" }} />
+                      <Icon d={ICONS.download} size={24} style={{ color: "var(--lb-text-muted)" }} />
                     </div>
                     <div style={{ position: "absolute", top: "-4px", right: "-4px", width: "16px", height: "16px", borderRadius: "50%", background: "var(--lb-status-info)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                       <span style={{ color: "#fff", fontSize: "9px", fontWeight: 900, lineHeight: 1 }}>+</span>
@@ -223,13 +223,20 @@ export default function FileUpload({ onAnalyze, theme, toggleTheme, onBack }) {
                 ? { background: "var(--lb-accent-gradient)", borderColor: "transparent", color: "#fff", cursor: "pointer", boxShadow: "0 4px 24px rgba(59,130,246,0.25)" }
                 : { background: "var(--lb-input-bg)", borderColor: "var(--lb-border)", color: "var(--lb-text-muted)", cursor: "not-allowed" }),
             }}>
-              <span>Analyze File</span>
+              <span>Get Your Report</span>
               <Icon d={ICONS.arrowRight} size={16} style={{ color: canSubmit ? "#fff" : "var(--lb-text-muted)" }} />
             </button>
 
-            <p style={{ textAlign: "center", fontSize: "11px", color: "var(--lb-text-muted)", marginTop: "14px" }}>
-              Encrypted in transit · Research / pilot use only
-            </p>
+            <div style={{
+              marginTop: "16px", display: "flex", alignItems: "flex-start", gap: "10px", padding: "12px 14px",
+              borderRadius: "var(--lb-radius-md)", background: "var(--lb-status-moderate-bg)", border: "1px solid var(--lb-status-moderate-border)",
+            }}>
+              <Icon d={ICONS.alert} size={14} style={{ color: "var(--lb-status-moderate)", flexShrink: 0, marginTop: "1px" }} />
+              <p style={{ fontSize: "11.5px", fontWeight: 600, color: "var(--lb-status-moderate)", lineHeight: 1.6 }}>
+                For research and pilot use only. Not intended for clinical diagnosis and not a substitute for
+                clinical-grade testing technologies. Encrypted in transit.
+              </p>
+            </div>
 
             <div style={{
               marginTop: "20px", display: "flex", alignItems: "flex-start", gap: "12px", padding: "16px", borderRadius: "var(--lb-radius-lg)",

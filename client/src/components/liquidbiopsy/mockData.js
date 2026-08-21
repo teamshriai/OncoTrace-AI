@@ -3,8 +3,8 @@
 // response schema the FastAPI service will return, so wiring the real backend
 // later is a change to api.js only — no page component should need to change.
 //
-// The per-variant values below are transcribed verbatim from a real GeneMind
-// SURFSeq5000 targeted-panel VCF (VarDict-called) used during planning. Every
+// The per-variant values below are transcribed verbatim from a real
+// targeted-panel VCF (VarDict-called) used during planning. Every
 // aggregate below (qc_summary, variant_type_distribution, vaf_profile, gene_summary,
 // prioritization_score) is *computed* from this raw list, not hand-typed, exactly
 // as the real backend's metrics.py will do — so this mock also doubles as a
@@ -277,7 +277,7 @@ export function buildMockAnalysis() {
         "Demo mode: no analysis backend is connected, so nothing in this view was computed from an uploaded file.",
       input_format: "vcf",
       provenance: { checklist: [], references: [], missing_count: 0 },
-      panel_name: "Targeted Oncology Panel (GeneMind SURFSeq5000)",
+      panel_name: "Targeted Oncology Panel",
       panel_footprint_mb: null,
       panel_gene_count: gene_summary.length,
       annotation_versions: { snpeff_db: "demo mode — no backend connected", clinvar_release: "demo mode", civic_release: "demo mode" },

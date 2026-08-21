@@ -7,7 +7,7 @@ import { analyzeVcf } from "./api";
 import "./tokens.css";
 
 export default function LiquidBiopsyDemo({ onBack }) {
-  const [theme, setTheme] = useState("dark");
+  const [theme, setTheme] = useState("light");
   const [status, setStatus] = useState("idle"); // idle | analyzing | done | error
   const [file, setFile] = useState(null);
   const [buildHint, setBuildHint] = useState(undefined);

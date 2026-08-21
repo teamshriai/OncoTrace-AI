@@ -1,28 +1,24 @@
 import { useState } from "react";
 import DashboardShell from "./layout/DashboardShell";
-import OverviewPage from "./pages/OverviewPage";
+import DoctorSummaryPage from "./pages/DoctorSummaryPage";
 import VariantsPage from "./pages/VariantsPage";
 import VafRiskPage from "./pages/VafRiskPage";
 import ResistancePage from "./pages/ResistancePage";
-import QualityPage from "./pages/QualityPage";
-import PatientPage from "./pages/PatientPage";
 import TechnicalPage from "./pages/TechnicalPage";
 
 const PAGES = {
-  overview: OverviewPage,
+  doctor: DoctorSummaryPage,
   variants: VariantsPage,
   vaf: VafRiskPage,
   resistance: ResistancePage,
-  quality: QualityPage,
-  patient: PatientPage,
   technical: TechnicalPage,
 };
 
 export default function Dashboard({ data, onReset, onBack, theme, toggleTheme }) {
-  const [activePage, setActivePage] = useState("overview");
+  const [activePage, setActivePage] = useState("doctor");
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const PageComponent = PAGES[activePage] || OverviewPage;
+  const PageComponent = PAGES[activePage] || DoctorSummaryPage;
 
   return (
     <DashboardShell
