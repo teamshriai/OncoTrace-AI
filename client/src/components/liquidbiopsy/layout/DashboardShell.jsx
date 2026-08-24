@@ -58,15 +58,15 @@ export default function DashboardShell({ activePage, onNavigate, meta, tierSumma
                 onClick={() => { onNavigate(page.id); setSidebarOpen(false); }}
                 style={{
                   width: "100%", display: "flex", alignItems: "center", gap: "10px",
-                  padding: "9px 12px", borderRadius: "var(--lb-radius-md)", marginBottom: "2px",
-                  border: "none", cursor: "pointer", textAlign: "left",
+                  padding: "10px 12px", borderRadius: "var(--lb-radius-md)", marginBottom: "2px",
+                  border: "none", borderLeft: `3px solid ${active ? "var(--lb-status-info)" : "transparent"}`,
+                  cursor: "pointer", textAlign: "left",
                   background: active ? "var(--lb-status-info-bg)" : "transparent",
                   color: active ? "var(--lb-status-info)" : "var(--lb-text-secondary)",
                   transition: "all 0.2s",
                 }}>
-                <Icon d={ICONS[page.icon] || ICONS.dna} size={14} style={{ color: active ? "var(--lb-status-info)" : "var(--lb-text-secondary)", flexShrink: 0 }} />
-                <span style={{ fontSize: "12px", fontWeight: active ? 700 : 500 }}>{page.label}</span>
-                {active && <div style={{ marginLeft: "auto", width: "4px", height: "4px", borderRadius: "50%", background: "var(--lb-status-info)" }} />}
+                <Icon d={ICONS[page.icon] || ICONS.dna} size={15} style={{ color: active ? "var(--lb-status-info)" : "var(--lb-text-secondary)", flexShrink: 0 }} />
+                <span style={{ fontSize: "var(--lb-text-sm)", fontWeight: active ? 700 : 500 }}>{page.label}</span>
               </button>
             );
           })}
@@ -87,20 +87,25 @@ export default function DashboardShell({ activePage, onNavigate, meta, tierSumma
           borderBottom: "1px solid var(--lb-border)", flexShrink: 0,
         }}>
           <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "0 16px" }}>
-            <div style={{ height: "56px", display: "flex", alignItems: "center", gap: "12px" }}>
+            <div className="lb-topbar-row" style={{ minHeight: "60px", padding: "10px 0", display: "flex", alignItems: "center", gap: "12px" }}>
+              {/* Only rendered where it does something: below 900px the
+                  sidebar is a drawer and this is the only way to open it.
+                  At >=900px the sidebar is permanently visible, so the
+                  toggle is redundant chrome and is hidden by CSS. */}
               <button onClick={() => setSidebarOpen((o) => !o)}
                 aria-label={sidebarOpen ? "Close navigation" : "Open navigation"}
                 data-lb-btn="utility"
+                className="lb-nav-toggle"
                 style={{
-                  width: "32px", height: "32px", borderRadius: "var(--lb-radius-md)", flexShrink: 0,
+                  width: "36px", height: "36px", borderRadius: "var(--lb-radius-md)", flexShrink: 0,
                   border: "1px solid var(--lb-border)", background: "var(--lb-input-bg)",
                   cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--lb-text-secondary)",
                 }}>
-                <Icon d={sidebarOpen ? ICONS.close : ICONS.menu} size={16} style={{ color: "var(--lb-text-secondary)" }} />
+                <Icon d={sidebarOpen ? ICONS.close : ICONS.menu} size={17} style={{ color: "var(--lb-text-secondary)" }} />
               </button>
 
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <p style={{ fontSize: "14px", fontWeight: 700, color: "var(--lb-text-primary)", lineHeight: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+              <div className="lb-topbar-title" style={{ flex: 1, minWidth: "120px" }}>
+                <p style={{ fontSize: "var(--lb-text-md)", fontWeight: 700, color: "var(--lb-text-primary)", lineHeight: 1.2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                   {pageTitle}
                 </p>
                 <p style={{ fontSize: "10px", color: "var(--lb-text-muted)", marginTop: "1px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
@@ -108,7 +113,7 @@ export default function DashboardShell({ activePage, onNavigate, meta, tierSumma
                 </p>
               </div>
 
-              <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0, flexWrap: "wrap", justifyContent: "flex-end" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap", justifyContent: "flex-end", minWidth: 0 }}>
                 <div style={{
                   display: "flex", alignItems: "center", gap: "6px",
                   padding: "5px 10px", borderRadius: "var(--lb-radius-sm)",
@@ -134,27 +139,35 @@ export default function DashboardShell({ activePage, onNavigate, meta, tierSumma
                   </div>
                 )}
                 <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
+                {/* Home = secondary navigation, tinted neutral-info so it
+                    reads as "leave this view" rather than an analysis action.
+                    New Patient = the primary action in this bar, so it takes
+                    the solid brand fill. */}
                 {onBack && (
                   <button onClick={onBack} title="Back to site" aria-label="Back to site"
-                    data-lb-btn="utility"
+                    data-lb-btn="secondary"
                     style={{
-                      width: "32px", height: "32px", flexShrink: 0,
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                      borderRadius: "var(--lb-radius-md)", border: "1px solid var(--lb-border)",
-                      background: "var(--lb-input-bg)", cursor: "pointer",
+                      flexShrink: 0, height: "36px",
+                      display: "flex", alignItems: "center", justifyContent: "center", gap: "6px",
+                      padding: "0 14px",
+                      borderRadius: "var(--lb-radius-md)", border: "1px solid var(--lb-status-info-border)",
+                      background: "var(--lb-status-info-bg)", color: "var(--lb-status-info)",
+                      fontSize: "13px", fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap",
                     }}>
-                    <Icon d={ICONS.back} size={16} style={{ color: "var(--lb-text-secondary)" }} />
+                    <Icon d={ICONS.back} size={16} style={{ color: "var(--lb-status-info)" }} />
+                    <span className="lb-hide-xs">Home</span>
                   </button>
                 )}
                 <button onClick={onReset} aria-label="Start a new analysis"
-                  data-lb-btn="secondary"
+                  data-lb-btn="primary"
                   style={{
-                    display: "flex", alignItems: "center", gap: "5px",
-                    padding: "7px 12px", borderRadius: "var(--lb-radius-md)", border: "1px solid var(--lb-border-strong)",
-                    background: "var(--lb-bg-surface)", color: "var(--lb-text-primary)", fontSize: "12px", fontWeight: 600, cursor: "pointer",
+                    display: "flex", alignItems: "center", justifyContent: "center", gap: "6px",
+                    height: "36px", padding: "0 16px",
+                    borderRadius: "var(--lb-radius-md)", border: "1px solid transparent",
+                    background: "var(--lb-brand)", color: "#fff", fontSize: "13px", fontWeight: 700, cursor: "pointer",
                     whiteSpace: "nowrap",
                   }}>
-                  <Icon d={ICONS.upload} size={13} style={{ color: "var(--lb-text-primary)" }} />
+                  <Icon d={ICONS.upload} size={15} style={{ color: "#fff" }} />
                   <span className="lb-hide-xs">New Patient</span>
                 </button>
               </div>
@@ -173,12 +186,23 @@ export default function DashboardShell({ activePage, onNavigate, meta, tierSumma
         @media (min-width: 900px) {
           .lb-sidebar { transform: translateX(0) !important; box-shadow: none !important; }
           .lb-main-area { margin-left: 220px; }
+          /* Sidebar is permanent at this width -- the toggle would be a
+             no-op control, so it's removed from the bar entirely. */
+          .lb-nav-toggle { display: none !important; }
         }
         @media (min-width: 1024px) {
           .ov-row2 { grid-template-columns: 1fr 1fr !important; }
         }
         @media (max-width: 480px) {
           .lb-hide-xs { display: none !important; }
+        }
+        /* Under 900px the sidebar is a drawer and the status pills are still
+           present, so the title and the action cluster can't share one line
+           without the heading collapsing to an ellipsis -- give each its own
+           row instead of truncating the heading. */
+        @media (max-width: 899px) {
+          .lb-topbar-row { flex-wrap: wrap; }
+          .lb-topbar-title { flex: 1 1 100%; order: -1; }
         }
         [data-lb-theme] ::-webkit-scrollbar { width: 6px; height: 6px; }
         [data-lb-theme] ::-webkit-scrollbar-track { background: transparent; }
