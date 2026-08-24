@@ -84,8 +84,8 @@ export default function VafRiskPage({ data, theme }) {
             {moderateLowGenes.map((g, i) => (
               <div key={i} style={{ display: "flex", alignItems: "center", gap: "8px", padding: "6px 8px" }}>
                 <span style={{ fontSize: "var(--lb-text-xs)", fontWeight: 700, color: "var(--lb-text-secondary)", width: "56px", flexShrink: 0, overflow: "hidden", textOverflow: "ellipsis" }}>{g.gene}</span>
-                <div style={{ flex: 1, height: "4px", background: "var(--lb-track)", borderRadius: "99px", overflow: "hidden" }}>
-                  <div style={{ height: "100%", width: `${Math.min((g.max_vaf || 0) * 100, 100)}%`, background: vafColor(g.max_vaf), borderRadius: "99px" }} />
+                <div style={{ flex: 1, height: "4px", background: "var(--lb-track)", borderRadius: "var(--lb-radius-full)", overflow: "hidden" }}>
+                  <div style={{ height: "100%", width: `${Math.min((g.max_vaf || 0) * 100, 100)}%`, background: vafColor(g.max_vaf), borderRadius: "var(--lb-radius-full)" }} />
                 </div>
                 <span style={{ fontSize: "var(--lb-text-2xs)", color: "var(--lb-text-muted)", width: "34px", textAlign: "right", flexShrink: 0 }}>{((g.max_vaf || 0) * 100).toFixed(0)}%</span>
               </div>

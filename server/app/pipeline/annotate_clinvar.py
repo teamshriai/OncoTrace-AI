@@ -41,10 +41,23 @@ def review_status_to_stars(status: str | None) -> int | None:
 
 def _bgzip_and_index(vcf_path: str) -> str:
     """bcftools annotate needs a bgzip-compressed, indexed input to do the
-    coordinate join, so compress and index a working copy."""
-    gz_path = f"{vcf_path}.gz"
+    coordinate join, so compress and index a working copy.
+
+    tabix requires coordinate-sorted input, but nothing upstream (SnpEff,
+    normalization) guarantees that -- so sort defensively here rather than
+    trusting the caller's ordering.
+    """
+    sorted_path = f"{vcf_path}.sorted.vcf"
+    result = subprocess.run(
+        ["bcftools", "sort", "-O", "v", "-o", sorted_path, vcf_path],
+        capture_output=True, text=True,
+    )
+    if result.returncode != 0:
+        raise ClinVarError(f"bcftools sort failed: {result.stderr.strip()[:500]}")
+
+    gz_path = f"{sorted_path}.gz"
     with open(gz_path, "wb") as out:
-        result = subprocess.run(["bgzip", "-c", vcf_path], stdout=out, stderr=subprocess.PIPE)
+        result = subprocess.run(["bgzip", "-c", sorted_path], stdout=out, stderr=subprocess.PIPE)
     if result.returncode != 0:
         raise ClinVarError(f"bgzip failed: {result.stderr.decode(errors='replace').strip()[:500]}")
     result = subprocess.run(["tabix", "-f", "-p", "vcf", gz_path], capture_output=True, text=True)
