@@ -196,12 +196,13 @@ export default function DoctorSummaryPage({ data }) {
         </Callout>
       )}
 
-      {/* Report header, styled like a lab-issued report -- real fields only. */}
-      <Card style={{ padding: "20px", marginBottom: "16px" }}>
+      {/* Report header -- a masthead, not a floating card: a bottom divider
+          is enough to separate it from the content that follows. */}
+      <div style={{ paddingBottom: "20px", marginBottom: "20px", borderBottom: "1px solid var(--lb-border)" }}>
         <div style={{ display: "flex", flexWrap: "wrap", gap: "16px", alignItems: "center", justifyContent: "space-between" }}>
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "6px", flexWrap: "wrap" }}>
-              <span style={{ fontSize: "20px", fontWeight: 900, color: "var(--lb-text-primary)" }}>
+              <span style={{ fontSize: "var(--lb-text-xl)", fontWeight: 700, color: "var(--lb-text-primary)" }}>
                 {patientName || `Sample ${meta.sample_id}`}
               </span>
               {counts.tier_1_actionable_somatic > 0 ? (
@@ -227,7 +228,7 @@ export default function DoctorSummaryPage({ data }) {
             ))}
           </div>
         </div>
-      </Card>
+      </div>
 
       {/* Rule-based synthesis of the fields shown elsewhere on this page --
           deliberately not labeled "AI": it's a template over disclosed
@@ -248,8 +249,8 @@ export default function DoctorSummaryPage({ data }) {
               <span style={{ fontSize: "32px", fontWeight: 900, color: "var(--lb-status-high)", lineHeight: 1 }}>{reviewPriority ?? "—"}</span>
               <span style={{ fontSize: "var(--lb-text-xs)", color: "var(--lb-text-muted)" }}>of up to {reviewPriorityMax}</span>
             </div>
-            <div style={{ height: "6px", background: "var(--lb-track)", borderRadius: "99px", overflow: "hidden", marginBottom: "8px" }}>
-              <div style={{ height: "100%", width: `${reviewPriorityMax > 0 ? Math.min(100, ((reviewPriority || 0) / reviewPriorityMax) * 100) : 0}%`, background: "var(--lb-status-high)", borderRadius: "99px" }} />
+            <div style={{ height: "6px", background: "var(--lb-track)", borderRadius: "var(--lb-radius-full)", overflow: "hidden", marginBottom: "8px" }}>
+              <div style={{ height: "100%", width: `${reviewPriorityMax > 0 ? Math.min(100, ((reviewPriority || 0) / reviewPriorityMax) * 100) : 0}%`, background: "var(--lb-status-high)", borderRadius: "var(--lb-radius-full)" }} />
             </div>
             <p style={{ fontSize: "var(--lb-text-2xs)", color: "var(--lb-text-muted)", lineHeight: 1.5 }}>
               A disclosed count, not a black-box score: {reviewPriorityFormula}
@@ -320,9 +321,11 @@ export default function DoctorSummaryPage({ data }) {
         </Card>
       </div>
 
-      {/* Key gene findings, in plain language. */}
+      {/* Key gene findings, in plain language. Flat section, not a card --
+          the per-gene tiles below already carry their own border + accent
+          color, so an outer Card would just be a second box around boxes. */}
       {patient_summary?.gene_cards?.length > 0 && (
-        <Card style={{ padding: "20px", marginBottom: "16px" }}>
+        <div style={{ marginBottom: "24px" }}>
           <SectionHeader title="Key Gene Findings" accent="var(--lb-status-info)" />
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: "12px" }}>
             {patient_summary.gene_cards.map((g, i) => (
@@ -345,7 +348,7 @@ export default function DoctorSummaryPage({ data }) {
               </div>
             ))}
           </div>
-        </Card>
+        </div>
       )}
 
       {/* Visual trend + confidence charts, in place of a raw number/gene dump. */}
@@ -369,8 +372,9 @@ export default function DoctorSummaryPage({ data }) {
         </Card>
       </div>
 
-      {/* Germline vs somatic context, already plain-language. */}
-      <Card style={{ padding: "24px", marginBottom: "16px" }}>
+      {/* Germline vs somatic context, already plain-language. Flat section --
+          the metric tiles below already carry their own border. */}
+      <div style={{ marginBottom: "24px" }}>
         <SectionHeader title="Germline / Somatic Pattern" accent="var(--lb-chart-2)" />
         {data.germline_summary?.applied === false ? (
           <p style={{ fontSize: "var(--lb-text-sm)", color: "var(--lb-text-secondary)", lineHeight: 1.7 }}>
@@ -398,7 +402,7 @@ export default function DoctorSummaryPage({ data }) {
             </div>
           </>
         )}
-      </Card>
+      </div>
 
       {/* Next steps, kept illustrative and clearly labeled as such. */}
       {patient_summary?.next_steps?.length > 0 && (
@@ -411,7 +415,7 @@ export default function DoctorSummaryPage({ data }) {
             {patient_summary.next_steps.map((step, i) => (
               <div key={i} style={{ display: "flex", gap: "16px", paddingBottom: i < patient_summary.next_steps.length - 1 ? "20px" : 0 }}>
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0 }}>
-                  <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "var(--lb-accent-gradient)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "var(--lb-brand)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                     <span style={{ fontSize: "12px", fontWeight: 900, color: "#fff" }}>{i + 1}</span>
                   </div>
                   {i < patient_summary.next_steps.length - 1 && <div style={{ width: "2px", flex: 1, background: "var(--lb-border)", marginTop: "4px" }} />}

@@ -45,15 +45,15 @@ export default function ErrorPanel({ kind, message, theme, toggleTheme, onRetry,
         <div style={{ maxWidth: "1024px", margin: "0 auto", padding: "0 20px", height: "56px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
             {onBack && (
-              <button onClick={onBack} title="Back to site" style={{
-                width: "28px", height: "28px", borderRadius: "8px", border: "1px solid var(--lb-border)",
+              <button onClick={onBack} title="Back to site" aria-label="Back to site" data-lb-btn="utility" style={{
+                width: "32px", height: "32px", borderRadius: "var(--lb-radius-md)", border: "1px solid var(--lb-border)",
                 background: "var(--lb-input-bg)", display: "flex", alignItems: "center", justifyContent: "center",
                 cursor: "pointer", flexShrink: 0,
               }}>
-                <Icon d={ICONS.back} size={13} style={{ color: "var(--lb-text-secondary)" }} />
+                <Icon d={ICONS.back} size={16} style={{ color: "var(--lb-text-secondary)" }} />
               </button>
             )}
-            <div style={{ width: "28px", height: "28px", borderRadius: "8px", background: "var(--lb-accent-gradient)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+            <div style={{ width: "28px", height: "28px", borderRadius: "var(--lb-radius-sm)", background: "var(--lb-brand)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
               <img src="/ribbon-logo.webp" alt="" style={{ width: 22, height: 22, objectFit: "contain" }} />
             </div>
             <p style={{ fontSize: "14px", fontWeight: 600, color: "var(--lb-text-primary)" }}>OncoTrace-AI</p>
@@ -65,28 +65,28 @@ export default function ErrorPanel({ kind, message, theme, toggleTheme, onRetry,
       <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "20px" }}>
         <div style={{ maxWidth: "440px", width: "100%", textAlign: "center" }}>
           <div style={{
-            width: "56px", height: "56px", borderRadius: "var(--lb-radius-lg)", margin: "0 auto 20px",
+            width: "56px", height: "56px", borderRadius: "var(--lb-radius-md)", margin: "0 auto 20px",
             background: "var(--lb-status-high-bg)", border: "1px solid var(--lb-status-high-border)",
             display: "flex", alignItems: "center", justifyContent: "center",
           }}>
             <Icon d={ICONS.alert} size={26} style={{ color: "var(--lb-status-high)" }} />
           </div>
-          <p style={{ fontSize: "18px", fontWeight: 800, color: "var(--lb-text-primary)", marginBottom: "10px" }}>{copy.title}</p>
+          <p style={{ fontSize: "var(--lb-text-lg)", fontWeight: 700, color: "var(--lb-text-primary)", marginBottom: "10px" }}>{copy.title}</p>
           <p style={{ fontSize: "13px", color: "var(--lb-text-secondary)", lineHeight: 1.6, marginBottom: "28px" }}>
             {message || copy.fallback}
           </p>
           <div style={{ display: "flex", gap: "10px", justifyContent: "center", flexWrap: "wrap" }}>
             {copy.primaryAction === "retry" && onRetry && (
-              <button onClick={onRetry} style={{
+              <button onClick={onRetry} data-lb-btn="primary" style={{
                 padding: "10px 20px", borderRadius: "var(--lb-radius-md)", border: "1px solid transparent",
-                background: "var(--lb-accent-gradient)", color: "#fff", fontSize: "13px", fontWeight: 600, cursor: "pointer",
+                background: "var(--lb-brand)", color: "#fff", fontSize: "13px", fontWeight: 700, cursor: "pointer",
               }}>
                 Retry
               </button>
             )}
-            <button onClick={onStartOver} style={{
-              padding: "10px 20px", borderRadius: "var(--lb-radius-md)", border: "1px solid var(--lb-border)",
-              background: "var(--lb-input-bg)", color: "var(--lb-text-secondary)", fontSize: "13px", fontWeight: 600, cursor: "pointer",
+            <button onClick={onStartOver} data-lb-btn="secondary" style={{
+              padding: "10px 20px", borderRadius: "var(--lb-radius-md)", border: "1px solid var(--lb-border-strong)",
+              background: "var(--lb-bg-surface)", color: "var(--lb-text-primary)", fontSize: "13px", fontWeight: 600, cursor: "pointer",
             }}>
               {copy.primaryAction === "retry" ? "Start Over" : "Try a Different File"}
             </button>

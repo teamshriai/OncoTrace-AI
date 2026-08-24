@@ -13,7 +13,7 @@ function TrendTooltip({ active, payload }) {
   const p = payload[0].payload;
   return (
     <div style={{
-      background: "var(--lb-bg-surface)", border: "1px solid var(--lb-border)", borderRadius: "8px",
+      background: "var(--lb-bg-surface)", border: "1px solid var(--lb-border)", borderRadius: "var(--lb-radius-sm)",
       padding: "8px 10px", fontSize: "11px", color: "var(--lb-text-primary)", lineHeight: 1.5,
     }}>
       <div style={{ fontWeight: 700 }}>{p.gene}</div>

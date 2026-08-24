@@ -12,7 +12,7 @@ export default function BarChart({ data, height = 180, xKey = "chr", yKey = "cou
         <YAxis tick={{ fontSize: 10, fill: "var(--lb-text-muted)" }} axisLine={false} tickLine={false} width={32} />
         <Tooltip
           cursor={{ fill: "var(--lb-row-hover)" }}
-          contentStyle={{ background: "var(--lb-bg-surface)", border: "1px solid var(--lb-border)", borderRadius: "8px", fontSize: "11px", color: "var(--lb-text-primary)" }}
+          contentStyle={{ background: "var(--lb-bg-surface)", border: "1px solid var(--lb-border)", borderRadius: "var(--lb-radius-sm)", fontSize: "11px", color: "var(--lb-text-primary)" }}
         />
         <Bar dataKey={yKey} radius={[3, 3, 0, 0]} fill={fill} isAnimationActive={false}>
           {colorKey && data.map((d, i) => <Cell key={i} fill={d[colorKey]} />)}

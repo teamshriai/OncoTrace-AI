@@ -41,8 +41,9 @@ export default function VafRiskPage({ data, theme }) {
   return (
     <div>
       {/* High-risk genes listed first and on their own -- not mixed into a
-          single chart with every other gene in the panel. */}
-      <Card style={{ padding: "20px", marginBottom: "16px" }}>
+          single chart with every other gene in the panel. Flat section: the
+          per-gene rows below already carry their own high-severity tint. */}
+      <div style={{ marginBottom: "24px" }}>
         <SectionHeader title={`High-Risk / Highly Mutated Genes (${highRiskGenes.length})`} accent="var(--lb-status-high)" />
         {highRiskGenes.length === 0 ? (
           <p style={{ fontSize: "var(--lb-text-sm)", color: "var(--lb-text-muted)" }}>
@@ -67,7 +68,7 @@ export default function VafRiskPage({ data, theme }) {
             </div>
           </>
         )}
-      </Card>
+      </div>
 
       {/* Everything else, de-emphasized -- present for completeness, not
           flagged for attention. */}
@@ -118,7 +119,7 @@ export default function VafRiskPage({ data, theme }) {
           {highVaf.map((v, i) => {
             const isPass = v.filter.length === 1 && v.filter[0] === "PASS";
             return (
-              <div key={i} style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px", padding: "10px", borderRadius: "var(--lb-radius-md)", background: "var(--lb-row-hover)", border: "1px solid var(--lb-border)" }}>
+              <div key={i} style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px", padding: "10px", borderRadius: "var(--lb-radius-md)", background: "var(--lb-row-hover)" }}>
                 <div style={{ flex: 1 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px", flexWrap: "wrap" }}>
                     <span style={{ fontSize: "var(--lb-text-sm)", fontWeight: 900, color: "var(--lb-status-info)" }}>{v.gene}</span>
@@ -128,7 +129,7 @@ export default function VafRiskPage({ data, theme }) {
                   <p style={{ fontSize: "var(--lb-text-2xs)", color: "var(--lb-text-muted)" }}>chr{v.chrom}:{v.pos.toLocaleString()} · Depth: {v.depth}×</p>
                 </div>
                 <div style={{ textAlign: "right" }}>
-                  <p style={{ fontSize: "18px", fontWeight: 900, color: vafColor(v.vaf), lineHeight: 1 }}>{(v.vaf * 100).toFixed(1)}%</p>
+                  <p style={{ fontSize: "var(--lb-text-lg)", fontWeight: 900, color: vafColor(v.vaf), lineHeight: 1 }}>{(v.vaf * 100).toFixed(1)}%</p>
                   <p style={{ fontSize: "9px", color: "var(--lb-text-muted)" }}>VAF</p>
                 </div>
               </div>

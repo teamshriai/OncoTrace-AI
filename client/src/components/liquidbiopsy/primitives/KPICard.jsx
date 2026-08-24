@@ -1,5 +1,4 @@
 import Card from "./Card";
-import PulseDot from "./PulseDot";
 import { Icon } from "../icons";
 import { ICONS } from "../iconPaths";
 
@@ -14,7 +13,6 @@ export default function KPICard({ label, value, unit, color = "var(--lb-status-i
         }}>
           <Icon d={ICONS[icon] || ICONS.dna} size={16} style={{ color }} />
         </div>
-        <PulseDot color={color} />
       </div>
       <p style={{ fontSize: "var(--lb-text-xl)", fontWeight: 900, color: "var(--lb-text-primary)", lineHeight: 1, letterSpacing: "-0.02em" }}>
         {value}<span style={{ fontSize: "var(--lb-text-sm)", fontWeight: 600, color: "var(--lb-text-secondary)", marginLeft: "3px" }}>{unit}</span>

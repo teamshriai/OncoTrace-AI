@@ -34,15 +34,15 @@ export default function AnalyzingPanel({ fileName, theme, toggleTheme, onCancel,
         <div style={{ maxWidth: "1024px", margin: "0 auto", padding: "0 20px", height: "56px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
             {onBack && (
-              <button onClick={onBack} title="Back to site" style={{
-                width: "28px", height: "28px", borderRadius: "8px", border: "1px solid var(--lb-border)",
+              <button onClick={onBack} title="Back to site" aria-label="Back to site" data-lb-btn="utility" style={{
+                width: "32px", height: "32px", borderRadius: "var(--lb-radius-md)", border: "1px solid var(--lb-border)",
                 background: "var(--lb-input-bg)", display: "flex", alignItems: "center", justifyContent: "center",
                 cursor: "pointer", flexShrink: 0,
               }}>
-                <Icon d={ICONS.back} size={13} style={{ color: "var(--lb-text-secondary)" }} />
+                <Icon d={ICONS.back} size={16} style={{ color: "var(--lb-text-secondary)" }} />
               </button>
             )}
-            <div style={{ width: "28px", height: "28px", borderRadius: "8px", background: "var(--lb-accent-gradient)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+            <div style={{ width: "28px", height: "28px", borderRadius: "var(--lb-radius-sm)", background: "var(--lb-brand)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
               <img src="/ribbon-logo.webp" alt="" style={{ width: 22, height: 22, objectFit: "contain" }} />
             </div>
             <p style={{ fontSize: "14px", fontWeight: 600, color: "var(--lb-text-primary)" }}>OncoTrace-AI</p>
@@ -64,15 +64,15 @@ export default function AnalyzingPanel({ fileName, theme, toggleTheme, onCancel,
           <p style={{ fontSize: "16px", fontWeight: 700, color: "var(--lb-text-primary)", marginBottom: "24px" }}>
             {STAGES[stageIndex]}
           </p>
-          <div style={{ width: "100%", height: "6px", background: "var(--lb-track)", borderRadius: "99px", overflow: "hidden", marginBottom: "12px" }}>
-            <div style={{ height: "100%", width: `${progressPct}%`, background: "var(--lb-accent-gradient)", borderRadius: "99px", transition: "width 0.6s ease" }} />
+          <div style={{ width: "100%", height: "6px", background: "var(--lb-track)", borderRadius: "var(--lb-radius-full)", overflow: "hidden", marginBottom: "12px" }}>
+            <div style={{ height: "100%", width: `${progressPct}%`, background: "var(--lb-brand)", borderRadius: "var(--lb-radius-full)", transition: "width 0.6s ease" }} />
           </div>
           <p style={{ fontSize: "11px", color: "var(--lb-text-muted)", marginBottom: "28px", lineHeight: 1.6 }}>
             Depending on file size, this can take anywhere from a few seconds to a couple of minutes.
           </p>
-          <button onClick={onCancel} style={{
-            padding: "10px 20px", borderRadius: "var(--lb-radius-md)", border: "1px solid var(--lb-border)",
-            background: "var(--lb-input-bg)", color: "var(--lb-text-secondary)", fontSize: "13px", fontWeight: 600, cursor: "pointer",
+          <button onClick={onCancel} data-lb-btn="secondary" style={{
+            padding: "10px 20px", borderRadius: "var(--lb-radius-md)", border: "1px solid var(--lb-border-strong)",
+            background: "var(--lb-bg-surface)", color: "var(--lb-text-primary)", fontSize: "13px", fontWeight: 600, cursor: "pointer",
           }}>
             Cancel
           </button>

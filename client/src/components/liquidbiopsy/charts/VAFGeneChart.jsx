@@ -58,12 +58,9 @@ export default function VAFGeneChart({ data, theme }) {
         const bH = rowH * 0.5;
         const bW = Math.max(d.max_vaf * cW, 1);
         const color = d.max_vaf >= 0.5 ? high : d.max_vaf >= 0.2 ? moderate : low;
-        const grad = ctx.createLinearGradient(pad.left, 0, pad.left + bW, 0);
-        grad.addColorStop(0, color + "aa");
-        grad.addColorStop(1, color);
         ctx.beginPath();
         ctx.roundRect(pad.left, y, bW, bH, 2);
-        ctx.fillStyle = grad;
+        ctx.fillStyle = color;
         ctx.fill();
         ctx.fillStyle = textSecondary;
         ctx.font = "9px 'Plus Jakarta Sans',sans-serif";

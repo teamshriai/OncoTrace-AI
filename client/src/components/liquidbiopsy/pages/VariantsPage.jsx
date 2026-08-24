@@ -62,8 +62,11 @@ export default function VariantsPage({ data }) {
 
   return (
     <div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))", gap: "16px", marginBottom: "16px" }}>
-        <Card style={{ padding: "20px" }}>
+      {/* Three overview modules as one flat, divided section instead of
+          three separate floating cards -- they're read together as one
+          "overview" glance, not three independent surfaces. */}
+      <div className="lb-overview-row" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))", gap: "24px", marginBottom: "24px" }}>
+        <div>
           <SectionHeader title="By Variant Type" accent="var(--lb-chart-1)" />
           <div style={{ display: "flex", alignItems: "center", gap: "16px", flexWrap: "wrap" }}>
             <DonutChart data={typeDist} label={String(total)} sublabel="Total" />
@@ -78,9 +81,9 @@ export default function VariantsPage({ data }) {
               ))}
             </div>
           </div>
-        </Card>
+        </div>
 
-        <Card style={{ padding: "20px" }}>
+        <div>
           <SectionHeader title="By Filter Status" accent="var(--lb-status-low)" />
           <div style={{ display: "flex", alignItems: "center", gap: "16px", flexWrap: "wrap" }}>
             <DonutChart
@@ -104,12 +107,12 @@ export default function VariantsPage({ data }) {
               </div>
             </div>
           </div>
-        </Card>
+        </div>
 
-        <Card style={{ padding: "20px" }}>
+        <div>
           <SectionHeader title="Variants per Chromosome" accent="var(--lb-chart-3)" />
           <BarChart data={chrDist} xKey="chrom" yKey="count" colorKey="color" height={160} />
-        </Card>
+        </div>
       </div>
 
       <Card style={{ padding: "20px", marginBottom: "16px" }}>
@@ -160,7 +163,7 @@ export default function VariantsPage({ data }) {
                   { f: "mq", l: "MQ" }, { f: "sn", l: "S/N" }, { f: "msi", l: "MSI" },
                   { f: "nm", l: "NM" }, { f: "filter", l: "Filter" },
                   { f: "tier", l: "Tier" }, { f: "qc", l: "QC Flags" },
-                ].map((h) => (
+                ].map((h, hi) => (
                   <th
                     key={h.f}
                     onClick={() => handleSort(h.f)}
@@ -168,6 +171,7 @@ export default function VariantsPage({ data }) {
                       paddingBottom: "10px", paddingRight: "10px", textAlign: "left", cursor: "pointer", userSelect: "none",
                       fontSize: "var(--lb-text-2xs)", fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.12em",
                       color: sortField === h.f ? "var(--lb-status-info)" : "var(--lb-text-muted)",
+                      ...(hi === 0 ? { position: "sticky", left: 0, background: "var(--lb-bg-surface)", zIndex: 1 } : {}),
                     }}
                   >
                     {h.l} {sortField === h.f ? (sortDir === "asc" ? "↑" : "↓") : ""}
@@ -180,16 +184,16 @@ export default function VariantsPage({ data }) {
                 const isPass = v.filter.length === 1 && v.filter[0] === "PASS";
                 return (
                   <tr key={i} style={{ borderBottom: "1px solid var(--lb-border)" }}>
-                    <td style={{ padding: "9px 10px 9px 0", fontWeight: 900, color: "var(--lb-status-info)", whiteSpace: "nowrap" }}>{v.gene}</td>
+                    <td style={{ padding: "9px 10px 9px 0", fontWeight: 900, color: "var(--lb-status-info)", whiteSpace: "nowrap", position: "sticky", left: 0, background: "var(--lb-bg-surface)" }}>{v.gene}</td>
                     <td style={{ padding: "9px 10px 9px 0", fontFamily: "monospace", color: "var(--lb-text-secondary)" }}>{v.chrom}</td>
                     <td style={{ padding: "9px 10px 9px 0", fontFamily: "monospace", color: "var(--lb-text-secondary)", whiteSpace: "nowrap" }}>{v.pos.toLocaleString()}</td>
                     <td style={{ padding: "9px 10px 9px 0" }}>
-                      <span style={{ padding: "2px 6px", borderRadius: "5px", background: "var(--lb-row-hover)", border: "1px solid var(--lb-border)", color: "var(--lb-text-secondary)", fontSize: "var(--lb-text-2xs)", whiteSpace: "nowrap" }}>{v.type}</span>
+                      <span style={{ padding: "2px 6px", borderRadius: "var(--lb-radius-sm)", background: "var(--lb-row-hover)", border: "1px solid var(--lb-border)", color: "var(--lb-text-secondary)", fontSize: "var(--lb-text-2xs)", whiteSpace: "nowrap" }}>{v.type}</span>
                     </td>
                     <td style={{ padding: "9px 10px 9px 0" }}>
                       <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                        <div style={{ width: "36px", height: "4px", background: "var(--lb-track)", borderRadius: "99px", overflow: "hidden" }}>
-                          <div style={{ height: "100%", width: `${Math.min(v.vaf * 100, 100)}%`, background: vafColor(v.vaf), borderRadius: "99px" }} />
+                        <div style={{ width: "36px", height: "4px", background: "var(--lb-track)", borderRadius: "var(--lb-radius-full)", overflow: "hidden" }}>
+                          <div style={{ height: "100%", width: `${Math.min(v.vaf * 100, 100)}%`, background: vafColor(v.vaf), borderRadius: "var(--lb-radius-full)" }} />
                         </div>
                         <span style={{ fontWeight: 700, color: vafColor(v.vaf), fontVariantNumeric: "tabular-nums" }}>{(v.vaf * 100).toFixed(1)}%</span>
                       </div>
@@ -244,6 +248,7 @@ export default function VariantsPage({ data }) {
                 type="button"
                 onClick={() => setPage((p) => Math.max(0, p - 1))}
                 disabled={clampedPage === 0}
+                data-lb-btn="utility"
                 style={{
                   padding: "6px 12px", borderRadius: "var(--lb-radius-md)", border: "1px solid var(--lb-border)",
                   background: "var(--lb-input-bg)", color: "var(--lb-text-primary)", fontSize: "var(--lb-text-xs)",
@@ -259,6 +264,7 @@ export default function VariantsPage({ data }) {
                 type="button"
                 onClick={() => setPage((p) => Math.min(pageCount - 1, p + 1))}
                 disabled={clampedPage >= pageCount - 1}
+                data-lb-btn="utility"
                 style={{
                   padding: "6px 12px", borderRadius: "var(--lb-radius-md)", border: "1px solid var(--lb-border)",
                   background: "var(--lb-input-bg)", color: "var(--lb-text-primary)", fontSize: "var(--lb-text-xs)",
@@ -285,15 +291,18 @@ export default function VariantsPage({ data }) {
             <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "var(--lb-text-sm)", minWidth: "600px" }}>
               <thead>
                 <tr style={{ borderBottom: "1px solid var(--lb-border)" }}>
-                  {["Gene", "Chr", "Position", "SV Type", "SV Length", "VAF", "Split Reads", "Span Pairs"].map((h) => (
-                    <th key={h} style={{ paddingBottom: "10px", paddingRight: "12px", textAlign: "left", fontSize: "var(--lb-text-2xs)", fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.12em", color: "var(--lb-text-muted)" }}>{h}</th>
+                  {["Gene", "Chr", "Position", "SV Type", "SV Length", "VAF", "Split Reads", "Span Pairs"].map((h, hi) => (
+                    <th key={h} style={{
+                      paddingBottom: "10px", paddingRight: "12px", textAlign: "left", fontSize: "var(--lb-text-2xs)", fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.12em", color: "var(--lb-text-muted)",
+                      ...(hi === 0 ? { position: "sticky", left: 0, background: "var(--lb-bg-surface)", zIndex: 1 } : {}),
+                    }}>{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {structural_variants.map((r, i) => (
                   <tr key={i} style={{ borderBottom: "1px solid var(--lb-border)" }}>
-                    <td style={{ padding: "10px 12px 10px 0", fontWeight: 900, color: "var(--lb-status-info)" }}>{r.gene}</td>
+                    <td style={{ padding: "10px 12px 10px 0", fontWeight: 900, color: "var(--lb-status-info)", position: "sticky", left: 0, background: "var(--lb-bg-surface)" }}>{r.gene}</td>
                     <td style={{ padding: "10px 12px 10px 0", fontFamily: "monospace", color: "var(--lb-text-secondary)" }}>{r.chrom}</td>
                     <td style={{ padding: "10px 12px 10px 0", fontFamily: "monospace", color: "var(--lb-text-secondary)" }}>{r.pos.toLocaleString()}</td>
                     <td style={{ padding: "10px 12px 10px 0" }}><Badge label={r.svtype} color="var(--lb-chart-2)" small /></td>
@@ -312,6 +321,16 @@ export default function VariantsPage({ data }) {
           No structural variants called in this file.
         </Card>
       )}
+
+      <style>{`
+        @media (min-width: 900px) {
+          .lb-overview-row > div:nth-child(2),
+          .lb-overview-row > div:nth-child(3) {
+            border-left: 1px solid var(--lb-border);
+            padding-left: 24px;
+          }
+        }
+      `}</style>
     </div>
   );
 }

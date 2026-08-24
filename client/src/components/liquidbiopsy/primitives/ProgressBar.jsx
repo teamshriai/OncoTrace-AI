@@ -1,10 +1,10 @@
 export default function ProgressBar({ value, max = 100, color = "var(--lb-status-info)", height = 5, showIdeal, idealRange }) {
   return (
     <div>
-      <div style={{ width: "100%", height: `${height}px`, background: "var(--lb-track)", borderRadius: "99px", overflow: "hidden", position: "relative" }}>
+      <div style={{ width: "100%", height: `${height}px`, background: "var(--lb-track)", borderRadius: "var(--lb-radius-full)", overflow: "hidden", position: "relative" }}>
         <div style={{
           height: "100%", width: `${Math.min((value / max) * 100, 100)}%`,
-          background: color, borderRadius: "99px", transition: "width 0.8s ease",
+          background: color, borderRadius: "var(--lb-radius-full)", transition: "width 0.8s ease",
         }} />
         {showIdeal && idealRange && (
           <>

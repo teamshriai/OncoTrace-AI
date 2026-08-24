@@ -25,7 +25,7 @@ export default function DonutChart({ data, size = 130, label, sublabel }) {
             contentStyle={{
               background: "var(--lb-bg-surface)",
               border: "1px solid var(--lb-border)",
-              borderRadius: "8px",
+              borderRadius: "var(--lb-radius-sm)",
               fontSize: "11px",
               color: "var(--lb-text-primary)",
             }}

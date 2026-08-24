@@ -1,4 +1,4 @@
-export default function SectionHeader({ title, accent = "var(--lb-accent-from)", right }) {
+export default function SectionHeader({ title, accent = "var(--lb-brand)", right }) {
   return (
     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px", flexWrap: "wrap", gap: "8px" }}>
       <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>

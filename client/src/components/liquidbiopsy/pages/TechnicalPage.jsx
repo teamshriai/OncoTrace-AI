@@ -7,6 +7,13 @@ import { Icon } from "../icons";
 import { ICONS } from "../iconPaths";
 import { depthColor, mqColor, msiColor } from "../colors";
 
+// Three shared grid widths for this page instead of a different minmax()
+// picked per section -- keeps the auto-fit reflow rhythm consistent instead
+// of columns resizing unpredictably relative to neighboring sections.
+const GRID_SMALL = "repeat(auto-fit,minmax(160px,1fr))";
+const GRID_MEDIUM = "repeat(auto-fit,minmax(220px,1fr))";
+const GRID_WIDE = "repeat(auto-fit,minmax(280px,1fr))";
+
 export default function TechnicalPage({ data }) {
   const { technical_report, meta, qc_summary, variants } = data;
 
@@ -28,8 +35,10 @@ export default function TechnicalPage({ data }) {
 
   return (
     <div>
-      {/* Pipeline stages: a stage that did not run is shown as such, never as a negative result. */}
-      <Card style={{ padding: "16px 20px", marginBottom: "16px" }}>
+      {/* Pipeline stages: a stage that did not run is shown as such, never as
+          a negative result. Flat section -- the stage chips already carry
+          their own ran/skipped color. */}
+      <div style={{ marginBottom: "24px" }}>
         <SectionHeader title="Pipeline Stages" accent="var(--lb-status-neutral)" />
         <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
           {Object.entries(meta.stages || {}).map(([stage, s]) => {
@@ -61,11 +70,14 @@ export default function TechnicalPage({ data }) {
             absent, not negative. Hover any stage for the exact reason.
           </p>
         )}
-      </Card>
+      </div>
 
-      <Card style={{ padding: "20px", marginBottom: "16px" }}>
+      {/* Flat section -- these are uncolored key/value pairs, no severity
+          coding to carry, so an outer Card plus per-item boxes was two
+          layers of chrome around plain reference text. */}
+      <div style={{ marginBottom: "24px" }}>
         <SectionHeader title="Pipeline & Annotation Versions" accent="var(--lb-status-info)" />
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: "12px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: GRID_MEDIUM, gap: "16px 20px" }}>
           {[
             { l: "Parser", v: technical_report.pipeline.parser },
             { l: "Normalization", v: technical_report.pipeline.normalization },
@@ -76,28 +88,34 @@ export default function TechnicalPage({ data }) {
             { l: "ClinVar Release", v: meta.annotation_versions.clinvar_release },
             { l: "CIViC Release", v: meta.annotation_versions.civic_release },
           ].map((item, i) => (
-            <div key={i} style={{ padding: "12px", borderRadius: "var(--lb-radius-md)", background: "var(--lb-row-hover)", border: "1px solid var(--lb-border)" }}>
+            <div key={i}>
               <p style={{ fontSize: "var(--lb-text-2xs)", fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.12em", color: "var(--lb-text-muted)", marginBottom: "4px" }}>{item.l}</p>
               <p style={{ fontSize: "var(--lb-text-sm)", fontWeight: 700, color: "var(--lb-text-primary)" }}>{item.v}</p>
             </div>
           ))}
         </div>
-      </Card>
-
-      {/* QC metrics -- moved here as-is; raw acronyms/thresholds belong in the
-          technical appendix, not on a doctor-facing page. */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(150px,1fr))", gap: "12px", marginBottom: "16px" }}>
-        {kpis.map((k, i) => (
-          <Card key={i} style={{ padding: "16px" }}>
-            <p style={{ fontSize: "22px", fontWeight: 900, color: k.color, lineHeight: 1 }}>{k.value}</p>
-            <p style={{ fontSize: "var(--lb-text-xs)", fontWeight: 600, color: "var(--lb-text-secondary)", marginTop: "6px" }}>{k.label}</p>
-            {k.ideal && <p style={{ fontSize: "var(--lb-text-2xs)", color: "var(--lb-text-muted)", marginTop: "3px" }}>Ideal: {k.ideal}</p>}
-            {k.sub && <p style={{ fontSize: "var(--lb-text-2xs)", color: "var(--lb-text-muted)", marginTop: "3px" }}>{k.sub}</p>}
-          </Card>
-        ))}
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: "16px", marginBottom: "16px" }}>
+      {/* QC metrics -- moved here as-is; raw acronyms/thresholds belong in
+          the technical appendix, not on a doctor-facing page. Consolidated
+          into one card with an internal tile grid, matching the same
+          pattern the doctor-facing "At a Glance" section already uses,
+          instead of six separate single-value cards. */}
+      <Card style={{ padding: "20px", marginBottom: "16px" }}>
+        <SectionHeader title="Sequencing QC Metrics" accent="var(--lb-status-info)" />
+        <div style={{ display: "grid", gridTemplateColumns: GRID_SMALL, gap: "12px" }}>
+          {kpis.map((k, i) => (
+            <div key={i} style={{ padding: "14px", borderRadius: "var(--lb-radius-md)", background: "var(--lb-row-hover)", border: "1px solid var(--lb-border)" }}>
+              <p style={{ fontSize: "var(--lb-text-xl)", fontWeight: 900, color: k.color, lineHeight: 1 }}>{k.value}</p>
+              <p style={{ fontSize: "var(--lb-text-xs)", fontWeight: 600, color: "var(--lb-text-secondary)", marginTop: "6px" }}>{k.label}</p>
+              {k.ideal && <p style={{ fontSize: "var(--lb-text-2xs)", color: "var(--lb-text-muted)", marginTop: "3px" }}>Ideal: {k.ideal}</p>}
+              {k.sub && <p style={{ fontSize: "var(--lb-text-2xs)", color: "var(--lb-text-muted)", marginTop: "3px" }}>{k.sub}</p>}
+            </div>
+          ))}
+        </div>
+      </Card>
+
+      <div style={{ display: "grid", gridTemplateColumns: GRID_WIDE, gap: "16px", marginBottom: "16px" }}>
         <Card style={{ padding: "20px" }}>
           <SectionHeader title="Sequencing Depth per Variant (first 20)" accent="var(--lb-status-info)" />
           <BarChart data={depthData} xKey="label" yKey="count" colorKey="color" height={160} />
@@ -127,13 +145,15 @@ export default function TechnicalPage({ data }) {
         </Card>
       </div>
 
-      <Card style={{ padding: "20px", marginBottom: "16px" }}>
+      {/* Flat section -- each item already carries its own pass/fail-colored
+          left border and tinted count tile. */}
+      <div style={{ marginBottom: "24px" }}>
         <SectionHeader title="Filter Flags Summary" accent="var(--lb-status-moderate)" />
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))", gap: "12px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: GRID_WIDE, gap: "12px" }}>
           {qc_summary.filter_flag_counts.map((f, i) => {
             const color = f.flag === "PASS" ? "var(--lb-status-low)" : "var(--lb-status-moderate)";
             return (
-              <div key={i} style={{ display: "flex", alignItems: "center", gap: "12px", padding: "12px", borderRadius: "var(--lb-radius-md)", background: "var(--lb-row-hover)", border: `1px solid ${color}` }}>
+              <div key={i} style={{ display: "flex", alignItems: "center", gap: "12px", padding: "12px", borderRadius: "var(--lb-radius-md)", background: "var(--lb-row-hover)", borderLeft: `3px solid ${color}` }}>
                 <div style={{ width: "40px", height: "40px", borderRadius: "var(--lb-radius-md)", flexShrink: 0, background: `color-mix(in srgb, ${color} 16%, transparent)`, display: "flex", alignItems: "center", justifyContent: "center" }}>
                   <span style={{ fontSize: "18px", fontWeight: 900, color }}>{f.count}</span>
                 </div>
@@ -145,9 +165,9 @@ export default function TechnicalPage({ data }) {
             );
           })}
         </div>
-      </Card>
+      </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: "16px", marginBottom: "16px" }}>
+      <div style={{ display: "grid", gridTemplateColumns: GRID_WIDE, gap: "16px", marginBottom: "16px" }}>
         <Card style={{ padding: "20px" }}>
           <SectionHeader title="Strand Bias (SBF) Analysis" accent="var(--lb-chart-4)" />
           <p style={{ fontSize: "var(--lb-text-xs)", color: "var(--lb-text-secondary)", marginBottom: "12px", lineHeight: 1.5 }}>
@@ -198,7 +218,7 @@ export default function TechnicalPage({ data }) {
 
       <Card style={{ padding: "20px", marginBottom: "16px" }}>
         <SectionHeader title="Signal-to-Noise & Mismatch Reference Ranges" accent="var(--lb-status-info)" />
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))", gap: "16px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: GRID_MEDIUM, gap: "16px" }}>
           <div>
             <p style={{ fontSize: "var(--lb-text-2xs)", fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.12em", color: "var(--lb-status-info)", marginBottom: "10px" }}>Signal-to-Noise (SN)</p>
             {[{ l: "SN < 1.5", d: "Below threshold — SN1.5 filter", c: "var(--lb-status-high)" }, { l: "SN 1.5–10", d: "Acceptable", c: "var(--lb-status-moderate)" }, { l: "SN ≥ 10", d: "Good signal quality", c: "var(--lb-status-low)" }].map((r, i) => (
@@ -251,11 +271,13 @@ export default function TechnicalPage({ data }) {
         </div>
       </Card>
 
-      <Card style={{ padding: "20px" }}>
+      {/* Flat section -- these are uncolored key/value pairs, same reasoning
+          as Pipeline & Annotation Versions above. */}
+      <div>
         <SectionHeader title="Key Field Glossary" accent="var(--lb-chart-2)" />
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: "12px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: GRID_WIDE, gap: "16px 20px" }}>
           {technical_report.field_glossary.map((item, i) => (
-            <div key={i} style={{ padding: "12px", borderRadius: "var(--lb-radius-md)", background: "var(--lb-row-hover)", border: "1px solid var(--lb-border)" }}>
+            <div key={i}>
               <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
                 <span style={{ padding: "2px 7px", borderRadius: "var(--lb-radius-sm)", background: "var(--lb-status-info-bg)", border: "1px solid var(--lb-status-info-border)", color: "var(--lb-status-info)", fontSize: "var(--lb-text-xs)", fontWeight: 700 }}>{item.field}</span>
                 <span style={{ fontSize: "var(--lb-text-xs)", color: "var(--lb-text-secondary)" }}>{item.full_name}</span>
@@ -264,7 +286,7 @@ export default function TechnicalPage({ data }) {
             </div>
           ))}
         </div>
-      </Card>
+      </div>
     </div>
   );
 }

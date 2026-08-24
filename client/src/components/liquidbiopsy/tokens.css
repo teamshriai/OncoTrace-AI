@@ -2,22 +2,22 @@
    feature root so this never leaks into the rest of the (light, pastel-blue) site. */
 
 [data-lb-theme] {
-  --lb-radius-sm: 8px;
-  --lb-radius-md: 12px;
-  --lb-radius-lg: 16px;
-  --lb-radius-xl: 24px;
+  /* Sharp, restrained scale -- cards are now the largest radius in the
+     system; text-bearing chips never use a pill shape. */
+  --lb-radius-xs: 3px;
+  --lb-radius-sm: 4px;
+  --lb-radius-md: 6px;
+  --lb-radius-lg: 8px;
+  --lb-radius-full: 999px;
 
   --lb-text-2xs: 10px;
   --lb-text-xs: 11px;
   --lb-text-sm: 12px;
   --lb-text-base: 14px;
-  --lb-text-lg: 17px;
+  --lb-text-md: 16px;
+  --lb-text-lg: 18px;
   --lb-text-xl: 24px;
-  --lb-text-2xl: clamp(2rem, 5vw, 3.25rem);
-
-  --lb-accent-from: #3b82f6;
-  --lb-accent-to: #6366f1;
-  --lb-accent-gradient: linear-gradient(135deg, var(--lb-accent-from), var(--lb-accent-to));
+  --lb-text-2xl: clamp(1.75rem, 3.5vw, 2.25rem);
 
   --lb-font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   --lb-font-display: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -27,6 +27,8 @@
    for chrome and neutral data, with red/amber reserved for real QC flags and
    genuinely high VAF rather than decorating the whole page. */
 [data-lb-theme="dark"] {
+  --lb-brand: #3b82f6;
+
   --lb-bg-page: #0a0e14;
   --lb-bg-surface: #121722;
   --lb-bg-surface-raised: #0d1119;
@@ -75,6 +77,8 @@
 
 /* Light */
 [data-lb-theme="light"] {
+  --lb-brand: #1d4ed8;
+
   --lb-bg-page: #f0f2f5;
   --lb-bg-surface: #ffffff;
   --lb-bg-surface-raised: #ffffff;
@@ -129,6 +133,27 @@
 [data-lb-theme] select option {
   background: var(--lb-bg-surface);
   color: var(--lb-text-primary);
+}
+
+/* Tier-specific button hover states -- scoped here (not per-file) so the
+   upload/analyzing/error screens get the same hover feedback the dashboard
+   does, since this file is the one thing every screen in the feature loads. */
+[data-lb-theme] button[data-lb-btn="primary"]:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--lb-brand) 85%, black);
+}
+[data-lb-theme] button[data-lb-btn="secondary"]:hover:not(:disabled),
+[data-lb-theme] button[data-lb-btn="utility"]:hover:not(:disabled) {
+  background: var(--lb-row-hover);
+  border-color: var(--lb-border-strong);
+}
+
+[data-lb-theme] button:focus-visible,
+[data-lb-theme] select:focus-visible,
+[data-lb-theme] input:focus-visible,
+[data-lb-theme] a:focus-visible,
+[data-lb-theme] [tabindex]:focus-visible {
+  outline: 2px solid var(--lb-brand);
+  outline-offset: 1px;
 }
 
 @keyframes lb-pulse {

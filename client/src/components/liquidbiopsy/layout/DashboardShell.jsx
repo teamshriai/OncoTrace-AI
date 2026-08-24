@@ -1,8 +1,10 @@
+import { useRef } from "react";
 import ThemeToggle from "../ThemeToggle";
 import PulseDot from "../primitives/PulseDot";
 import { Icon } from "../icons";
 import { ICONS } from "../iconPaths";
 import { NAV_PAGES } from "../nav";
+import useFocusTrap from "../useFocusTrap";
 
 // The uploaded filename, not a fabricated name -- there is no real
 // patient-identity field anywhere in the API response.
@@ -16,6 +18,8 @@ export default function DashboardShell({ activePage, onNavigate, meta, tierSumma
   const tier1 = tierSummary?.counts?.tier_1_actionable_somatic ?? 0;
   const tier2 = tierSummary?.counts?.tier_2_uncertain_needs_review ?? 0;
   const patientName = displayNameFromFilename(meta.source_filename);
+  const sidebarRef = useRef(null);
+  useFocusTrap(sidebarRef, sidebarOpen, () => setSidebarOpen(false));
 
   return (
     <div style={{
@@ -26,25 +30,24 @@ export default function DashboardShell({ activePage, onNavigate, meta, tierSumma
         <div onClick={() => setSidebarOpen(false)} style={{ position: "fixed", inset: 0, zIndex: 40, background: "var(--lb-bg-overlay)", backdropFilter: "blur(4px)" }} />
       )}
 
-      <aside style={{
-        position: "fixed", top: 0, left: 0, bottom: 0, zIndex: 50,
-        width: "220px", background: "var(--lb-bg-surface-raised)",
-        borderRight: "1px solid var(--lb-border)",
-        display: "flex", flexDirection: "column",
-        transform: sidebarOpen ? "translateX(0)" : "translateX(-100%)",
-        transition: "transform 0.3s ease",
-        boxShadow: sidebarOpen ? "4px 0 20px rgba(0,0,0,0.15)" : "none",
-      }} className="lb-sidebar">
+      <aside
+        ref={sidebarRef}
+        role={sidebarOpen ? "dialog" : undefined}
+        aria-modal={sidebarOpen ? "true" : undefined}
+        aria-label="Navigation"
+        tabIndex={-1}
+        style={{
+          position: "fixed", top: 0, left: 0, bottom: 0, zIndex: 50,
+          width: "220px", background: "var(--lb-bg-surface-raised)",
+          borderRight: "1px solid var(--lb-border)",
+          display: "flex", flexDirection: "column",
+          transform: sidebarOpen ? "translateX(0)" : "translateX(-100%)",
+          transition: "transform 0.3s ease",
+          boxShadow: sidebarOpen ? "4px 0 20px rgba(0,0,0,0.15)" : "none",
+        }} className="lb-sidebar">
         <div style={{ padding: "16px", borderBottom: "1px solid var(--lb-border)", flexShrink: 0 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <div style={{ width: "32px", height: "32px", borderRadius: "9px", flexShrink: 0, background: "var(--lb-accent-gradient)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <img src="/ribbon-logo.webp" alt="" style={{ width: 24, height: 24, objectFit: "contain" }} />
-            </div>
-            <div>
-              <p style={{ fontSize: "13px", fontWeight: 700, color: "var(--lb-text-primary)", lineHeight: 1 }}>OncoTrace-AI</p>
-              <p style={{ fontSize: "10px", color: "var(--lb-text-muted)", marginTop: "2px" }}>{patientName || `Sample ${meta.sample_id}`}</p>
-            </div>
-          </div>
+          <p style={{ fontSize: "13px", fontWeight: 700, color: "var(--lb-text-primary)", lineHeight: 1 }}>OncoTrace-AI</p>
+          <p style={{ fontSize: "10px", color: "var(--lb-text-muted)", marginTop: "4px" }}>{patientName || `Sample ${meta.sample_id}`}</p>
         </div>
 
         <nav style={{ flex: 1, padding: "12px 8px", overflowY: "auto" }}>
@@ -86,8 +89,10 @@ export default function DashboardShell({ activePage, onNavigate, meta, tierSumma
           <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "0 16px" }}>
             <div style={{ height: "56px", display: "flex", alignItems: "center", gap: "12px" }}>
               <button onClick={() => setSidebarOpen((o) => !o)}
+                aria-label={sidebarOpen ? "Close navigation" : "Open navigation"}
+                data-lb-btn="utility"
                 style={{
-                  width: "36px", height: "36px", borderRadius: "var(--lb-radius-md)", flexShrink: 0,
+                  width: "32px", height: "32px", borderRadius: "var(--lb-radius-md)", flexShrink: 0,
                   border: "1px solid var(--lb-border)", background: "var(--lb-input-bg)",
                   cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--lb-text-secondary)",
                 }}>
@@ -103,10 +108,10 @@ export default function DashboardShell({ activePage, onNavigate, meta, tierSumma
                 </p>
               </div>
 
-              <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0, flexWrap: "wrap", justifyContent: "flex-end" }}>
                 <div style={{
                   display: "flex", alignItems: "center", gap: "6px",
-                  padding: "5px 10px", borderRadius: "var(--lb-radius-md)",
+                  padding: "5px 10px", borderRadius: "var(--lb-radius-sm)",
                   background: "var(--lb-status-info-bg)", border: "1px solid var(--lb-status-info-border)",
                 }} title="This is a research prototype, not a validated clinical diagnostic tool.">
                   <PulseDot color="var(--lb-status-info)" />
@@ -119,7 +124,7 @@ export default function DashboardShell({ activePage, onNavigate, meta, tierSumma
                     title="This file's variant caller adapter has not been validated against a known file from that caller. Field interpretation, including VAF and depth, may be wrong."
                     style={{
                       display: "flex", alignItems: "center", gap: "5px",
-                      padding: "5px 10px", borderRadius: "var(--lb-radius-md)",
+                      padding: "5px 10px", borderRadius: "var(--lb-radius-sm)",
                       background: "var(--lb-status-high-bg)", border: "1px solid var(--lb-status-high-border)",
                     }}>
                     <Icon d={ICONS.alert} size={11} style={{ color: "var(--lb-status-high)" }} />
@@ -130,24 +135,26 @@ export default function DashboardShell({ activePage, onNavigate, meta, tierSumma
                 )}
                 <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
                 {onBack && (
-                  <button onClick={onBack} title="Back to site"
+                  <button onClick={onBack} title="Back to site" aria-label="Back to site"
+                    data-lb-btn="utility"
                     style={{
-                      width: "34px", height: "34px", flexShrink: 0,
+                      width: "32px", height: "32px", flexShrink: 0,
                       display: "flex", alignItems: "center", justifyContent: "center",
                       borderRadius: "var(--lb-radius-md)", border: "1px solid var(--lb-border)",
                       background: "var(--lb-input-bg)", cursor: "pointer",
                     }}>
-                    <Icon d={ICONS.back} size={13} style={{ color: "var(--lb-text-secondary)" }} />
+                    <Icon d={ICONS.back} size={16} style={{ color: "var(--lb-text-secondary)" }} />
                   </button>
                 )}
-                <button onClick={onReset}
+                <button onClick={onReset} aria-label="Start a new analysis"
+                  data-lb-btn="secondary"
                   style={{
                     display: "flex", alignItems: "center", gap: "5px",
-                    padding: "7px 12px", borderRadius: "var(--lb-radius-md)", border: "1px solid var(--lb-border)",
-                    background: "var(--lb-input-bg)", color: "var(--lb-text-secondary)", fontSize: "12px", fontWeight: 600, cursor: "pointer",
+                    padding: "7px 12px", borderRadius: "var(--lb-radius-md)", border: "1px solid var(--lb-border-strong)",
+                    background: "var(--lb-bg-surface)", color: "var(--lb-text-primary)", fontSize: "12px", fontWeight: 600, cursor: "pointer",
                     whiteSpace: "nowrap",
                   }}>
-                  <Icon d={ICONS.upload} size={13} style={{ color: "var(--lb-text-secondary)" }} />
+                  <Icon d={ICONS.upload} size={13} style={{ color: "var(--lb-text-primary)" }} />
                   <span className="lb-hide-xs">New Patient</span>
                 </button>
               </div>
@@ -177,7 +184,6 @@ export default function DashboardShell({ activePage, onNavigate, meta, tierSumma
         [data-lb-theme] ::-webkit-scrollbar-track { background: transparent; }
         [data-lb-theme] ::-webkit-scrollbar-thumb { background: rgba(128,128,128,0.3); border-radius: 99px; }
         [data-lb-theme] input::placeholder { color: var(--lb-text-muted); }
-        [data-lb-theme] button:hover { opacity: 0.85; }
       `}</style>
     </div>
   );

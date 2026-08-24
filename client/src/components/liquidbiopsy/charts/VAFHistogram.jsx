@@ -10,7 +10,7 @@ export default function VAFHistogram({ data }) {
           <YAxis tick={{ fontSize: 10, fill: "var(--lb-text-muted)" }} axisLine={false} tickLine={false} width={32} />
           <Tooltip
             cursor={{ fill: "var(--lb-row-hover)" }}
-            contentStyle={{ background: "var(--lb-bg-surface)", border: "1px solid var(--lb-border)", borderRadius: "8px", fontSize: "11px", color: "var(--lb-text-primary)" }}
+            contentStyle={{ background: "var(--lb-bg-surface)", border: "1px solid var(--lb-border)", borderRadius: "var(--lb-radius-sm)", fontSize: "11px", color: "var(--lb-text-primary)" }}
           />
           <Bar dataKey="count" radius={[4, 4, 0, 0]} isAnimationActive={false}>
             {data.map((d, i) => <Cell key={i} fill={d.color} />)}

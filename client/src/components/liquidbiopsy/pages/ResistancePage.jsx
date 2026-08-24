@@ -53,7 +53,7 @@ export default function ResistancePage({ data }) {
                   <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "8px" }}>
                     <div style={{ flex: 1 }}>
                       <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px", flexWrap: "wrap" }}>
-                        <span style={{ fontSize: "16px", fontWeight: 900, color: "var(--lb-text-primary)" }}>{g.gene}</span>
+                        <span style={{ fontSize: "var(--lb-text-md)", fontWeight: 900, color: "var(--lb-text-primary)" }}>{g.gene}</span>
                         <Badge
                           label={g.match_level === "variant" ? "Variant-level evidence" : "Gene-level evidence only"}
                           color={g.match_level === "variant" ? "var(--lb-status-high)" : "var(--lb-status-moderate)"}
@@ -67,7 +67,7 @@ export default function ResistancePage({ data }) {
                     </div>
                     {v && (
                       <div style={{ textAlign: "right", flexShrink: 0 }}>
-                        <p style={{ fontSize: "22px", fontWeight: 900, color: vafColor(v.vaf), lineHeight: 1 }}>{(v.vaf * 100).toFixed(1)}%</p>
+                        <p style={{ fontSize: "var(--lb-text-xl)", fontWeight: 900, color: vafColor(v.vaf), lineHeight: 1 }}>{(v.vaf * 100).toFixed(1)}%</p>
                         <p style={{ fontSize: "9px", color: "var(--lb-text-muted)" }}>VAF</p>
                       </div>
                     )}
