@@ -1,12 +1,11 @@
 import Card from "../primitives/Card";
-import SectionHeader from "../primitives/SectionHeader";
-import Badge from "../primitives/Badge";
 import DonutChart from "../charts/DonutChart";
 import BarChart from "../charts/BarChart";
 import VAFTrendLine from "../charts/VAFTrendLine";
+import VAFHistogram from "../charts/VAFHistogram";
 import { Icon } from "../icons";
 import { ICONS } from "../iconPaths";
-import { tierColor, depthColor, TIER_LABELS } from "../colors";
+import { tierColor, depthColor, mqColor, qualitativeColor, TIER_LABELS } from "../colors";
 
 const TIER_ORDER = [
   "tier_1_actionable_somatic",
@@ -105,15 +104,6 @@ function buildClinicalImpression({ tier1Genes, tier3Count, conditions, reviewPri
   return sentences.join(" ");
 }
 
-// The uploaded filename, not a fabricated name -- this app has no real
-// patient-identity field (confirmed against the schema: sample_id and
-// source_filename are the only identifiers anywhere in the response), so the
-// honest stand-in for "patient name" is literally what the file was named.
-function displayNameFromFilename(filename) {
-  if (!filename) return null;
-  return filename.replace(/\.vcf\.gz$/i, "").replace(/\.vcf$/i, "");
-}
-
 function Callout({ tone = "info", icon = "info", children }) {
   return (
     <div style={{
@@ -129,8 +119,91 @@ function Callout({ tone = "info", icon = "info", children }) {
   );
 }
 
+// Small colored icon badge, reused ahead of every section header on this page
+// so each block reads as a distinct, colorful "instrument" rather than a
+// stack of identical gray cards -- purely decorative, same pattern KPICard
+// already uses elsewhere in this design system.
+function IconBadge({ icon, color, size = 32 }) {
+  return (
+    <div style={{
+      width: `${size}px`, height: `${size}px`, borderRadius: "var(--lb-radius-md)", flexShrink: 0,
+      background: `color-mix(in srgb, ${color} 16%, transparent)`,
+      display: "flex", alignItems: "center", justifyContent: "center",
+    }}>
+      <Icon d={ICONS[icon]} size={size * 0.47} style={{ color }} />
+    </div>
+  );
+}
+
+function SectionHead({ icon, color, title, right }) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "16px", flexWrap: "wrap" }}>
+      <IconBadge icon={icon} color={color} />
+      <div style={{ flex: 1, minWidth: "160px" }}>
+        <span style={{
+          fontSize: "var(--lb-text-2xs)", fontWeight: 900, textTransform: "uppercase",
+          letterSpacing: "0.12em", color: "var(--lb-text-muted)",
+        }}>
+          {title}
+        </span>
+      </div>
+      {right}
+    </div>
+  );
+}
+
+// Pure-CSS radial gauge for the Clinical Review Priority count -- same
+// disclosed value/ceiling shown as text beneath it, just rendered as a ring
+// instead of a thin bar so it reads at a glance.
+function PriorityGauge({ value, max, color }) {
+  const pct = max > 0 ? Math.min(100, ((value || 0) / max) * 100) : 0;
+  return (
+    <div style={{
+      position: "relative", width: "104px", height: "104px", borderRadius: "50%", flexShrink: 0,
+      background: `conic-gradient(${color} ${pct}%, var(--lb-track) 0)`,
+    }}>
+      <div style={{
+        position: "absolute", inset: "8px", borderRadius: "50%", background: "var(--lb-bg-surface)",
+        display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+      }}>
+        <span style={{ fontSize: "26px", fontWeight: 900, color, lineHeight: 1 }}>{value ?? "—"}</span>
+        <span style={{ fontSize: "9px", fontWeight: 700, color: "var(--lb-text-muted)", marginTop: "2px" }}>of {max}</span>
+      </div>
+    </div>
+  );
+}
+
+// A slim, single-container horizontal stat bar -- deliberately not a grid of
+// individually-boxed KPICards. Used for quick-glance counts that belong
+// together as one continuous row rather than as separate tiles.
+function StatStrip({ title, items }) {
+  return (
+    <Card style={{ padding: "16px 20px", marginBottom: "14px" }}>
+      {title && (
+        <p style={{ fontSize: "var(--lb-text-2xs)", fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.12em", color: "var(--lb-text-muted)", marginBottom: "12px" }}>
+          {title}
+        </p>
+      )}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(190px,1fr))", gap: "16px" }}>
+        {items.map((s, i) => (
+          <div key={i} style={{ display: "flex", alignItems: "center", gap: "12px", minWidth: 0 }}>
+            <IconBadge icon={s.icon} color={s.color} />
+            <div style={{ minWidth: 0 }}>
+              <div style={{ display: "flex", alignItems: "baseline", gap: "6px", flexWrap: "wrap" }}>
+                <span style={{ fontSize: "22px", fontWeight: 900, color: s.color, lineHeight: 1 }}>{s.value}{s.unit || ""}</span>
+                <span style={{ fontSize: "var(--lb-text-xs)", fontWeight: 700, color: "var(--lb-text-primary)" }}>{s.label}</span>
+              </div>
+              {s.sub && <p style={{ fontSize: "var(--lb-text-2xs)", color: "var(--lb-text-muted)", marginTop: "2px", lineHeight: 1.4 }}>{s.sub}</p>}
+            </div>
+          </div>
+        ))}
+      </div>
+    </Card>
+  );
+}
+
 export default function DoctorSummaryPage({ data }) {
-  const { meta, tier_summary, patient_summary, variants, actionability_summary } = data;
+  const { meta, tier_summary, patient_summary, variants, variant_type_distribution } = data;
   const counts = tier_summary?.counts || {};
   const totalTiered = TIER_ORDER.reduce((sum, t) => sum + (counts[t] || 0), 0) || 1;
 
@@ -138,8 +211,8 @@ export default function DoctorSummaryPage({ data }) {
     .filter((t) => (counts[t] || 0) > 0)
     .map((t) => ({ label: TIER_LABELS[t], value: counts[t], color: tierColor(t) }));
 
-  const genesWithLiteratureEvidence = (patient_summary?.genes_with_variant_level_evidence || 0)
-    + (actionability_summary?.genes?.length || 0);
+  const typeDonutData = (variant_type_distribution || []).map((d, i) => ({ label: d.type, value: d.count, color: qualitativeColor(i) }));
+  const totalTyped = typeDonutData.reduce((sum, d) => sum + d.value, 0);
 
   const trendData = downsample(
     [...variants].sort((a, b) => chromRank(a.chrom) - chromRank(b.chrom) || a.pos - b.pos),
@@ -163,12 +236,18 @@ export default function DoctorSummaryPage({ data }) {
     reviewPriorityFormula,
   });
 
-  const patientName = displayNameFromFilename(meta.source_filename);
-
-  let analysisDate = null;
-  try {
-    analysisDate = new Date(meta.analysis_timestamp).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
-  } catch { /* leave null if unparseable */ }
+  // New chart datasets, mirroring the same aggregates already used verbatim
+  // on the Variant Analysis, VAF & Risk, and Technical Details tabs --
+  // duplicated locally per this file's own convention rather than extracted
+  // into a shared helper.
+  const chrDist = (data.chromosome_distribution || []).map((d, i) => ({ ...d, color: qualitativeColor(i) }));
+  const vafHistogramData = (data.vaf_profile?.histogram || []).map((d, i) => ({ ...d, color: qualitativeColor(i) }));
+  const filterStatusData = [
+    { label: "Pass", value: data.qc_summary?.pass_count || 0, color: "var(--lb-status-low)" },
+    { label: "Non-pass", value: data.qc_summary?.non_pass_count || 0, color: "var(--lb-status-moderate)" },
+  ];
+  const depthPerVariantData = variants.slice(0, 20).map((v) => ({ label: v.gene, count: v.depth, color: depthColor(v.depth) }));
+  const mqPerVariantData = variants.slice(0, 20).map((v) => ({ label: v.gene, count: v.mq, color: mqColor(v.mq) }));
 
   return (
     <div>
@@ -196,65 +275,240 @@ export default function DoctorSummaryPage({ data }) {
         </Callout>
       )}
 
-      {/* Report header -- a masthead, not a floating card: a bottom divider
-          is enough to separate it from the content that follows. */}
-      <div style={{ paddingBottom: "20px", marginBottom: "20px", borderBottom: "1px solid var(--lb-border)" }}>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "16px", alignItems: "center", justifyContent: "space-between" }}>
-          <div>
-            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "6px", flexWrap: "wrap" }}>
-              <span style={{ fontSize: "var(--lb-text-xl)", fontWeight: 700, color: "var(--lb-text-primary)" }}>
-                {patientName || `Sample ${meta.sample_id}`}
-              </span>
-              {counts.tier_1_actionable_somatic > 0 ? (
-                <Badge label={`${counts.tier_1_actionable_somatic} actionable somatic finding${counts.tier_1_actionable_somatic > 1 ? "s" : ""}`} color="var(--lb-status-high)" />
-              ) : (
-                <Badge label="No actionable somatic finding" color="var(--lb-status-low)" />
-              )}
+      {/* Reserved for a future patient-record integration -- this app has no
+          real demographic fields today (confirmed against the schema:
+          sample_id and source_filename are the only identifiers anywhere in
+          the response), so these are deliberately empty placeholders, not
+          fabricated values. */}
+      <Card style={{ padding: "18px 20px", marginBottom: "14px" }}>
+        <SectionHead icon="user" color="var(--lb-status-neutral)" title="Patient Demographics" />
+        <p style={{ fontSize: "var(--lb-text-2xs)", color: "var(--lb-text-muted)", marginBottom: "14px", lineHeight: 1.5 }}>
+          Reserved for a future patient-record integration — no demographic data is collected or inferred by this
+          analysis today.
+        </p>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(140px,1fr))", gap: "14px" }}>
+          {["Full Name", "Date of Birth", "Age", "Sex", "Contact Number", "MRN / Patient ID", "Ordering Physician"].map((label, i) => (
+            <div key={i}>
+              <p style={{ fontSize: "var(--lb-text-2xs)", fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--lb-text-muted)", marginBottom: "6px" }}>
+                {label}
+              </p>
+              <div style={{ height: "16px", borderRadius: "var(--lb-radius-sm)", background: "var(--lb-track)" }} />
             </div>
-            <p style={{ fontSize: "var(--lb-text-sm)", color: "var(--lb-text-secondary)" }}>
-              Sample ID: {meta.sample_id}
-            </p>
+          ))}
+        </div>
+      </Card>
+
+      {/* Findings-first: donuts, not a number wall. Variant type
+          distribution is the same aggregate already computed and shown on
+          the Variant Analysis tab -- surfaced here too as a second real
+          chart alongside the tier breakdown, matching how a lab report pairs
+          a findings donut with a variant-type donut. */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: "14px", marginBottom: "14px" }}>
+        <Card style={{ padding: "20px" }}>
+          <SectionHead icon="target" color="var(--lb-status-info)" title="Findings Overview" />
+          <div style={{ display: "flex", alignItems: "center", gap: "18px", flexWrap: "wrap" }}>
+            <DonutChart data={tierDonutData} size={140} label={String(totalTiered)} sublabel="Variants" />
+            <div style={{ flex: 1, minWidth: "180px" }}>
+              {TIER_ORDER.filter((t) => (counts[t] || 0) > 0).map((t) => (
+                <div key={t} style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "7px" }}>
+                  <span style={{ width: "9px", height: "9px", borderRadius: "3px", background: tierColor(t), flexShrink: 0 }} />
+                  <span style={{ fontSize: "var(--lb-text-xs)", color: "var(--lb-text-secondary)", flex: 1 }}>{TIER_LABELS[t]}</span>
+                  <span style={{ fontSize: "var(--lb-text-sm)", fontWeight: 900, color: tierColor(t) }}>{counts[t]}</span>
+                </div>
+              ))}
+            </div>
           </div>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "16px" }}>
-            {[
-              { l: "Reference Build", v: `${meta.reference_build}${meta.reference_build_confirmed ? "" : " (unconfirmed)"}` },
-              { l: "Genes Covered", v: meta.panel_gene_count },
-              { l: "Analysis Date", v: analysisDate || "—" },
-            ].map((item, i) => (
-              <div key={i}>
-                <p style={{ fontSize: "var(--lb-text-2xs)", fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.12em", color: "var(--lb-text-muted)", marginBottom: "2px" }}>{item.l}</p>
-                <p style={{ fontSize: "var(--lb-text-sm)", fontWeight: 700, color: "var(--lb-text-primary)" }}>{item.v}</p>
+        </Card>
+
+        {typeDonutData.length > 0 && (
+          <Card style={{ padding: "20px" }}>
+            <SectionHead icon="layers" color="var(--lb-chart-1)" title="Variant Type Distribution" />
+            <div style={{ display: "flex", alignItems: "center", gap: "18px", flexWrap: "wrap" }}>
+              <DonutChart data={typeDonutData} size={140} label={String(totalTyped)} sublabel="Total" />
+              <div style={{ flex: 1, minWidth: "180px" }}>
+                {typeDonutData.map((d, i) => (
+                  <div key={i} style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "7px" }}>
+                    <span style={{ width: "9px", height: "9px", borderRadius: "3px", background: d.color, flexShrink: 0 }} />
+                    <span style={{ fontSize: "var(--lb-text-xs)", color: "var(--lb-text-secondary)", flex: 1 }}>{d.label}</span>
+                    <span style={{ fontSize: "var(--lb-text-sm)", fontWeight: 900, color: d.color }}>{d.value}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </Card>
+        )}
+      </div>
+
+      {/* Visual trend + confidence charts, in place of a raw number/gene dump. */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(320px,1fr))", gap: "14px", marginBottom: "14px" }}>
+        <Card style={{ padding: "20px" }}>
+          <SectionHead icon="trend" color="var(--lb-status-info)" title="Variant Severity Trend Across the Genome" />
+          <p style={{ fontSize: "var(--lb-text-xs)", color: "var(--lb-text-secondary)", marginBottom: "10px", lineHeight: 1.5 }}>
+            How much of the sample's DNA carries each variant, ordered across the genome — the same per-variant
+            values behind the Clinical Review Priority score above. Dashed lines mark the typical clonal (30%) and
+            low-fraction (5%) reference points; dot color matches the finding tiers.
+          </p>
+          <VAFTrendLine data={trendData} />
+        </Card>
+
+        <Card style={{ padding: "20px" }}>
+          <SectionHead icon="filter" color="var(--lb-chart-3)" title="Sequencing Confidence" />
+          <p style={{ fontSize: "var(--lb-text-xs)", color: "var(--lb-text-secondary)", marginBottom: "10px", lineHeight: 1.5 }}>
+            How many independent reads back each result — higher generally means a more reliable call.
+          </p>
+          <BarChart data={depthHistogram} xKey="label" yKey="count" colorKey="color" height={180} />
+        </Card>
+      </div>
+
+      {/* Genome-wide molecular composition -- chromosome spread and VAF-
+          histogram shape, the same aggregates already computed for the
+          Variant Analysis tab, surfacing them as a second genome-wide view
+          alongside the trend/confidence row above, before the purely
+          technical/QC row below. */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(320px,1fr))", gap: "14px", marginBottom: "14px" }}>
+        {chrDist.length > 0 && (
+          <Card style={{ padding: "20px" }}>
+            <SectionHead icon="sort" color="var(--lb-chart-3)" title="Variants per Chromosome" />
+            <BarChart data={chrDist} xKey="chrom" yKey="count" colorKey="color" height={160} />
+          </Card>
+        )}
+
+        {vafHistogramData.length > 0 && (
+          <Card style={{ padding: "20px" }}>
+            <SectionHead icon="flask" color="var(--lb-status-info)" title={`VAF Distribution Across All ${variants.length} Variants`} />
+            <VAFHistogram data={vafHistogramData} />
+          </Card>
+        )}
+      </div>
+
+      {/* Most technical of the added charts -- pure sequencing-confidence/QC
+          signal, not a clinical finding, so it's placed last among all chart
+          sections, immediately before the Germline/Somatic categorization
+          below. */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))", gap: "14px", marginBottom: "14px" }}>
+        <Card style={{ padding: "20px" }}>
+          <SectionHead icon="filter" color="var(--lb-status-low)" title="By Filter Status" />
+          <div style={{ display: "flex", alignItems: "center", gap: "16px", flexWrap: "wrap" }}>
+            <DonutChart data={filterStatusData} size={140} label={String(variants.length)} sublabel="Variants" />
+            <div style={{ flex: 1, minWidth: "120px" }}>
+              {filterStatusData.map((d, i) => (
+                <div key={i} style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "7px" }}>
+                  <span style={{ width: "9px", height: "9px", borderRadius: "3px", background: d.color, flexShrink: 0 }} />
+                  <span style={{ fontSize: "var(--lb-text-xs)", color: "var(--lb-text-secondary)", flex: 1 }}>{d.label}</span>
+                  <span style={{ fontSize: "var(--lb-text-sm)", fontWeight: 900, color: d.color }}>{d.value}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Card>
+
+        <Card style={{ padding: "20px" }}>
+          <SectionHead icon="layers" color="var(--lb-status-info)" title="Sequencing Depth per Variant (first 20)" />
+          <BarChart data={depthPerVariantData} xKey="label" yKey="count" colorKey="color" height={160} />
+          <div style={{ marginTop: "12px", display: "flex", gap: "12px", flexWrap: "wrap" }}>
+            {[{ l: "≥500× (excellent)", c: "var(--lb-status-low)" }, { l: "100–500× (adequate)", c: "var(--lb-status-moderate)" }, { l: "<100× (low)", c: "var(--lb-status-high)" }].map((r, i) => (
+              <div key={i} style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                <span style={{ width: "8px", height: "8px", borderRadius: "2px", background: r.c }} />
+                <span style={{ fontSize: "var(--lb-text-2xs)", color: "var(--lb-text-secondary)" }}>{r.l}</span>
               </div>
             ))}
           </div>
-        </div>
+        </Card>
+
+        <Card style={{ padding: "20px" }}>
+          <SectionHead icon="target" color="var(--lb-status-low)" title="Mapping Quality (MQ) per Variant (first 20)" />
+          <BarChart data={mqPerVariantData} xKey="label" yKey="count" colorKey="color" height={160} />
+          <div style={{ marginTop: "8px", padding: "10px", borderRadius: "var(--lb-radius-md)", background: "var(--lb-row-hover)", border: "1px solid var(--lb-border)" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(96px,1fr))", gap: "8px" }}>
+              {[{ l: "MQ = 60", d: "Perfectly unique mapping", c: "var(--lb-status-low)" }, { l: "MQ ≥ 30", d: "Acceptable", c: "var(--lb-status-moderate)" }, { l: "MQ < 30", d: "Poor, artefact risk", c: "var(--lb-status-high)" }].map((r, i) => (
+                <div key={i}>
+                  <p style={{ fontSize: "var(--lb-text-xs)", fontWeight: 700, color: r.c }}>{r.l}</p>
+                  <p style={{ fontSize: "var(--lb-text-2xs)", color: "var(--lb-text-muted)" }}>{r.d}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Card>
       </div>
+
+      {/* Germline vs somatic context, already plain-language, now as a
+          sleek stat strip instead of individually boxed tiles. */}
+      <div style={{ marginBottom: "16px" }}>
+        {data.germline_summary?.applied === false ? (
+          <>
+            <SectionHead icon="shield" color="var(--lb-chart-2)" title="Germline / Somatic Pattern" />
+            <p style={{ fontSize: "var(--lb-text-sm)", color: "var(--lb-text-secondary)", lineHeight: 1.7 }}>
+              {data.germline_summary.reason}
+            </p>
+          </>
+        ) : (
+          <>
+            <StatStrip
+              title="Germline / Somatic Pattern"
+              items={[
+                { label: "Heterozygous pattern", value: data.germline_summary?.putative_heterozygous_germline_pattern ?? 0, icon: "layers", color: "var(--lb-chart-2)" },
+                { label: "Homozygous pattern", value: data.germline_summary?.putative_homozygous_germline_pattern ?? 0, icon: "shield", color: "var(--lb-chart-2)" },
+                { label: "Common in population", value: data.germline_summary?.common_population_variant ?? 0, icon: "users", color: "var(--lb-chart-2)" },
+                { label: "Median VAF", value: Math.round((data.vaf_profile?.median || 0) * 100), unit: "%", icon: "trend", color: "var(--lb-chart-2)" },
+              ]}
+            />
+            <div style={{ padding: "12px", borderRadius: "var(--lb-radius-md)", background: "var(--lb-status-moderate-bg)", border: "1px solid var(--lb-status-moderate-border)" }}>
+              <p style={{ fontSize: "var(--lb-text-xs)", color: "var(--lb-status-moderate)", lineHeight: 1.6, fontWeight: 600 }}>
+                {data.germline_summary?.population_af_source_note}
+              </p>
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* Next steps, kept illustrative and clearly labeled as such. */}
+      {patient_summary?.next_steps?.length > 0 && (
+        <Card style={{ padding: "18px 20px", marginBottom: "14px" }}>
+          <SectionHead icon="arrowRight" color="var(--lb-status-low)" title="Typical Next Steps (Illustrative)" />
+          <p style={{ fontSize: "var(--lb-text-xs)", color: "var(--lb-text-muted)", marginBottom: "16px" }}>
+            Generic steps in a real clinical workflow — not generated from this specific file.
+          </p>
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            {patient_summary.next_steps.map((step, i) => (
+              <div key={i} style={{ display: "flex", gap: "16px", paddingBottom: i < patient_summary.next_steps.length - 1 ? "20px" : 0 }}>
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0 }}>
+                  <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "var(--lb-brand)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <span style={{ fontSize: "12px", fontWeight: 900, color: "#fff" }}>{i + 1}</span>
+                  </div>
+                  {i < patient_summary.next_steps.length - 1 && <div style={{ width: "2px", flex: 1, background: "var(--lb-border)", marginTop: "4px" }} />}
+                </div>
+                <div style={{ paddingTop: "6px" }}>
+                  <p style={{ fontSize: "var(--lb-text-sm)", color: "var(--lb-text-primary)", lineHeight: 1.6, fontWeight: 500 }}>{step}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
 
       {/* Rule-based synthesis of the fields shown elsewhere on this page --
           deliberately not labeled "AI": it's a template over disclosed
           values, not a separate model, and calling it AI would itself be the
-          kind of overclaim this whole page exists to avoid. */}
-      <Card style={{ padding: "20px", marginBottom: "16px" }}>
-        <SectionHeader title="Clinical Impression (Rule-Based Summary)" accent="var(--lb-status-info)" />
-        <p style={{ fontSize: "var(--lb-text-sm)", color: "var(--lb-text-primary)", lineHeight: 1.7, marginBottom: "16px" }}>
+          kind of overclaim this whole page exists to avoid. Placed last,
+          after every chart, so the first screen leads with visuals rather
+          than prose. */}
+      <Card style={{ padding: "18px 20px", marginBottom: "14px" }}>
+        <SectionHead icon="stethoscope" color="var(--lb-status-info)" title="Clinical Impression (Rule-Based Summary)" />
+        <p style={{ fontSize: "var(--lb-text-sm)", color: "var(--lb-text-primary)", lineHeight: 1.7, marginBottom: "18px" }}>
           {clinicalImpression}
         </p>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))", gap: "16px" }}>
-          <div>
-            <p style={{ fontSize: "var(--lb-text-2xs)", fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.12em", color: "var(--lb-text-muted)", marginBottom: "8px" }}>
-              Clinical Review Priority
-            </p>
-            <div style={{ display: "flex", alignItems: "baseline", gap: "8px", marginBottom: "6px" }}>
-              <span style={{ fontSize: "32px", fontWeight: 900, color: "var(--lb-status-high)", lineHeight: 1 }}>{reviewPriority ?? "—"}</span>
-              <span style={{ fontSize: "var(--lb-text-xs)", color: "var(--lb-text-muted)" }}>of up to {reviewPriorityMax}</span>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))", gap: "20px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "18px" }}>
+            <PriorityGauge value={reviewPriority} max={reviewPriorityMax} color="var(--lb-status-high)" />
+            <div>
+              <p style={{ fontSize: "var(--lb-text-2xs)", fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.12em", color: "var(--lb-text-muted)", marginBottom: "6px" }}>
+                Clinical Review Priority
+              </p>
+              <p style={{ fontSize: "var(--lb-text-2xs)", color: "var(--lb-text-muted)", lineHeight: 1.5 }}>
+                A disclosed count, not a black-box score: {reviewPriorityFormula}
+              </p>
             </div>
-            <div style={{ height: "6px", background: "var(--lb-track)", borderRadius: "var(--lb-radius-full)", overflow: "hidden", marginBottom: "8px" }}>
-              <div style={{ height: "100%", width: `${reviewPriorityMax > 0 ? Math.min(100, ((reviewPriority || 0) / reviewPriorityMax) * 100) : 0}%`, background: "var(--lb-status-high)", borderRadius: "var(--lb-radius-full)" }} />
-            </div>
-            <p style={{ fontSize: "var(--lb-text-2xs)", color: "var(--lb-text-muted)", lineHeight: 1.5 }}>
-              A disclosed count, not a black-box score: {reviewPriorityFormula}
-            </p>
           </div>
 
           <div>
@@ -284,150 +538,6 @@ export default function DoctorSummaryPage({ data }) {
           </div>
         </div>
       </Card>
-
-      {/* Findings-first: a chart, not a number wall. */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "16px", marginBottom: "16px" }} className="ov-row2">
-        <Card style={{ padding: "24px" }}>
-          <SectionHeader title="Findings Overview" accent="var(--lb-status-info)" />
-          <div style={{ display: "flex", alignItems: "center", gap: "20px", flexWrap: "wrap" }}>
-            <DonutChart data={tierDonutData} size={140} label={String(totalTiered)} sublabel="Variants" />
-            <div style={{ flex: 1, minWidth: "200px" }}>
-              {TIER_ORDER.filter((t) => (counts[t] || 0) > 0).map((t) => (
-                <div key={t} style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "7px" }}>
-                  <span style={{ width: "9px", height: "9px", borderRadius: "3px", background: tierColor(t), flexShrink: 0 }} />
-                  <span style={{ fontSize: "var(--lb-text-xs)", color: "var(--lb-text-secondary)", flex: 1 }}>{TIER_LABELS[t]}</span>
-                  <span style={{ fontSize: "var(--lb-text-sm)", fontWeight: 900, color: tierColor(t) }}>{counts[t]}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </Card>
-
-        <Card style={{ padding: "24px" }}>
-          <SectionHeader title="At a Glance" accent="var(--lb-chart-2)" />
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(140px,1fr))", gap: "12px" }}>
-            {[
-              { label: "Genes Tested", value: patient_summary?.genes_tested ?? 0, desc: "Different gene regions analyzed", color: "var(--lb-status-info)" },
-              { label: "Notable Findings", value: patient_summary?.genes_with_findings ?? 0, desc: "Genes with a substantial fraction of altered DNA", color: "var(--lb-status-moderate)" },
-              { label: "Literature Evidence", value: genesWithLiteratureEvidence, desc: "General associations, not confirmed variant-specific matches", color: "var(--lb-status-low)" },
-            ].map((k, i) => (
-              <div key={i} style={{ padding: "14px", borderRadius: "var(--lb-radius-md)", background: "var(--lb-row-hover)", border: "1px solid var(--lb-border)" }}>
-                <p style={{ fontSize: "24px", fontWeight: 900, color: k.color, lineHeight: 1 }}>{k.value}</p>
-                <p style={{ fontSize: "var(--lb-text-xs)", fontWeight: 700, color: "var(--lb-text-primary)", marginTop: "6px" }}>{k.label}</p>
-                <p style={{ fontSize: "var(--lb-text-2xs)", color: "var(--lb-text-secondary)", marginTop: "3px", lineHeight: 1.4 }}>{k.desc}</p>
-              </div>
-            ))}
-          </div>
-        </Card>
-      </div>
-
-      {/* Key gene findings, in plain language. Flat section, not a card --
-          the per-gene tiles below already carry their own border + accent
-          color, so an outer Card would just be a second box around boxes. */}
-      {patient_summary?.gene_cards?.length > 0 && (
-        <div style={{ marginBottom: "24px" }}>
-          <SectionHeader title="Key Gene Findings" accent="var(--lb-status-info)" />
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: "12px" }}>
-            {patient_summary.gene_cards.map((g, i) => (
-              <div key={i} style={{ padding: "16px", borderRadius: "var(--lb-radius-lg)", background: "var(--lb-row-hover)", border: "1px solid var(--lb-border)", borderLeft: "4px solid var(--lb-status-info)" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px", flexWrap: "wrap" }}>
-                  <span style={{ fontSize: "14px", fontWeight: 900, color: "var(--lb-text-primary)" }}>{g.gene}</span>
-                  {g.plain_name && <span style={{ fontSize: "var(--lb-text-2xs)", color: "var(--lb-text-secondary)" }}>— {g.plain_name}</span>}
-                </div>
-                <div style={{ marginBottom: "8px" }}>
-                  <p style={{ fontSize: "var(--lb-text-2xs)", fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.12em", color: "var(--lb-status-info)", marginBottom: "3px" }}>What We Found</p>
-                  <p style={{ fontSize: "var(--lb-text-sm)", color: "var(--lb-text-primary)", lineHeight: 1.5 }}>{g.finding}</p>
-                </div>
-                <div style={{ marginBottom: "8px" }}>
-                  <p style={{ fontSize: "var(--lb-text-2xs)", fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.12em", color: "var(--lb-status-low)", marginBottom: "3px" }}>Why It Matters</p>
-                  <p style={{ fontSize: "var(--lb-text-sm)", color: "var(--lb-text-secondary)", lineHeight: 1.5 }}>{g.why}</p>
-                </div>
-                <div style={{ padding: "8px 10px", borderRadius: "var(--lb-radius-sm)", background: "var(--lb-status-info-bg)", border: "1px solid var(--lb-status-info-border)" }}>
-                  <p style={{ fontSize: "var(--lb-text-xs)", fontWeight: 700, color: "var(--lb-status-info)" }}>→ {g.action}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Visual trend + confidence charts, in place of a raw number/gene dump. */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(320px,1fr))", gap: "16px", marginBottom: "16px" }}>
-        <Card style={{ padding: "20px" }}>
-          <SectionHeader title="Variant Severity Trend Across the Genome" accent="var(--lb-status-info)" />
-          <p style={{ fontSize: "var(--lb-text-xs)", color: "var(--lb-text-secondary)", marginBottom: "10px", lineHeight: 1.5 }}>
-            How much of the sample's DNA carries each variant, ordered across the genome — the same per-variant
-            values behind the Clinical Review Priority score above. Dashed lines mark the typical clonal (30%) and
-            low-fraction (5%) reference points; dot color matches the finding tiers.
-          </p>
-          <VAFTrendLine data={trendData} />
-        </Card>
-
-        <Card style={{ padding: "20px" }}>
-          <SectionHeader title="Sequencing Confidence" accent="var(--lb-chart-3)" />
-          <p style={{ fontSize: "var(--lb-text-xs)", color: "var(--lb-text-secondary)", marginBottom: "10px", lineHeight: 1.5 }}>
-            How many independent reads back each result — higher generally means a more reliable call.
-          </p>
-          <BarChart data={depthHistogram} xKey="label" yKey="count" colorKey="color" height={180} />
-        </Card>
-      </div>
-
-      {/* Germline vs somatic context, already plain-language. Flat section --
-          the metric tiles below already carry their own border. */}
-      <div style={{ marginBottom: "24px" }}>
-        <SectionHeader title="Germline / Somatic Pattern" accent="var(--lb-chart-2)" />
-        {data.germline_summary?.applied === false ? (
-          <p style={{ fontSize: "var(--lb-text-sm)", color: "var(--lb-text-secondary)", lineHeight: 1.7 }}>
-            {data.germline_summary.reason}
-          </p>
-        ) : (
-          <>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(160px,1fr))", gap: "12px", marginBottom: "14px" }}>
-              {[
-                { label: "Heterozygous pattern", value: data.germline_summary?.putative_heterozygous_germline_pattern ?? 0 },
-                { label: "Homozygous pattern", value: data.germline_summary?.putative_homozygous_germline_pattern ?? 0 },
-                { label: "Common in population", value: data.germline_summary?.common_population_variant ?? 0 },
-                { label: "Median VAF", value: `${Math.round((data.vaf_profile?.median || 0) * 100)}%` },
-              ].map((m, i) => (
-                <div key={i} style={{ padding: "14px", borderRadius: "var(--lb-radius-md)", background: "var(--lb-row-hover)", border: "1px solid var(--lb-border)" }}>
-                  <p style={{ fontSize: "var(--lb-text-2xs)", fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.12em", color: "var(--lb-text-muted)", marginBottom: "6px" }}>{m.label}</p>
-                  <p style={{ fontSize: "18px", fontWeight: 900, color: "var(--lb-chart-2)" }}>{m.value}</p>
-                </div>
-              ))}
-            </div>
-            <div style={{ padding: "12px", borderRadius: "var(--lb-radius-md)", background: "var(--lb-status-moderate-bg)", border: "1px solid var(--lb-status-moderate-border)" }}>
-              <p style={{ fontSize: "var(--lb-text-xs)", color: "var(--lb-status-moderate)", lineHeight: 1.6, fontWeight: 600 }}>
-                {data.germline_summary?.population_af_source_note}
-              </p>
-            </div>
-          </>
-        )}
-      </div>
-
-      {/* Next steps, kept illustrative and clearly labeled as such. */}
-      {patient_summary?.next_steps?.length > 0 && (
-        <Card style={{ padding: "20px", marginBottom: "16px" }}>
-          <SectionHeader title="Typical Next Steps (Illustrative)" accent="var(--lb-status-low)" />
-          <p style={{ fontSize: "var(--lb-text-xs)", color: "var(--lb-text-muted)", marginBottom: "16px" }}>
-            Generic steps in a real clinical workflow — not generated from this specific file.
-          </p>
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            {patient_summary.next_steps.map((step, i) => (
-              <div key={i} style={{ display: "flex", gap: "16px", paddingBottom: i < patient_summary.next_steps.length - 1 ? "20px" : 0 }}>
-                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", flexShrink: 0 }}>
-                  <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "var(--lb-brand)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <span style={{ fontSize: "12px", fontWeight: 900, color: "#fff" }}>{i + 1}</span>
-                  </div>
-                  {i < patient_summary.next_steps.length - 1 && <div style={{ width: "2px", flex: 1, background: "var(--lb-border)", marginTop: "4px" }} />}
-                </div>
-                <div style={{ paddingTop: "6px" }}>
-                  <p style={{ fontSize: "var(--lb-text-sm)", color: "var(--lb-text-primary)", lineHeight: 1.6, fontWeight: 500 }}>{step}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </Card>
-      )}
 
       <div style={{ padding: "20px", borderRadius: "var(--lb-radius-lg)", background: "var(--lb-status-moderate-bg)", border: "1px solid var(--lb-status-moderate-border)", display: "flex", alignItems: "flex-start", gap: "14px" }}>
         <div style={{ width: "36px", height: "36px", borderRadius: "var(--lb-radius-md)", flexShrink: 0, background: "color-mix(in srgb, var(--lb-status-moderate) 16%, transparent)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--lb-status-moderate)" }}>

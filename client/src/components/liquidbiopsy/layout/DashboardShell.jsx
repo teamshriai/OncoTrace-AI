@@ -1,10 +1,8 @@
-import { useRef } from "react";
 import ThemeToggle from "../ThemeToggle";
 import PulseDot from "../primitives/PulseDot";
 import { Icon } from "../icons";
 import { ICONS } from "../iconPaths";
 import { NAV_PAGES } from "../nav";
-import useFocusTrap from "../useFocusTrap";
 
 // The uploaded filename, not a fabricated name -- there is no real
 // patient-identity field anywhere in the API response.
@@ -13,37 +11,28 @@ function displayNameFromFilename(filename) {
   return filename.replace(/\.vcf\.gz$/i, "").replace(/\.vcf$/i, "");
 }
 
-export default function DashboardShell({ activePage, onNavigate, meta, tierSummary, callerAdapterValidated = true, theme, toggleTheme, onReset, onBack, sidebarOpen, setSidebarOpen, children }) {
+export default function DashboardShell({ activePage, onNavigate, meta, tierSummary, callerAdapterValidated = true, theme, toggleTheme, onReset, onBack, children }) {
   const pageTitle = NAV_PAGES.find((p) => p.id === activePage)?.label || "Dashboard";
   const tier1 = tierSummary?.counts?.tier_1_actionable_somatic ?? 0;
   const tier2 = tierSummary?.counts?.tier_2_uncertain_needs_review ?? 0;
   const patientName = displayNameFromFilename(meta.source_filename);
-  const sidebarRef = useRef(null);
-  useFocusTrap(sidebarRef, sidebarOpen, () => setSidebarOpen(false));
 
   return (
     <div style={{
       minHeight: "100vh", background: "var(--lb-bg-page)",
       fontFamily: "var(--lb-font-body)", transition: "background 0.5s", display: "flex",
     }}>
-      {sidebarOpen && (
-        <div onClick={() => setSidebarOpen(false)} style={{ position: "fixed", inset: 0, zIndex: 40, background: "var(--lb-bg-overlay)", backdropFilter: "blur(4px)" }} />
-      )}
-
+      {/* Permanent at >=900px; hidden below it, where the bottom tab bar
+          takes over navigation entirely -- a real app-style bottom nav, not
+          a drawer, so there's no toggle/backdrop/focus-trap to maintain for
+          a surface that's either always visible or never rendered. */}
       <aside
-        ref={sidebarRef}
-        role={sidebarOpen ? "dialog" : undefined}
-        aria-modal={sidebarOpen ? "true" : undefined}
         aria-label="Navigation"
-        tabIndex={-1}
         style={{
           position: "fixed", top: 0, left: 0, bottom: 0, zIndex: 50,
           width: "220px", background: "var(--lb-bg-surface-raised)",
           borderRight: "1px solid var(--lb-border)",
-          display: "flex", flexDirection: "column",
-          transform: sidebarOpen ? "translateX(0)" : "translateX(-100%)",
-          transition: "transform 0.3s ease",
-          boxShadow: sidebarOpen ? "4px 0 20px rgba(0,0,0,0.15)" : "none",
+          display: "none", flexDirection: "column",
         }} className="lb-sidebar">
         <div style={{ padding: "16px", borderBottom: "1px solid var(--lb-border)", flexShrink: 0 }}>
           <p style={{ fontSize: "13px", fontWeight: 700, color: "var(--lb-text-primary)", lineHeight: 1 }}>OncoTrace-AI</p>
@@ -55,7 +44,7 @@ export default function DashboardShell({ activePage, onNavigate, meta, tierSumma
             const active = activePage === page.id;
             return (
               <button key={page.id}
-                onClick={() => { onNavigate(page.id); setSidebarOpen(false); }}
+                onClick={() => onNavigate(page.id)}
                 style={{
                   width: "100%", display: "flex", alignItems: "center", gap: "10px",
                   padding: "10px 12px", borderRadius: "var(--lb-radius-md)", marginBottom: "2px",
@@ -88,22 +77,6 @@ export default function DashboardShell({ activePage, onNavigate, meta, tierSumma
         }}>
           <div style={{ maxWidth: "1400px", margin: "0 auto", padding: "0 16px" }}>
             <div className="lb-topbar-row" style={{ minHeight: "60px", padding: "10px 0", display: "flex", alignItems: "center", gap: "12px" }}>
-              {/* Only rendered where it does something: below 900px the
-                  sidebar is a drawer and this is the only way to open it.
-                  At >=900px the sidebar is permanently visible, so the
-                  toggle is redundant chrome and is hidden by CSS. */}
-              <button onClick={() => setSidebarOpen((o) => !o)}
-                aria-label={sidebarOpen ? "Close navigation" : "Open navigation"}
-                data-lb-btn="utility"
-                className="lb-nav-toggle"
-                style={{
-                  width: "36px", height: "36px", borderRadius: "var(--lb-radius-md)", flexShrink: 0,
-                  border: "1px solid var(--lb-border)", background: "var(--lb-input-bg)",
-                  cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--lb-text-secondary)",
-                }}>
-                <Icon d={sidebarOpen ? ICONS.close : ICONS.menu} size={17} style={{ color: "var(--lb-text-secondary)" }} />
-              </button>
-
               <div className="lb-topbar-title" style={{ flex: 1, minWidth: "120px" }}>
                 <p style={{ fontSize: "var(--lb-text-md)", fontWeight: 700, color: "var(--lb-text-primary)", lineHeight: 1.2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                   {pageTitle}
@@ -175,34 +148,64 @@ export default function DashboardShell({ activePage, onNavigate, meta, tierSumma
           </div>
         </header>
 
-        <main style={{ flex: 1, overflowY: "auto", padding: "20px 16px 80px" }}>
+        <main className="lb-main-content" style={{ flex: 1, overflowY: "auto", padding: "20px 16px 32px" }}>
           <div style={{ maxWidth: "1400px", margin: "0 auto" }}>
             {children}
           </div>
         </main>
+
+        {/* Real app-style bottom tab bar, replacing the sidebar entirely
+            below 900px. */}
+        <nav className="lb-bottom-nav" aria-label="Primary">
+          {NAV_PAGES.map((page) => {
+            const active = activePage === page.id;
+            return (
+              <button key={page.id} onClick={() => onNavigate(page.id)}
+                aria-current={active ? "page" : undefined}
+                style={{
+                  flex: 1, minWidth: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "3px",
+                  padding: "7px 2px 8px", border: "none", background: "none", cursor: "pointer",
+                  color: active ? "var(--lb-status-info)" : "var(--lb-text-muted)",
+                }}>
+                <Icon d={ICONS[page.icon] || ICONS.dna} size={20} style={{ color: active ? "var(--lb-status-info)" : "var(--lb-text-muted)", flexShrink: 0 }} />
+                <span style={{
+                  fontSize: "9px", fontWeight: active ? 800 : 600, lineHeight: 1.2,
+                  whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: "100%",
+                }}>
+                  {page.label}
+                </span>
+              </button>
+            );
+          })}
+        </nav>
       </div>
 
       <style>{`
         @media (min-width: 900px) {
-          .lb-sidebar { transform: translateX(0) !important; box-shadow: none !important; }
+          .lb-sidebar { display: flex !important; }
           .lb-main-area { margin-left: 220px; }
-          /* Sidebar is permanent at this width -- the toggle would be a
-             no-op control, so it's removed from the bar entirely. */
-          .lb-nav-toggle { display: none !important; }
-        }
-        @media (min-width: 1024px) {
-          .ov-row2 { grid-template-columns: 1fr 1fr !important; }
         }
         @media (max-width: 480px) {
           .lb-hide-xs { display: none !important; }
         }
-        /* Under 900px the sidebar is a drawer and the status pills are still
-           present, so the title and the action cluster can't share one line
-           without the heading collapsing to an ellipsis -- give each its own
-           row instead of truncating the heading. */
+        /* Under 900px the status pills and title can't share one line
+           without the heading collapsing to an ellipsis -- give each its
+           own row instead of truncating the heading. The bottom nav also
+           needs its own reserved space so it never covers page content. */
         @media (max-width: 899px) {
           .lb-topbar-row { flex-wrap: wrap; }
           .lb-topbar-title { flex: 1 1 100%; order: -1; }
+          .lb-main-content { padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px)) !important; }
+        }
+        .lb-bottom-nav {
+          display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+          background: var(--lb-bg-surface-raised);
+          border-top: 1px solid var(--lb-border);
+          backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+          padding-bottom: env(safe-area-inset-bottom, 0px);
+        }
+        @media (min-width: 900px) {
+          .lb-bottom-nav { display: none !important; }
         }
         [data-lb-theme] ::-webkit-scrollbar { width: 6px; height: 6px; }
         [data-lb-theme] ::-webkit-scrollbar-track { background: transparent; }

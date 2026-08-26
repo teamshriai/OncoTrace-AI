@@ -1,11 +1,12 @@
 import Card from "../primitives/Card";
+import Badge from "../primitives/Badge";
 import SectionHeader from "../primitives/SectionHeader";
 import StatRow from "../primitives/StatRow";
 import ProgressBar from "../primitives/ProgressBar";
 import BarChart from "../charts/BarChart";
 import { Icon } from "../icons";
 import { ICONS } from "../iconPaths";
-import { depthColor, mqColor, msiColor } from "../colors";
+import { depthColor, mqColor, msiColor, tierColor } from "../colors";
 
 // Three shared grid widths for this page instead of a different minmax()
 // picked per section -- keeps the auto-fit reflow rhythm consistent instead
@@ -14,8 +15,42 @@ const GRID_SMALL = "repeat(auto-fit,minmax(160px,1fr))";
 const GRID_MEDIUM = "repeat(auto-fit,minmax(220px,1fr))";
 const GRID_WIDE = "repeat(auto-fit,minmax(280px,1fr))";
 
+// The uploaded filename, not a fabricated name -- this app has no real
+// patient-identity field (confirmed against the schema: sample_id and
+// source_filename are the only identifiers anywhere in the response), so the
+// honest stand-in for "patient name" is literally what the file was named.
+function displayNameFromFilename(filename) {
+  if (!filename) return null;
+  return filename.replace(/\.vcf\.gz$/i, "").replace(/\.vcf$/i, "");
+}
+
+function IconBadge({ icon, color, size = 32 }) {
+  return (
+    <div style={{
+      width: `${size}px`, height: `${size}px`, borderRadius: "var(--lb-radius-md)", flexShrink: 0,
+      background: `color-mix(in srgb, ${color} 16%, transparent)`,
+      display: "flex", alignItems: "center", justifyContent: "center",
+    }}>
+      <Icon d={ICONS[icon]} size={size * 0.47} style={{ color }} />
+    </div>
+  );
+}
+
+const HEADLINE_TIERS = [
+  { key: "tier_1_actionable_somatic", label: "Actionable Somatic", icon: "target" },
+  { key: "tier_2_uncertain_needs_review", label: "Needs Review", icon: "eye" },
+  { key: "tier_3_germline_pattern_clinically_relevant", label: "Germline Pattern", icon: "shield" },
+];
+
 export default function TechnicalPage({ data }) {
-  const { technical_report, meta, qc_summary, variants } = data;
+  const { technical_report, meta, qc_summary, variants, tier_summary } = data;
+  const counts = tier_summary?.counts || {};
+
+  const patientName = displayNameFromFilename(meta.source_filename);
+  let analysisDate = null;
+  try {
+    analysisDate = new Date(meta.analysis_timestamp).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" });
+  } catch { /* leave null if unparseable */ }
 
   const skippedStages = Object.entries(meta.stages || {}).filter(([, s]) => s.status !== "ran");
 
@@ -35,6 +70,83 @@ export default function TechnicalPage({ data }) {
 
   return (
     <div>
+      {/* Report masthead -- sample identity, analysis metadata, and headline
+          tier counts, relocated here from Doctor Summary so that page stays
+          lean on charts. Reference build / genes covered / analysis date are
+          all analysis-provenance details, making this technical-report page
+          their natural home. */}
+      <Card style={{
+        padding: "20px 22px", marginBottom: "16px", position: "relative", overflow: "hidden",
+        background: "linear-gradient(135deg, color-mix(in srgb, var(--lb-brand) 12%, var(--lb-bg-surface)) 0%, var(--lb-bg-surface) 65%)",
+        borderTop: "3px solid var(--lb-brand)",
+      }}>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "18px", alignItems: "center", justifyContent: "space-between", marginBottom: "18px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+            <div style={{
+              width: "52px", height: "52px", borderRadius: "var(--lb-radius-lg)", flexShrink: 0,
+              background: "color-mix(in srgb, var(--lb-brand) 18%, transparent)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+            }}>
+              <Icon d={ICONS.dna} size={26} style={{ color: "var(--lb-brand)" }} />
+            </div>
+            <div>
+              <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "5px", flexWrap: "wrap" }}>
+                <span style={{ fontSize: "var(--lb-text-xl)", fontWeight: 800, color: "var(--lb-text-primary)" }}>
+                  {patientName || `Sample ${meta.sample_id}`}
+                </span>
+                {counts.tier_1_actionable_somatic > 0 ? (
+                  <Badge label={`${counts.tier_1_actionable_somatic} actionable somatic finding${counts.tier_1_actionable_somatic > 1 ? "s" : ""}`} color="var(--lb-status-high)" />
+                ) : (
+                  <Badge label="No actionable somatic finding" color="var(--lb-status-low)" />
+                )}
+              </div>
+              <p style={{ fontSize: "var(--lb-text-sm)", color: "var(--lb-text-secondary)" }}>Sample ID: {meta.sample_id}</p>
+            </div>
+          </div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
+            {[
+              { l: "Reference Build", v: `${meta.reference_build}${meta.reference_build_confirmed ? "" : " (unconfirmed)"}`, icon: "layers" },
+              { l: "Genes Covered", v: meta.panel_gene_count, icon: "dna" },
+              { l: "Analysis Date", v: analysisDate || "—", icon: "calendar" },
+            ].map((item, i) => (
+              <div key={i} style={{
+                display: "flex", alignItems: "center", gap: "9px", padding: "9px 12px",
+                borderRadius: "var(--lb-radius-md)", background: "var(--lb-bg-surface-raised)", border: "1px solid var(--lb-border)",
+              }}>
+                <Icon d={ICONS[item.icon]} size={14} style={{ color: "var(--lb-text-muted)", flexShrink: 0 }} />
+                <div>
+                  <p style={{ fontSize: "9px", fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--lb-text-muted)", lineHeight: 1 }}>{item.l}</p>
+                  <p style={{ fontSize: "var(--lb-text-sm)", fontWeight: 700, color: "var(--lb-text-primary)", marginTop: "3px" }}>{item.v}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Headline tier counts -- the same tier_summary.counts driving the
+            Findings Overview donut on Doctor Summary, surfaced here as bold
+            at-a-glance boxes. */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: "10px" }}>
+          {HEADLINE_TIERS.map((t) => {
+            const color = tierColor(t.key);
+            const value = counts[t.key] || 0;
+            return (
+              <div key={t.key} style={{
+                display: "flex", alignItems: "center", gap: "12px", padding: "12px 14px",
+                borderRadius: "var(--lb-radius-lg)", background: `color-mix(in srgb, ${color} 10%, transparent)`,
+                border: `1px solid color-mix(in srgb, ${color} 30%, transparent)`,
+              }}>
+                <IconBadge icon={t.icon} color={color} size={38} />
+                <div>
+                  <p style={{ fontSize: "26px", fontWeight: 900, color, lineHeight: 1 }}>{value}</p>
+                  <p style={{ fontSize: "var(--lb-text-2xs)", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--lb-text-secondary)", marginTop: "4px" }}>{t.label}</p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </Card>
+
       {/* Pipeline stages: a stage that did not run is shown as such, never as
           a negative result. Flat section -- the stage chips already carry
           their own ran/skipped color. */}

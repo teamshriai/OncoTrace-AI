@@ -12,7 +12,7 @@ import { vafColor, depthColor, mqColor, snColor, msiColor, nmColor, filterPassCo
 const PAGE_SIZE = 50;
 
 export default function VariantsPage({ data }) {
-  const { variants, variant_type_distribution, chromosome_distribution, vaf_profile, structural_variants } = data;
+  const { variants, variant_type_distribution, chromosome_distribution, vaf_profile, structural_variants, patient_summary, actionability_summary } = data;
   const [search, setSearch] = useState("");
   const [filterMode, setFilterMode] = useState("all");
   const [sortField, setSortField] = useState("vaf");
@@ -22,6 +22,14 @@ export default function VariantsPage({ data }) {
   const typeDist = variant_type_distribution.map((d, i) => ({ label: d.type, value: d.count, color: qualitativeColor(i) }));
   const chrDist = chromosome_distribution.map((d, i) => ({ ...d, color: qualitativeColor(i) }));
   const total = variants.length;
+
+  const genesWithLiteratureEvidence = (patient_summary?.genes_with_variant_level_evidence || 0)
+    + (actionability_summary?.genes?.length || 0);
+  const atAGlance = [
+    { label: "Genes Tested", value: patient_summary?.genes_tested ?? 0, icon: "dna", color: "var(--lb-status-info)", sub: "Different gene regions analyzed" },
+    { label: "Notable Findings", value: patient_summary?.genes_with_findings ?? 0, icon: "alert", color: "var(--lb-status-moderate)", sub: "Genes with a substantial fraction of altered DNA" },
+    { label: "Literature Evidence", value: genesWithLiteratureEvidence, icon: "flask", color: "var(--lb-status-low)", sub: "General associations, not confirmed variant-specific matches" },
+  ];
 
   const filtered = useMemo(() => {
     return variants
@@ -62,6 +70,34 @@ export default function VariantsPage({ data }) {
 
   return (
     <div>
+      {/* At a Glance -- gene-coverage and evidence counts, relocated here
+          from Doctor Summary so that page stays lean on charts; this page
+          already tracks per-gene/per-variant detail, making it the natural
+          home. */}
+      <Card style={{ padding: "16px 20px", marginBottom: "16px" }}>
+        <SectionHeader title="At a Glance" accent="var(--lb-chart-2)" />
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(190px,1fr))", gap: "16px" }}>
+          {atAGlance.map((s, i) => (
+            <div key={i} style={{ display: "flex", alignItems: "center", gap: "12px", minWidth: 0 }}>
+              <div style={{
+                width: "32px", height: "32px", borderRadius: "var(--lb-radius-md)", flexShrink: 0,
+                background: `color-mix(in srgb, ${s.color} 16%, transparent)`,
+                display: "flex", alignItems: "center", justifyContent: "center",
+              }}>
+                <Icon d={ICONS[s.icon]} size={15} style={{ color: s.color }} />
+              </div>
+              <div style={{ minWidth: 0 }}>
+                <div style={{ display: "flex", alignItems: "baseline", gap: "6px", flexWrap: "wrap" }}>
+                  <span style={{ fontSize: "22px", fontWeight: 900, color: s.color, lineHeight: 1 }}>{s.value}</span>
+                  <span style={{ fontSize: "var(--lb-text-xs)", fontWeight: 700, color: "var(--lb-text-primary)" }}>{s.label}</span>
+                </div>
+                <p style={{ fontSize: "var(--lb-text-2xs)", color: "var(--lb-text-muted)", marginTop: "2px", lineHeight: 1.4 }}>{s.sub}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </Card>
+
       {/* Three overview modules as one flat, divided section instead of
           three separate floating cards -- they're read together as one
           "overview" glance, not three independent surfaces. */}
@@ -132,6 +168,7 @@ export default function VariantsPage({ data }) {
                 value={search}
                 onChange={(e) => { setSearch(e.target.value); setPage(0); }}
                 placeholder="Search gene or type..."
+                aria-label="Search variants by gene or type"
                 style={{
                   paddingLeft: "28px", paddingRight: "10px", paddingTop: "7px", paddingBottom: "7px",
                   borderRadius: "var(--lb-radius-md)", border: "1px solid var(--lb-border)", background: "var(--lb-input-bg)",
@@ -142,6 +179,7 @@ export default function VariantsPage({ data }) {
             <select
               value={filterMode}
               onChange={(e) => { setFilterMode(e.target.value); setPage(0); }}
+              aria-label="Filter variants"
               style={{ padding: "7px 12px", borderRadius: "var(--lb-radius-md)", border: "1px solid var(--lb-border)", background: "var(--lb-input-bg)", color: "var(--lb-text-primary)", fontSize: "var(--lb-text-sm)", outline: "none" }}
             >
               <option value="all">All Variants</option>

@@ -3,6 +3,10 @@
 // ./iconPaths.js, kept separate so this file only exports components (React Fast
 // Refresh requires that of any file exporting a component).
 
+// aria-hidden + focusable="false": every call site pairs this with either
+// visible text or an aria-label on the enclosing button, so the icon itself
+// is decorative -- exposing it to the accessibility tree would just announce
+// an unlabeled graphic ahead of the label that already names it.
 export const Icon = ({ d, size = 16, style = {}, strokeWidth = 1.5 }) => (
   <svg
     style={{ width: size, height: size, flexShrink: 0, ...style }}
@@ -12,6 +16,8 @@ export const Icon = ({ d, size = 16, style = {}, strokeWidth = 1.5 }) => (
     strokeWidth={strokeWidth}
     strokeLinecap="round"
     strokeLinejoin="round"
+    aria-hidden="true"
+    focusable="false"
   >
     <path d={d} />
   </svg>

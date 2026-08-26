@@ -16,7 +16,6 @@ const PAGES = {
 
 export default function Dashboard({ data, onReset, onBack, theme, toggleTheme }) {
   const [activePage, setActivePage] = useState("doctor");
-  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const PageComponent = PAGES[activePage] || DoctorSummaryPage;
 
@@ -31,8 +30,6 @@ export default function Dashboard({ data, onReset, onBack, theme, toggleTheme })
       toggleTheme={toggleTheme}
       onReset={onReset}
       onBack={onBack}
-      sidebarOpen={sidebarOpen}
-      setSidebarOpen={setSidebarOpen}
     >
       <PageComponent data={data} theme={theme} />
     </DashboardShell>

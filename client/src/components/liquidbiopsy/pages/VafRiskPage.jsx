@@ -2,7 +2,7 @@ import Card from "../primitives/Card";
 import SectionHeader from "../primitives/SectionHeader";
 import Badge from "../primitives/Badge";
 import VAFGeneChart from "../charts/VAFGeneChart";
-import { vafColor, filterPassColor } from "../colors";
+import { vafColor, filterPassColor, tierColor, TIER_SHORT_LABELS } from "../colors";
 
 const VAF_GUIDE = [
   { range: "0–10%", interp: "Low fraction — sequencing noise or low-fraction sample", color: "var(--lb-chart-2)" },
@@ -26,7 +26,7 @@ function isHighRisk(g) {
 }
 
 export default function VafRiskPage({ data, theme }) {
-  const { gene_summary, variants } = data;
+  const { gene_summary, variants, patient_summary } = data;
   const highVaf = variants.filter((v) => v.vaf >= 0.7).sort((a, b) => b.vaf - a.vaf);
   const maxDepth = variants.reduce((m, v) => Math.max(m, v.depth), 0);
   const bubbleVariants = variants.length > BUBBLE_CAP
@@ -40,7 +40,47 @@ export default function VafRiskPage({ data, theme }) {
 
   return (
     <div>
-      {/* High-risk genes listed first and on their own -- not mixed into a
+      {/* Key gene findings, in plain language, color-coded by the same real
+          evidence tier used everywhere else in this app -- relocated here
+          from Doctor Summary so page 1 leads with charts, grouped above the
+          VAF-magnitude-ranked high-risk list below it (curated evidence
+          first, quantitative ranking second). */}
+      {patient_summary?.gene_cards?.length > 0 && (
+        <div style={{ marginBottom: "24px" }}>
+          <SectionHeader title="Key Gene Findings" accent="var(--lb-status-info)" />
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: "12px" }}>
+            {patient_summary.gene_cards.map((g, i) => {
+              const c = tierColor(g.evidence_basis);
+              return (
+                <div key={i} style={{
+                  padding: "16px", borderRadius: "var(--lb-radius-lg)",
+                  background: `color-mix(in srgb, ${c} 6%, var(--lb-row-hover))`,
+                  border: "1px solid var(--lb-border)", borderLeft: `4px solid ${c}`,
+                }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px", flexWrap: "wrap" }}>
+                    <span style={{ fontSize: "14px", fontWeight: 900, color: "var(--lb-text-primary)" }}>{g.gene}</span>
+                    {g.plain_name && <span style={{ fontSize: "var(--lb-text-2xs)", color: "var(--lb-text-secondary)" }}>— {g.plain_name}</span>}
+                    {g.evidence_basis && <Badge label={TIER_SHORT_LABELS[g.evidence_basis] || g.evidence_basis} color={c} small />}
+                  </div>
+                  <div style={{ marginBottom: "8px" }}>
+                    <p style={{ fontSize: "var(--lb-text-2xs)", fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.12em", color: "var(--lb-status-info)", marginBottom: "3px" }}>What We Found</p>
+                    <p style={{ fontSize: "var(--lb-text-sm)", color: "var(--lb-text-primary)", lineHeight: 1.5 }}>{g.finding}</p>
+                  </div>
+                  <div style={{ marginBottom: "8px" }}>
+                    <p style={{ fontSize: "var(--lb-text-2xs)", fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.12em", color: "var(--lb-status-low)", marginBottom: "3px" }}>Why It Matters</p>
+                    <p style={{ fontSize: "var(--lb-text-sm)", color: "var(--lb-text-secondary)", lineHeight: 1.5 }}>{g.why}</p>
+                  </div>
+                  <div style={{ padding: "8px 10px", borderRadius: "var(--lb-radius-sm)", background: "var(--lb-status-info-bg)", border: "1px solid var(--lb-status-info-border)" }}>
+                    <p style={{ fontSize: "var(--lb-text-xs)", fontWeight: 700, color: "var(--lb-status-info)" }}>→ {g.action}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* High-risk genes listed on their own -- not mixed into a
           single chart with every other gene in the panel. Flat section: the
           per-gene rows below already carry their own high-severity tint. */}
       <div style={{ marginBottom: "24px" }}>
