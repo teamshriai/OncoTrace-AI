@@ -120,3 +120,23 @@ def test_annotate_with_clinvar_skips_reconciliation_when_already_compliant(tmp_p
     sort_calls = [cmd for cmd in calls if cmd[:2] == ["bcftools", "sort"]]
     assert len(sort_calls) == 1
     assert sort_calls[0][-1] == input_vcf  # sorted directly, no reconciled copy needed
+
+
+def test_annotate_with_clinvar_reconciles_headers_even_with_no_reference_provisioned(tmp_path):
+    """Reproduces the actual live-deployment failure: resources/reference/ is
+    completely empty (reference genome never downloaded on this server), so
+    reference_fasta and its .fai both point at paths that don't exist.
+    `normalize_vcf()` never even runs in this state (analysis_service.py
+    gates it on config.reference_ready()), so the raw, header-less upload
+    reaches this step unchanged. Declaring a file's own already-correct
+    contigs doesn't require a reference at all -- only renaming a mismatched
+    name would -- so this must still succeed."""
+    clinvar_vcf = _build_clinvar_vcf(tmp_path)
+    input_vcf = write(tmp_path, "raw_upload.vcf", NO_HEADER_DECLARATIONS_VCF)
+    output_vcf = str(tmp_path / "clinvar_annotated.vcf")
+    nonexistent_reference_fasta = str(tmp_path / "reference" / "GRCh37.fa")  # directory doesn't even exist
+
+    annotate_clinvar.annotate_with_clinvar(input_vcf, output_vcf, clinvar_vcf, nonexistent_reference_fasta)
+
+    result = annotate_clinvar.extract_clinvar(output_vcf)
+    assert result["1:5:A:G"]["clnsig"] == "Pathogenic"
