@@ -13,6 +13,8 @@ from pathlib import Path
 
 from cyvcf2 import VCF
 
+from .normalize import ensure_contig_headers
+
 
 class ClinVarError(Exception):
     pass
@@ -39,17 +41,24 @@ def review_status_to_stars(status: str | None) -> int | None:
     return _REVIEW_STARS.get(status.strip().lower().replace(" ", "_"))
 
 
-def _bgzip_and_index(vcf_path: str) -> str:
+def _bgzip_and_index(vcf_path: str, reference_fasta: str) -> str:
     """bcftools annotate needs a bgzip-compressed, indexed input to do the
     coordinate join, so compress and index a working copy.
 
     tabix requires coordinate-sorted input, but nothing upstream (SnpEff,
     normalization) guarantees that -- so sort defensively here rather than
-    trusting the caller's ordering.
+    trusting the caller's ordering. `bcftools sort` also requires every
+    record's CHROM to be declared in the file's own header: SnpEff (run just
+    before this, on normalize.py's output) does not reliably carry through
+    the ##contig declarations normalize.py already ensured were present, so
+    reconcile them again here, on whatever file this call actually receives,
+    rather than trusting an upstream tool this module doesn't control.
     """
-    sorted_path = f"{vcf_path}.sorted.vcf"
+    reconciled = ensure_contig_headers(vcf_path, vcf_path, reference_fasta)
+
+    sorted_path = f"{reconciled}.sorted.vcf"
     result = subprocess.run(
-        ["bcftools", "sort", "-O", "v", "-o", sorted_path, vcf_path],
+        ["bcftools", "sort", "-O", "v", "-o", sorted_path, reconciled],
         capture_output=True, text=True,
     )
     if result.returncode != 0:
@@ -66,12 +75,12 @@ def _bgzip_and_index(vcf_path: str) -> str:
     return gz_path
 
 
-def annotate_with_clinvar(input_vcf: str, output_vcf: str, clinvar_vcf: str) -> None:
+def annotate_with_clinvar(input_vcf: str, output_vcf: str, clinvar_vcf: str, reference_fasta: str) -> None:
     if not Path(clinvar_vcf).exists():
         raise ClinVarError(
             f"ClinVar VCF not found at {clinvar_vcf}. Run scripts/download_references.sh to provision it."
         )
-    indexed_input = _bgzip_and_index(input_vcf)
+    indexed_input = _bgzip_and_index(input_vcf, reference_fasta)
     result = subprocess.run(
         [
             "bcftools", "annotate",

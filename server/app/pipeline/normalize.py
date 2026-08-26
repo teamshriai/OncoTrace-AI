@@ -7,9 +7,10 @@ Symbolic ALT (<DEL> etc.) records pass through largely unchanged by
 `bcftools norm -m -any` -- they're matched by gene-overlap downstream, not
 exact REF/ALT, so that's expected and not a bug in this step.
 
-This module is also the single place that reconciles two classes of VCF
-contig-naming problems against the reference FASTA, before they can surface
-as confusing failures several pipeline stages later:
+This module also exports `ensure_contig_headers()`, the single place that
+reconciles two classes of VCF contig-naming problems against the reference
+FASTA, before they can surface as confusing failures several pipeline stages
+later:
 
   1. A "chr1"-style upload against this codebase's bare-contig ("1")
      reference FASTAs (or vice versa) -- `bcftools norm` itself only warns
@@ -17,14 +18,17 @@ as confusing failures several pipeline stages later:
      sequence from the reference by its unreconciled name.
   2. A VCF whose header omits (or incompletely declares) ##contig lines --
      permitted by the VCF spec, and tolerated elsewhere in this pipeline
-     (validate.py warns rather than fails on it), but `bcftools annotate`
-     -- used downstream for the ClinVar/CIViC join, on this module's output
-     -- refuses to run at all against a record whose CHROM isn't declared
-     in its own header.
+     (validate.py warns rather than fails on it), but `bcftools sort` /
+     `bcftools annotate` -- used downstream for the ClinVar/CIViC join --
+     refuse to run at all against a record whose CHROM isn't declared in
+     its own header.
 
-Both are reconciled here, once, so every downstream bcftools consumer of
-this module's output sees a well-formed header regardless of what the
-original upload declared.
+`normalize_vcf()` calls this on the raw upload before `bcftools norm` runs.
+SnpEff, run between normalization and the ClinVar join, does not reliably
+carry the injected declarations through to its own output -- so
+`annotate_clinvar.py` calls `ensure_contig_headers()` again on SnpEff's
+output before sorting it, rather than trusting an upstream tool it doesn't
+control to preserve them.
 """
 
 import subprocess
@@ -145,6 +149,37 @@ def _reconcile_contigs(
     return reconciled_path
 
 
+def ensure_contig_headers(input_path: str, output_path_hint: str, reference_fasta: str) -> str:
+    """Returns a path to a VCF whose header declares every contig its records
+    actually use, spelled to match reference_fasta's own .fai -- input_path
+    itself, unchanged, if it's already compliant (the common case, and the
+    only case that costs more than two cheap scans). `output_path_hint` is
+    used only to derive where a reconciled copy is written (same directory,
+    same per-request workdir the caller already cleans up) -- it is never
+    read or overwritten itself.
+
+    Safe to call more than once on the same logical file as it moves through
+    the pipeline: each call re-checks the file it's actually handed, so it
+    reconciles whatever gap exists at that point rather than assuming an
+    earlier call's fix survived an intervening tool untouched.
+    """
+    fai_lengths = _read_fai(reference_fasta)
+    if fai_lengths is None:
+        return input_path
+
+    reference_contigs = set(fai_lengths)
+    used = _used_contigs(input_path)
+    rename_map = _chr_prefix_rename_map(used, reference_contigs)
+
+    declared_after_rename = {rename_map.get(c, c) for c in _declared_contigs(input_path)}
+    final_contigs = (rename_map.get(c, c) for c in used)
+    missing = [c for c in dict.fromkeys(final_contigs) if c not in declared_after_rename]
+
+    if not rename_map and not missing:
+        return input_path
+    return _reconcile_contigs(input_path, output_path_hint, rename_map, missing, fai_lengths)
+
+
 def normalize_vcf(input_path: str, output_path: str, reference_fasta: str) -> None:
     if not Path(reference_fasta).exists():
         raise NormalizationError(
@@ -152,24 +187,7 @@ def normalize_vcf(input_path: str, output_path: str, reference_fasta: str) -> No
             f"to provision it before analysis can run."
         )
 
-    # Reconcile contig naming/header-declaration gaps before `norm` (and
-    # every downstream bcftools step) ever runs. Already-compliant files
-    # (correctly-named, fully-declared -- the common case) pay only for the
-    # two cheap scans below; the actual rewrite pass only runs when a real
-    # gap is found.
-    norm_input = input_path
-    fai_lengths = _read_fai(reference_fasta)
-    if fai_lengths is not None:
-        reference_contigs = set(fai_lengths)
-        used = _used_contigs(input_path)
-        rename_map = _chr_prefix_rename_map(used, reference_contigs)
-
-        declared_after_rename = {rename_map.get(c, c) for c in _declared_contigs(input_path)}
-        final_contigs = (rename_map.get(c, c) for c in used)
-        missing = [c for c in dict.fromkeys(final_contigs) if c not in declared_after_rename]
-
-        if rename_map or missing:
-            norm_input = _reconcile_contigs(input_path, output_path, rename_map, missing, fai_lengths)
+    norm_input = ensure_contig_headers(input_path, output_path, reference_fasta)
 
     result = subprocess.run(
         ["bcftools", "norm", "-f", reference_fasta, "-m", "-any", "-O", "v", "-o", output_path, norm_input],

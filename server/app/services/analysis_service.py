@@ -242,7 +242,7 @@ def analyze_vcf(upload_path: str, source_filename: str, reference_build_hint: st
             clinvar_release = "not applicable"
         elif config.clinvar_ready(build):
             clinvar_out = str(workdir / "clinvar.vcf")
-            annotate_clinvar.annotate_with_clinvar(working_vcf, clinvar_out, str(clinvar_vcf))
+            annotate_clinvar.annotate_with_clinvar(working_vcf, clinvar_out, str(clinvar_vcf), str(ref_fasta))
             clinvar_by_key = annotate_clinvar.extract_clinvar(clinvar_out)
             clinvar_release = config.read_release(config.CLINVAR_RELEASE_FILE, "clinvar")
             matched = sum(1 for c in clinvar_by_key.values() if c["match_level"] == "exact")
