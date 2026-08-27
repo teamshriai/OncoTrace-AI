@@ -637,7 +637,7 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
               </span>
             ) : (
               <img
-                src="/logo.webp"
+                src="/oncotrace-ai-logo.png"
                 alt="OncoTrace-AI"
                 draggable={false}
                 onError={() => setLogoError(true)}
