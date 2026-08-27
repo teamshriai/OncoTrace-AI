@@ -17,30 +17,25 @@ import Mammodemo          from './components/Mammodemo';
 import Blog               from './pages/Blog/Blog';
 import BlogPost           from './pages/Blog/BlogPost';
 
-/* ── Navbar height token — change once here ── */
-const NAV_H = 108; // px  (matches .nb-bar height: 108px in Navbar.jsx)
+/* ── Navbar height token ──
+   Navbar.jsx defines --nav-h responsively (it shrinks on small screens) and
+   scrolls/offsets against it; page content below must offset by the same
+   var so the fixed header never overlaps it at any breakpoint. */
+const NAV_H = 'var(--nav-h, 108px)';
 
 /* ─────────────────────────────────────────────
    Section anchor helper
    Usage: <Section id="mammogram"> … </Section>
-   Renders a zero-height anchor that sits above
-   the visible top edge so the navbar doesn't
-   cover the heading when scrolled into view.
+   Just carries the id for scroll targeting — the
+   fixed-navbar offset itself is applied once,
+   globally, via `scroll-padding-top` and
+   SCROLL_OFFSET in Navbar.jsx. Baking a second
+   offset in here would double-count it and land
+   scrolls with a large empty gap under the navbar.
 ───────────────────────────────────────────── */
 function Section({ id, children, className = '' }) {
   return (
-    <div className={`relative ${className}`}>
-      <span
-        id={id}
-        style={{
-          position: 'absolute',
-          top: `-${NAV_H + 16}px`,
-          display: 'block',
-          visibility: 'hidden',
-          pointerEvents: 'none',
-        }}
-        aria-hidden="true"
-      />
+    <div id={id} className={`relative ${className}`}>
       {children}
     </div>
   );

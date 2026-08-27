@@ -207,29 +207,29 @@ const scopedCSS = `
     }
 
     .hero-badge-open-source {
-      font-size:   clamp(5px, 2.4vw, 11px);
+      font-size:   clamp(9px, 2.4vw, 11px);
       white-space: normal;
     }
 
     .hero-badge-tagline {
-      font-size:   clamp(4px, 1.7vw, 8px);
+      font-size:   clamp(7px, 1.7vw, 8px);
       margin-top:  0.2em;
       white-space: normal;
     }
 
     .hero-ai-powered-label {
-      font-size:   clamp(4px, 1.6vw, 7px);
+      font-size:   clamp(7px, 1.6vw, 7px);
       white-space: normal;
       margin-bottom: 0.1em;
     }
 
     .hero-main-headline {
-      font-size:   clamp(7px, 2.9vw, 13px);
+      font-size:   clamp(11px, 2.9vw, 13px);
       line-height: 1.15;
     }
 
     .hero-powered-by-link {
-      font-size:  clamp(3px, 1.6vw, 7px);
+      font-size:  clamp(6px, 1.6vw, 7px);
       margin-top: 0.1em;
       white-space: normal;
     }

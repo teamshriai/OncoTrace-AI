@@ -184,7 +184,7 @@ function StatStrip({ title, items }) {
           {title}
         </p>
       )}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(190px,1fr))", gap: "16px" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(190px,100%),1fr))", gap: "16px" }}>
         {items.map((s, i) => (
           <div key={i} style={{ display: "flex", alignItems: "center", gap: "12px", minWidth: 0 }}>
             <IconBadge icon={s.icon} color={s.color} />
@@ -286,7 +286,7 @@ export default function DoctorSummaryPage({ data }) {
           Reserved for a future patient-record integration — no demographic data is collected or inferred by this
           analysis today.
         </p>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(140px,1fr))", gap: "14px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(140px,100%),1fr))", gap: "14px" }}>
           {["Full Name", "Date of Birth", "Age", "Sex", "Contact Number", "MRN / Patient ID", "Ordering Physician"].map((label, i) => (
             <div key={i}>
               <p style={{ fontSize: "var(--lb-text-2xs)", fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--lb-text-muted)", marginBottom: "6px" }}>
@@ -303,7 +303,7 @@ export default function DoctorSummaryPage({ data }) {
           the Variant Analysis tab -- surfaced here too as a second real
           chart alongside the tier breakdown, matching how a lab report pairs
           a findings donut with a variant-type donut. */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: "14px", marginBottom: "14px" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(280px,100%),1fr))", gap: "14px", marginBottom: "14px" }}>
         <Card style={{ padding: "20px" }}>
           <SectionHead icon="target" color="var(--lb-status-info)" title="Findings Overview" />
           <div style={{ display: "flex", alignItems: "center", gap: "18px", flexWrap: "wrap" }}>
@@ -340,7 +340,7 @@ export default function DoctorSummaryPage({ data }) {
       </div>
 
       {/* Visual trend + confidence charts, in place of a raw number/gene dump. */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(320px,1fr))", gap: "14px", marginBottom: "14px" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(320px,100%),1fr))", gap: "14px", marginBottom: "14px" }}>
         <Card style={{ padding: "20px" }}>
           <SectionHead icon="trend" color="var(--lb-status-info)" title="Variant Severity Trend Across the Genome" />
           <p style={{ fontSize: "var(--lb-text-xs)", color: "var(--lb-text-secondary)", marginBottom: "10px", lineHeight: 1.5 }}>
@@ -365,7 +365,7 @@ export default function DoctorSummaryPage({ data }) {
           Variant Analysis tab, surfacing them as a second genome-wide view
           alongside the trend/confidence row above, before the purely
           technical/QC row below. */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(320px,1fr))", gap: "14px", marginBottom: "14px" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(320px,100%),1fr))", gap: "14px", marginBottom: "14px" }}>
         {chrDist.length > 0 && (
           <Card style={{ padding: "20px" }}>
             <SectionHead icon="sort" color="var(--lb-chart-3)" title="Variants per Chromosome" />
@@ -385,7 +385,7 @@ export default function DoctorSummaryPage({ data }) {
           signal, not a clinical finding, so it's placed last among all chart
           sections, immediately before the Germline/Somatic categorization
           below. */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))", gap: "14px", marginBottom: "14px" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(260px,100%),1fr))", gap: "14px", marginBottom: "14px" }}>
         <Card style={{ padding: "20px" }}>
           <SectionHead icon="filter" color="var(--lb-status-low)" title="By Filter Status" />
           <div style={{ display: "flex", alignItems: "center", gap: "16px", flexWrap: "wrap" }}>
@@ -419,7 +419,7 @@ export default function DoctorSummaryPage({ data }) {
           <SectionHead icon="target" color="var(--lb-status-low)" title="Mapping Quality (MQ) per Variant (first 20)" />
           <BarChart data={mqPerVariantData} xKey="label" yKey="count" colorKey="color" height={160} />
           <div style={{ marginTop: "8px", padding: "10px", borderRadius: "var(--lb-radius-md)", background: "var(--lb-row-hover)", border: "1px solid var(--lb-border)" }}>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(96px,1fr))", gap: "8px" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(96px,100%),1fr))", gap: "8px" }}>
               {[{ l: "MQ = 60", d: "Perfectly unique mapping", c: "var(--lb-status-low)" }, { l: "MQ ≥ 30", d: "Acceptable", c: "var(--lb-status-moderate)" }, { l: "MQ < 30", d: "Poor, artefact risk", c: "var(--lb-status-high)" }].map((r, i) => (
                 <div key={i}>
                   <p style={{ fontSize: "var(--lb-text-xs)", fontWeight: 700, color: r.c }}>{r.l}</p>
@@ -498,7 +498,7 @@ export default function DoctorSummaryPage({ data }) {
           {clinicalImpression}
         </p>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))", gap: "20px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(240px,100%),1fr))", gap: "20px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "18px" }}>
             <PriorityGauge value={reviewPriority} max={reviewPriorityMax} color="var(--lb-status-high)" />
             <div>

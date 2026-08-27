@@ -1,7 +1,23 @@
-import { useEffect, useRef, useMemo, Suspense } from "react";
+import { useEffect, useRef, useMemo, useState, Suspense } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
+import ErrorBoundary from "./ErrorBoundary";
+
+// Some older mobile browsers / in-app webviews have no WebGL at all; creating
+// a <Canvas> there throws synchronously. Check before ever mounting one.
+function hasWebGL() {
+  if (typeof window === "undefined" || typeof document === "undefined") return false;
+  try {
+    const canvas = document.createElement("canvas");
+    return !!(
+      window.WebGLRenderingContext &&
+      (canvas.getContext("webgl2") || canvas.getContext("webgl") || canvas.getContext("experimental-webgl"))
+    );
+  } catch {
+    return false;
+  }
+}
 
 /* ─────────────────────────────────────────────
    Scroll store — lerped for silky-smooth motion
@@ -111,6 +127,30 @@ export default function DNA3DSection() {
   const scrollHintRef = useRef();
   const textTrackRef = useRef();
   const offsetsRef = useRef({ start: 0, end: 0, computed: false });
+  const [canRender3D] = useState(hasWebGL);
+  const [load3D, setLoad3D] = useState(false);
+
+  // Don't fetch the 49MB model until the section is actually within reach —
+  // otherwise every visitor pays for it immediately on page load.
+  useEffect(() => {
+    if (!canRender3D) return;
+    const el = sectionRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") {
+      setLoad3D(true);
+      return;
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) {
+          setLoad3D(true);
+          io.disconnect();
+        }
+      },
+      { rootMargin: "800px 0px" }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [canRender3D]);
 
   useEffect(() => {
     /* ───────────────────────────────────────────
@@ -241,7 +281,7 @@ export default function DNA3DSection() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="relative h-[500vh]">
+    <section ref={sectionRef} className="relative h-[320vh] sm:h-[420vh] lg:h-[500vh]">
       {/* ─── sticky viewport ─── */}
       <div className="sticky top-0 h-screen overflow-hidden bg-white">
         {/* ── ambient glows ── */}
@@ -394,57 +434,62 @@ export default function DNA3DSection() {
                      flex items-center justify-center"
         >
           <div className="relative h-full w-full">
-            <Canvas
-              camera={{ position: [0, 0, 20], fov: 50 }}
-              dpr={[1, 2]}
-              className="!bg-transparent"
-              gl={{
-                antialias: true,
-                alpha: true,
-                powerPreference: "high-performance",
-                toneMapping: THREE.NoToneMapping,
-              }}
-            >
-              <Suspense fallback={<Loader />}>
-                <ambientLight intensity={1.1} />
-                <directionalLight
-                  position={[5, 8, 5]}
-                  intensity={2.4}
-                  color="#ffffff"
-                />
-                <directionalLight
-                  position={[-4, -3, 6]}
-                  intensity={1.0}
-                  color="#93c5fd"
-                />
-                <pointLight
-                  position={[-6, 4, 4]}
-                  intensity={0.8}
-                  color="#60a5fa"
-                />
-                <pointLight
-                  position={[6, -4, -3]}
-                  intensity={0.5}
-                  color="#818cf8"
-                />
-                <pointLight
-                  position={[0, -8, 2]}
-                  intensity={0.4}
-                  color="#22d3ee"
-                />
-                <pointLight
-                  position={[0, 8, -2]}
-                  intensity={0.5}
-                  color="#dbeafe"
-                />
-                <DNAModel />
-              </Suspense>
-            </Canvas>
+            {canRender3D && load3D && (
+              // If WebGL context creation fails at runtime, or the model
+              // fails to fetch/parse, this only drops the 3D model — it
+              // must never take the rest of the page down with it.
+              <ErrorBoundary fallback={null}>
+                <Canvas
+                  camera={{ position: [0, 0, 20], fov: 50 }}
+                  dpr={[1, 2]}
+                  className="!bg-transparent"
+                  gl={{
+                    antialias: true,
+                    alpha: true,
+                    powerPreference: "high-performance",
+                    toneMapping: THREE.NoToneMapping,
+                  }}
+                >
+                  <Suspense fallback={<Loader />}>
+                    <ambientLight intensity={1.1} />
+                    <directionalLight
+                      position={[5, 8, 5]}
+                      intensity={2.4}
+                      color="#ffffff"
+                    />
+                    <directionalLight
+                      position={[-4, -3, 6]}
+                      intensity={1.0}
+                      color="#93c5fd"
+                    />
+                    <pointLight
+                      position={[-6, 4, 4]}
+                      intensity={0.8}
+                      color="#60a5fa"
+                    />
+                    <pointLight
+                      position={[6, -4, -3]}
+                      intensity={0.5}
+                      color="#818cf8"
+                    />
+                    <pointLight
+                      position={[0, -8, 2]}
+                      intensity={0.4}
+                      color="#22d3ee"
+                    />
+                    <pointLight
+                      position={[0, 8, -2]}
+                      intensity={0.5}
+                      color="#dbeafe"
+                    />
+                    <DNAModel />
+                  </Suspense>
+                </Canvas>
+              </ErrorBoundary>
+            )}
           </div>
         </div>
       </div>
     </section>
   );
-}
-
-useGLTF.preload("/DNA_STRAND_NEW.glb"); 
+} 

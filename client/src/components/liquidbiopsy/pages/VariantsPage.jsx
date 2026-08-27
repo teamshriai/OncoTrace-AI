@@ -19,8 +19,8 @@ export default function VariantsPage({ data }) {
   const [sortDir, setSortDir] = useState("desc");
   const [page, setPage] = useState(0);
 
-  const typeDist = variant_type_distribution.map((d, i) => ({ label: d.type, value: d.count, color: qualitativeColor(i) }));
-  const chrDist = chromosome_distribution.map((d, i) => ({ ...d, color: qualitativeColor(i) }));
+  const typeDist = (variant_type_distribution || []).map((d, i) => ({ label: d.type, value: d.count, color: qualitativeColor(i) }));
+  const chrDist = (chromosome_distribution || []).map((d, i) => ({ ...d, color: qualitativeColor(i) }));
   const total = variants.length;
 
   const genesWithLiteratureEvidence = (patient_summary?.genes_with_variant_level_evidence || 0)
@@ -34,7 +34,7 @@ export default function VariantsPage({ data }) {
   const filtered = useMemo(() => {
     return variants
       .filter((v) => {
-        const isPass = v.filter.length === 1 && v.filter[0] === "PASS";
+        const isPass = (v.filter || []).length === 1 && v.filter[0] === "PASS";
         const matchSearch = !search || v.gene.toLowerCase().includes(search.toLowerCase()) || v.type.toLowerCase().includes(search.toLowerCase());
         const qcFlagged = (v.qc?.flags || []).length > 0;
         const matchFilter =
@@ -76,7 +76,7 @@ export default function VariantsPage({ data }) {
           home. */}
       <Card style={{ padding: "16px 20px", marginBottom: "16px" }}>
         <SectionHeader title="At a Glance" accent="var(--lb-chart-2)" />
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(190px,1fr))", gap: "16px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(190px,100%),1fr))", gap: "16px" }}>
           {atAGlance.map((s, i) => (
             <div key={i} style={{ display: "flex", alignItems: "center", gap: "12px", minWidth: 0 }}>
               <div style={{
@@ -101,7 +101,7 @@ export default function VariantsPage({ data }) {
       {/* Three overview modules as one flat, divided section instead of
           three separate floating cards -- they're read together as one
           "overview" glance, not three independent surfaces. */}
-      <div className="lb-overview-row" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))", gap: "24px", marginBottom: "24px" }}>
+      <div className="lb-overview-row" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(260px,100%),1fr))", gap: "24px", marginBottom: "24px" }}>
         <div>
           <SectionHeader title="By Variant Type" accent="var(--lb-chart-1)" />
           <div style={{ display: "flex", alignItems: "center", gap: "16px", flexWrap: "wrap" }}>
@@ -153,7 +153,7 @@ export default function VariantsPage({ data }) {
 
       <Card style={{ padding: "20px", marginBottom: "16px" }}>
         <SectionHeader title={`VAF Distribution Across All ${total} Variants`} accent="var(--lb-status-info)" />
-        <VAFHistogram data={vaf_profile.histogram.map((d, i) => ({ ...d, color: qualitativeColor(i) }))} />
+        <VAFHistogram data={(vaf_profile?.histogram || []).map((d, i) => ({ ...d, color: qualitativeColor(i) }))} />
       </Card>
 
       <Card style={{ padding: "20px", marginBottom: "16px" }}>
@@ -219,7 +219,7 @@ export default function VariantsPage({ data }) {
             </thead>
             <tbody>
               {pageItems.map((v, i) => {
-                const isPass = v.filter.length === 1 && v.filter[0] === "PASS";
+                const isPass = (v.filter || []).length === 1 && v.filter[0] === "PASS";
                 return (
                   <tr key={i} style={{ borderBottom: "1px solid var(--lb-border)" }}>
                     <td style={{ padding: "9px 10px 9px 0", fontWeight: 900, color: "var(--lb-status-info)", whiteSpace: "nowrap", position: "sticky", left: 0, background: "var(--lb-bg-surface)" }}>{v.gene}</td>
@@ -241,7 +241,7 @@ export default function VariantsPage({ data }) {
                     <td style={{ padding: "9px 10px 9px 0" }}><span style={{ color: snColor(v.sn), fontWeight: 700 }}>{v.sn}</span></td>
                     <td style={{ padding: "9px 10px 9px 0" }}><span style={{ color: msiColor(v.msi), fontWeight: 700 }}>{v.msi}</span></td>
                     <td style={{ padding: "9px 10px 9px 0" }}><span style={{ color: nmColor(v.nm), fontWeight: 700 }}>{v.nm}</span></td>
-                    <td style={{ padding: "9px 10px 9px 0" }}><Badge label={v.filter.join(";")} color={filterPassColor(isPass)} small /></td>
+                    <td style={{ padding: "9px 10px 9px 0" }}><Badge label={(v.filter || []).join(";")} color={filterPassColor(isPass)} small /></td>
                     <td style={{ padding: "9px 10px 9px 0" }}>
                       {v.tier?.tier && (
                         <span title={(v.tier.reasons || []).join(" · ")}>

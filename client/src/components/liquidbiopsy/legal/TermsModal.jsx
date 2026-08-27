@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { Icon } from "../icons";
 import { ICONS } from "../iconPaths";
-import useFocusTrap from "../useFocusTrap";
+import useFocusTrap from "../../../hooks/useFocusTrap";
 import { TERMS_SECTIONS } from "./termsContent";
 
 export default function TermsModal({ open, onClose, triggerRef }) {

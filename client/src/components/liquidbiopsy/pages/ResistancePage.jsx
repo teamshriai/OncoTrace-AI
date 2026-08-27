@@ -8,10 +8,10 @@ import { ICONS } from "../iconPaths";
 import { vafColor } from "../colors";
 
 export default function ResistancePage({ data }) {
-  const { actionability_summary, variants } = data;
+  const { actionability_summary = {}, variants = [] } = data;
   const [expanded, setExpanded] = useState(null);
 
-  const geneCards = actionability_summary.genes.map((g) => {
+  const geneCards = (actionability_summary.genes || []).map((g) => {
     const topVariant = variants.filter((v) => v.gene === g.gene).sort((a, b) => b.vaf - a.vaf)[0];
     return { ...g, topVariant };
   });
@@ -43,7 +43,7 @@ export default function ResistancePage({ data }) {
           No genes in this file matched our (demo-mode) literature evidence list.
         </Card>
       ) : (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(320px,1fr))", gap: "16px", marginBottom: "16px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(320px,100%),1fr))", gap: "16px", marginBottom: "16px" }}>
           {geneCards.map((g, i) => {
             const v = g.topVariant;
             const isOpen = expanded === i;

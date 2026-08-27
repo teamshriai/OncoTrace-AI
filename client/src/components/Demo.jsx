@@ -681,11 +681,11 @@ export default function Demo() {
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
               <select
                 value={selectedPatientId}
                 onChange={(e) => setSelectedPatientId(e.target.value)}
-                className="bg-white/80 backdrop-blur-sm border border-slate-200/60 rounded-xl px-4 py-2.5 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all cursor-pointer hover:bg-slate-50/80 shadow-lg"
+                className="min-w-0 max-w-[40vw] sm:max-w-[220px] truncate bg-white/80 backdrop-blur-sm border border-slate-200/60 rounded-xl px-4 py-2.5 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all cursor-pointer hover:bg-slate-50/80 shadow-lg"
               >
                 {patients.map((p) => (
                   <option key={p.id} value={p.id}>
@@ -694,9 +694,9 @@ export default function Demo() {
                 ))}
               </select>
 
-              <div className={`px-4 py-2 rounded-xl text-xs font-bold backdrop-blur-sm flex items-center gap-2 ${getRiskBadgeClass(patient.riskCategory)}`}>
-                <span className={`w-2.5 h-2.5 rounded-full ${getRiskDot(patient.riskCategory)} animate-pulse`} />
-                <span className="uppercase tracking-wide">{patient.riskCategory}</span>
+              <div className={`flex-shrink-0 px-3 sm:px-4 py-2 rounded-xl text-xs font-bold backdrop-blur-sm flex items-center gap-2 ${getRiskBadgeClass(patient.riskCategory)}`}>
+                <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${getRiskDot(patient.riskCategory)} animate-pulse`} />
+                <span className="uppercase tracking-wide hidden sm:inline">{patient.riskCategory}</span>
               </div>
             </div>
           </div>
@@ -1387,9 +1387,9 @@ function PredictionsPage({ patient }) {
           <p className="text-xs text-slate-500 mb-6">Driving the prediction</p>
           <div className="space-y-4">
             {features.map((f, i) => (
-              <div key={i} className="flex items-center gap-4">
-                <div className="w-36 shrink-0 text-sm text-slate-600 text-right font-semibold">{f.feature}</div>
-                <div className="flex-1 flex items-center gap-3">
+              <div key={i} className="flex items-center gap-2 sm:gap-4">
+                <div className="w-20 sm:w-36 shrink-0 text-xs sm:text-sm text-slate-600 text-right font-semibold truncate">{f.feature}</div>
+                <div className="flex-1 flex items-center gap-2 sm:gap-3 min-w-0">
                   <div className="flex-1 h-6 bg-slate-100 rounded-full overflow-hidden">
                     <div
                       className={`h-full rounded-full transition-all ${
@@ -1398,7 +1398,7 @@ function PredictionsPage({ patient }) {
                       style={{ width: `${(f.importance / maxImportance) * 100}%` }}
                     />
                   </div>
-                  <span className={`text-sm font-mono font-bold w-24 shrink-0 ${f.direction === 'positive' ? 'text-red-600' : 'text-blue-600'}`}>
+                  <span className={`text-xs sm:text-sm font-mono font-bold w-14 sm:w-24 shrink-0 text-right ${f.direction === 'positive' ? 'text-red-600' : 'text-blue-600'}`}>
                     {f.value}
                   </span>
                 </div>

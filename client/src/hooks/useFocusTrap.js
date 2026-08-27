@@ -1,9 +1,10 @@
 import { useEffect } from "react";
 
-// Hand-rolled focus trap for the two dialog-like surfaces in this feature (the
-// Terms modal and the mobile sidebar drawer) -- no modal/dialog dependency
-// exists anywhere in this app, and pulling one in for two call sites isn't
-// worth it. Cycles Tab/Shift+Tab within `containerRef` and closes on Escape.
+// Hand-rolled focus trap for dialog-like surfaces (modals, the mobile nav
+// drawer) -- no modal/dialog dependency exists anywhere in this app, and
+// pulling one in isn't worth it for a handful of call sites. Moves focus
+// into `containerRef` on open, cycles Tab/Shift+Tab within it, and closes
+// on Escape.
 export default function useFocusTrap(containerRef, isOpen, onClose) {
   useEffect(() => {
     if (!isOpen) return;

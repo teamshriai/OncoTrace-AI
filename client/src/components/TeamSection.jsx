@@ -174,7 +174,7 @@ export default function TeamSection() {
   const [ref, inView] = useInView();
 
   return (
-    <section id="team" className="scroll-mt-20 bg-white py-24 lg:py-32">
+    <section className="bg-white py-24 lg:py-32">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
         {/* Section Header */}

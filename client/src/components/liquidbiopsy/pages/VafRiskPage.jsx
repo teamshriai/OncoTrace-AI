@@ -26,9 +26,9 @@ function isHighRisk(g) {
 }
 
 export default function VafRiskPage({ data, theme }) {
-  const { gene_summary, variants, patient_summary } = data;
+  const { gene_summary = [], variants = [], patient_summary } = data;
   const highVaf = variants.filter((v) => v.vaf >= 0.7).sort((a, b) => b.vaf - a.vaf);
-  const maxDepth = variants.reduce((m, v) => Math.max(m, v.depth), 0);
+  const maxDepth = variants.reduce((m, v) => Math.max(m, v.depth || 0), 0);
   const bubbleVariants = variants.length > BUBBLE_CAP
     ? [...variants].sort((a, b) => b.depth - a.depth).slice(0, BUBBLE_CAP)
     : variants;
@@ -48,7 +48,7 @@ export default function VafRiskPage({ data, theme }) {
       {patient_summary?.gene_cards?.length > 0 && (
         <div style={{ marginBottom: "24px" }}>
           <SectionHeader title="Key Gene Findings" accent="var(--lb-status-info)" />
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: "12px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(280px,100%),1fr))", gap: "12px" }}>
             {patient_summary.gene_cards.map((g, i) => {
               const c = tierColor(g.evidence_basis);
               return (
@@ -121,7 +121,7 @@ export default function VafRiskPage({ data, theme }) {
         {moderateLowGenes.length === 0 ? (
           <p style={{ fontSize: "var(--lb-text-sm)", color: "var(--lb-text-muted)" }}>None — every gene with a finding in this file is listed above.</p>
         ) : (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))", gap: "6px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(220px,100%),1fr))", gap: "6px" }}>
             {moderateLowGenes.map((g, i) => (
               <div key={i} style={{ display: "flex", alignItems: "center", gap: "8px", padding: "6px 8px" }}>
                 <span style={{ fontSize: "var(--lb-text-xs)", fontWeight: 700, color: "var(--lb-text-secondary)", width: "56px", flexShrink: 0, overflow: "hidden", textOverflow: "ellipsis" }}>{g.gene}</span>
@@ -135,7 +135,7 @@ export default function VafRiskPage({ data, theme }) {
         )}
       </Card>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: "16px", marginBottom: "16px" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(280px,100%),1fr))", gap: "16px", marginBottom: "16px" }}>
         <Card style={{ padding: "20px" }}>
           <SectionHeader title="VAF Interpretation Guide" accent="var(--lb-status-info)" />
           {VAF_GUIDE.map((r, i) => (
@@ -157,14 +157,14 @@ export default function VafRiskPage({ data, theme }) {
           <p style={{ fontSize: "var(--lb-text-xs)", color: "var(--lb-text-secondary)", marginBottom: "12px" }}>Variants with VAF ≥ 70%, highest first</p>
           {highVaf.length === 0 && <p style={{ fontSize: "var(--lb-text-xs)", color: "var(--lb-text-muted)" }}>None in this file.</p>}
           {highVaf.map((v, i) => {
-            const isPass = v.filter.length === 1 && v.filter[0] === "PASS";
+            const isPass = (v.filter || []).length === 1 && v.filter[0] === "PASS";
             return (
               <div key={i} style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px", padding: "10px", borderRadius: "var(--lb-radius-md)", background: "var(--lb-row-hover)" }}>
                 <div style={{ flex: 1 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px", flexWrap: "wrap" }}>
                     <span style={{ fontSize: "var(--lb-text-sm)", fontWeight: 900, color: "var(--lb-status-info)" }}>{v.gene}</span>
                     <Badge label={v.type} color="var(--lb-chart-2)" small />
-                    <Badge label={v.filter.join(";")} color={filterPassColor(isPass)} small />
+                    <Badge label={(v.filter || []).join(";")} color={filterPassColor(isPass)} small />
                   </div>
                   <p style={{ fontSize: "var(--lb-text-2xs)", color: "var(--lb-text-muted)" }}>chr{v.chrom}:{v.pos.toLocaleString()} · Depth: {v.depth}×</p>
                 </div>
@@ -187,8 +187,8 @@ export default function VafRiskPage({ data, theme }) {
             {bubbleVariants.map((v, i) => (
               <div key={i} title={`${v.gene}: VAF=${(v.vaf * 100).toFixed(1)}%, Depth=${v.depth}×`} style={{ display: "inline-flex" }}>
                 <div style={{
-                  width: `${Math.max(8, (v.depth / maxDepth) * 24)}px`,
-                  height: `${Math.max(8, (v.depth / maxDepth) * 24)}px`,
+                  width: `${Math.max(8, maxDepth > 0 ? (v.depth / maxDepth) * 24 : 0)}px`,
+                  height: `${Math.max(8, maxDepth > 0 ? (v.depth / maxDepth) * 24 : 0)}px`,
                   borderRadius: "50%",
                   background: vafColor(v.vaf),
                   opacity: 0.75,

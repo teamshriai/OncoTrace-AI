@@ -647,7 +647,7 @@ export default function CaseStudySection() {
             ref={ref}
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+              gridTemplateColumns: "repeat(auto-fit, minmax(min(300px,100%),1fr))",
               gap: "1.25rem",
               maxWidth: 860,
             }}

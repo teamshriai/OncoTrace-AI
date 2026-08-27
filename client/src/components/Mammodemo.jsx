@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import emailjs from '@emailjs/browser'
 
 const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID_MAMMO
@@ -63,6 +63,7 @@ const scopedCSS = `
   .mm-select,
   .mm-textarea {
     width: 100%;
+    min-height: 44px;
     padding: 10px 13px;
     background: rgba(255,255,255,0.75);
     backdrop-filter: blur(8px);
@@ -227,7 +228,9 @@ const scopedCSS = `
   .mm-back-btn {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 6px;
+    min-height: 40px;
     padding: 7px 13px;
     border-radius: 8px;
     font-family: 'Inter', sans-serif;
@@ -565,6 +568,13 @@ export default function Mammodemo({ onBack }) {
   const [sending, setSending] = useState(false)
   const [sendError, setSendError] = useState('')
 
+  // The "Back" button stays enabled while a submit is in flight (it navigates
+  // away rather than being disabled), so the EmailJS request can resolve
+  // after this component has already unmounted -- guard every post-await
+  // setState with this.
+  const isMountedRef = useRef(true)
+  useEffect(() => () => { isMountedRef.current = false }, [])
+
   const handleChange = useCallback((field) => (e) => {
     const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value
     setFormData(p => ({ ...p, [field]: value }))
@@ -633,12 +643,12 @@ export default function Mammodemo({ onBack }) {
         },
         PUBLIC_KEY
       )
-      setSubmitted(true)
+      if (isMountedRef.current) setSubmitted(true)
     } catch (err) {
       console.error('EmailJS error:', err)
-      setSendError('Something went wrong. Please try again or email us at info@oncotraceai.org.')
+      if (isMountedRef.current) setSendError('Something went wrong. Please try again or email us at info@oncotraceai.org.')
     } finally {
-      setSending(false)
+      if (isMountedRef.current) setSending(false)
     }
   }, [formData, sending])
 

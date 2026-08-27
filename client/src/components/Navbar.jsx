@@ -1,5 +1,6 @@
 // Navbar.jsx
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import useFocusTrap from '../hooks/useFocusTrap';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -113,8 +114,17 @@ const BOOKING_LINKS = [
   },
 ];
 
-const NAVBAR_HEIGHT = 108;
+const NAVBAR_HEIGHT = 108; // desktop (lg+) fallback; actual height is responsive via --nav-h below
 const SCROLL_OFFSET = NAVBAR_HEIGHT + 8;
+
+// Reads the *currently rendered* navbar height (it shrinks on small screens)
+// so scroll offsets stay correct at every breakpoint instead of only on desktop.
+function getScrollOffset() {
+  if (typeof window === 'undefined') return SCROLL_OFFSET;
+  const raw = getComputedStyle(document.documentElement).getPropertyValue('--nav-h');
+  const h = parseFloat(raw);
+  return (Number.isFinite(h) ? h : NAVBAR_HEIGHT) + 8;
+}
 
 // ─── Minimal CSS ──────────────────────────────────────────────────────────────
 
@@ -135,7 +145,11 @@ function injectMinimalStyles() {
   const s = document.createElement('style');
   s.id = STYLE_ID;
   s.textContent = `
-    html { scroll-padding-top: ${SCROLL_OFFSET}px; }
+    :root { --nav-h: ${NAVBAR_HEIGHT}px; }
+    @media (max-width: 639px) { :root { --nav-h: 72px; } }
+    @media (min-width: 640px) and (max-width: 1023px) { :root { --nav-h: 92px; } }
+
+    html { scroll-padding-top: calc(var(--nav-h) + 8px); }
 
     .nb-font { font-family: 'DM Sans', system-ui, -apple-system, sans-serif; }
 
@@ -218,7 +232,7 @@ function smoothScrollToId(id) {
   }
   const el = document.getElementById(id);
   if (!el) return;
-  const top = el.getBoundingClientRect().top + window.scrollY - SCROLL_OFFSET;
+  const top = el.getBoundingClientRect().top + window.scrollY - getScrollOffset();
   window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
 }
 
@@ -392,6 +406,7 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
 
   const ddTriggerRef = useRef(null);
   const bookDdTriggerRef = useRef(null);
+  const drawerRef = useRef(null);
   const rafRef = useRef(null);
   const menuOpenRef = useRef(false);
   const closingTimerRef = useRef(null);
@@ -445,6 +460,8 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
     }, 280);
   }, []);
 
+  useFocusTrap(drawerRef, menuOpen, closeMenu);
+
   // Cleanup closing timer on unmount
   useEffect(() => {
     return () => {
@@ -473,7 +490,7 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
             const { href } = NAV_LINKS[i];
             if (href === '#home' || href === '#blog-page') continue;
             const el = document.getElementById(href.slice(1));
-            if (el && el.getBoundingClientRect().top <= SCROLL_OFFSET + 20) {
+            if (el && el.getBoundingClientRect().top <= getScrollOffset() + 20) {
               cur = href;
               break;
             }
@@ -505,9 +522,14 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
 
   useEffect(() => {
     if (currentPage !== 'home') return;
-    const target = sessionStorage.getItem('nb-scroll-target');
+    let target;
+    try {
+      target = sessionStorage.getItem('nb-scroll-target');
+      if (target) sessionStorage.removeItem('nb-scroll-target');
+    } catch {
+      return; // storage access blocked (e.g. private browsing) — nothing to recover
+    }
     if (!target) return;
-    sessionStorage.removeItem('nb-scroll-target');
     requestAnimationFrame(() => {
       setTimeout(() => smoothScrollToId(target), 120);
     });
@@ -525,7 +547,9 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
 
     if (isDemoPage || isBlogPage) {
       navigate('home');
-      if (id !== 'home') sessionStorage.setItem('nb-scroll-target', id);
+      if (id !== 'home') {
+        try { sessionStorage.setItem('nb-scroll-target', id); } catch { /* storage blocked — scroll just won't resume */ }
+      }
     } else {
       // Delay scroll until after menu closing animation + body scroll unlock completes
       setTimeout(() => smoothScrollToId(id), 320);
@@ -606,7 +630,7 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
         <header
           className={`
             relative flex items-center justify-between
-            h-[108px] px-[clamp(1rem,4vw,2.5rem)]
+            h-[var(--nav-h)] px-[clamp(1rem,4vw,2.5rem)]
             bg-white/[0.97] backdrop-blur-xl
             border-b transition-all duration-400 ease-out
             will-change-[box-shadow,border-color]
@@ -641,7 +665,7 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
                 alt="OncoTrace-AI"
                 draggable={false}
                 onError={() => setLogoError(true)}
-                className="h-[88px] w-auto object-contain block pointer-events-none select-none"
+                className="h-[52px] w-auto object-contain block pointer-events-none select-none sm:h-[68px] lg:h-[88px]"
               />
             )}
           </button>
@@ -675,7 +699,7 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
                       className={`
                         nb-nav-btn
                         relative border-none cursor-pointer font-medium
-                        text-[0.8125rem] px-2.5 py-[7px] rounded-lg
+                        text-[0.8125rem] px-2.5 py-[7px] min-h-[40px] rounded-lg
                         outline-none whitespace-nowrap
                         inline-flex items-center gap-1.5
                         transition-all duration-250 ease-out
@@ -872,14 +896,16 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
       {/* ══ MOBILE DRAWER ══════════════════════════════════════════════════ */}
       {showDrawer && (
         <div
+          ref={drawerRef}
           id="nb-mobile-drawer"
           role="dialog"
           aria-modal="true"
           aria-label="Site navigation"
+          tabIndex={-1}
           className={`
             nb-drawer-scroll
             fixed z-[9998]
-            top-[116px] left-3 right-3
+            top-[calc(var(--nav-h)+8px)] left-3 right-3
             bg-white rounded-[20px]
             border border-blue-100
             shadow-[0_4px_6px_-1px_rgba(0,0,0,0.07),0_20px_50px_rgba(37,99,235,0.13)]

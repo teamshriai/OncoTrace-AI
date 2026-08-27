@@ -11,9 +11,9 @@ import { depthColor, mqColor, msiColor, tierColor } from "../colors";
 // Three shared grid widths for this page instead of a different minmax()
 // picked per section -- keeps the auto-fit reflow rhythm consistent instead
 // of columns resizing unpredictably relative to neighboring sections.
-const GRID_SMALL = "repeat(auto-fit,minmax(160px,1fr))";
-const GRID_MEDIUM = "repeat(auto-fit,minmax(220px,1fr))";
-const GRID_WIDE = "repeat(auto-fit,minmax(280px,1fr))";
+const GRID_SMALL = "repeat(auto-fit,minmax(min(160px,100%),1fr))";
+const GRID_MEDIUM = "repeat(auto-fit,minmax(min(220px,100%),1fr))";
+const GRID_WIDE = "repeat(auto-fit,minmax(min(280px,100%),1fr))";
 
 // The uploaded filename, not a fabricated name -- this app has no real
 // patient-identity field (confirmed against the schema: sample_id and
@@ -126,7 +126,7 @@ export default function TechnicalPage({ data }) {
         {/* Headline tier counts -- the same tier_summary.counts driving the
             Findings Overview donut on Doctor Summary, surfaced here as bold
             at-a-glance boxes. */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: "10px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(200px,100%),1fr))", gap: "10px" }}>
           {HEADLINE_TIERS.map((t) => {
             const color = tierColor(t.key);
             const value = counts[t.key] || 0;
