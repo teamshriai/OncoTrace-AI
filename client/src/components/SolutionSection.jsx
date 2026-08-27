@@ -25,21 +25,6 @@ function useInView(threshold = 0.12) {
   return [ref, inView];
 }
 
-/* ═══ useScrollProgress ═══ */
-function useScrollProgress() {
-  const [progress, setProgress] = useState(0);
-  useEffect(() => {
-    const update = () => {
-      const max = document.documentElement.scrollHeight - window.innerHeight;
-      setProgress(max > 0 ? window.scrollY / max : 0);
-    };
-    window.addEventListener("scroll", update, { passive: true });
-    update();
-    return () => window.removeEventListener("scroll", update);
-  }, []);
-  return progress;
-}
-
 /* ═══ useParallax ═══ */
 function useParallax(speed = 0.06) {
   const [y, setY] = useState(0);
@@ -824,7 +809,7 @@ const globalStyles = `
 `;
 
 /* ═══ HERO SECTION (default export) ═══ */
-export default function HeroSection({ onNavigate }) {
+export default function HeroSection() {
   const [heroRef, heroIn] = useInView(0.04);
 
   return (

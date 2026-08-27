@@ -266,21 +266,21 @@ function injectHeroStyles() {
    ═══════════════════════════════════════════════════════ */
 
 function useInView(ref, threshold = 0.1) {
-  const [inView, setInView] = useState(false)
+  // Environments without IntersectionObserver (old browsers, SSR) have no way
+  // to observe visibility, so they start "in view" already -- computed as the
+  // initial state itself rather than set from inside the effect below.
+  const [inView, setInView] = useState(() => typeof IntersectionObserver === 'undefined')
 
   useEffect(() => {
     const node = ref.current
     if (!node) return
-    if (typeof IntersectionObserver === 'undefined') { 
-      setInView(true)
-      return 
-    }
+    if (typeof IntersectionObserver === 'undefined') return
 
     const obs = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) { 
+        if (entry.isIntersecting) {
           setInView(true)
-          obs.unobserve(node) 
+          obs.unobserve(node)
         }
       },
       { threshold }
@@ -293,12 +293,15 @@ function useInView(ref, threshold = 0.1) {
 }
 
 function useReducedMotion() {
-  const [reduced, setReduced] = useState(false)
+  // Read the current match synchronously as the initial state, so the first
+  // render already reflects it instead of being corrected a tick later.
+  const [reduced, setReduced] = useState(() =>
+    typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  )
 
   useEffect(() => {
     if (typeof window === 'undefined') return
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
-    setReduced(mq.matches)
     const handler = (e) => setReduced(e.matches)
     mq.addEventListener('change', handler)
     return () => mq.removeEventListener('change', handler)

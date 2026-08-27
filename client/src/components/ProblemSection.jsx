@@ -43,7 +43,7 @@ const PROBLEMS = [
   },
 ];
 
-function MobileRow({ p, index }) {
+function MobileRow({ p }) {
   const [open, setOpen] = useState(false);
 
   return (

@@ -11,14 +11,14 @@ function BlogImage({ src, alt, caption }) {
   const [hasError, setHasError] = useState(false);
 
   return (
-    <figure className="my-8 md:my-12 group">
-      <div className="relative overflow-hidden rounded-xl md:rounded-2xl border border-slate-200 bg-slate-50 shadow-lg hover:shadow-2xl transition-all duration-500">
+    <figure className="my-8 md:my-12">
+      <div className="relative overflow-hidden rounded-xl md:rounded-2xl shadow-md">
         {/* Loading skeleton */}
         {!isLoaded && !hasError && (
-          <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-slate-200 via-slate-100 to-slate-200 bg-[length:200%_100%]" 
+          <div className="absolute inset-0 min-h-[200px] animate-pulse bg-gradient-to-r from-slate-200 via-slate-100 to-slate-200 bg-[length:200%_100%]"
                style={{ animation: 'shimmer 2s infinite' }} />
         )}
-        
+
         {/* Actual image */}
         {!hasError ? (
           <img
@@ -28,10 +28,9 @@ function BlogImage({ src, alt, caption }) {
             onLoad={() => setIsLoaded(true)}
             onError={() => setHasError(true)}
             className={`
-              w-full h-auto object-contain max-h-[600px]
-              transition-all duration-700 ease-out
-              ${isLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}
-              group-hover:scale-[1.02]
+              block w-full h-auto
+              transition-opacity duration-700 ease-out
+              ${isLoaded ? 'opacity-100' : 'opacity-0'}
             `}
           />
         ) : (
@@ -44,13 +43,8 @@ function BlogImage({ src, alt, caption }) {
             </div>
           </div>
         )}
-        
-        {/* Subtle gradient overlay */}
-        {isLoaded && !hasError && (
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-900/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-        )}
       </div>
-      
+
       {/* Caption */}
       {caption && (
         <figcaption className="mt-3 md:mt-4 px-2 md:px-4 text-center">
@@ -70,25 +64,45 @@ function BlogImage({ src, alt, caption }) {
   );
 }
 
+function updateMetaTag(attribute, key, content) {
+  let element = document.querySelector(`meta[${attribute}="${key}"]`);
+  if (element) {
+    element.setAttribute('content', content);
+  } else {
+    const meta = document.createElement('meta');
+    meta.setAttribute(attribute, key);
+    meta.setAttribute('content', content);
+    document.head.appendChild(meta);
+  }
+}
+
 export default function BlogPost() {
   const { slug } = useParams();
   const navigate = useNavigate();
-  const [post, setPost] = useState(null);
-  const [relatedPosts, setRelatedPosts] = useState([]);
+  const [prevSlug, setPrevSlug] = useState(slug);
+  const [post, setPost] = useState(() => getPostBySlug(slug));
+  const [relatedPosts, setRelatedPosts] = useState(() => getRelatedPosts(slug));
   const [shareTooltip, setShareTooltip] = useState('');
+
+  // Derived from `slug`: adjusted directly during render (React's documented
+  // pattern for "reset state when a prop changes") rather than in the effect
+  // below, so post/relatedPosts are already correct for this render instead
+  // of lagging one commit behind.
+  if (slug !== prevSlug) {
+    setPrevSlug(slug);
+    setPost(getPostBySlug(slug));
+    setRelatedPosts(getRelatedPosts(slug));
+  }
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'auto' });
-    
+
     const currentPost = getPostBySlug(slug);
-    
+
     if (!currentPost) {
       navigate('/blog');
       return;
     }
-
-    setPost(currentPost);
-    setRelatedPosts(getRelatedPosts(slug));
 
     // SEO Meta tags
     document.title = `${currentPost.title} | OncoTrace-AI Blog`;
@@ -133,18 +147,6 @@ export default function BlogPost() {
     }
 
   }, [slug, navigate]);
-
-  const updateMetaTag = (attribute, key, content) => {
-    let element = document.querySelector(`meta[${attribute}="${key}"]`);
-    if (element) {
-      element.setAttribute('content', content);
-    } else {
-      const meta = document.createElement('meta');
-      meta.setAttribute(attribute, key);
-      meta.setAttribute('content', content);
-      document.head.appendChild(meta);
-    }
-  };
 
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };

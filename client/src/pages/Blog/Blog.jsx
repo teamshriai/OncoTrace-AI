@@ -69,8 +69,8 @@ export default function Blog() {
       </section>
 
       {/* Blog Grid */}
-      <section className="max-w-[1600px] mx-auto px-4 md:px-6 lg:px-8 py-8 md:py-12 pb-16 md:pb-20">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 md:gap-8">
+      <section className="max-w-[1100px] mx-auto px-4 md:px-6 lg:px-8 py-8 md:py-12 pb-16 md:pb-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8">
           {blogPosts.map((post, index) => (
             <article
               key={post.id}

@@ -388,6 +388,7 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
   const [progress, setProgress] = useState(0);
   const [activeHref, setActiveHref] = useState('#home');
   const [logoError, setLogoError] = useState(false);
+  const [prevPage, setPrevPage] = useState(currentPage);
 
   const ddTriggerRef = useRef(null);
   const bookDdTriggerRef = useRef(null);
@@ -398,8 +399,33 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
   const isDemoPage = currentPage === 'demo' || currentPage === 'mammo' || currentPage === 'lb';
   const isBlogPage = currentPage === 'blog';
 
+  // Reset menu/dropdown UI state on navigation -- adjusted directly during
+  // render (React's documented pattern for "reset state when a prop
+  // changes") rather than in an effect, so it takes effect in the same
+  // render instead of committing stale UI for one frame first. Refs can't be
+  // touched during render, though, so the pending-close-timer cleanup for
+  // the same transition is handled separately, in the effect below.
+  if (currentPage !== prevPage) {
+    setPrevPage(currentPage);
+    setMenuOpen(false);
+    setMenuClosing(false);
+    setDdOpen(false);
+    setBookDdOpen(false);
+  }
+
   // Keep ref in sync with state
-  menuOpenRef.current = menuOpen;
+  useEffect(() => {
+    menuOpenRef.current = menuOpen;
+  }, [menuOpen]);
+
+  // Cancel any pending close-menu timer on navigation, mirroring the state
+  // reset above -- this half has to be an effect since it touches a ref.
+  useEffect(() => {
+    if (closingTimerRef.current) {
+      clearTimeout(closingTimerRef.current);
+      closingTimerRef.current = null;
+    }
+  }, [currentPage]);
 
   useBodyScrollLock(menuOpen);
 
@@ -465,17 +491,6 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
   }, [currentPage, isBlogPage]);
-
-  useEffect(() => {
-    if (closingTimerRef.current) {
-      clearTimeout(closingTimerRef.current);
-      closingTimerRef.current = null;
-    }
-    setMenuOpen(false);
-    setMenuClosing(false);
-    setDdOpen(false);
-    setBookDdOpen(false);
-  }, [currentPage]);
 
   useEffect(() => {
     const handler = (e) => {

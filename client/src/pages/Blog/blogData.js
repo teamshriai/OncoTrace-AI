@@ -6,13 +6,13 @@ export const blogPosts = [
     title: 'Why We Focus on ctDNA Over CTCs',
     subtitle: 'For AI-Powered Realtime Precision Monitoring of Oncology, circulating tumor DNA offers a scientifically validated and computationally robust foundation.',
     author: 'OncoTrace-AI Research Team',
-    date: '2024-01-15',
+    date: '2026-08-03',
     readTime: 12,
     category: 'Research',
-    tags: ['ctDNA', 'Liquid Biopsy', 'Precision Oncology', 'AI'],
+    tags: ['ctDNA', 'ctDNA vs CTCs', 'Liquid Biopsy', 'Precision Oncology', 'Circulating Tumor Cells', 'Minimal Residual Disease', 'Cancer Genomics', 'AI'],
     featured: true,
     metaDescription: 'Discover why ctDNA is the optimal biomarker for AI-powered realtime cancer monitoring compared to CTCs.',
-    metaKeywords: 'ctDNA, circulating tumor DNA, CTCs, liquid biopsy, precision oncology, cancer monitoring, AI cancer detection',
+    metaKeywords: 'ctDNA, circulating tumor DNA, CTCs, ctDNA vs CTCs, circulating tumor cells, liquid biopsy, precision oncology, minimal residual disease, cancer genomics, cancer monitoring, AI cancer detection',
     
     // Featured images
     images: [
@@ -234,16 +234,16 @@ export const blogPosts = [
   {
     id: 2,
     slug: 'genomic-data-crisis',
-    title: 'We Have the AI. We Have the Sequencers. But Where Is the Data?',
+    title: 'We Have the AI. But Where Is the Data?',
     subtitle: 'The Missing Link That Is Silently Stalling Genomic Innovation',
     author: 'OncoTrace-AI Research Team',
     date: '2026-08-26',
-    readTime: 11,
+    readTime: 7,
     category: 'Industry Analysis',
-    tags: ['Genomic Data', 'Federated Learning', 'Precision Medicine', 'Data Privacy'],
+    tags: ['Genomic Data', 'Federated Learning', 'Precision Medicine', 'Data Privacy', 'Synthetic Data', 'Data Commons', 'Genomic AI', 'Healthcare Data Sharing'],
     featured: true,
-    metaDescription: 'Hospitals are drowning in genomic data they cannot use, and researchers are starving for data they cannot access. Explore why the genomic data pipeline is broken and the federated learning, synthetic data, dynamic consent, and data commons solutions that can fix it.',
-    metaKeywords: 'genomic data, federated learning, synthetic genomic data, dynamic consent, data commons, precision medicine, genomic AI, healthcare data sharing, HIPAA, GDPR',
+    metaDescription: "Hospitals are drowning in genomic data they can't use. Researchers can't access it. Here's why the pipeline broke — and the fixes that already exist.",
+    metaKeywords: 'genomic data, federated learning, synthetic genomic data, dynamic consent, data commons, precision medicine, genomic AI, healthcare data sharing, health data privacy, HIPAA, GDPR',
 
     images: [
       {
@@ -263,7 +263,7 @@ export const blogPosts = [
     content: {
       intro: [
         'Hospitals are drowning in genomic data they cannot use. Researchers are starving for data they cannot access. Somewhere in between, breakthroughs are dying.',
-        'We built the most powerful AI diagnostic tools in history and deployed sequencers that read an entire genome in hours. Yet ask a researcher for real-world, diverse, clinically validated genomic data — and the response is silence.',
+        "We built the most powerful AI diagnostic tools in history and sequencers that read a genome in hours. Ask a researcher for real-world, diverse, clinically validated data, though, and the answer is silence.",
         "The problem isn't the technology. It's the data pipeline that was never built to support it."
       ],
 
@@ -271,9 +271,9 @@ export const blogPosts = [
         {
           eyebrow: 'The Core Failure',
           title: 'The Real Problem: A Three-Way Deadlock',
-          description: 'The genomic data crisis is not a single failure. It is a systemic collapse at the intersection of three interdependent systems — AI infrastructure, clinical data governance, and research access — none of which can move forward without the other.',
+          description: 'The genomic data crisis is a systemic collapse at the intersection of three interdependent systems — AI infrastructure, clinical governance, and research access — none of which can move without the other.',
           content: [
-            'AI systems demand data to train. Clinical institutions demand proof of safety before sharing. Research laboratories demand access before they can provide that proof. The result is a deadlock that costs lives quietly and consistently.',
+            'AI systems need data to train. Institutions need proof of safety before sharing. Researchers need access before they can provide that proof. The result is a deadlock that costs lives quietly and consistently.',
             'The Three Silent Killers:'
           ],
           pillars: [
@@ -296,9 +296,9 @@ export const blogPosts = [
           eyebrow: 'A Human Cost',
           title: 'When Missing Data Has a Human Face',
           content: [
-            'Consider a seven-year-old child presenting with a rare genetic disorder. Her physicians run every available diagnostic test. The AI flags nothing — not because of a flaw in the algorithm, but because her ethnic background represents less than two percent of the data the model was trained on.',
+            'Consider a seven-year-old with a rare genetic disorder. Her physicians run every available test. The AI flags nothing — not from a flaw in the algorithm, but because her ethnic background is under two percent of its training data.',
             'The AI was not broken. It was starved.',
-            "This is not hypothetical. It is happening in clinics around the world today. The gap in genomic data representation is not a technical inconvenience — it is a patient safety crisis."
+            'This is happening in clinics worldwide today. The gap in genomic representation is not a technical inconvenience — it is a patient safety crisis.'
           ]
         },
 
@@ -310,35 +310,35 @@ export const blogPosts = [
               number: '01',
               title: 'The Fortress Institution Syndrome',
               content: [
-                'Many healthcare institutions treat genomic data as a competitive asset, guarding databases with the intensity applied to proprietary research — even when sharing could accelerate cures. Institutional self-preservation has become one of the most significant barriers to scientific progress.'
+                'Many institutions treat genomic data as a competitive asset, guarding it like proprietary research even when sharing could accelerate cures. Institutional self-preservation is one of the biggest barriers to progress.'
               ]
             },
             {
               number: '02',
               title: 'The Consent Graveyard',
               content: [
-                "Millions of patient samples sit in biobanks attached to consent forms that are legally outdated or too ambiguous for research uses that didn't exist when they were signed. Legal teams won't act on them, so the data stays frozen."
+                "Millions of samples sit in biobanks under consent forms too outdated or ambiguous for research uses that didn't exist when they were signed. Legal teams won't act on them, so the data stays frozen."
               ]
             },
             {
               number: '03',
               title: 'The Diversity Blind Spot',
               content: [
-                "The world's most referenced genomic databases are predominantly Western, wealthy, and drawn from a narrow demographic band. AI systems trained on this data carry those biases into every clinical decision they inform, wherever they are deployed."
+                "The world's most-referenced genomic databases are predominantly Western, wealthy, and narrow. AI trained on this data carries those biases into every clinical decision it informs, wherever it's deployed."
               ]
             },
             {
               number: '04',
               title: 'The Privacy Paradox',
               content: [
-                "GDPR, HIPAA, PDPA, and their equivalents were designed to protect patients — and they do. But in doing so, they have also built barriers that block the data sharing that could improve patient outcomes. Privacy protection and medical progress remain in structural conflict, with no legislated resolution."
+                "GDPR, HIPAA, and their equivalents protect patients — and they should. But they've also built barriers that block the data sharing that could improve outcomes, with no legislated resolution to that tension."
               ]
             },
             {
               number: '05',
               title: 'The Ownership Maze',
               content: [
-                'Who owns genomic data — the patient, the hospital, the sequencer manufacturer, or the researcher who analyzed it? With no clear legal answer, nobody feels authorized to share it, so nobody does.'
+                'Who owns genomic data — the patient, the hospital, the sequencer maker, or the researcher? With no clear legal answer, nobody feels authorized to share it, so nobody does.'
               ]
             }
           ]
@@ -347,21 +347,18 @@ export const blogPosts = [
         {
           eyebrow: 'The Solutions That Actually Work',
           title: 'Federated Learning: Bring the Algorithm to the Data',
-          description: 'The traditional model of centralizing patient data for AI training is no longer viable from a privacy, legal, or ethical standpoint. Federated learning inverts the model entirely.',
+          description: 'Centralizing patient data for AI training is no longer viable on privacy or legal grounds. Federated learning inverts the model: the algorithm travels to the data instead.',
           content: [
-            "Rather than moving sensitive data to a central server, the AI model travels to each institution. Local training happens on the institution's own infrastructure, and only encrypted model updates — never raw data — are sent back to build a global model. Privacy is preserved by design, and the AI grows more capable with every institution that joins.",
-            "This is not theoretical: Google Health has demonstrated federated learning across hospital networks without a single patient record leaving its originating facility, satisfying regulators while training on genuinely diverse, multi-institutional data.",
-            'Key advantages: no raw data transfer, native compliance with HIPAA and GDPR, full institutional control, and scalability across borders.'
+            "Each institution trains locally on its own infrastructure; only encrypted model updates, never raw data, are sent back to build a global model. Google Health has proven this across hospital networks without a single patient record leaving its home facility — no raw transfer, native HIPAA/GDPR compliance, full institutional control, and a model that grows more capable with every institution that joins."
           ]
         },
 
         {
           eyebrow: 'The Solutions That Actually Work',
           title: 'Synthetic Genomic Data: If You Cannot Find It, Generate It',
-          description: 'Synthetic data is not fabricated data. It is privacy-preserving data — generated by machine learning models trained on real genomic sequences — that carries the statistical properties of real populations without exposing any individual patient.',
+          description: "Synthetic data isn't fabricated data — it's privacy-preserving data, generated by models trained on real sequences, that carries real populations' statistical properties without exposing any individual patient.",
           content: [
-            "Generative models, including generative adversarial networks and variational autoencoders, can produce synthetic genomic sequences that are mathematically valid, legally clean, and infinitely scalable — deliberately engineered to represent underrepresented populations and close the diversity gap current databases cannot address.",
-            'Current leading platforms:'
+            "Generative models — GANs and variational autoencoders — produce synthetic sequences that are mathematically valid, legally clean, and infinitely scalable, deliberately engineered to close the diversity gap current databases can't fill."
           ],
           pillars: [
             { title: 'Syntho', description: 'Synthetic health data generation at institutional scale.' },
@@ -373,10 +370,9 @@ export const blogPosts = [
         {
           eyebrow: 'The Solutions That Actually Work',
           title: 'Dynamic Consent Platforms: Let Patients Lead',
-          description: "The current consent model is binary and static — a patient signs once, and that signature governs their data indefinitely, regardless of how research needs evolve. The result is a graveyard of consented data nobody can legally use for anything the form did not anticipate.",
+          description: "Today's consent is binary and static: one signature, signed once, governs data use indefinitely — leaving a graveyard of data nobody can legally use for anything the form didn't anticipate.",
           content: [
-            'Dynamic consent replaces that static signature with a living relationship: patients can expand or restrict how their data is used at any time, get notified when it contributes to a discovery, and withdraw instantly. When patients feel genuinely in control, opt-in rates rise substantially — trust, earned through transparency, is the most powerful data acquisition strategy available.',
-            'Pioneer implementations:'
+            'Dynamic consent replaces that signature with a living relationship: patients can expand or restrict use anytime, get notified when their data contributes to a discovery, and withdraw instantly. Trust, earned through transparency, is the most powerful data acquisition strategy there is.'
           ],
           pillars: [
             { title: 'Portable Legal Consent (PLC)', description: 'The GA4GH international standard.' },
@@ -388,11 +384,9 @@ export const blogPosts = [
         {
           eyebrow: 'The Solutions That Actually Work',
           title: 'Global Data Commons: Build the Infrastructure for Data to Travel',
-          description: 'Individual institutional solutions are insufficient at scale. What the genomic research community requires is neutral, trusted, interoperable infrastructure — data commons — where information can flow across institutional and national boundaries under clearly defined governance.',
+          description: 'No single institution can solve this alone. What genomic research needs is neutral, interoperable infrastructure — data commons — where information moves across borders under clear governance.',
           content: [
-            'The architecture is straightforward: institutions adopt standardized formats — FHIR, VCF, OMOP — so datasets can be compared and combined, access is governed by cryptographic permissions tied to validated research credentials, and compliance is auditable.',
-            'The UK Biobank linked 500,000 genomes with longitudinal health records under a rigorous governance framework, producing more than 7,000 published studies spanning cardiovascular to infectious disease. This is shared data functioning as intended.',
-            'Established global networks:'
+            'Institutions adopt standard formats (FHIR, VCF, OMOP), access is governed by cryptographic, credential-tied permissions, and compliance is auditable. The UK Biobank linked 500,000 genomes with health records this way, producing over 7,000 published studies — shared data functioning exactly as intended.'
           ],
           pillars: [
             { title: 'Global Alliance for Genomics and Health (GA4GH)', description: '' },
@@ -404,11 +398,9 @@ export const blogPosts = [
         {
           eyebrow: 'The Solutions That Actually Work',
           title: 'Homomorphic Encryption and Blockchain Governance: Compute on Data You Cannot See',
-          description: 'For the most sensitive applications, where even federated approaches carry residual risk, homomorphic encryption enables computation on encrypted data without ever decrypting it — an AI system can analyze a genomic dataset and return insights while the underlying data is never exposed at any stage.',
+          description: 'For the most sensitive data, homomorphic encryption lets an AI system analyze and return insights from encrypted genomic data without ever decrypting it.',
           content: [
-            'Blockchain infrastructure adds a governance layer: every data access is recorded immutably, smart contracts enforce consent parameters automatically, and patients can audit in real time exactly who accessed their data and why.',
-            'These are not future-state aspirations. They are operational today and represent the most technically robust approach to unlocking high-sensitivity genomic data for research.',
-            'Active projects in this space:'
+            'Blockchain adds the governance layer: every access is recorded immutably, consent is enforced by smart contract, and patients can audit in real time who accessed their data and why. Both are operational today, not future-state aspirations.'
           ],
           pillars: [
             { title: 'Nebula Genomics', description: 'Blockchain-secured personal genomic data management.' },
@@ -425,28 +417,28 @@ export const blogPosts = [
               number: '01',
               title: 'Immediate Priority — Institutional Data Audit',
               content: [
-                "Every institution holding genomic data should audit what it holds, what consent governs it, and what's blocking participation in federated research networks. Data that cannot be inventoried cannot be made useful."
+                "Every institution should audit what genomic data it holds, what consent governs it, and what's blocking federated participation. Data that can't be inventoried can't be made useful."
               ]
             },
             {
               number: '02',
               title: 'Near-Term Priority — Federated Infrastructure and Synthetic Data Deployment',
               content: [
-                'Institutions should implement federated learning and begin generating synthetic data to fill representation gaps. Both can run in parallel and show measurable improvements in AI training quality within months.'
+                'Deploy federated learning and synthetic data generation in parallel — both show measurable AI training gains within months.'
               ]
             },
             {
               number: '03',
               title: 'Medium-Term Priority — Standards Adoption and Commons Participation',
               content: [
-                'Widespread adoption of interoperable data standards and participation in global data commons is the necessary condition for research at population scale. No institution can achieve this alone — the infrastructure exists, the barrier is adoption.'
+                'Adopt interoperable data standards and join global data commons — the infrastructure already exists; the barrier is adoption, not capability.'
               ]
             },
             {
               number: '04',
               title: 'Long-Term Outcome — Precision Medicine That Works for Everyone',
               content: [
-                'When diverse, high-quality genomic data flows through trusted infrastructure, AI diagnostic systems trained on it will perform equitably across all populations — precision medicine becomes achievable not for the few, but for the many.'
+                'When diverse, high-quality data flows through trusted infrastructure, AI diagnostics trained on it perform equitably across all populations — precision medicine for the many, not the few.'
               ]
             }
           ]
@@ -499,11 +491,9 @@ export const blogPosts = [
           title: 'The Conclusion',
           content: [
             'The genomic revolution did not stall for lack of science or technology. It stalled because the infrastructure to move data safely, equitably, and at scale was never built with the same urgency applied to the sequencers and the algorithms.',
-            'Federated learning exists. Synthetic data generation exists. Dynamic consent platforms exist. Global data commons exist. Homomorphic encryption exists.',
-            'Every technical and governance solution required is available today. The deficit is not in capability. It is in coordination, political will, and the institutional courage to treat data sharing as a medical imperative rather than a legal liability.',
+            'Federated learning exists. Synthetic data generation exists. Dynamic consent platforms exist. Global data commons exist. Homomorphic encryption exists. Every solution required is available today — the deficit is coordination, political will, and the institutional courage to treat data sharing as a medical imperative rather than a legal liability.',
             'The next breakthrough in genomic medicine is not waiting on a laboratory discovery. It is waiting in a database somewhere, behind a consent form nobody will sign off on and a firewall nobody will open.',
-            'The question is no longer whether we have the tools to solve this — it is whether we have the will to use them.',
-            'The genomic data crisis is solvable. The timeline for solving it is a choice.'
+            'The question is no longer whether we have the tools to solve this — it is whether we have the will to use them. The genomic data crisis is solvable. The timeline for solving it is a choice.'
           ]
         }
       ],
