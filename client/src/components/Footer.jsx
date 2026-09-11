@@ -789,11 +789,29 @@ export default function Footer() {
                 </div>
 
                 {/* Copyright */}
-                <p
-                  className="text-blue-200"
-                  style={{ fontSize: "13px", opacity: 0.8, margin: 0 }}
-                >                  © 2026 OncoTrace-AI • All rights reserved • v07.09.2026
-                </p>
+                <div className={isMobile ? "text-center" : "text-right"}>
+                  <p
+                    className="text-blue-200"
+                    style={{ fontSize: "13px", opacity: 0.8, margin: 0 }}
+                  >
+                    © 2026 OncoTrace-AI • All rights reserved • v07.09.2026
+                  </p>
+                  <p
+                    className="text-blue-200"
+                    style={{ fontSize: "11px", opacity: 0.55, margin: "4px 0 0" }}
+                  >
+                    Hero image by{" "}
+                    <a
+                      href="https://www.vecteezy.com/free-png/blood-sample-tubes"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:underline"
+                      style={{ color: "inherit" }}
+                    >
+                      Vecteezy
+                    </a>
+                  </p>
+                </div>
               </div>
             </div>
           </div>

@@ -1,17 +1,26 @@
 import { useEffect, useRef, useState } from 'react'
 
-const CORNER_ACCENTS = [
-  { pos: 'top-5 left-5 xl:top-7 xl:left-7 border-l border-t', warm: true },
-  { pos: 'bottom-5 left-5 xl:bottom-7 xl:left-7 border-l border-b', warm: false },
-  { pos: 'bottom-5 right-5 xl:bottom-7 xl:right-7 border-r border-b', warm: false },
-]
-
 const WORKFLOW_STEPS = [
-  { id: 1, label: 'Blood Draw',         icon: '/img1.webp', color: '#64748b' },
-  { id: 2, label: 'Plasma Separation',  icon: '/img2.webp', color: '#3b82f6' },
-  { id: 3, label: 'ctDNA + NGS',        icon: '/img3.webp', color: '#6366f1' },
-  { id: 4, label: 'AI Analysis',        icon: '/img4.webp', color: '#0ea5e9' },
-  { id: 5, label: 'Clinician Decision', icon: '/img5.webp', color: '#475569' },
+  {
+    id: 1, label: 'Blood Draw', icon: '/img1.webp', color: '#64748b',
+    description: 'A routine blood sample is collected from the patient — the starting point of the pipeline.',
+  },
+  {
+    id: 2, label: 'Plasma Separation', icon: '/img2.webp', color: '#3b82f6',
+    description: 'Plasma is isolated from the sample to access circulating tumor DNA (ctDNA).',
+  },
+  {
+    id: 3, label: 'ctDNA + NGS', icon: '/img3.webp', color: '#6366f1',
+    description: 'ctDNA is extracted and sequenced with Next-Generation Sequencing for a full genomic profile.',
+  },
+  {
+    id: 4, label: 'AI Analysis', icon: '/img4.webp', color: '#0ea5e9',
+    description: 'AI models process the sequencing data to identify and tier clinically relevant variants.',
+  },
+  {
+    id: 5, label: 'Clinician Decision', icon: '/img5.webp', color: '#475569',
+    description: 'Structured, evidence-linked results reach the treating physician to inform next steps.',
+  },
 ]
 
 /* ═══════════════════════════════════════════════════════
@@ -49,205 +58,69 @@ const scopedCSS = `
     to   { transform: rotate(360deg); }
   }
 
-  @keyframes heroGradientShift {
-    0%, 100% { background-position: 0% 50%; }
-    50%       { background-position: 100% 50%; }
-  }
-
-  @keyframes heroGoldenGlow {
-    0%, 100% { opacity: 0.4; }
-    50%       { opacity: 0.7; }
-  }
-
-  @keyframes heroBadgePulse {
-    0%, 100% { opacity: 1; }
-    50%       { opacity: 0.82; }
-  }
-
-  /* ─── Workflow circles ─── */
-  .wf-circle {
-    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
-                box-shadow 0.3s ease;
-  }
-  .wf-circle:hover { 
-    transform: translateY(-8px) scale(1.03); 
-  }
-
-  .wf-label { 
-    transition: color 0.2s ease, transform 0.2s ease; 
-  }
-  
-  .wf-wrapper:hover .wf-label { 
-    color: #1e40af; 
-    transform: scale(1.02); 
-  }
-
-  .golden-glow { 
-    animation: heroGoldenGlow 3s ease-in-out infinite; 
-  }
-
-  /* ═══════════════════════════════════════════════
-     LEFT OVERLAY BLOCK — desktop
-     ═══════════════════════════════════════════════ */
-  .hero-overlay-left {
-    position: absolute;
-    left:     7%;
-    top:      10%;
-    z-index:  10;
-    pointer-events: none;
-    user-select: none;
-    max-width: 38%;
-  }
-
-  .hero-badge-open-source {
-    font-family: 'Inter', system-ui, sans-serif;
-    font-weight: 800;
-    letter-spacing: 0.055em;
-    text-transform: uppercase;
-    color: #b45309;
-    line-height: 1.15;
-    white-space: nowrap;
-    font-size: clamp(8px, 1.55vw, 22px);
-    animation: heroBadgePulse 4s ease-in-out infinite;
-    display: block;
-  }
-
-  .hero-badge-tagline {
-    font-family: 'Inter', system-ui, sans-serif;
-    font-weight: 400;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: #6b7280;
-    margin-top: 0.35em;
-    white-space: nowrap;
-    font-size: clamp(6px, 0.9vw, 13px);
-    display: block;
-  }
-
-  /* ═══════════════════════════════════════════════
-     RIGHT OVERLAY BLOCK — desktop
-     ═══════════════════════════════════════════════ */
-  .hero-overlay-right {
-    position:   absolute;
-    left:       63%;
-    top:        7%;
-    right:      2%;
-    z-index:    10;
-    max-width:  34%;
-    user-select: none;
-    pointer-events: none;
-  }
-
-  .hero-ai-powered-label {
-    font-family: 'Inter', system-ui, sans-serif;
-    font-weight: 500;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: #dc2626;
-    white-space: nowrap;
-    font-size: clamp(6px, 0.82vw, 13px);
-    margin-bottom: 0.25em;
-    display: block;
-    pointer-events: none;
-  }
-
-  .hero-main-headline {
-    font-family: Georgia, 'Times New Roman', serif;
-    font-weight: 700;
-    color: #1e3a8a;
-    font-size: clamp(12px, 3.2vw, 48px);
-    line-height: 1.12;
-    letter-spacing: -0.01em;
-    margin: 0;
-    display: block;
-    overflow-wrap: break-word;
-    word-break: break-word;
-    pointer-events: none;
-    cursor: default;
-  }
-
   .hero-powered-by-link {
-    font-family: 'Inter', system-ui, sans-serif;
-    font-weight: 400;
-    color: #dc2626;
-    margin-top: 0.5em;
-    white-space: nowrap;
-    font-size: clamp(5px, 0.82vw, 12px);
-    letter-spacing: 0.01em;
-    display: inline-block;
-    pointer-events: auto;
-    text-decoration: none;
-    cursor: pointer;
     transition: color 0.2s ease, text-decoration-color 0.2s ease;
   }
 
-  .hero-powered-by-link:hover {
-    color: #991b1b;
-    text-decoration: underline;
-    text-decoration-color: #991b1b60;
-    text-underline-offset: 2px;
+  /* ─── Hero intro backdrop (dotted grid + soft glow, Stroke-AI style) ─── */
+  .hero-intro-bg {
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(circle, rgba(37, 99, 235, 0.16) 1.4px, transparent 1.4px);
+    background-size: 26px 26px;
+    -webkit-mask-image: radial-gradient(ellipse 85% 75% at 68% 40%, #000 0%, transparent 78%);
+            mask-image: radial-gradient(ellipse 85% 75% at 68% 40%, #000 0%, transparent 78%);
   }
 
-  /* ═══════════════════════════════════════════════
-     MOBILE OVERRIDES  (< 480px)
-     ═══════════════════════════════════════════════ */
-  @media (max-width: 479px) {
-
-    .hero-overlay-left {
-      left:      4%;
-      top:       6%;
-      max-width: 44%;
-    }
-
-    .hero-overlay-right {
-      left:      52%;
-      top:       5%;
-      right:     2%;
-      max-width: 46%;
-    }
-
-    .hero-badge-open-source {
-      font-size:   clamp(9px, 2.4vw, 11px);
-      white-space: normal;
-    }
-
-    .hero-badge-tagline {
-      font-size:   clamp(7px, 1.7vw, 8px);
-      margin-top:  0.2em;
-      white-space: normal;
-    }
-
-    .hero-ai-powered-label {
-      font-size:   clamp(7px, 1.6vw, 7px);
-      white-space: normal;
-      margin-bottom: 0.1em;
-    }
-
-    .hero-main-headline {
-      font-size:   clamp(11px, 2.9vw, 13px);
-      line-height: 1.15;
-    }
-
-    .hero-powered-by-link {
-      font-size:  clamp(6px, 1.6vw, 7px);
-      margin-top: 0.1em;
-      white-space: normal;
-    }
+  .hero-intro-glow {
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(70px);
+    pointer-events: none;
   }
 
-  /* Tablet specific adjustments */
-  @media (min-width: 768px) and (max-width: 1023px) {
-    .hero-overlay-left {
-      left:      5%;
-      top:       8%;
-      max-width: 40%;
-    }
+  @keyframes heroEyebrowIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
 
-    .hero-overlay-right {
-      left:      58%;
-      top:       6%;
-      max-width: 38%;
-    }
+  @keyframes heroHeadlineIn {
+    from { opacity: 0; transform: translateY(22px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes heroBarGrow {
+    from { transform: scaleY(0); }
+    to   { transform: scaleY(1); }
+  }
+
+  .hero-anim-eyebrow {
+    animation: heroEyebrowIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .hero-anim-headline {
+    animation: heroHeadlineIn 0.75s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .hero-anim-bar {
+    transform-origin: top;
+    animation: heroBarGrow 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  /* ─── Flow cards (architecture-diagram style workflow) ─── */
+  .flow-card {
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  }
+  .flow-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.10);
+  }
+  .flow-card img {
+    transition: transform 0.4s ease;
+  }
+  .flow-card:hover img {
+    transform: scale(1.04);
   }
 `
 
@@ -311,89 +184,49 @@ function useReducedMotion() {
 }
 
 /* ═══════════════════════════════════════════════════════
-   WORKFLOW STEP CIRCLE
+   FLOW CARD — architecture-diagram style workflow step:
+   large photo on top, tinted info panel below.
    ═══════════════════════════════════════════════════════ */
 
-function WorkflowStepCircle({ step, index, inView, isReduced }) {
+function FlowCard({ step, index, inView, isReduced }) {
   const [imgLoaded, setImgLoaded] = useState(false)
-  const [imgError,  setImgError]  = useState(false)
-
+  const [imgError, setImgError] = useState(false)
   const entryDelay = isReduced ? 0 : index * 0.08
-  const circleSize = 'clamp(140px, 18vw, 260px)'
+  const number = String(step.id).padStart(2, '0')
 
   return (
     <div
-      className="wf-wrapper flex flex-col items-center"
+      className="flex w-full min-w-0 flex-1 flex-col items-center"
       style={{
-        opacity:   inView ? 1 : 0,
-        transform: inView ? 'translateY(0)' : 'translateY(24px)',
-        transition: isReduced
-          ? 'none'
-          : `opacity 0.5s ease ${entryDelay}s, transform 0.5s ease ${entryDelay}s`,
+        opacity: inView ? 1 : 0,
+        transform: inView ? 'translateY(0)' : 'translateY(20px)',
+        transition: isReduced ? 'none' : `opacity 0.5s ease ${entryDelay}s, transform 0.5s ease ${entryDelay}s`,
       }}
     >
-      {/* Step Number Badge */}
       <div
-        className="relative z-10 mb-3 flex items-center justify-center rounded-full font-bold text-white shadow-lg flex-shrink-0"
+        className="flow-card w-full overflow-hidden rounded-lg border"
         style={{
-          width:      36,
-          height:     36,
-          fontSize:   14,
-          background: `linear-gradient(135deg, ${step.color}ee, ${step.color})`,
-          boxShadow:  `0 3px 10px ${step.color}60`,
-          fontFamily: 'Inter, system-ui, sans-serif',
+          borderColor: `color-mix(in srgb, ${step.color} 28%, transparent)`,
+          background: '#ffffff',
         }}
       >
-        {step.id}
-      </div>
-
-      {/* Container for glow + circle - helps with alignment */}
-      <div className="relative flex items-center justify-center">
-        {/* Golden Glow */}
-        <div
-          className="absolute golden-glow rounded-full pointer-events-none"
-          style={{
-            width:      `calc(${circleSize} + 24px)`,
-            height:     `calc(${circleSize} + 24px)`,
-            background: 'radial-gradient(circle, rgba(251,191,36,0.15) 0%, rgba(245,158,11,0.08) 50%, transparent 70%)',
-            filter:     'blur(8px)',
-            zIndex:     0,
-          }}
-          aria-hidden="true"
-        />
-
-        {/* Circle */}
-        <div
-          className="wf-circle relative rounded-full overflow-hidden bg-white flex-shrink-0"
-          style={{
-            width:     circleSize,
-            height:    circleSize,
-            border:    `3px solid ${step.color}50`,
-            boxShadow: `0 6px 20px rgba(0,0,0,0.1),
-                        0 2px 6px rgba(0,0,0,0.06),
-                        0 0 0 6px rgba(251,191,36,0.08),
-                        inset 0 0 0 2px ${step.color}20`,
-            zIndex: 1,
-          }}
-        >
+        <div className="relative aspect-square w-full overflow-hidden bg-slate-100">
           {!imgLoaded && !imgError && (
-            <div className="absolute inset-0 flex items-center justify-center bg-slate-50">
+            <div className="absolute inset-0 flex items-center justify-center">
               <div
-                className="w-10 h-10 border-4 border-slate-200 border-t-slate-400 rounded-full"
+                className="h-8 w-8 rounded-full border-4 border-slate-200 border-t-slate-400"
                 style={{ animation: 'heroSpin 0.8s linear infinite' }}
               />
             </div>
           )}
-
           {imgError && (
-            <div className="absolute inset-0 flex items-center justify-center bg-slate-50">
-              <svg width="40%" height="40%" viewBox="0 0 48 48" fill="none">
+            <div className="absolute inset-0 flex items-center justify-center">
+              <svg width="30%" height="30%" viewBox="0 0 48 48" fill="none">
                 <circle cx="24" cy="24" r="20" stroke={step.color} strokeWidth="2" opacity="0.3" />
                 <path d="M16 24h16M24 16v16" stroke={step.color} strokeWidth="2.5" strokeLinecap="round" />
               </svg>
             </div>
           )}
-
           <img
             src={step.icon}
             alt={step.label}
@@ -401,34 +234,31 @@ function WorkflowStepCircle({ step, index, inView, isReduced }) {
             draggable={false}
             onLoad={() => setImgLoaded(true)}
             onError={() => setImgError(true)}
-            className="absolute inset-0 w-full h-full object-cover"
+            className="absolute inset-0 h-full w-full object-cover"
             style={{ opacity: imgLoaded ? 1 : 0, transition: 'opacity 0.4s ease' }}
           />
-
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background: 'radial-gradient(circle at 35% 35%, rgba(255,255,255,0.25) 0%, transparent 60%)',
-            }}
-          />
         </div>
-      </div>
 
-      {/* Label */}
-      <div className="mt-4 px-3" style={{ maxWidth: circleSize }}>
-        <p
-          className="wf-label text-center font-bold text-slate-800 select-none leading-tight"
-          style={{
-            fontFamily:    'Inter, system-ui, sans-serif',
-            fontSize:      'clamp(13px, 1.35vw, 17px)',
-            letterSpacing: '-0.02em',
-            lineHeight:    1.25,
-            wordBreak:     'break-word',
-            hyphens:       'auto',
-          }}
+        <div
+          className="px-3.5 py-3 sm:px-4 sm:py-3.5"
+          style={{ background: `color-mix(in srgb, ${step.color} 8%, transparent)` }}
         >
-          {step.label}
-        </p>
+          <p
+            className="text-[10px] font-bold tracking-wider"
+            style={{ color: step.color, fontFamily: 'Inter, system-ui, sans-serif' }}
+          >
+            {number}
+          </p>
+          <p
+            className="mt-1 font-bold leading-snug text-slate-900"
+            style={{ fontFamily: 'Inter, system-ui, sans-serif', fontSize: 'clamp(12.5px, 1.1vw, 14px)' }}
+          >
+            {step.label}
+          </p>
+          <p className="mt-1 text-[10.5px] leading-relaxed text-slate-600 sm:text-xs">
+            {step.description}
+          </p>
+        </div>
       </div>
     </div>
   )
@@ -438,17 +268,16 @@ function WorkflowStepCircle({ step, index, inView, isReduced }) {
    CONNECTORS - Perfectly centered arrows
    ═══════════════════════════════════════════════════════ */
 
-const ARROW_FILL = 'rgba(147, 197, 253, 0.55)'
+const ARROW_FILL = '#d97706'
 
 function DesktopConnector({ inView, delay, isReduced }) {
   return (
     <div
-      className="flex-shrink-0 flex items-center justify-center self-start"
+      className="flex-shrink-0 flex items-center justify-center self-center"
       style={{
-        // Align arrow to center of circle:
-        // Badge height (36px) + badge margin-bottom (12px) + half of circle
-        marginTop: 'calc(36px + 12px + clamp(70px, 9vw, 130px))',
-        width:      'clamp(35px, 4vw, 70px)',
+        // The parent pair wrapper is `items-center`, so this centers against
+        // its own card sibling's actual rendered height automatically.
+        width:      'clamp(28px, 3vw, 56px)',
         opacity:    inView ? 1 : 0,
         transition: isReduced ? 'none' : `opacity 0.5s ease ${delay}s`,
       }}
@@ -498,103 +327,148 @@ function MobileConnector({ inView, delay, isReduced }) {
 }
 
 /* ═══════════════════════════════════════════════════════
-   HERO IMAGE SECTION
+   HERO INTRO — plain, typographic, no photo
    ═══════════════════════════════════════════════════════ */
 
-function HeroImageSection() {
-  const [imageLoaded, setImageLoaded] = useState(false)
-
+function HeroIntro() {
   return (
     <section
       className="relative w-full overflow-hidden"
       aria-label="Hero - AI-powered precision oncology platform"
       style={{ background: '#ffffff' }}
     >
-      <div className="relative w-full">
+      {/* Decorative dotted-grid backdrop, Stroke-AI style */}
+      <div className="hero-intro-bg" aria-hidden="true" />
+      <div
+        className="hero-intro-glow"
+        aria-hidden="true"
+        style={{
+          width: 560, height: 560, top: '-12%', right: '-8%',
+          background: 'radial-gradient(circle, rgba(37,99,235,0.14) 0%, transparent 70%)',
+        }}
+      />
+      <div
+        className="hero-intro-glow"
+        aria-hidden="true"
+        style={{
+          width: 420, height: 420, bottom: '-14%', right: '18%',
+          background: 'radial-gradient(circle, rgba(6,182,212,0.12) 0%, transparent 70%)',
+        }}
+      />
 
-        {/* Loading state */}
-        {!imageLoaded && (
-          <div 
-            className="absolute inset-0 bg-slate-100 flex items-center justify-center"
-            style={{ minHeight: '400px' }}
-          >
+      <div className="relative mx-auto max-w-[1400px] px-4 sm:px-6 lg:pl-10 lg:pr-0">
+        {/* On desktop the image is pulled out of this container (see below); the copy
+            just caps its own width so it never runs under the image. */}
+        <div className="grid grid-cols-1 items-center gap-10 py-16 sm:py-20 lg:block lg:py-32">
+
+          {/* ── Left: copy ── */}
+          <div className="text-center lg:max-w-[48%] lg:min-w-[520px] lg:text-left xl:max-w-[720px]">
+            {/* Status pill — live dot + the two positioning statements, one unit */}
             <div
-              className="w-16 h-16 border-4 border-slate-300 border-t-slate-600 rounded-full"
-              style={{ animation: 'heroSpin 1s linear infinite' }}
+              className="hero-anim-eyebrow inline-flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1 rounded-full border px-4 py-2 shadow-sm backdrop-blur-sm sm:gap-x-3"
+              style={{
+                borderColor: 'rgba(16, 185, 129, 0.28)',
+                background: 'linear-gradient(90deg, rgba(236,253,245,0.95) 0%, rgba(239,246,255,0.95) 100%)',
+              }}
+            >
+              <span className="relative flex h-2 w-2 shrink-0" aria-hidden="true">
+                <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-70" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+              </span>
+              <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-emerald-700 sm:text-xs">
+                Open Source · Not For Profit
+              </span>
+              <span className="hidden h-3 w-px bg-emerald-300/60 sm:block" aria-hidden="true" />
+              <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-blue-600 sm:text-xs">
+                AI For Health · Care For All
+              </span>
+            </div>
+
+            {/* Headline leads — no competing eyebrow above it */}
+            <h1
+              className="hero-anim-headline mt-7 font-bold tracking-[-0.03em] text-slate-900 sm:mt-8"
+              style={{ fontSize: 'clamp(2.3rem, 5.2vw, 4.15rem)', lineHeight: 1.02, animationDelay: '0.1s' }}
+            >
+              Real-time Precision Monitoring of{' '}
+              <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
+                Oncology
+              </span>
+            </h1>
+
+            {/* Supporting line, set off by a rule rather than floating alone */}
+            <div
+              className="hero-anim-headline mt-8 flex items-center justify-center gap-4 sm:mt-9 lg:justify-start"
+              style={{ animationDelay: '0.2s' }}
+            >
+              <span
+                className="hidden h-8 w-[2px] shrink-0 rounded-full lg:block"
+                style={{ background: 'linear-gradient(180deg, #2563eb, #06b6d4)' }}
+                aria-hidden="true"
+              />
+              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-blue-600 sm:text-[15px]">
+                AI — Powered
+              </p>
+            </div>
+
+            {/* Attribution demoted to a quiet footer line */}
+            <p
+              className="hero-anim-eyebrow mt-10 text-[13px] text-slate-400 sm:mt-12"
+              style={{ animationDelay: '0.3s' }}
+            >
+              Powered by{' '}
+              <a
+                href="https://shri-ai.org/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hero-powered-by-link font-medium text-slate-600 underline decoration-slate-300 hover:text-blue-600 hover:decoration-blue-400"
+                style={{ textUnderlineOffset: '3px' }}
+              >
+                Senus Healthcare Research Institute
+              </a>
+              , USA
+            </p>
+          </div>
+
+          {/* ── Mobile / tablet only: image sits below the copy, flush to the right edge ── */}
+          <div className="relative -mr-4 flex h-[190px] items-center justify-end sm:-mr-6 sm:h-[240px] lg:hidden">
+            <div
+              className="absolute inset-y-0 right-0 -z-10 w-[85%] rounded-l-[2.5rem]"
+              aria-hidden="true"
+              style={{
+                background: 'radial-gradient(ellipse 78% 82% at 65% 50%, rgba(219,234,254,0.85) 0%, rgba(219,234,254,0.25) 55%, transparent 78%)',
+              }}
+            />
+            <img
+              src="/hero-vial-hand.webp"
+              alt="A gloved hand holding a blood sample tube, representing the starting point of the OncoTrace-AI liquid biopsy pipeline"
+              draggable={false}
+              loading="eager"
+              className="relative z-10 h-auto w-[68%] max-w-[280px] object-contain sm:max-w-[320px]"
+              style={{ filter: 'drop-shadow(0 24px 32px rgba(15, 23, 42, 0.16))' }}
             />
           </div>
-        )}
+        </div>
+      </div>
 
-        {/* Cover image */}
-        <img
-          src="/trial.webp"
-          alt="AI Precision Diagnostics & Monitoring Centre"
-          loading="eager"
-          fetchPriority="high"
-          draggable={false}
-          onLoad={() => setImageLoaded(true)}
-          className="w-full h-auto block"
+      {/* ── Desktop only: image anchored to the TRUE viewport right edge.
+           A direct child of the full-width <section>, so `right-0` is the real
+           screen edge rather than the centered max-w-[1400px] container's edge. ── */}
+      <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-[46vw] max-w-[680px] items-center justify-end lg:flex">
+        <div
+          className="absolute right-0 top-1/2 -z-10 h-[110%] w-[90%] -translate-y-1/2"
+          aria-hidden="true"
           style={{
-            minHeight:      'clamp(200px, 43vw, 780px)',
-            maxHeight:      '90vh',
-            objectFit:      'cover',
-            objectPosition: 'center',
-            opacity:        imageLoaded ? 1 : 0,
-            transition:     'opacity 0.5s ease',
+            background: 'radial-gradient(ellipse 70% 70% at 70% 50%, rgba(219,234,254,0.9) 0%, rgba(219,234,254,0.3) 50%, transparent 76%)',
           }}
         />
-
-        {/* LEFT OVERLAY */}
-        <div
-          className="hero-overlay-left"
-          aria-label="Open source not for profit – AI for health, care for all"
-        >
-          <span className="hero-badge-open-source">
-            Open Source Not For Profit
-          </span>
-          <span className="hero-badge-tagline">
-            AI For Health&nbsp;|&nbsp;Care For All
-          </span>
-        </div>
-
-        {/* RIGHT OVERLAY */}
-        <div
-          className="hero-overlay-right"
-          aria-label="AI-Powered Real-time Precision Monitoring of Oncology"
-        >
-          <span className="hero-ai-powered-label">
-            AI&nbsp;–&nbsp;Powered
-          </span>
-
-          <span className="hero-main-headline">
-            Real-time Precision<br />
-            Monitoring of Oncology
-          </span>
-
-          <a
-            href="https://shri-ai.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hero-powered-by-link"
-            aria-label="Visit Senus Healthcare and Research Institute"
-          >
-            Powered by  : Senus Healthcare Research Institute (USA)
-          </a>
-        </div>
-
-        {/* Corner Accents */}
-        {CORNER_ACCENTS.map(({ pos, warm }) => (
-          <div
-            key={pos}
-            aria-hidden="true"
-            className={`hidden xl:block absolute ${pos} w-10 h-10 xl:w-12 xl:h-12 z-10 pointer-events-none`}
-            style={{
-              borderColor: warm
-                ? 'rgba(251,191,36,0.35)'
-                : 'rgba(59,130,246,0.25)',
-            }}
-          />
-        ))}
+        <img
+          src="/hero-vial-hand.webp"
+          alt="A gloved hand holding a blood sample tube, representing the starting point of the OncoTrace-AI liquid biopsy pipeline"
+          draggable={false}
+          loading="eager"
+          className="relative z-10 h-auto w-full object-contain"
+          style={{ filter: 'drop-shadow(0 24px 32px rgba(15, 23, 42, 0.16))' }}
+        />
       </div>
     </section>
   )
@@ -631,15 +505,15 @@ export default function HeroSection() {
         Skip to workflow
       </a>
 
-      {/* Hero Image + Overlaid Text */}
-      <HeroImageSection />
+      {/* Hero intro — plain typographic hero, no photo */}
+      <HeroIntro />
 
       {/* ── Workflow Section ── */}
       <section
         id="workflow-section"
         ref={workflowRef}
         className="relative w-full overflow-hidden"
-        aria-label="Liquid Biopsy Deployment Model"
+        aria-label="From Sample to Clinical Insight"
         style={{ background: 'linear-gradient(to bottom, #f8fafc 0%, #ffffff 100%)' }}
       >
         <div className="max-w-[1800px] mx-auto px-3 sm:px-4 lg:px-6 py-14 sm:py-18 lg:py-24">
@@ -655,36 +529,28 @@ export default function HeroSection() {
                 : 'opacity 0.5s ease, transform 0.5s ease',
             }}
           >
+            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.25em] text-blue-600 sm:text-sm">
+              The Pipeline
+            </p>
             <h2
-              className="font-bold text-slate-900 leading-tight mb-4"
-              style={{
-                fontSize:      'clamp(1.8rem, 4.5vw, 3rem)',
-                letterSpacing: '-0.025em',
-              }}
+              className="font-bold leading-tight tracking-tight text-slate-900"
+              style={{ fontSize: 'clamp(1.8rem, 4.5vw, 3rem)', letterSpacing: '-0.025em' }}
             >
-              <span
-                style={{
-                  background:           'linear-gradient(135deg, #784000d2 0%, #c57d00e2 35%, #fbbf24 65%, #d2a100de 100%)',
-                  backgroundSize:       '200% 200%',
-                  WebkitBackgroundClip: 'text',
-                  backgroundClip:       'text',
-                  WebkitTextFillColor:  'transparent',
-                  animation:            isReduced ? 'none' : 'heroGradientShift 6s ease infinite',
-                }}
-              >
-                Liquid Biopsy Deployment Model
+              From Sample to{' '}
+              <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
+                Clinical Insight
               </span>
             </h2>
+            <p className="mx-auto mt-4 max-w-xl text-sm text-slate-500 sm:text-base">
+              Five stages, one continuous liquid biopsy workflow.
+            </p>
           </div>
 
-          {/* Desktop Layout (lg+) - Horizontal row */}
-          <div
-            className="hidden lg:flex items-start justify-center flex-wrap"
-            style={{ gap: 'clamp(4px, 0.5vw, 12px)' }}
-          >
+          {/* Desktop Layout (lg+) - equal-width cards in one row */}
+          <div className="hidden lg:flex lg:items-center lg:justify-center lg:gap-1.5 xl:gap-3">
             {WORKFLOW_STEPS.map((step, index) => (
-              <div key={step.id} className="flex items-start">
-                <WorkflowStepCircle
+              <div key={step.id} className="flex flex-1 items-center" style={{ minWidth: 0 }}>
+                <FlowCard
                   step={step}
                   index={index}
                   inView={workflowInView}
@@ -701,16 +567,13 @@ export default function HeroSection() {
             ))}
           </div>
 
-          {/* Tablet Layout (md → lg) - 3 top, 2 bottom */}
+          {/* Tablet Layout (sm → lg) - 3 top, 2 bottom */}
           <div className="hidden md:block lg:hidden">
             {/* First Row – 3 steps */}
-            <div
-              className="flex items-start justify-center flex-wrap"
-              style={{ gap: 'clamp(6px, 1vw, 16px)' }}
-            >
+            <div className="flex items-center gap-2">
               {WORKFLOW_STEPS.slice(0, 3).map((step, index) => (
-                <div key={step.id} className="flex items-start">
-                  <WorkflowStepCircle
+                <div key={step.id} className="flex flex-1 items-center" style={{ minWidth: 0 }}>
+                  <FlowCard
                     step={step}
                     index={index}
                     inView={workflowInView}
@@ -737,13 +600,10 @@ export default function HeroSection() {
             </div>
 
             {/* Second Row – 2 steps */}
-            <div
-              className="flex items-start justify-center flex-wrap"
-              style={{ gap: 'clamp(6px, 1vw, 16px)' }}
-            >
+            <div className="mx-auto flex max-w-[66%] items-center gap-2">
               {WORKFLOW_STEPS.slice(3).map((step, index) => (
-                <div key={step.id} className="flex items-start">
-                  <WorkflowStepCircle
+                <div key={step.id} className="flex flex-1 items-center" style={{ minWidth: 0 }}>
+                  <FlowCard
                     step={step}
                     index={index + 3}
                     inView={workflowInView}
@@ -761,11 +621,11 @@ export default function HeroSection() {
             </div>
           </div>
 
-          {/* Mobile Layout (< md) - Vertical stack */}
+          {/* Mobile Layout (< sm) - Vertical stack */}
           <div className="flex md:hidden flex-col items-center">
             {WORKFLOW_STEPS.map((step, index) => (
-              <div key={step.id} className="flex flex-col items-center w-full max-w-md">
-                <WorkflowStepCircle
+              <div key={step.id} className="flex flex-col items-center w-full max-w-sm">
+                <FlowCard
                   step={step}
                   index={index}
                   inView={workflowInView}
@@ -780,6 +640,22 @@ export default function HeroSection() {
                 )}
               </div>
             ))}
+          </div>
+
+          {/* Legend */}
+          <div
+            className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 border-t border-slate-200 pt-6 lg:mt-10 lg:pt-8"
+            style={{
+              opacity: workflowInView ? 1 : 0,
+              transition: isReduced ? 'none' : 'opacity 0.6s ease 0.9s',
+            }}
+          >
+            <div className="flex items-center gap-2">
+              <svg width="20" height="10" viewBox="0 0 20 10" fill="none" aria-hidden="true">
+                <path d="M0 5h13M10 1l4 4-4 4" stroke="#d97706" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              <span className="text-xs font-medium text-slate-500">Process flow, left to right</span>
+            </div>
           </div>
 
         </div>
