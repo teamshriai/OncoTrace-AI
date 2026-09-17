@@ -16,6 +16,16 @@ const STEPS = [
   { num: "03", title: "Structured Summary", desc: "A structured variant report with QC metrics and general reference context, usually ready within a minute or two." },
 ];
 
+// Bundled under /public so they're just static files at runtime — no upload
+// endpoint or backend round trip needed to let someone try the pipeline
+// without a VCF of their own. All three are aligned to GRCh38.
+const SAMPLE_FILES = [
+  { name: "S5.input-38.vcf", label: "Small panel (S5)", size: 61742 },
+  { name: "IonXpress-38.vcf", label: "IonXpress panel", size: 1032581 },
+  { name: "Robin-38.vcf", label: "Robin panel", size: 2905278 },
+];
+const SAMPLE_BUILD = "GRCh38";
+
 export default function FileUpload({ onAnalyze, theme, toggleTheme, onBack }) {
   const [file, setFile] = useState(null);
   const [dragOver, setDragOver] = useState(false);
@@ -25,6 +35,24 @@ export default function FileUpload({ onAnalyze, theme, toggleTheme, onBack }) {
   // header, and the analysis service refuses to guess — a wrong build silently
   // invalidates every coordinate-based annotation. So it's asked for up front.
   const [referenceBuild, setReferenceBuild] = useState("");
+  const [sampleLoading, setSampleLoading] = useState(null);
+  const [sampleError, setSampleError] = useState(null);
+
+  const chooseSample = async (sample) => {
+    setSampleError(null);
+    setSampleLoading(sample.name);
+    try {
+      const res = await fetch(`/sample-vcf/${sample.name}`);
+      if (!res.ok) throw new Error(`${res.status}`);
+      const blob = await res.blob();
+      setFile(new File([blob], sample.name, { type: "text/plain" }));
+      setReferenceBuild(SAMPLE_BUILD);
+    } catch {
+      setSampleError("Couldn't load that sample file. Try again.");
+    } finally {
+      setSampleLoading(null);
+    }
+  };
 
   const handleDrop = (e) => {
     e.preventDefault();
@@ -190,6 +218,35 @@ export default function FileUpload({ onAnalyze, theme, toggleTheme, onBack }) {
                     ))}
                   </div>
                 </div>
+              )}
+            </div>
+
+            <div style={{ marginTop: "14px" }}>
+              <p style={{ fontSize: "11px", color: "var(--lb-text-muted)", marginBottom: "8px" }}>
+                No VCF handy? Try one of our sample files:
+              </p>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+                {SAMPLE_FILES.map((sample) => (
+                  <button
+                    key={sample.name}
+                    type="button"
+                    onClick={() => chooseSample(sample)}
+                    disabled={Boolean(sampleLoading)}
+                    data-lb-btn="utility"
+                    style={{
+                      padding: "8px 12px", borderRadius: "var(--lb-radius-md)", border: "1px solid var(--lb-border)",
+                      background: "var(--lb-input-bg)", color: "var(--lb-text-secondary)", fontSize: "12px", fontWeight: 600,
+                      cursor: sampleLoading ? "not-allowed" : "pointer", opacity: sampleLoading && sampleLoading !== sample.name ? 0.5 : 1,
+                      display: "flex", alignItems: "center", gap: "6px",
+                    }}
+                  >
+                    <Icon d={ICONS.file} size={12} style={{ color: "var(--lb-text-muted)" }} />
+                    {sampleLoading === sample.name ? "Loading…" : sample.label}
+                  </button>
+                ))}
+              </div>
+              {sampleError && (
+                <p style={{ fontSize: "11px", color: "var(--lb-status-high, #d33)", marginTop: "6px" }}>{sampleError}</p>
               )}
             </div>
 

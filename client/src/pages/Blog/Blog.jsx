@@ -165,7 +165,7 @@ export default function Blog() {
         )}
       </section>
 
-      <style jsx>{`
+      <style>{`
         @keyframes fadeInUp {
           from {
             opacity: 0;

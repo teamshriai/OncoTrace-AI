@@ -12,6 +12,7 @@ import CaseStudySection   from './components/CaseStudySection';
 import TeamSection        from './components/TeamSection';
 import Footer             from './components/Footer';
 import LiquidBiopsySection from './components/LiquidBiopsySection';
+import SampleReportSection from './components/SampleReportSection';
 import LiquidBiopsyDemo   from './components/liquidbiopsy';
 import Mammodemo          from './components/Mammodemo';
 import Blog               from './pages/Blog/Blog';
@@ -81,6 +82,10 @@ function HomePage({ onNavigate }) {
       <div id="home">
         <HeroSection onNavigate={onNavigate} />
       </div>
+
+      <Section id="sample-report">
+        <SampleReportSection />
+      </Section>
 
       {/* Breathing room */}
       <div style={{ height: '8rem', background: '#fff' }} />
