@@ -1,9 +1,4 @@
 import { useState, useEffect, useCallback } from "react";
-import emailjs from "@emailjs/browser";
-
-const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID_FOOTER;
-const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID_FOOTER;
-const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
 
 const FIELDS = [
   { name: "name", label: "Name", type: "text" },
@@ -32,8 +27,6 @@ export default function Footer() {
     message: "",
   });
   const [submitted, setSubmitted] = useState(false);
-  const [sending, setSending] = useState(false);
-  const [sendError, setSendError] = useState("");
   const width = useWindowWidth();
 
   const isMobile = width < 768;
@@ -55,36 +48,12 @@ export default function Footer() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if (sending) return;
-    setSendError("");
-    if (!SERVICE_ID || !TEMPLATE_ID || !PUBLIC_KEY) {
-      setSendError("Email service is not configured properly.");
-      return;
-    }
-    setSending(true);
-    try {
-      await emailjs.send(
-        SERVICE_ID,
-        TEMPLATE_ID,
-        {
-          from_name: form.name,
-          from_email: form.email,
-          organization: form.organization || "Not provided",
-          message: form.message || "No message provided.",
-        },
-        PUBLIC_KEY
-      );
-      setSubmitted(true);
-      setForm({ name: "", email: "", organization: "", message: "" });
-      setTimeout(() => setSubmitted(false), 4000);
-    } catch (err) {
-      console.error("EmailJS error:", err);
-      setSendError("Something went wrong. Please try again or email us at info@oncotraceai.org.");
-    } finally {
-      setSending(false);
-    }
+    console.log(form);
+    setSubmitted(true);
+    setForm({ name: "", email: "", organization: "", message: "" });
+    setTimeout(() => setSubmitted(false), 4000);
   };
 
   const handleCopy = useCallback(() => {
@@ -125,7 +94,7 @@ export default function Footer() {
 
   return (
     <>
-      <style>{`
+      <style jsx>{`
         @keyframes float {
           0%, 100% {
             transform: translateY(0px) rotate(0deg);
@@ -344,21 +313,14 @@ export default function Footer() {
 
                 <button
                   type="submit"
-                  disabled={sending}
-                  className="mt-2 rounded bg-blue-600 px-4 py-3 text-[12px] tracking-[0.12em] text-white transition hover:-translate-y-0.5 hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
+                  className="mt-2 rounded bg-blue-600 px-4 py-3 text-[12px] tracking-[0.12em] text-white transition hover:-translate-y-0.5 hover:bg-blue-700"
                 >
-                  {sending ? "SENDING..." : "SEND MESSAGE"}
+                  SEND MESSAGE
                 </button>
 
                 {submitted && (
                   <p className="mt-1 text-center text-[12px] text-emerald-300">
                     Thanks! We&apos;ll be in touch.
-                  </p>
-                )}
-
-                {sendError && (
-                  <p className="mt-1 text-center text-[12px] text-red-400">
-                    {sendError}
                   </p>
                 )}
               </form>
@@ -832,22 +794,7 @@ export default function Footer() {
                     className="text-blue-200"
                     style={{ fontSize: "13px", opacity: 0.8, margin: 0 }}
                   >
-                    © 2026 OncoTrace-AI • All rights reserved • v07.09.2026
-                  </p>
-                  <p
-                    className="text-blue-200"
-                    style={{ fontSize: "11px", opacity: 0.55, margin: "4px 0 0" }}
-                  >
-                    Hero image by{" "}
-                    <a
-                      href="https://www.vecteezy.com/free-png/blood-sample-tubes"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="hover:underline"
-                      style={{ color: "inherit" }}
-                    >
-                      Vecteezy
-                    </a>
+                    © 2026 OncoTrace-AI • All rights reserved • v18.09.2026
                   </p>
                 </div>
               </div>
