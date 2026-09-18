@@ -19,7 +19,7 @@ export default function SampleReportSection() {
       aria-label="Sample Report"
       style={{ background: "#f8fafc" }}
     >
-      <div className="max-w-[1800px] mx-auto px-3 sm:px-4 lg:px-6 py-14 sm:py-18 lg:py-24">
+      <div className="max-w-[1150px] mx-auto px-3 sm:px-4 lg:px-6 py-14 sm:py-18 lg:py-24">
         <div className="text-center mb-10 sm:mb-14">
           <p className="mb-3 text-xs font-semibold uppercase tracking-[0.25em] text-blue-600 sm:text-sm">
             See It In Action
@@ -38,8 +38,11 @@ export default function SampleReportSection() {
           </p>
         </div>
 
-        <div data-lb-theme="light">
-          <DoctorSummaryPage data={data} theme="light" />
+        <div
+          data-lb-theme="light"
+          className="rounded-2xl border border-slate-200 bg-white p-3 shadow-xl sm:p-5 lg:p-7"
+        >
+          <DoctorSummaryPage data={data} theme="light" hideDisclaimers />
         </div>
       </div>
     </section>

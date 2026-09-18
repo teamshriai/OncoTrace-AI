@@ -3,6 +3,8 @@ import DonutChart from "../charts/DonutChart";
 import BarChart from "../charts/BarChart";
 import VAFTrendLine from "../charts/VAFTrendLine";
 import VAFHistogram from "../charts/VAFHistogram";
+import Badge from "../primitives/Badge";
+import RiskScoreGauge from "../primitives/RiskScoreGauge";
 import { Icon } from "../icons";
 import { ICONS } from "../iconPaths";
 import { tierColor, vafColor, depthColor, mqColor, qualitativeColor, TIER_LABELS, TIER_SHORT_LABELS } from "../colors";
@@ -124,6 +126,52 @@ function buildClinicalImpression({ tier1Genes, tier3Count, conditions, reviewPri
     sentences.push(`Clinical Review Priority: ${reviewPriority} (${reviewPriorityFormula}).`);
   }
   return sentences.join(" ");
+}
+
+// A disclosed, weighted composite -- every driver below traces to a field
+// already shown elsewhere on this page (tier counts, peak VAF, review
+// priority, QC pass rate). Weights sum to 100 and are shown alongside each
+// driver's contribution, the same "show the formula" approach already used
+// for Clinical Review Priority above.
+function buildRiskScore({ tier1Count, tier3Count, maxVaf, reviewPriority, reviewPriorityMax, qcPassRate }) {
+  const drivers = [
+    {
+      key: "tier1",
+      label: tier1Count > 0
+        ? `Actionable somatic burden — ${tier1Count} Tier 1 finding${tier1Count > 1 ? "s" : ""}`
+        : "Actionable somatic burden — none found",
+      weight: 35,
+      contribution: Math.min(1, tier1Count / 3) * 35,
+    },
+    {
+      key: "vaf",
+      label: `Clonal dominance — peak VAF ${(maxVaf * 100).toFixed(1)}%`,
+      weight: 25,
+      contribution: maxVaf * 25,
+    },
+    {
+      key: "review",
+      label: `Review-priority load — ${reviewPriority ?? 0} of ${reviewPriorityMax}`,
+      weight: 20,
+      contribution: reviewPriorityMax > 0 ? Math.min(1, (reviewPriority || 0) / reviewPriorityMax) * 20 : 0,
+    },
+    {
+      key: "tier3",
+      label: tier3Count > 0 ? `Germline pattern findings — ${tier3Count}` : "Germline pattern findings — none",
+      weight: 10,
+      contribution: Math.min(1, tier3Count / 2) * 10,
+    },
+    {
+      key: "qc",
+      label: `Sequencing QC pass rate — ${Math.round(qcPassRate * 100)}%`,
+      weight: 10,
+      contribution: (1 - qcPassRate) * 10,
+    },
+  ];
+  const score = Math.max(0, Math.min(100, drivers.reduce((s, d) => s + d.contribution, 0)));
+  const ranked = [...drivers].sort((a, b) => b.contribution - a.contribution);
+  if (ranked[0]) ranked[0].dominant = true;
+  return { score, drivers: ranked };
 }
 
 function formatTimestamp(iso) {
@@ -261,7 +309,36 @@ function TierBadge({ count, color, label }) {
   );
 }
 
-export default function DoctorSummaryPage({ data }) {
+// One "what's driving the score" row -- label + weight on top, a filled
+// track sized to the driver's share of its own weight underneath, and the
+// contribution points on the right.
+function DriverBar({ label, weight, contribution, dominant, color }) {
+  const pct = weight > 0 ? Math.min(100, (contribution / weight) * 100) : 0;
+  return (
+    <div style={{ marginBottom: "14px" }}>
+      <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: "10px", marginBottom: "5px" }}>
+        <span style={{ fontSize: "12px", fontWeight: 800, color: "var(--lb-text-primary)" }}>
+          {label}
+          {dominant && (
+            <span style={{
+              marginLeft: "8px", fontSize: "9px", fontWeight: 900, letterSpacing: "0.06em",
+              color: "var(--lb-status-high)", textTransform: "uppercase",
+            }}>
+              Dominant driver
+            </span>
+          )}
+        </span>
+        <span style={{ fontSize: "12px", fontWeight: 900, color, flexShrink: 0 }}>+{contribution.toFixed(1)}</span>
+      </div>
+      <div style={{ height: "7px", background: "var(--lb-track)", borderRadius: "var(--lb-radius-full)", overflow: "hidden" }}>
+        <div style={{ height: "100%", width: `${pct}%`, background: color, borderRadius: "var(--lb-radius-full)" }} />
+      </div>
+      <span style={{ fontSize: "9.5px", color: "var(--lb-text-muted)" }}>weight {weight}%</span>
+    </div>
+  );
+}
+
+export default function DoctorSummaryPage({ data, hideDisclaimers = false }) {
   const { meta, tier_summary, patient_summary, variants, variant_type_distribution, gene_summary = [], actionability_summary } = data;
   const counts = tier_summary?.counts || {};
   const totalTiered = TIER_ORDER.reduce((sum, t) => sum + (counts[t] || 0), 0) || 1;
@@ -294,6 +371,27 @@ export default function DoctorSummaryPage({ data }) {
     reviewPriority,
     reviewPriorityFormula,
   });
+
+  // ── Risk score (page-1 headline gauge) ──
+  const maxVaf = gene_summary.reduce((m, g) => Math.max(m, g.max_vaf || 0), 0);
+  const { score: riskScore, drivers: riskDrivers } = buildRiskScore({
+    tier1Count: counts.tier_1_actionable_somatic || 0,
+    tier3Count: counts.tier_3_germline_pattern_clinically_relevant || 0,
+    maxVaf,
+    reviewPriority,
+    reviewPriorityMax,
+    qcPassRate: data.qc_summary?.pass_rate ?? 1,
+  });
+  const riskBand = riskScore >= 67
+    ? { label: "High Risk · Priority Review", short: "HIGH", color: "var(--lb-status-high)" }
+    : riskScore >= 34
+    ? { label: "Average Risk · Routine Review", short: "AVERAGE", color: "var(--lb-status-moderate)" }
+    : { label: "Low Risk · Standard Follow-Up", short: "LOW", color: "var(--lb-status-low)" };
+  const riskHeadline = tier1Genes.length > 0
+    ? `Actionable somatic finding${tier1Genes.length > 1 ? "s" : ""} in ${tier1Genes.join(", ")}`
+    : (counts.tier_2_uncertain_needs_review || 0) > 0
+    ? "Uncertain variant(s) requiring review"
+    : "No actionable or uncertain findings";
 
   const chrDist = (data.chromosome_distribution || []).map((d, i) => ({ ...d, color: qualitativeColor(i) }));
   const vafHistogramData = (data.vaf_profile?.histogram || []).map((d, i) => ({ ...d, color: qualitativeColor(i) }));
@@ -346,23 +444,23 @@ export default function DoctorSummaryPage({ data }) {
 
   return (
     <div style={REPORT_THEME}>
-      <Callout tone="info">{meta.disclaimer}</Callout>
+      {!hideDisclaimers && meta.disclaimer && <Callout tone="info">{meta.disclaimer}</Callout>}
 
-      {meta.caller_adapter_warning && (
+      {!hideDisclaimers && meta.caller_adapter_warning && (
         <Callout tone="high" icon="alert">
           <strong style={{ color: "var(--lb-status-high)" }}>Unvalidated caller adapter — </strong>
           {meta.caller_adapter_warning}
         </Callout>
       )}
 
-      {meta.reference_build_corroboration?.status === "conflict" && (
+      {!hideDisclaimers && meta.reference_build_corroboration?.status === "conflict" && (
         <Callout tone="high" icon="alert">
           <strong style={{ color: "var(--lb-status-high)" }}>Reference build mismatch — </strong>
           {meta.reference_build_corroboration.warning}
         </Callout>
       )}
 
-      {!meta.reference_build_confirmed && (
+      {!hideDisclaimers && !meta.reference_build_confirmed && (
         <Callout tone="moderate" icon="alert">
           <strong style={{ color: "var(--lb-status-moderate)" }}>Reference build unconfirmed — </strong>
           Coordinate-based annotation (ClinVar, CIViC) is refused until the build is confirmed, so
@@ -399,6 +497,52 @@ export default function DoctorSummaryPage({ data }) {
           </div>
         </div>
       </Card>
+
+      {/* ══ Risk Score — primary page-1 gauge ══ */}
+      <ReportSection title="Risk Score">
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(230px,100%),1fr) minmax(min(320px,100%),2fr))", gap: "24px", alignItems: "center" }}>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+            <RiskScoreGauge score={riskScore} color={riskBand.color} />
+            <p style={{ fontSize: "13px", fontWeight: 900, letterSpacing: "0.04em", color: riskBand.color, marginTop: "2px" }}>
+              {riskBand.label.toUpperCase()}
+            </p>
+            <p style={{ fontSize: "var(--lb-text-2xs)", color: "var(--lb-text-muted)", marginTop: "4px", textAlign: "center", lineHeight: 1.5 }}>
+              Weighted composite of the five inputs at right. Disclosed formula, not a black-box output.
+            </p>
+          </div>
+
+          <div>
+            <p style={{ fontSize: "17px", fontWeight: 900, color: "var(--lb-text-primary)", marginBottom: "6px" }}>{riskHeadline}</p>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", marginBottom: "16px" }}>
+              <Badge label={`Tier 1: ${counts.tier_1_actionable_somatic || 0}`} color={tierColor("tier_1_actionable_somatic")} />
+              <Badge label={`Tier 2: ${counts.tier_2_uncertain_needs_review || 0}`} color={tierColor("tier_2_uncertain_needs_review")} />
+              <Badge label={`Peak VAF ${(maxVaf * 100).toFixed(1)}%`} color={vafColor(maxVaf)} />
+              <Badge label={`QC: ${qcAllPass ? "Pass" : "Review"}`} color={qcAllPass ? "var(--lb-status-low)" : "var(--lb-status-moderate)"} />
+              <Badge label={`Review Priority ${reviewPriority ?? 0}/${reviewPriorityMax}`} color="var(--lb-status-info)" />
+            </div>
+
+            <p style={{ fontSize: "var(--lb-text-2xs)", fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--lb-text-muted)", marginBottom: "10px" }}>
+              What Is Driving The Score
+            </p>
+            {riskDrivers.map((d) => (
+              <DriverBar
+                key={d.key}
+                label={d.label}
+                weight={d.weight}
+                contribution={d.contribution}
+                dominant={d.dominant}
+                color={
+                  d.key === "tier1" ? "var(--lb-status-high)"
+                  : d.key === "vaf" ? "var(--lb-status-moderate)"
+                  : d.key === "review" ? "var(--lb-status-info)"
+                  : d.key === "tier3" ? "var(--lb-status-info)"
+                  : "var(--lb-status-neutral)"
+                }
+              />
+            ))}
+          </div>
+        </div>
+      </ReportSection>
 
       {/* ══ 3-column info bar ══ */}
       <Card style={{ padding: "20px", marginBottom: "16px" }}>
@@ -853,9 +997,11 @@ export default function DoctorSummaryPage({ data }) {
         display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "16px", flexWrap: "wrap",
         padding: "16px 20px", borderRadius: "var(--lb-radius-lg)", border: "1px solid var(--lb-border)", background: "var(--lb-bg-surface)",
       }}>
-        <p style={{ fontSize: "var(--lb-text-2xs)", color: "var(--lb-text-muted)", lineHeight: 1.6, maxWidth: "620px" }}>
-          {meta.disclaimer}
-        </p>
+        {!hideDisclaimers && meta.disclaimer && (
+          <p style={{ fontSize: "var(--lb-text-2xs)", color: "var(--lb-text-muted)", lineHeight: 1.6, maxWidth: "620px" }}>
+            {meta.disclaimer}
+          </p>
+        )}
         <p style={{ fontSize: "var(--lb-text-2xs)", color: "var(--lb-text-muted)", lineHeight: 1.6, textAlign: "right" }}>
           Generated by OncoTrace-AI Genomics Pipeline<br />
           Caller: {meta.caller || "—"} · {formatTimestamp(meta.analysis_timestamp)}

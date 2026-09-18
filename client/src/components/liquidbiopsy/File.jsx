@@ -11,9 +11,9 @@ function formatSize(bytes) {
 }
 
 const STEPS = [
-  { num: "01", title: "Upload your VCF", desc: "Drop your .vcf or .vcf.gz file. Standard variant call formats supported." },
-  { num: "02", title: "Parsing & Annotation", desc: "Your file's variant calls are parsed and annotated against reference databases — no realignment or re-calling happens here." },
-  { num: "03", title: "Structured Summary", desc: "A structured variant report with QC metrics and general reference context, usually ready within a minute or two." },
+  { num: "01", title: "Upload your VCF File", desc: "Drop your .vcf or .vcf.gz file. Standard variant call formats supported." },
+  { num: "02", title: "AI Parsing & Annotation", desc: "Your file's variant calls are parsed and annotated against reference databases — no realignment or re-calling happens here." },
+  { num: "03", title: "Structured AI Summary", desc: "A structured variant report with QC metrics and general reference context, usually ready within a minute or two." },
 ];
 
 // Bundled under /public so they're just static files at runtime — no upload
@@ -287,7 +287,7 @@ export default function FileUpload({ onAnalyze, theme, toggleTheme, onBack }) {
                 ? { background: "var(--lb-brand)", borderColor: "transparent", color: "#fff", cursor: "pointer" }
                 : { background: "var(--lb-input-bg)", borderColor: "var(--lb-border)", color: "var(--lb-text-muted)", cursor: "not-allowed" }),
             }}>
-              <span>Get Your Report</span>
+              <span>Get Your AI Report</span>
               <Icon d={ICONS.arrowRight} size={16} style={{ color: canSubmit ? "#fff" : "var(--lb-text-muted)" }} />
             </button>
 
@@ -322,7 +322,7 @@ export default function FileUpload({ onAnalyze, theme, toggleTheme, onBack }) {
               <div>
                 <p style={{ fontSize: "12px", fontWeight: 600, color: "var(--lb-status-low)" }}>How your file is handled</p>
                 <p style={{ fontSize: "11px", color: "var(--lb-text-secondary)", marginTop: "2px", lineHeight: 1.5 }}>
-                  Processed by our own self-hosted analysis service (not sent to third-party APIs) · not persisted after analysis · not a substitute for clinical-grade compliance certification
+                  Processed by secured AWS Cloud (not sent to third-party APIs) · not persisted after analysis · not a substitute for clinical-grade compliance certification
                 </p>
               </div>
             </div>
