@@ -1,10 +1,20 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import emailjs from "@emailjs/browser";
 
 const FIELDS = [
   { name: "name", label: "Name", type: "text" },
   { name: "email", label: "Email", type: "email" },
   { name: "organization", label: "Organization", type: "text" },
 ];
+
+// Falls back to the liquid-biopsy template so enquiries still reach the same
+// inbox if a dedicated contact template hasn't been created yet. Create one and
+// set VITE_EMAILJS_TEMPLATE_ID_CONTACT for correctly-formatted contact emails.
+const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID_LB;
+const TEMPLATE_ID =
+  import.meta.env.VITE_EMAILJS_TEMPLATE_ID_CONTACT
+  || import.meta.env.VITE_EMAILJS_TEMPLATE_ID_LB;
+const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
 
 function useWindowWidth() {
   const [width, setWidth] = useState(
@@ -27,7 +37,17 @@ export default function Footer() {
     message: "",
   });
   const [submitted, setSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [sendError, setSendError] = useState("");
   const width = useWindowWidth();
+
+  // Guards the post-await setState calls below: the footer unmounts on route
+  // changes, and a reply arriving after that would warn and leak.
+  const isMountedRef = useRef(true);
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => { isMountedRef.current = false; };
+  }, []);
 
   const isMobile = width < 768;
   const isTablet = width >= 768 && width < 1024;
@@ -48,17 +68,57 @@ export default function Footer() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(form);
-    setSubmitted(true);
-    setForm({ name: "", email: "", organization: "", message: "" });
-    setTimeout(() => setSubmitted(false), 4000);
+    if (sending) return;
+    setSendError("");
+
+    if (!SERVICE_ID || !TEMPLATE_ID || !PUBLIC_KEY) {
+      // Never show success when nothing was sent -- this form previously
+      // reported success unconditionally and silently dropped every enquiry.
+      setSendError(
+        "The contact form isn't configured right now. Please email us directly at info@oncotraceai.org.",
+      );
+      return;
+    }
+
+    setSending(true);
+    try {
+      await emailjs.send(
+        SERVICE_ID,
+        TEMPLATE_ID,
+        {
+          from_name: form.name,
+          from_email: form.email,
+          organization: form.organization || "Not provided",
+          message: form.message || "No message provided.",
+          product: "Website contact form (Partner With Us)",
+        },
+        PUBLIC_KEY,
+      );
+      if (!isMountedRef.current) return;
+      setSubmitted(true);
+      setForm({ name: "", email: "", organization: "", message: "" });
+      setTimeout(() => {
+        if (isMountedRef.current) setSubmitted(false);
+      }, 6000);
+    } catch (err) {
+      console.error("Contact form send failed:", err);
+      if (isMountedRef.current) {
+        setSendError(
+          "Something went wrong sending your message. Please try again, or email us at info@oncotraceai.org.",
+        );
+      }
+    } finally {
+      if (isMountedRef.current) setSending(false);
+    }
   };
 
   const handleCopy = useCallback(() => {
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText("info@oncotraceai.org");
+      // Rejects when the page lacks clipboard permission or isn't in a secure
+      // context; an uncaught rejection here surfaces as a console error.
+      navigator.clipboard.writeText("info@oncotraceai.org").catch(() => {});
     }
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -94,7 +154,7 @@ export default function Footer() {
 
   return (
     <>
-      <style jsx>{`
+      <style>{`
         @keyframes float {
           0%, 100% {
             transform: translateY(0px) rotate(0deg);
@@ -313,16 +373,24 @@ export default function Footer() {
 
                 <button
                   type="submit"
-                  className="mt-2 rounded bg-blue-600 px-4 py-3 text-[12px] tracking-[0.12em] text-white transition hover:-translate-y-0.5 hover:bg-blue-700"
+                  disabled={sending}
+                  className="mt-2 rounded bg-blue-600 px-4 py-3 text-[12px] tracking-[0.12em] text-white transition hover:-translate-y-0.5 hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
                 >
-                  SEND MESSAGE
+                  {sending ? "SENDING…" : "SEND MESSAGE"}
                 </button>
 
-                {submitted && (
-                  <p className="mt-1 text-center text-[12px] text-emerald-300">
-                    Thanks! We&apos;ll be in touch.
-                  </p>
-                )}
+                <div aria-live="polite">
+                  {submitted && (
+                    <p className="mt-1 text-center text-[12px] text-emerald-300">
+                      Thanks! We&apos;ll be in touch.
+                    </p>
+                  )}
+                  {sendError && (
+                    <p className="mt-1 text-center text-[12px] text-red-300">
+                      {sendError}
+                    </p>
+                  )}
+                </div>
               </form>
             </div>
           </div>

@@ -3,8 +3,11 @@ from pathlib import Path
 from fastapi.testclient import TestClient
 
 from app.main import app
+from .conftest import basic_auth_header
 
-client = TestClient(app)
+# Credentials ride on every request so these tests stay focused on analysis
+# behaviour; the gate itself is covered in test_auth.py.
+client = TestClient(app, headers=basic_auth_header())
 FIXTURES = Path(__file__).parent / "fixtures"
 S5 = FIXTURES / "S5.panel.annotated.vcf"
 

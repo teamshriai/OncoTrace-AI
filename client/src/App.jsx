@@ -14,6 +14,7 @@ import Footer             from './components/Footer';
 import LiquidBiopsySection from './components/LiquidBiopsySection';
 import SampleReportSection from './components/SampleReportSection';
 import LiquidBiopsyDemo   from './components/liquidbiopsy';
+import DemoAuthGate       from './components/liquidbiopsy/auth/DemoAuthGate';
 import Mammodemo          from './components/Mammodemo';
 import Blog               from './pages/Blog/Blog';
 import BlogPost           from './pages/Blog/BlogPost';
@@ -177,6 +178,14 @@ function AppInner() {
   // silently intercepting clicks on it.
   const isFullScreenApp = currentPage === 'demo' || currentPage === 'lb';
 
+  // Both liquid-biopsy routes render the same gated demo; sharing one element
+  // keeps them from drifting apart.
+  const gatedLiquidBiopsyDemo = (
+    <DemoAuthGate>
+      <LiquidBiopsyDemo onBack={() => handleNavigate('home')} />
+    </DemoAuthGate>
+  );
+
   return (
     <>
       {!isFullScreenApp && <Navbar currentPage={currentPage} onNavigate={handleNavigate} />}
@@ -189,12 +198,12 @@ function AppInner() {
 
         <Route
           path="/demo"
-          element={<LiquidBiopsyDemo onBack={() => handleNavigate('home')} />}
+          element={gatedLiquidBiopsyDemo}
         />
 
         <Route
           path="/Book-LB"
-          element={<LiquidBiopsyDemo onBack={() => handleNavigate('home')} />}
+          element={gatedLiquidBiopsyDemo}
         />
 
         <Route

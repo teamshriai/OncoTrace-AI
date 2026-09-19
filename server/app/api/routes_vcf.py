@@ -1,13 +1,16 @@
+import asyncio
 import logging
 import hashlib
 import os
 import tempfile
+import uuid
 
-from fastapi import APIRouter, File, Form, UploadFile
+from fastapi import APIRouter, Depends, File, Form, UploadFile
 from fastapi.responses import JSONResponse
 from starlette.concurrency import run_in_threadpool
 
 from ..core import config
+from ..core.security import require_demo_auth
 from ..pipeline.build_detection import BuildUnresolvedError, SUPPORTED_BUILDS
 from ..pipeline.callers.base import UnsupportedCallerError
 from ..pipeline.normalize import NormalizationError
@@ -23,6 +26,10 @@ logger = logging.getLogger("oncotrace.api")
 
 _CHUNK = 1024 * 1024
 
+# Caps concurrent analyses per worker process. Each one runs `java -Xmx4g`, so
+# this is really a memory budget: keep (workers x this x 4GB) below host RAM.
+_analysis_slots = asyncio.Semaphore(config.MAX_CONCURRENT_ANALYSES)
+
 
 def _error(status: int, kind: str, message: str, detail: dict | None = None) -> JSONResponse:
     body = {"error_kind": kind, "message": message}
@@ -37,24 +44,42 @@ def health():
 
 
 async def _spool_upload(upload: UploadFile, suffix: str) -> tuple[str, int, str]:
-    """Streams an upload to a temp file, returning (path, bytes, sha256_prefix)."""
+    """Streams an upload to a temp file, returning (path, bytes, sha256_prefix).
+
+    Cleans up its own temp file on failure: the caller only learns the path from
+    the return value, so a partially-written file would otherwise be stranded on
+    disk forever -- an oversize upload could leave MAX_UPLOAD_BYTES behind every
+    time, which is a trivial way to fill the disk.
+    """
     fd, tmp_path = tempfile.mkstemp(suffix=suffix, prefix="oncotrace-upload-")
     total = 0
     digest = hashlib.sha256()
-    with os.fdopen(fd, "wb") as out:
-        while chunk := await upload.read(_CHUNK):
-            total += len(chunk)
-            if total > config.MAX_UPLOAD_BYTES:
-                out.close()
-                raise ValueError(
-                    f"File exceeds the {config.MAX_UPLOAD_BYTES // (1024 * 1024)} MB upload limit."
-                )
-            digest.update(chunk)
-            out.write(chunk)
+    try:
+        with os.fdopen(fd, "wb") as out:
+            while chunk := await upload.read(_CHUNK):
+                total += len(chunk)
+                if total > config.MAX_UPLOAD_BYTES:
+                    raise ValueError(
+                        f"File exceeds the {config.MAX_UPLOAD_BYTES // (1024 * 1024)} MB upload limit."
+                    )
+                digest.update(chunk)
+                out.write(chunk)
+    except BaseException:
+        try:
+            os.unlink(tmp_path)
+        except OSError:
+            pass
+        raise
     return tmp_path, total, digest.hexdigest()[:16]
 
 
-@router.post("/vcf/analyze", response_model=AnalysisResponse)
+# Guarded at the route rather than the router so /health stays reachable
+# unauthenticated for nginx and uptime monitoring.
+@router.post(
+    "/vcf/analyze",
+    response_model=AnalysisResponse,
+    dependencies=[Depends(require_demo_auth)],
+)
 async def analyze(
     vcf_file: UploadFile = File(...),
     reference_build_hint: str | None = Form(None),
@@ -93,14 +118,28 @@ async def analyze(
         # analyze_vcf is a long, blocking call (subprocess bcftools/SnpEff runs).
         # Off the event loop, so one slow analysis doesn't freeze every other
         # request this server is handling -- including /health.
-        return await run_in_threadpool(
-            analyze_vcf,
-            tmp_path,
-            vcf_file.filename or "uploaded.vcf",
-            reference_build_hint,
-            sample_name=sample_name,
-            panel_bed_path=bed_path,
-        )
+        #
+        # Gated by a semaphore because each analysis spawns `java -Xmx4g`: the
+        # default threadpool would allow 40 concurrent runs per worker, i.e.
+        # enough JVMs to OOM the host from a handful of simultaneous uploads.
+        # Shedding load with a 503 is far better than the kernel picking a
+        # victim process.
+        if _analysis_slots.locked():
+            logger.warning("analysis capacity reached; shedding request")
+            return _error(
+                503, "annotation_failure",
+                "The analysis service is at capacity right now. Please try again in a few minutes.",
+            )
+
+        async with _analysis_slots:
+            return await run_in_threadpool(
+                analyze_vcf,
+                tmp_path,
+                vcf_file.filename or "uploaded.vcf",
+                reference_build_hint,
+                sample_name=sample_name,
+                panel_bed_path=bed_path,
+            )
 
     except UnsupportedFormatError as exc:
         return _error(400, "malformed_vcf", str(exc), exc.detail or None)
@@ -123,9 +162,18 @@ async def analyze(
             "the local ClinVar databases didn't give a clear enough answer. Please resubmit specifying the build.",
             {"evidence": exc.heuristic_result, "supported_builds": list(SUPPORTED_BUILDS)},
         )
-    except (NormalizationError, SnpEffError, ClinVarError) as exc:
-        logger.exception("annotation stage failed")
-        return _error(500, "annotation_failure", str(exc)[:500])
+    except (NormalizationError, SnpEffError, ClinVarError):
+        # The exception text embeds absolute server paths and raw bcftools/SnpEff
+        # stderr, so it stays server-side. The client gets a correlation id it
+        # can quote to support instead.
+        incident = uuid.uuid4().hex[:12]
+        logger.exception("annotation stage failed [incident=%s]", incident)
+        return _error(
+            500, "annotation_failure",
+            "The file parsed correctly, but an annotation stage failed on our side. "
+            "This isn't a problem with your file.",
+            {"incident_id": incident},
+        )
     except ValueError as exc:
         return _error(400, "malformed_vcf", str(exc)[:500])
     except Exception:

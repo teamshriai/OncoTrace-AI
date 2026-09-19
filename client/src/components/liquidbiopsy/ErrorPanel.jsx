@@ -23,6 +23,13 @@ const COPY = {
     fallback: "This took longer than expected. Try again, or try a smaller file.",
     primaryAction: "retry",
   },
+  unauthorized: {
+    title: "Session expired",
+    fallback:
+      "Your demo credentials are no longer accepted — they may have been rotated. "
+      + "Sign in again to continue.",
+    primaryAction: "startOver",
+  },
   reference_build_unresolved: {
     title: "Reference build needed",
     fallback:

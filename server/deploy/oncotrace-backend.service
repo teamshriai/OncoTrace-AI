@@ -23,6 +23,11 @@ Type=simple
 User=anand
 WorkingDirectory=/home/anand/OncoTrace-AI/server
 Environment="ONCOTRACE_PANEL_NAME=Targeted Oncology Panel (GeneMind SURFSeq5000)"
+# The shared demo credential normally comes from an untracked server/.env.
+# To supply it here instead, uncomment these with real values and restrict the
+# unit file first: sudo chmod 600 /etc/systemd/system/oncotrace-backend.service
+#Environment="ONCOTRACE_DEMO_USERNAME=demo-user"
+#Environment="ONCOTRACE_DEMO_PASSWORD=change-me"
 # Bind to loopback only -- nginx is the only thing that should reach this
 # port. Never expose 8000 directly to the internet.
 ExecStart=/home/anand/OncoTrace-AI/server/.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000 --workers 2

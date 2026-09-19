@@ -6,7 +6,16 @@ out of band.
 import os
 from pathlib import Path
 
+from dotenv import load_dotenv
+
 SERVER_ROOT = Path(__file__).resolve().parents[2]
+
+# Loaded before any os.environ read below. override=False so a real environment
+# variable (systemd Environment=, CI, a shell export) always beats the file --
+# server/.env is a local-development convenience, not the production source of
+# truth, and it is untracked precisely because it holds the demo credential.
+load_dotenv(SERVER_ROOT / ".env", override=False)
+
 RESOURCES = Path(os.environ.get("ONCOTRACE_RESOURCES", SERVER_ROOT / "resources"))
 
 
@@ -50,16 +59,44 @@ ALLOW_GENERIC_CALLER = os.environ.get("ONCOTRACE_ALLOW_GENERIC_CALLER", "true").
 
 MAX_UPLOAD_BYTES = int(os.environ.get("ONCOTRACE_MAX_UPLOAD_BYTES", 500 * 1024 * 1024))
 
+# Concurrent analyses allowed per worker process. Each analysis runs SnpEff as
+# `java -Xmx4g`, so the real constraint is memory: keep
+# (uvicorn --workers) x (this value) x 4GB comfortably under host RAM.
+# Requests beyond the limit are shed with a 503 rather than queued, because a
+# queued genomics job is usually abandoned by the caller long before it runs.
+MAX_CONCURRENT_ANALYSES = int(os.environ.get("ONCOTRACE_MAX_CONCURRENT_ANALYSES", 2))
+
+# Vite takes the next free port when 5173 is already in use (a second dev
+# server, or one left running from an earlier session), so the 5174/5175
+# fallbacks are listed too. Without them the browser blocks the login request
+# at CORS preflight and the demo looks like it is rejecting valid credentials.
+_DEV_ORIGINS = ",".join(
+    f"http://{host}:{port}"
+    for port in (5173, 5174, 5175)
+    for host in ("localhost", "127.0.0.1")
+)
+
 CORS_ORIGINS = [
     o.strip() for o in os.environ.get(
         "ONCOTRACE_CORS_ORIGINS",
-        "http://localhost:5173,http://127.0.0.1:5173",
+        _DEV_ORIGINS,
     ).split(",") if o.strip()
 ]
 
 # When false, requests fail with a clear 503 if reference data is missing rather
 # than returning partial results that could be mistaken for a full analysis.
 ALLOW_PARTIAL_ANNOTATION = os.environ.get("ONCOTRACE_ALLOW_PARTIAL", "true").lower() == "true"
+
+# Single shared credential gating the analysis endpoint while the demo is
+# invite-only. Deliberately fail-closed: when these are unset the protected
+# routes return 503 rather than serving unauthenticated, so a misconfigured
+# deploy is loudly broken instead of silently public.
+DEMO_AUTH_USERNAME = os.environ.get("ONCOTRACE_DEMO_USERNAME") or None
+DEMO_AUTH_PASSWORD = os.environ.get("ONCOTRACE_DEMO_PASSWORD") or None
+
+
+def demo_auth_configured() -> bool:
+    return bool(DEMO_AUTH_USERNAME and DEMO_AUTH_PASSWORD)
 
 
 def read_release(path: Path, label: str) -> str:
