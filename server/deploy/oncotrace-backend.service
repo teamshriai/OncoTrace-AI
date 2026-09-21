@@ -24,6 +24,16 @@ User=anand
 WorkingDirectory=/home/anand/OncoTrace-AI/server
 Environment="ONCOTRACE_PANEL_NAME=Targeted Oncology Panel (GeneMind SURFSeq5000)"
 
+# Sized for an AWS t3.large (2 vCPU / 8 GB RAM). Each analysis spawns
+# `java -Xmx4g`, so worker_count x ONCOTRACE_MAX_CONCURRENT_ANALYSES x 4GB is a
+# hard memory budget, not a soft one -- exceeding host RAM means the OOM killer
+# picks a process at random, which is a far worse failure mode than a 503.
+# With --workers 2 below, ONCOTRACE_MAX_CONCURRENT_ANALYSES must stay at 1
+# (config.py's default) to cap peak usage at 2 x 1 x 4GB = 8GB, leaving nothing
+# to spare for nginx/OS/React static files -- do not raise either value on this
+# instance size without also increasing RAM.
+Environment="ONCOTRACE_MAX_CONCURRENT_ANALYSES=1"
+
 # Secrets live here, NOT in this file. The unit file is world-readable and
 # `systemctl show` would print any Environment= value to any local user, so the
 # demo credential is loaded from a root-owned 0600 file instead:
@@ -42,6 +52,23 @@ EnvironmentFile=-/etc/oncotrace/env
 ExecStart=/home/anand/OncoTrace-AI/server/.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000 --workers 2
 Restart=on-failure
 RestartSec=5
+
+# Hard backstop on an 8 GB box: if the app-level semaphore above is ever
+# bypassed by a bug, the kernel kills THIS service instead of letting memory
+# pressure take down nginx, sshd, or anything else on the host. 6G leaves
+# headroom for nginx + the OS above the ~8GB analysis budget calculated above;
+# lower this if other services share the instance.
+MemoryMax=6G
+MemoryHigh=5G
+
+# Basic sandboxing -- cheap to add, meaningfully reduces blast radius if the
+# analysis pipeline (which shells out to bcftools/SnpEff on attacker-supplied
+# files) is ever exploited.
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/home/anand/OncoTrace-AI/server
 
 [Install]
 WantedBy=multi-user.target

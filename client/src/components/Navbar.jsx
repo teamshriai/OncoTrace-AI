@@ -66,7 +66,7 @@ const NAV_LINKS = [
 const PRODUCT_LINKS = [
 
   {
-    label: 'Explore Liquid Biopsy AI',
+    label: 'Liquid Biopsy',
     action: 'view-lb',
     featured: false,
     icon: (
@@ -78,7 +78,7 @@ const PRODUCT_LINKS = [
   }, 
 
   {
-    label: 'Experience Mammo AI',
+    label: 'Mammogram',
     action: 'view-mammo',
     featured: false,
     icon: (
@@ -809,7 +809,7 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
                       focus-visible:ring-2 focus-visible:ring-blue-400
                     "
                   >
-                    <span>View Products</span>
+                    <span>View Demo</span>
                     <Chevron open={ddOpen} />
                   </button>
 
@@ -1075,7 +1075,7 @@ export default function Navbar({ currentPage = 'home', onNavigate }) {
                     block text-[0.6875rem] font-bold tracking-[0.09em] uppercase
                     text-gray-400 px-3.5 pt-3 pb-2
                   ">
-                    View Products
+                    View Demo
                   </span>
 
                   {PRODUCT_LINKS.map((p) => (

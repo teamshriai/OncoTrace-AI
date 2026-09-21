@@ -12,7 +12,12 @@
     --text-soft:      #64748b;
     --text-muted:     #94a3b8;
     --bg-white:       #ffffff;
-    --bg-page:        #f8faff;
+    /* Matches every section's own background exactly (#f8fafc, used across
+       HeroSection/SampleReportSection/etc). This used to be a very slightly
+       different blue-tinted #f8faff -- invisible on its own, but it showed
+       through as a faint hairline at any overflow:hidden section boundary
+       where anti-aliasing exposed a sliver of the page background beneath. */
+    --bg-page:        #f8fafc;
     --border-light:   rgba(59,130,246,0.12);
     --border-soft:    rgba(59,130,246,0.08);
     --shadow-card:    0 4px 24px rgba(59,130,246,0.08);

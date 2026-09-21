@@ -335,84 +335,110 @@ function HeroIntro() {
     <section
       className="relative w-full overflow-hidden"
       aria-label="Hero - AI-powered precision oncology platform"
-      style={{ background: '#ffffff' }}
+      // Matches SampleReportSection's background so the hero and the section
+      // right below it read as one continuous surface, not two visibly
+      // different shades of white.
+      style={{ background: '#f8fafc' }}
     >
       {/* Decorative dotted-grid backdrop, Stroke-AI style */}
       <div className="hero-intro-bg" aria-hidden="true" />
+      {/* These two glow blobs previously bled past the section's own edges
+          (top:-12%, bottom:-14%) so overflow:hidden hard-clipped each
+          radial-gradient before it reached full transparency -- visible as a
+          faint horizontal line exactly at the section's bottom boundary,
+          compounding with the image glow below into a line that survived
+          fixing any single blob alone. Fully contained positioning (no
+          negative offsets) plus a fade that reaches transparent at 55% of
+          the blob's own radius, well inside its box, guarantees the edge is
+          never clipped at any viewport width. */}
       <div
         className="hero-intro-glow"
         aria-hidden="true"
         style={{
-          width: 560, height: 560, top: '-12%', right: '-8%',
-          background: 'radial-gradient(circle, rgba(37,99,235,0.14) 0%, transparent 70%)',
+          width: 560, height: 560, top: '4%', right: '2%',
+          background: 'radial-gradient(circle, rgba(37,99,235,0.14) 0%, transparent 55%)',
         }}
       />
       <div
         className="hero-intro-glow"
         aria-hidden="true"
         style={{
-          width: 420, height: 420, bottom: '-14%', right: '18%',
-          background: 'radial-gradient(circle, rgba(6,182,212,0.12) 0%, transparent 70%)',
+          width: 420, height: 420, bottom: '4%', right: '20%',
+          background: 'radial-gradient(circle, rgba(6,182,212,0.12) 0%, transparent 55%)',
         }}
       />
 
       <div className="relative mx-auto max-w-[1400px] px-4 sm:px-6 lg:pl-10 lg:pr-0">
         {/* On desktop the image is pulled out of this container (see below); the copy
-            just caps its own width so it never runs under the image. */}
-        <div className="grid grid-cols-1 items-center gap-10 py-16 sm:py-20 lg:block lg:py-32">
+            just caps its own width so it never runs under the image.
+            Vertical padding trimmed (was py-16/20/32) and the image column
+            lifted (was h-190/240px) so the section takes up less of the
+            viewport overall, bringing SampleReportSection up sooner. */}
+        <div className="grid grid-cols-1 items-center gap-6 py-10 sm:py-12 lg:block lg:py-20">
 
-          {/* ── Left: copy ── */}
+          {/* ── Left: copy — sizes reduced one step across the board ── */}
           <div className="text-center lg:max-w-[48%] lg:min-w-[520px] lg:text-left xl:max-w-[720px]">
             {/* Status pill — live dot + the two positioning statements, one unit */}
             <div
-              className="hero-anim-eyebrow inline-flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1 rounded-full border px-4 py-2 shadow-sm backdrop-blur-sm sm:gap-x-3"
+              className="hero-anim-eyebrow inline-flex flex-wrap items-center justify-center gap-x-2 gap-y-1 rounded-full border px-3.5 py-1.5 shadow-sm backdrop-blur-sm sm:gap-x-2.5"
               style={{
                 borderColor: 'rgba(16, 185, 129, 0.28)',
                 background: 'linear-gradient(90deg, rgba(236,253,245,0.95) 0%, rgba(239,246,255,0.95) 100%)',
               }}
             >
-              <span className="relative flex h-2 w-2 shrink-0" aria-hidden="true">
+              <span className="relative flex h-1.5 w-1.5 shrink-0" aria-hidden="true">
                 <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-70" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
               </span>
-              <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-emerald-700 sm:text-xs">
+              <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-emerald-700 sm:text-[11px]">
                 Open Source · Not For Profit
               </span>
               <span className="hidden h-3 w-px bg-emerald-300/60 sm:block" aria-hidden="true" />
-              <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-blue-600 sm:text-xs">
+              <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-blue-600 sm:text-[11px]">
                 AI For Health · Care For All
               </span>
             </div>
 
             {/* Headline leads — no competing eyebrow above it */}
             <h1
-              className="hero-anim-headline mt-7 font-bold tracking-[-0.03em] text-slate-900 sm:mt-8"
-              style={{ fontSize: 'clamp(2.3rem, 5.2vw, 4.15rem)', lineHeight: 1.02, animationDelay: '0.1s' }}
+              className="hero-anim-headline mt-5 font-bold tracking-[-0.03em] text-slate-900 sm:mt-6"
+              // Floor lowered from 1.9rem: "Monitoring of Oncology" is forced
+              // onto one line below (whitespace-nowrap, so it never breaks
+              // mid-phrase) and at the old floor that phrase was wider than
+              // the text column on narrow phones (clipped past the right
+              // edge at 320-360px). 8.5vw closes that gap specifically on
+              // small screens without changing anything above ~420px, where
+              // 4.2vw already exceeds it.
+              style={{ fontSize: 'clamp(1.35rem, 8.5vw, 3.4rem)', lineHeight: 1.08, animationDelay: '0.1s' }}
             >
-              Real-time Precision Monitoring of{' '}
-              <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
-                Oncology
+              Real-time Precision
+              <br />
+              <span className="whitespace-nowrap">
+                Monitoring of{' '}
+                <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
+                  Oncology
+                </span>
               </span>
             </h1>
 
             {/* Supporting line, set off by a rule rather than floating alone */}
             <div
-              className="hero-anim-headline mt-8 flex items-center justify-center gap-4 sm:mt-9 lg:justify-start"
+              className="hero-anim-headline mt-5 flex items-center justify-center gap-3 sm:mt-6 lg:justify-start"
               style={{ animationDelay: '0.2s' }}
             >
               <span
-                className="hidden h-8 w-[2px] shrink-0 rounded-full lg:block"
+                className="hidden h-6 w-[2px] shrink-0 rounded-full lg:block"
                 style={{ background: 'linear-gradient(180deg, #2563eb, #06b6d4)' }}
                 aria-hidden="true"
               />
-              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-blue-600 sm:text-[15px]">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-600 sm:text-sm">
                 AI — Powered
               </p>
             </div>
 
             {/* Attribution demoted to a quiet footer line */}
             <p
-              className="hero-anim-eyebrow mt-10 text-[13px] text-slate-400 sm:mt-12"
+              className="hero-anim-eyebrow mt-6 text-xs text-slate-400 sm:mt-7"
               style={{ animationDelay: '0.3s' }}
             >
               Powered by{' '}
@@ -429,8 +455,10 @@ function HeroIntro() {
             </p>
           </div>
 
-          {/* ── Mobile / tablet only: image sits below the copy, flush to the right edge ── */}
-          <div className="relative -mr-4 flex h-[190px] items-center justify-end sm:-mr-6 sm:h-[240px] lg:hidden">
+          {/* ── Mobile / tablet only: image sits below the copy, flush to the right edge.
+               Sized down (was 190/240px tall, 280/320px wide) to match the
+               smaller text above. ── */}
+          <div className="relative -mr-4 flex h-[140px] items-center justify-end sm:-mr-6 sm:h-[180px] lg:hidden">
             <div
               className="absolute inset-y-0 right-0 -z-10 w-[85%] rounded-l-[2.5rem]"
               aria-hidden="true"
@@ -443,7 +471,7 @@ function HeroIntro() {
               alt="A gloved hand holding a blood sample tube, representing the starting point of the OncoTrace-AI liquid biopsy pipeline"
               draggable={false}
               loading="eager"
-              className="relative z-10 h-auto w-[68%] max-w-[280px] object-contain sm:max-w-[320px]"
+              className="relative z-10 h-auto w-[54%] max-w-[220px] object-contain sm:max-w-[250px]"
               style={{ filter: 'drop-shadow(0 24px 32px rgba(15, 23, 42, 0.16))' }}
             />
           </div>
@@ -452,13 +480,22 @@ function HeroIntro() {
 
       {/* ── Desktop only: image anchored to the TRUE viewport right edge.
            A direct child of the full-width <section>, so `right-0` is the real
-           screen edge rather than the centered max-w-[1400px] container's edge. ── */}
-      <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-[46vw] max-w-[680px] items-center justify-end lg:flex">
+           screen edge rather than the centered max-w-[1400px] container's edge.
+           Column shrunk (was 46vw/680px) and pulled up (top-based instead of
+           vertically centered) to sit level with the now-smaller text. ── */}
+      <div className="pointer-events-none absolute right-0 top-[8%] hidden w-[36vw] max-w-[520px] items-start justify-end lg:flex">
         <div
-          className="absolute right-0 top-1/2 -z-10 h-[110%] w-[90%] -translate-y-1/2"
+          // Was h-[110%], taller than its own parent -- close enough to the
+          // section's bottom edge for the ellipse's fade (previously reaching
+          // transparent only at 76% of its radius) to still be faintly
+          // visible right where overflow:hidden clipped it, compounding with
+          // the two glow blobs above into a visible seam. Shrunk to fit
+          // inside the parent and set to reach full transparency at 60%,
+          // comfortably inside its own box regardless of viewport width.
+          className="absolute right-0 top-1/2 -z-10 h-[95%] w-[90%] -translate-y-1/2"
           aria-hidden="true"
           style={{
-            background: 'radial-gradient(ellipse 70% 70% at 70% 50%, rgba(219,234,254,0.9) 0%, rgba(219,234,254,0.3) 50%, transparent 76%)',
+            background: 'radial-gradient(ellipse 70% 70% at 70% 50%, rgba(219,234,254,0.9) 0%, rgba(219,234,254,0.3) 40%, transparent 60%)',
           }}
         />
         <img
@@ -490,8 +527,10 @@ export default function HeroSection() {
   return (
     <div
       className="hero-root"
-      style={{ 
-        background: '#ffffff', 
+      style={{
+        // Matches SampleReportSection's background (#f8fafc) so the two
+        // sections read as one continuous surface with no visible seam.
+        background: '#f8fafc',
         fontFamily: 'Inter, system-ui, sans-serif',
         minHeight: '100vh',
         width: '100%',
@@ -514,13 +553,19 @@ export default function HeroSection() {
         ref={workflowRef}
         className="relative w-full overflow-hidden"
         aria-label="From Sample to Clinical Insight"
-        style={{ background: 'linear-gradient(to bottom, #f8fafc 0%, #ffffff 100%)' }}
+        // Flat #f8fafc, matching HeroIntro above and SampleReportSection
+        // below exactly -- a gradient here previously started at #ffffff
+        // while HeroIntro ended at #f8fafc, and that mismatch was visible as
+        // a hard line right at the section boundary. Flat + identical colors
+        // on both sides is what actually removes the seam, not a gradient
+        // (which just relocates the mismatch to wherever it doesn't line up).
+        style={{ background: '#f8fafc' }}
       >
         <div className="max-w-[1800px] mx-auto px-3 sm:px-4 lg:px-6 py-14 sm:py-18 lg:py-24">
 
           {/* Section Header */}
           <div
-            className="text-center mb-12 sm:mb-16 lg:mb-20"
+            className="text-center mb-8 sm:mb-10 lg:mb-14"
             style={{
               opacity:   workflowInView ? 1 : 0,
               transform: workflowInView ? 'translateY(0)' : 'translateY(20px)',
@@ -642,9 +687,13 @@ export default function HeroSection() {
             ))}
           </div>
 
-          {/* Legend */}
+          {/* Legend — no border-t here: this section hands off directly into
+              SampleReportSection below, and a hard divider line this close to
+              that boundary read as a seam between the two "pages" rather than
+              a rule within one. Spacing alone still separates it from the
+              cards above. */}
           <div
-            className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 border-t border-slate-200 pt-6 lg:mt-10 lg:pt-8"
+            className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 pt-6 lg:mt-10 lg:pt-8"
             style={{
               opacity: workflowInView ? 1 : 0,
               transition: isReduced ? 'none' : 'opacity 0.6s ease 0.9s',

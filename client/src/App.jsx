@@ -1,10 +1,9 @@
 // App.jsx
-import { useEffect, useRef } from 'react';
+import { lazy, Suspense, useEffect, useRef } from 'react';
 import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 
 import Navbar        from './components/Navbar';
 import HeroSection   from './components/HeroSection';
-import DNA3DSection  from './components/DNA3DSection';
 import Mammogram     from './components/Mammogram';
 import ProblemSection     from './components/ProblemSection';
 import SolutionSection    from './components/SolutionSection';
@@ -13,11 +12,28 @@ import TeamSection        from './components/TeamSection';
 import Footer             from './components/Footer';
 import LiquidBiopsySection from './components/LiquidBiopsySection';
 import SampleReportSection from './components/SampleReportSection';
-import LiquidBiopsyDemo   from './components/liquidbiopsy';
-import DemoAuthGate       from './components/liquidbiopsy/auth/DemoAuthGate';
-import Mammodemo          from './components/Mammodemo';
-import Blog               from './pages/Blog/Blog';
-import BlogPost           from './pages/Blog/BlogPost';
+import DemoAuthGate        from './components/liquidbiopsy/auth/DemoAuthGate';
+
+// Code-split by route/section: none of these are needed for the initial
+// homepage paint, so every visitor previously downloaded and parsed all of
+// them (three.js, recharts, emailjs) up front regardless of which page they
+// actually wanted. Splitting means each chunk loads only when its route or
+// section is reached.
+//
+// DNA3DSection: three.js + @react-three/fiber is ~870KB alone. It already
+// wraps its own <Canvas> in an ErrorBoundary and gates the model load behind
+// an IntersectionObserver, so the Suspense boundary below only covers the
+// brief gap while the JS chunk itself downloads.
+const DNA3DSection      = lazy(() => import('./components/DNA3DSection'));
+// The gated analysis dashboard: pulls in recharts (~280KB) for charts no
+// other page uses.
+const LiquidBiopsyDemo  = lazy(() => import('./components/liquidbiopsy'));
+// Booking forms: pull in @emailjs/browser, used nowhere else pre-submission.
+const Mammodemo           = lazy(() => import('./components/Mammodemo'));
+const LiquidBiopsyBooking = lazy(() => import('./components/LiquidBiopsyBooking'));
+// Blog: separate content area, irrelevant to a first-time product visitor.
+const Blog     = lazy(() => import('./pages/Blog/Blog'));
+const BlogPost = lazy(() => import('./pages/Blog/BlogPost'));
 
 /* ── Navbar height token ──
    Navbar.jsx defines --nav-h responsively (it shrinks on small screens) and
@@ -91,7 +107,9 @@ function HomePage({ onNavigate }) {
       {/* Breathing room */}
       <div style={{ height: '8rem', background: '#fff' }} />
 
-      <DNA3DSection />
+      <Suspense fallback={null}>
+        <DNA3DSection />
+      </Suspense>
 
       <Section id="mammogram">
         <Mammogram />
@@ -170,26 +188,26 @@ function AppInner() {
     }
   };
 
-  // The liquid biopsy dashboard is a full-screen app experience with its own
-  // fixed sidebar/header, not another marketing page — it owns its own chrome
-  // (including a working "back to site" button, wired via onBack) rather than
-  // sitting underneath the site Navbar. Keeping the global Navbar mounted here
-  // put a z-index:10001 element on top of the dashboard's own fixed sidebar,
-  // silently intercepting clicks on it.
-  const isFullScreenApp = currentPage === 'demo' || currentPage === 'lb';
-
-  // Both liquid-biopsy routes render the same gated demo; sharing one element
-  // keeps them from drifting apart.
-  const gatedLiquidBiopsyDemo = (
-    <DemoAuthGate>
-      <LiquidBiopsyDemo onBack={() => handleNavigate('home')} />
-    </DemoAuthGate>
-  );
+  // The liquid biopsy DASHBOARD (/demo) is a full-screen app experience with
+  // its own fixed sidebar/header, not another marketing page — it owns its own
+  // chrome (including a working "back to site" button, wired via onBack)
+  // rather than sitting underneath the site Navbar. Keeping the global Navbar
+  // mounted here put a z-index:10001 element on top of the dashboard's own
+  // fixed sidebar, silently intercepting clicks on it.
+  //
+  // /Book-LB is a booking FORM, not the dashboard, so it keeps the Navbar —
+  // matching /mammo-demo's own booking-form route below.
+  const isFullScreenApp = currentPage === 'demo';
 
   return (
     <>
       {!isFullScreenApp && <Navbar currentPage={currentPage} onNavigate={handleNavigate} />}
 
+      {/* One boundary for every route below: only the routes that are
+          actually lazy (demo, Book-LB, mammo-demo, blog/*) suspend here --
+          HomePage's own import is static, so navigating to "/" never shows
+          this fallback. Kept minimal/branded rather than a blank flash. */}
+      <Suspense fallback={<RouteLoadingFallback />}>
       <Routes>
         <Route
           path="/"
@@ -198,12 +216,20 @@ function AppInner() {
 
         <Route
           path="/demo"
-          element={gatedLiquidBiopsyDemo}
+          element={
+            <DemoAuthGate>
+              <LiquidBiopsyDemo onBack={() => handleNavigate('home')} />
+            </DemoAuthGate>
+          }
         />
 
         <Route
           path="/Book-LB"
-          element={gatedLiquidBiopsyDemo}
+          element={
+            <div style={{ paddingTop: NAV_H }}>
+              <LiquidBiopsyBooking onBack={() => handleNavigate('home')} />
+            </div>
+          }
         />
 
         <Route
@@ -231,7 +257,26 @@ function AppInner() {
           element={<NotFound onNavigate={handleNavigate} />}
         />
       </Routes>
+      </Suspense>
     </>
+  );
+}
+
+// Minimal, brand-neutral placeholder while a lazy route chunk downloads.
+// Full-viewport-height-agnostic (no fixed height) so it never causes a
+// visible layout jump when the real route content mounts in its place.
+function RouteLoadingFallback() {
+  return (
+    <div
+      role="status"
+      aria-label="Loading"
+      style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        minHeight: '60vh', color: '#94a3b8', fontSize: '0.875rem',
+      }}
+    >
+      Loading…
+    </div>
   );
 }
 
