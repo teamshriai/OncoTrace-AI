@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import ThemeToggle from "./ThemeToggle";
 import { Icon, LockIcon } from "./icons";
 import { ICONS } from "./iconPaths";
+import { HeroIllustration, FileThumbnail } from "./Illustrations";
 import { isMockMode } from "./api";
 import TermsModal from "./legal/TermsModal";
 
@@ -37,6 +38,7 @@ export default function FileUpload({ onAnalyze, theme, toggleTheme, onBack }) {
   const [referenceBuild, setReferenceBuild] = useState("");
   const [sampleLoading, setSampleLoading] = useState(null);
   const [sampleError, setSampleError] = useState(null);
+  const [uploadMode, setUploadMode] = useState("local");
 
   const chooseSample = async (sample) => {
     setSampleError(null);
@@ -123,13 +125,19 @@ export default function FileUpload({ onAnalyze, theme, toggleTheme, onBack }) {
       </nav>
 
       <div style={{ maxWidth: "1024px", margin: "0 auto", padding: "64px 20px" }}>
-        <div style={{ textAlign: "center", marginBottom: "56px" }}>
-          <h1 style={{ fontSize: "var(--lb-text-2xl)", fontFamily: "var(--lb-font-display)", fontWeight: 700, lineHeight: 1.15, letterSpacing: "-0.01em", color: "var(--lb-text-primary)", marginBottom: "16px" }}>
-            Upload a VCF. Get a Structured Variant Report.
-          </h1>
-          <p style={{ fontSize: "clamp(15px,2vw,18px)", color: "var(--lb-text-secondary)", lineHeight: 1.7, maxWidth: "480px", margin: "0 auto", fontWeight: 300 }}>
-            Our pipeline parses variant calls and annotates them against reference databases, then returns a structured summary — built for research and pilot review, not clinical diagnosis.
-          </p>
+        <div style={{
+          display: "flex", flexWrap: "wrap-reverse", alignItems: "center", justifyContent: "center",
+          gap: "24px", marginBottom: "56px", textAlign: "center",
+        }}>
+          <div style={{ flex: "1 1 380px", maxWidth: "540px" }}>
+            <h1 style={{ fontSize: "var(--lb-text-2xl)", fontFamily: "var(--lb-font-display)", fontWeight: 700, lineHeight: 1.15, letterSpacing: "-0.01em", color: "var(--lb-text-primary)", marginBottom: "16px" }}>
+              Upload a VCF. Get a Structured Variant Report.
+            </h1>
+            <p style={{ fontSize: "clamp(15px,2vw,18px)", color: "var(--lb-text-secondary)", lineHeight: 1.7, maxWidth: "480px", margin: "0 auto", fontWeight: 300 }}>
+              Our pipeline parses variant calls and annotates them against reference databases, then returns a structured summary — built for research and pilot review, not clinical diagnosis.
+            </p>
+          </div>
+          <HeroIllustration size={188} style={{ flex: "0 0 auto" }} />
         </div>
 
         {/* Open, flowing layout -- no outer card wrapping either column. Only
@@ -149,106 +157,164 @@ export default function FileUpload({ onAnalyze, theme, toggleTheme, onBack }) {
               </div>
             </div>
 
-            <label htmlFor="vcf-input" style={{ position: "absolute", width: "1px", height: "1px", overflow: "hidden", clip: "rect(0 0 0 0)" }}>
-              Upload VCF file
-            </label>
-            <div
-              onDrop={handleDrop} onDragOver={handleDragOver} onDragLeave={handleDragLeave}
-              onClick={() => !file && openPicker()}
-              role={file ? undefined : "button"}
-              tabIndex={file ? undefined : 0}
-              onKeyDown={handleDropzoneKeyDown}
-              aria-label={file ? undefined : "Drop your VCF file here, or activate to browse files"}
-              style={{
-                position: "relative", border: `2px dashed ${dropBorder}`, borderRadius: "var(--lb-radius-md)",
-                background: dropBg, padding: "28px 20px", textAlign: "center",
-                cursor: file ? "default" : "pointer", transform: dragOver ? "scale(1.01)" : "scale(1)",
-                transition: "all 0.3s", minHeight: "140px", display: "flex", alignItems: "center", justifyContent: "center",
-              }}
-            >
-              <input id="vcf-input" type="file" accept=".vcf,.vcf.gz" style={{ display: "none" }}
-                onChange={(e) => { if (e.target.files[0]) setFile(e.target.files[0]); }} />
-
-              {dragOver && (
-                <div style={{ position: "absolute", inset: 0, borderRadius: "var(--lb-radius-md)", display: "flex", alignItems: "center", justifyContent: "center", pointerEvents: "none" }}>
-                  <p style={{ color: "var(--lb-status-info)", fontSize: "14px", fontWeight: 600 }}>Release to upload</p>
-                </div>
-              )}
-
-              {file ? (
-                <div style={{ display: "flex", alignItems: "center", gap: "16px", width: "100%", textAlign: "left" }}>
-                  <div style={{ width: "44px", height: "44px", borderRadius: "var(--lb-radius-md)", background: "var(--lb-status-info-bg)", border: "1px solid var(--lb-status-info-border)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                    <Icon d={ICONS.file} size={20} style={{ color: "var(--lb-status-info)" }} />
-                  </div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ fontSize: "13px", fontWeight: 700, color: "var(--lb-text-primary)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{file.name}</p>
-                    <p style={{ fontSize: "11px", color: "var(--lb-text-muted)", marginTop: "2px" }}>{formatSize(file.size)}</p>
-                    <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "6px" }}>
-                      <Icon d={ICONS.check} size={12} style={{ color: "var(--lb-status-low)" }} strokeWidth={2.5} />
-                      <span style={{ fontSize: "11px", fontWeight: 600, color: "var(--lb-status-low)" }}>Ready to analyze</span>
-                    </div>
-                  </div>
-                  <button onClick={(e) => { e.stopPropagation(); clearFile(); }} aria-label="Remove selected file" data-lb-btn="utility" style={{
-                    width: "32px", height: "32px", borderRadius: "var(--lb-radius-md)", border: "1px solid var(--lb-border)",
-                    background: "var(--lb-input-bg)", color: "var(--lb-text-muted)", display: "flex", alignItems: "center", justifyContent: "center",
-                    cursor: "pointer", flexShrink: 0,
-                  }}>
-                    <Icon d={ICONS.close} size={14} style={{ color: "var(--lb-text-muted)" }} strokeWidth={2} />
-                  </button>
-                </div>
-              ) : (
-                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "16px" }}>
-                  <div style={{ position: "relative" }}>
-                    <div style={{ width: "56px", height: "56px", borderRadius: "var(--lb-radius-md)", background: "var(--lb-input-bg)", border: "1px solid var(--lb-border)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      <Icon d={ICONS.download} size={24} style={{ color: "var(--lb-text-muted)" }} />
-                    </div>
-                    <div style={{ position: "absolute", top: "-4px", right: "-4px", width: "16px", height: "16px", borderRadius: "50%", background: "var(--lb-status-info)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      <span style={{ color: "#fff", fontSize: "9px", fontWeight: 900, lineHeight: 1 }}>+</span>
-                    </div>
-                  </div>
-                  <div>
-                    <p style={{ fontSize: "13px", fontWeight: 600, color: "var(--lb-text-primary)", marginBottom: "4px" }}>Drop your VCF file here</p>
-                    <p style={{ fontSize: "12px", color: "var(--lb-text-muted)" }}>
-                      or <span style={{ color: "var(--lb-status-info)", fontWeight: 600, cursor: "pointer" }}>browse files</span>
-                    </p>
-                  </div>
-                  <div style={{ display: "flex", gap: "6px" }}>
-                    {[".vcf", ".vcf.gz", "Max 500 MB"].map((t) => (
-                      <span key={t} style={{ padding: "4px 10px", borderRadius: "var(--lb-radius-sm)", border: "1px solid var(--lb-border)", background: "var(--lb-input-bg)", color: "var(--lb-text-secondary)", fontSize: "10px", fontWeight: 500 }}>{t}</span>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <div style={{ marginTop: "14px" }}>
-              <p style={{ fontSize: "11px", color: "var(--lb-text-muted)", marginBottom: "8px" }}>
-                No VCF handy? Try one of our sample files:
-              </p>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
-                {SAMPLE_FILES.map((sample) => (
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "16px" }}>
+              {[
+                { key: "local", icon: ICONS.folder, iconBg: "var(--lb-brand)", title: "Local Upload", subtitle: "Upload from your computer" },
+                { key: "remote", icon: ICONS.server, iconBg: "var(--lb-status-low)", title: "Sample Files", subtitle: "Load from our sample panels" },
+              ].map((opt) => {
+                const active = uploadMode === opt.key;
+                return (
                   <button
-                    key={sample.name}
+                    key={opt.key}
                     type="button"
-                    onClick={() => chooseSample(sample)}
-                    disabled={Boolean(sampleLoading)}
+                    onClick={() => { setUploadMode(opt.key); setFile(null); setSampleError(null); }}
                     data-lb-btn="utility"
                     style={{
-                      padding: "8px 12px", borderRadius: "var(--lb-radius-md)", border: "1px solid var(--lb-border)",
-                      background: "var(--lb-input-bg)", color: "var(--lb-text-secondary)", fontSize: "12px", fontWeight: 600,
-                      cursor: sampleLoading ? "not-allowed" : "pointer", opacity: sampleLoading && sampleLoading !== sample.name ? 0.5 : 1,
-                      display: "flex", alignItems: "center", gap: "6px",
+                      display: "flex", flexDirection: "column", alignItems: "center", gap: "10px",
+                      padding: "20px 12px", borderRadius: "var(--lb-radius-md)", textAlign: "center",
+                      border: `1px solid ${active ? "var(--lb-status-info)" : "var(--lb-border)"}`,
+                      background: active ? "var(--lb-status-info-bg)" : "var(--lb-input-bg)",
+                      boxShadow: active ? "0 0 0 3px var(--lb-status-info-bg)" : "none",
+                      cursor: "pointer", transition: "all 0.2s",
                     }}
                   >
-                    <Icon d={ICONS.file} size={12} style={{ color: "var(--lb-text-muted)" }} />
-                    {sampleLoading === sample.name ? "Loading…" : sample.label}
+                    <div style={{
+                      width: "48px", height: "48px", borderRadius: "50%", background: opt.iconBg,
+                      display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
+                    }}>
+                      <Icon d={opt.icon} size={22} style={{ color: "#fff" }} strokeWidth={1.8} />
+                    </div>
+                    <div>
+                      <p style={{ fontSize: "14px", fontWeight: 700, color: "var(--lb-text-primary)" }}>{opt.title}</p>
+                      <p style={{ fontSize: "11px", color: "var(--lb-text-muted)", marginTop: "2px" }}>{opt.subtitle}</p>
+                    </div>
                   </button>
-                ))}
-              </div>
-              {sampleError && (
-                <p style={{ fontSize: "11px", color: "var(--lb-status-high, #d33)", marginTop: "6px" }}>{sampleError}</p>
-              )}
+                );
+              })}
             </div>
+
+            {uploadMode === "local" && (
+              <>
+                <label htmlFor="vcf-input" style={{ position: "absolute", width: "1px", height: "1px", overflow: "hidden", clip: "rect(0 0 0 0)" }}>
+                  Upload VCF file
+                </label>
+                <div
+                  onDrop={handleDrop} onDragOver={handleDragOver} onDragLeave={handleDragLeave}
+                  onClick={() => !file && openPicker()}
+                  role={file ? undefined : "button"}
+                  tabIndex={file ? undefined : 0}
+                  onKeyDown={handleDropzoneKeyDown}
+                  aria-label={file ? undefined : "Drop your VCF file here, or activate to browse files"}
+                  style={{
+                    position: "relative", border: `2px dashed ${dropBorder}`, borderRadius: "var(--lb-radius-md)",
+                    background: dropBg, padding: "28px 20px", textAlign: "center",
+                    cursor: file ? "default" : "pointer", transform: dragOver ? "scale(1.01)" : "scale(1)",
+                    transition: "all 0.3s", minHeight: "140px", display: "flex", alignItems: "center", justifyContent: "center",
+                  }}
+                >
+                  <input id="vcf-input" type="file" accept=".vcf,.vcf.gz" style={{ display: "none" }}
+                    onChange={(e) => { if (e.target.files[0]) setFile(e.target.files[0]); }} />
+
+                  {dragOver && (
+                    <div style={{ position: "absolute", inset: 0, borderRadius: "var(--lb-radius-md)", display: "flex", alignItems: "center", justifyContent: "center", pointerEvents: "none" }}>
+                      <p style={{ color: "var(--lb-status-info)", fontSize: "14px", fontWeight: 600 }}>Release to upload</p>
+                    </div>
+                  )}
+
+                  {file ? (
+                    <div style={{ display: "flex", alignItems: "center", gap: "16px", width: "100%", textAlign: "left" }}>
+                      <div style={{ width: "44px", height: "44px", borderRadius: "var(--lb-radius-md)", background: "var(--lb-status-info-bg)", border: "1px solid var(--lb-status-info-border)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                        <Icon d={ICONS.file} size={20} style={{ color: "var(--lb-status-info)" }} />
+                      </div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <p style={{ fontSize: "13px", fontWeight: 700, color: "var(--lb-text-primary)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{file.name}</p>
+                        <p style={{ fontSize: "11px", color: "var(--lb-text-muted)", marginTop: "2px" }}>{formatSize(file.size)}</p>
+                        <div style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "6px" }}>
+                          <Icon d={ICONS.check} size={12} style={{ color: "var(--lb-status-low)" }} strokeWidth={2.5} />
+                          <span style={{ fontSize: "11px", fontWeight: 600, color: "var(--lb-status-low)" }}>Ready to analyze</span>
+                        </div>
+                      </div>
+                      <button onClick={(e) => { e.stopPropagation(); clearFile(); }} aria-label="Remove selected file" data-lb-btn="utility" style={{
+                        width: "32px", height: "32px", borderRadius: "var(--lb-radius-md)", border: "1px solid var(--lb-border)",
+                        background: "var(--lb-input-bg)", color: "var(--lb-text-muted)", display: "flex", alignItems: "center", justifyContent: "center",
+                        cursor: "pointer", flexShrink: 0,
+                      }}>
+                        <Icon d={ICONS.close} size={14} style={{ color: "var(--lb-text-muted)" }} strokeWidth={2} />
+                      </button>
+                    </div>
+                  ) : (
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "16px" }}>
+                      <div style={{ position: "relative" }}>
+                        <div style={{ width: "56px", height: "56px", borderRadius: "var(--lb-radius-md)", background: "var(--lb-input-bg)", border: "1px solid var(--lb-border)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                          <Icon d={ICONS.download} size={24} style={{ color: "var(--lb-text-muted)" }} />
+                        </div>
+                        <div style={{ position: "absolute", top: "-4px", right: "-4px", width: "16px", height: "16px", borderRadius: "50%", background: "var(--lb-status-info)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                          <span style={{ color: "#fff", fontSize: "9px", fontWeight: 900, lineHeight: 1 }}>+</span>
+                        </div>
+                      </div>
+                      <div>
+                        <p style={{ fontSize: "13px", fontWeight: 600, color: "var(--lb-text-primary)", marginBottom: "4px" }}>Drop your VCF file here</p>
+                        <p style={{ fontSize: "12px", color: "var(--lb-text-muted)" }}>
+                          or <span style={{ color: "var(--lb-status-info)", fontWeight: 600, cursor: "pointer" }}>browse files</span>
+                        </p>
+                      </div>
+                      <div style={{ display: "flex", gap: "6px" }}>
+                        {[".vcf", ".vcf.gz", "Max 500 MB"].map((t) => (
+                          <span key={t} style={{ padding: "4px 10px", borderRadius: "var(--lb-radius-sm)", border: "1px solid var(--lb-border)", background: "var(--lb-input-bg)", color: "var(--lb-text-secondary)", fontSize: "10px", fontWeight: 500 }}>{t}</span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
+
+            {uploadMode === "remote" && (
+              <div>
+                <p style={{ fontSize: "11px", color: "#000", fontWeight: 600, marginBottom: "8px" }}>
+                  No VCF handy? Try one of our sample files:
+                </p>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(112px, 1fr))", gap: "10px" }}>
+                  {SAMPLE_FILES.map((sample) => (
+                    <button
+                      key={sample.name}
+                      type="button"
+                      onClick={() => chooseSample(sample)}
+                      disabled={Boolean(sampleLoading)}
+                      data-lb-btn="utility"
+                      style={{
+                        padding: "14px 10px 12px", borderRadius: "var(--lb-radius-md)",
+                        border: `1px solid ${file?.name === sample.name ? "var(--lb-status-info)" : "var(--lb-status-info-border)"}`,
+                        background: "linear-gradient(180deg, color-mix(in srgb, white 25%, var(--lb-status-info-bg)) 0%, var(--lb-status-info-bg) 100%)",
+                        boxShadow: "inset 0 1px 0 rgba(255,255,255,0.7), 0 1px 3px rgba(0,0,0,0.1)",
+                        cursor: sampleLoading ? "not-allowed" : "pointer", opacity: sampleLoading && sampleLoading !== sample.name ? 0.5 : 1,
+                        display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: "8px",
+                      }}
+                    >
+                      <FileThumbnail size={40} />
+                      <div style={{ minWidth: 0, width: "100%" }}>
+                        <p style={{ fontSize: "12px", fontWeight: 700, color: "var(--lb-status-info)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                          {sampleLoading === sample.name ? "Loading…" : sample.label}
+                        </p>
+                        <p style={{ fontSize: "10px", fontWeight: 500, color: "var(--lb-text-muted)", marginTop: "2px" }}>
+                          {formatSize(sample.size)}
+                        </p>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+                {sampleError && (
+                  <p style={{ fontSize: "11px", color: "var(--lb-status-high, #d33)", marginTop: "6px" }}>{sampleError}</p>
+                )}
+                {file && (
+                  <div style={{ display: "flex", alignItems: "center", gap: "10px", marginTop: "12px", padding: "10px 12px", borderRadius: "var(--lb-radius-md)", background: "var(--lb-row-hover)", border: "1px solid var(--lb-status-info-border)" }}>
+                    <Icon d={ICONS.check} size={14} style={{ color: "var(--lb-status-low)" }} strokeWidth={2.5} />
+                    <p style={{ fontSize: "12px", fontWeight: 600, color: "var(--lb-text-primary)", flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{file.name}</p>
+                    <span style={{ fontSize: "11px", color: "var(--lb-text-muted)" }}>{formatSize(file.size)}</span>
+                  </div>
+                )}
+              </div>
+            )}
 
             {!isMockMode && (
               <div style={{ marginTop: "16px" }}>
@@ -265,7 +331,9 @@ export default function FileUpload({ onAnalyze, theme, toggleTheme, onBack }) {
                   style={{
                     width: "100%", padding: "11px 12px", borderRadius: "var(--lb-radius-md)",
                     border: `1px solid ${referenceBuild ? "var(--lb-border)" : "var(--lb-status-moderate-border)"}`,
-                    background: "var(--lb-input-bg)", color: "var(--lb-text-primary)",
+                    background: "linear-gradient(180deg, color-mix(in srgb, white 35%, var(--lb-input-bg)) 0%, var(--lb-input-bg) 60%)",
+                    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.7), 0 1px 3px rgba(0,0,0,0.1)",
+                    color: "var(--lb-text-primary)",
                     fontSize: "var(--lb-text-base)",
                   }}
                 >
