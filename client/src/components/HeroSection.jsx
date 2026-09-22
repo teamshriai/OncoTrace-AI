@@ -1,25 +1,30 @@
-import { useEffect, useRef, useState } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
 
+// Descriptions kept close in length (roughly 55-70 characters) on purpose:
+// each FlowCard reserves a fixed amount of vertical space for this text (see
+// the minHeight comment in FlowCard below), and outliers that need an extra
+// line broke the "every card the same size" requirement -- keeping the copy
+// balanced is what actually keeps the cards balanced.
 const WORKFLOW_STEPS = [
   {
     id: 1, label: 'Blood Draw', icon: '/img1.webp', color: '#64748b',
-    description: 'A routine blood sample is collected from the patient — the starting point of the pipeline.',
+    description: 'A routine blood sample is collected from the patient.',
   },
   {
     id: 2, label: 'Plasma Separation', icon: '/img2.webp', color: '#3b82f6',
-    description: 'Plasma is isolated from the sample to access circulating tumor DNA (ctDNA).',
+    description: 'Plasma is isolated to access circulating tumor DNA.',
   },
   {
     id: 3, label: 'ctDNA + NGS', icon: '/img3.webp', color: '#6366f1',
-    description: 'ctDNA is extracted and sequenced with Next-Generation Sequencing for a full genomic profile.',
+    description: 'ctDNA is extracted and sequenced for a full genomic profile.',
   },
   {
     id: 4, label: 'AI Analysis', icon: '/img4.webp', color: '#0ea5e9',
-    description: 'AI models process the sequencing data to identify and tier clinically relevant variants.',
+    description: 'AI models identify and tier clinically relevant variants.',
   },
   {
-    id: 5, label: 'Clinician Decision', icon: '/img5.webp', color: '#475569',
-    description: 'Structured, evidence-linked results reach the treating physician to inform next steps.',
+    id: 5, label: 'AI Report', icon: '/report-preview.webp', color: '#475569',
+    description: 'Findings are compiled into a structured, evidence-linked report.',
   },
 ]
 
@@ -240,22 +245,39 @@ function FlowCard({ step, index, inView, isReduced }) {
         </div>
 
         <div
-          className="px-3.5 py-3 sm:px-4 sm:py-3.5"
+          className="px-3 py-2.5 sm:px-3.5 sm:py-3"
           style={{ background: `color-mix(in srgb, ${step.color} 8%, transparent)` }}
         >
           <p
-            className="text-[10px] font-bold tracking-wider"
+            className="text-[9px] font-bold tracking-wider"
             style={{ color: step.color, fontFamily: 'Inter, system-ui, sans-serif' }}
           >
             {number}
           </p>
+          {/* min-height in `em` (relative to this element's own font-size, which
+              is itself responsive) reserves space for 2 lines at any breakpoint,
+              so a card whose label wraps ("Plasma Separation") ends up the same
+              total height as one that doesn't -- required for every card in the
+              workflow to render at an identical size regardless of its content. */}
           <p
-            className="mt-1 font-bold leading-snug text-slate-900"
-            style={{ fontFamily: 'Inter, system-ui, sans-serif', fontSize: 'clamp(12.5px, 1.1vw, 14px)' }}
+            className="mt-1 font-bold text-slate-900"
+            style={{
+              fontFamily: 'Inter, system-ui, sans-serif',
+              fontSize: 'clamp(11.5px, 1vw, 13px)',
+              lineHeight: 1.25,
+              minHeight: '2.5em',
+            }}
           >
             {step.label}
           </p>
-          <p className="mt-1 text-[10.5px] leading-relaxed text-slate-600 sm:text-xs">
+          {/* Same technique, sized for 3 lines -- the longest description here
+              runs to 3 lines on a narrow card, so this is the shared height
+              every card's description area reserves, whether its own text
+              takes 1, 2, or 3 lines. */}
+          <p
+            className="mt-1 text-[9.5px] text-slate-600 sm:text-[11px]"
+            style={{ lineHeight: 1.5, minHeight: '4.5em' }}
+          >
             {step.description}
           </p>
         </div>
@@ -270,6 +292,14 @@ function FlowCard({ step, index, inView, isReduced }) {
 
 const ARROW_FILL = '#d97706'
 
+// Shared with the tablet layout's row-2 width formula below, so a card in
+// the 2-card row is guaranteed the same pixel width as a card in the 3-card
+// row -- not just approximately, algebraically. Keep both in sync if either
+// changes; they're deliberately not computed from one another because the
+// row-2 formula needs this as a literal string to embed in its own calc().
+const CONNECTOR_WIDTH_CSS = 'clamp(22px, 2.4vw, 44px)'
+const CARD_GAP_CSS = '0.5rem' // matches the `gap-2` utility used around these cards
+
 function DesktopConnector({ inView, delay, isReduced }) {
   return (
     <div
@@ -277,7 +307,7 @@ function DesktopConnector({ inView, delay, isReduced }) {
       style={{
         // The parent pair wrapper is `items-center`, so this centers against
         // its own card sibling's actual rendered height automatically.
-        width:      'clamp(28px, 3vw, 56px)',
+        width:      CONNECTOR_WIDTH_CSS,
         opacity:    inView ? 1 : 0,
         transition: isReduced ? 'none' : `opacity 0.5s ease ${delay}s`,
       }}
@@ -374,10 +404,10 @@ function HeroIntro() {
             Vertical padding trimmed (was py-16/20/32) and the image column
             lifted (was h-190/240px) so the section takes up less of the
             viewport overall, bringing SampleReportSection up sooner. */}
-        <div className="grid grid-cols-1 items-center gap-6 py-10 sm:py-12 lg:block lg:py-20">
+        <div className="grid grid-cols-1 items-center gap-5 py-8 sm:py-10 lg:block lg:py-16">
 
-          {/* ── Left: copy — sizes reduced one step across the board ── */}
-          <div className="text-center lg:max-w-[48%] lg:min-w-[520px] lg:text-left xl:max-w-[720px]">
+          {/* ── Left: copy — sizes reduced one more step across the board ── */}
+          <div className="text-center lg:max-w-[45%] lg:min-w-[480px] lg:text-left xl:max-w-[660px]">
             {/* Status pill — live dot + the two positioning statements, one unit */}
             <div
               className="hero-anim-eyebrow inline-flex flex-wrap items-center justify-center gap-x-2 gap-y-1 rounded-full border px-3.5 py-1.5 shadow-sm backdrop-blur-sm sm:gap-x-2.5"
@@ -401,15 +431,13 @@ function HeroIntro() {
 
             {/* Headline leads — no competing eyebrow above it */}
             <h1
-              className="hero-anim-headline mt-5 font-bold tracking-[-0.03em] text-slate-900 sm:mt-6"
-              // Floor lowered from 1.9rem: "Monitoring of Oncology" is forced
-              // onto one line below (whitespace-nowrap, so it never breaks
-              // mid-phrase) and at the old floor that phrase was wider than
-              // the text column on narrow phones (clipped past the right
-              // edge at 320-360px). 8.5vw closes that gap specifically on
-              // small screens without changing anything above ~420px, where
-              // 4.2vw already exceeds it.
-              style={{ fontSize: 'clamp(1.35rem, 8.5vw, 3.4rem)', lineHeight: 1.08, animationDelay: '0.1s' }}
+              className="hero-anim-headline mt-4 font-bold tracking-[-0.03em] text-slate-900 sm:mt-5"
+              // Floor kept low: "Monitoring of Oncology" is forced onto one
+              // line below (whitespace-nowrap, so it never breaks mid-phrase)
+              // and needs enough room on narrow phones (280-360px) to avoid
+              // clipping past the column edge. Ceiling lowered a further step
+              // (was 3.4rem) per request to shrink the headline overall.
+              style={{ fontSize: 'clamp(1.3rem, 7.8vw, 3.05rem)', lineHeight: 1.1, animationDelay: '0.1s' }}
             >
               Real-time Precision
               <br />
@@ -423,22 +451,22 @@ function HeroIntro() {
 
             {/* Supporting line, set off by a rule rather than floating alone */}
             <div
-              className="hero-anim-headline mt-5 flex items-center justify-center gap-3 sm:mt-6 lg:justify-start"
+              className="hero-anim-headline mt-4 flex items-center justify-center gap-3 sm:mt-5 lg:justify-start"
               style={{ animationDelay: '0.2s' }}
             >
               <span
-                className="hidden h-6 w-[2px] shrink-0 rounded-full lg:block"
+                className="hidden h-5 w-[2px] shrink-0 rounded-full lg:block"
                 style={{ background: 'linear-gradient(180deg, #2563eb, #06b6d4)' }}
                 aria-hidden="true"
               />
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-600 sm:text-sm">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-blue-600 sm:text-[13px]">
                 AI — Powered
               </p>
             </div>
 
             {/* Attribution demoted to a quiet footer line */}
             <p
-              className="hero-anim-eyebrow mt-6 text-xs text-slate-400 sm:mt-7"
+              className="hero-anim-eyebrow mt-5 text-xs text-slate-400 sm:mt-6"
               style={{ animationDelay: '0.3s' }}
             >
               Powered by{' '}
@@ -456,9 +484,9 @@ function HeroIntro() {
           </div>
 
           {/* ── Mobile / tablet only: image sits below the copy, flush to the right edge.
-               Sized down (was 190/240px tall, 280/320px wide) to match the
-               smaller text above. ── */}
-          <div className="relative -mr-4 flex h-[140px] items-center justify-end sm:-mr-6 sm:h-[180px] lg:hidden">
+               Sized down another step (was 140/180px tall, 220/250px wide)
+               to track the smaller text above. ── */}
+          <div className="relative -mr-4 flex h-[120px] items-center justify-end sm:-mr-6 sm:h-[155px] lg:hidden">
             <div
               className="absolute inset-y-0 right-0 -z-10 w-[85%] rounded-l-[2.5rem]"
               aria-hidden="true"
@@ -471,7 +499,7 @@ function HeroIntro() {
               alt="A gloved hand holding a blood sample tube, representing the starting point of the OncoTrace-AI liquid biopsy pipeline"
               draggable={false}
               loading="eager"
-              className="relative z-10 h-auto w-[54%] max-w-[220px] object-contain sm:max-w-[250px]"
+              className="relative z-10 h-auto w-[48%] max-w-[190px] object-contain sm:max-w-[220px]"
               style={{ filter: 'drop-shadow(0 24px 32px rgba(15, 23, 42, 0.16))' }}
             />
           </div>
@@ -481,9 +509,9 @@ function HeroIntro() {
       {/* ── Desktop only: image anchored to the TRUE viewport right edge.
            A direct child of the full-width <section>, so `right-0` is the real
            screen edge rather than the centered max-w-[1400px] container's edge.
-           Column shrunk (was 46vw/680px) and pulled up (top-based instead of
-           vertically centered) to sit level with the now-smaller text. ── */}
-      <div className="pointer-events-none absolute right-0 top-[8%] hidden w-[36vw] max-w-[520px] items-start justify-end lg:flex">
+           Column shrunk one more step (was 36vw/520px) to track the smaller
+           text beside it. ── */}
+      <div className="pointer-events-none absolute right-0 top-[9%] hidden w-[31vw] max-w-[460px] items-start justify-end lg:flex">
         <div
           // Was h-[110%], taller than its own parent -- close enough to the
           // section's bottom edge for the ellipse's fade (previously reaching
@@ -561,11 +589,12 @@ export default function HeroSection() {
         // (which just relocates the mismatch to wherever it doesn't line up).
         style={{ background: '#f8fafc' }}
       >
-        <div className="max-w-[1800px] mx-auto px-3 sm:px-4 lg:px-6 py-14 sm:py-18 lg:py-24">
+        <div className="max-w-[1600px] mx-auto px-3 sm:px-4 lg:px-6 py-12 sm:py-14 lg:py-18">
 
-          {/* Section Header */}
+          {/* Section Header — "The Pipeline" eyebrow removed per request; the
+              heading alone carries the section label now. */}
           <div
-            className="text-center mb-8 sm:mb-10 lg:mb-14"
+            className="text-center mb-7 sm:mb-9 lg:mb-11"
             style={{
               opacity:   workflowInView ? 1 : 0,
               transform: workflowInView ? 'translateY(0)' : 'translateY(20px)',
@@ -574,33 +603,42 @@ export default function HeroSection() {
                 : 'opacity 0.5s ease, transform 0.5s ease',
             }}
           >
-            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.25em] text-blue-600 sm:text-sm">
-              The Pipeline
-            </p>
             <h2
               className="font-bold leading-tight tracking-tight text-slate-900"
-              style={{ fontSize: 'clamp(1.8rem, 4.5vw, 3rem)', letterSpacing: '-0.025em' }}
+              style={{ fontSize: 'clamp(1.7rem, 4vw, 2.7rem)', letterSpacing: '-0.025em' }}
             >
               From Sample to{' '}
               <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
                 Clinical Insight
               </span>
             </h2>
-            <p className="mx-auto mt-4 max-w-xl text-sm text-slate-500 sm:text-base">
+            <p className="mx-auto mt-3 max-w-xl text-sm text-slate-500 sm:text-base">
               Five stages, one continuous liquid biopsy workflow.
             </p>
           </div>
 
           {/* Desktop Layout (lg+) - equal-width cards in one row */}
+          {/* Connectors are siblings of the card wrappers here, not nested
+              inside them -- when a connector was nested inside the same
+              flex-1 wrapper as its card, that wrapper's flex-basis had to
+              fit both, so cards followed by a connector rendered narrower
+              than the last card (which has none). That's the one thing that
+              broke "every card is the same size": aspect-square makes the
+              image height track its own width, so a wider last card was
+              also visibly taller. Flattening the connector out to a
+              non-growing sibling lets all 5 card wrappers share the row's
+              width exactly evenly, independent of connector width. */}
           <div className="hidden lg:flex lg:items-center lg:justify-center lg:gap-1.5 xl:gap-3">
             {WORKFLOW_STEPS.map((step, index) => (
-              <div key={step.id} className="flex flex-1 items-center" style={{ minWidth: 0 }}>
-                <FlowCard
-                  step={step}
-                  index={index}
-                  inView={workflowInView}
-                  isReduced={isReduced}
-                />
+              <Fragment key={step.id}>
+                <div className="flex flex-1 items-center" style={{ minWidth: 0 }}>
+                  <FlowCard
+                    step={step}
+                    index={index}
+                    inView={workflowInView}
+                    isReduced={isReduced}
+                  />
+                </div>
                 {index < WORKFLOW_STEPS.length - 1 && (
                   <DesktopConnector
                     inView={workflowInView}
@@ -608,22 +646,36 @@ export default function HeroSection() {
                     isReduced={isReduced}
                   />
                 )}
-              </div>
+              </Fragment>
             ))}
           </div>
 
-          {/* Tablet Layout (sm → lg) - 3 top, 2 bottom */}
+          {/* Tablet Layout (sm → lg) - 3 top, 2 bottom.
+              Row 2's wrapper width is computed algebraically from row 1's own
+              math (3 flex-1 cards + 2 connectors + 2 gaps), not approximated
+              with a flat `max-w-[66%]`. A flat percentage only happened to be
+              exact at one specific container width -- flex's default
+              flex-shrink:1 also amplified the mismatch further, since row 1's
+              5-item content (3 cards + 2 connectors) can overflow its row
+              and shrink while row 2's smaller 3-item content (2 cards + 1
+              connector) often doesn't need to, so the two rows' flex-1 cards
+              settled at different sizes even given identical container
+              width. Solving row 2's width so that its 2 flex-1 cards + 1
+              fixed-width connector land on exactly row 1's per-card width
+              makes both rows match by construction, at every viewport width. */}
           <div className="hidden md:block lg:hidden">
             {/* First Row – 3 steps */}
             <div className="flex items-center gap-2">
               {WORKFLOW_STEPS.slice(0, 3).map((step, index) => (
-                <div key={step.id} className="flex flex-1 items-center" style={{ minWidth: 0 }}>
-                  <FlowCard
-                    step={step}
-                    index={index}
-                    inView={workflowInView}
-                    isReduced={isReduced}
-                  />
+                <Fragment key={step.id}>
+                  <div className="flex flex-1 items-center" style={{ minWidth: 0 }}>
+                    <FlowCard
+                      step={step}
+                      index={index}
+                      inView={workflowInView}
+                      isReduced={isReduced}
+                    />
+                  </div>
                   {index < 2 && (
                     <DesktopConnector
                       inView={workflowInView}
@@ -631,7 +683,7 @@ export default function HeroSection() {
                       isReduced={isReduced}
                     />
                   )}
-                </div>
+                </Fragment>
               ))}
             </div>
 
@@ -645,15 +697,22 @@ export default function HeroSection() {
             </div>
 
             {/* Second Row – 2 steps */}
-            <div className="mx-auto flex max-w-[66%] items-center gap-2">
+            <div
+              className="mx-auto flex items-center gap-2"
+              style={{
+                width: `calc(2 * ((100% - 2 * ${CARD_GAP_CSS} - 2 * ${CONNECTOR_WIDTH_CSS}) / 3) + ${CONNECTOR_WIDTH_CSS} + ${CARD_GAP_CSS})`,
+              }}
+            >
               {WORKFLOW_STEPS.slice(3).map((step, index) => (
-                <div key={step.id} className="flex flex-1 items-center" style={{ minWidth: 0 }}>
-                  <FlowCard
-                    step={step}
-                    index={index + 3}
-                    inView={workflowInView}
-                    isReduced={isReduced}
-                  />
+                <Fragment key={step.id}>
+                  <div className="flex flex-1 items-center" style={{ minWidth: 0 }}>
+                    <FlowCard
+                      step={step}
+                      index={index + 3}
+                      inView={workflowInView}
+                      isReduced={isReduced}
+                    />
+                  </div>
                   {index === 0 && (
                     <DesktopConnector
                       inView={workflowInView}
@@ -661,7 +720,7 @@ export default function HeroSection() {
                       isReduced={isReduced}
                     />
                   )}
-                </div>
+                </Fragment>
               ))}
             </div>
           </div>
