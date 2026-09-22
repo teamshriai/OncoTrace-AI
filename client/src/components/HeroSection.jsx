@@ -23,6 +23,11 @@ const WORKFLOW_STEPS = [
     description: 'AI models identify and tier clinically relevant variants.',
   },
   {
+    // report-preview.webp is itself a tight crop (the risk-score gauge +
+    // "27%" + LOW/HIGH labels + risk-level line only, captured directly from
+    // the live report, no surrounding chrome) -- it's already exactly the
+    // "focused on the risk score" framing, so no extra CSS zoom is layered
+    // on top here; that would just crop into the gauge itself.
     id: 5, label: 'AI Report', icon: '/report-preview.webp', color: '#475569',
     description: 'Findings are compiled into a structured, evidence-linked report.',
   },
@@ -122,10 +127,19 @@ const scopedCSS = `
     box-shadow: 0 12px 28px rgba(15, 23, 42, 0.10);
   }
   .flow-card img {
+    /* --flow-img-zoom is an optional per-step base zoom (see step.zoom in
+       WORKFLOW_STEPS), set inline per-card; the hover rule below multiplies
+       on top of it rather than overriding it, so a zoomed step still gets
+       the same hover feedback as the others. transform-origin anchored to
+       the top: a centered zoom pushed the AI Report screenshot's own navy
+       header bar (its most recognizable "this is the real product" cue) out
+       of frame; anchoring top keeps that bar in view while still cropping in. */
+    transform: scale(var(--flow-img-zoom, 1));
+    transform-origin: 50% 15%;
     transition: transform 0.4s ease;
   }
   .flow-card:hover img {
-    transform: scale(1.04);
+    transform: scale(calc(var(--flow-img-zoom, 1) * 1.04));
   }
 `
 
@@ -240,7 +254,15 @@ function FlowCard({ step, index, inView, isReduced }) {
             onLoad={() => setImgLoaded(true)}
             onError={() => setImgError(true)}
             className="absolute inset-0 h-full w-full object-cover"
-            style={{ opacity: imgLoaded ? 1 : 0, transition: 'opacity 0.4s ease' }}
+            style={{
+              opacity: imgLoaded ? 1 : 0,
+              transition: 'opacity 0.4s ease, transform 0.4s ease',
+              // Read by the .flow-card img / .flow-card:hover img rules
+              // above (see step.zoom in WORKFLOW_STEPS). The image box has
+              // overflow-hidden, so the zoom crops cleanly rather than
+              // spilling past the card's rounded corners.
+              '--flow-img-zoom': step.zoom || 1,
+            }}
           />
         </div>
 
@@ -401,10 +423,9 @@ function HeroIntro() {
       <div className="relative mx-auto max-w-[1400px] px-4 sm:px-6 lg:pl-10 lg:pr-0">
         {/* On desktop the image is pulled out of this container (see below); the copy
             just caps its own width so it never runs under the image.
-            Vertical padding trimmed (was py-16/20/32) and the image column
-            lifted (was h-190/240px) so the section takes up less of the
-            viewport overall, bringing SampleReportSection up sooner. */}
-        <div className="grid grid-cols-1 items-center gap-5 py-8 sm:py-10 lg:block lg:py-16">
+            Vertical padding trimmed yet again (was py-8/10/16) to lift the
+            workflow section further up the page. */}
+        <div className="grid grid-cols-1 items-center gap-4 py-6 sm:py-8 lg:block lg:py-12">
 
           {/* ── Left: copy — sizes reduced one more step across the board ── */}
           <div className="text-center lg:max-w-[45%] lg:min-w-[480px] lg:text-left xl:max-w-[660px]">
@@ -420,11 +441,11 @@ function HeroIntro() {
                 <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-70" />
                 <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
               </span>
-              <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-emerald-700 sm:text-[11px]">
+              <span className="text-[9px] font-bold uppercase tracking-[0.12em] text-emerald-700 sm:text-[10px]">
                 Open Source · Not For Profit
               </span>
               <span className="hidden h-3 w-px bg-emerald-300/60 sm:block" aria-hidden="true" />
-              <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-blue-600 sm:text-[11px]">
+              <span className="text-[9px] font-bold uppercase tracking-[0.12em] text-blue-600 sm:text-[10px]">
                 AI For Health · Care For All
               </span>
             </div>
@@ -434,10 +455,11 @@ function HeroIntro() {
               className="hero-anim-headline mt-4 font-bold tracking-[-0.03em] text-slate-900 sm:mt-5"
               // Floor kept low: "Monitoring of Oncology" is forced onto one
               // line below (whitespace-nowrap, so it never breaks mid-phrase)
-              // and needs enough room on narrow phones (280-360px) to avoid
-              // clipping past the column edge. Ceiling lowered a further step
-              // (was 3.4rem) per request to shrink the headline overall.
-              style={{ fontSize: 'clamp(1.3rem, 7.8vw, 3.05rem)', lineHeight: 1.1, animationDelay: '0.1s' }}
+              // and needs enough room on narrow phones (260-360px) to avoid
+              // clipping past the column edge -- re-verified against the same
+              // 260-2560px sweep after each reduction. Ceiling lowered yet
+              // another step (was 3.05rem) per request.
+              style={{ fontSize: 'clamp(1.2rem, 7.2vw, 2.75rem)', lineHeight: 1.12, animationDelay: '0.1s' }}
             >
               Real-time Precision
               <br />
@@ -459,7 +481,7 @@ function HeroIntro() {
                 style={{ background: 'linear-gradient(180deg, #2563eb, #06b6d4)' }}
                 aria-hidden="true"
               />
-              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-blue-600 sm:text-[13px]">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-blue-600 sm:text-[12px]">
                 AI — Powered
               </p>
             </div>
@@ -484,9 +506,9 @@ function HeroIntro() {
           </div>
 
           {/* ── Mobile / tablet only: image sits below the copy, flush to the right edge.
-               Sized down another step (was 140/180px tall, 220/250px wide)
+               Sized down yet another step (was 120/155px tall, 190/220px wide)
                to track the smaller text above. ── */}
-          <div className="relative -mr-4 flex h-[120px] items-center justify-end sm:-mr-6 sm:h-[155px] lg:hidden">
+          <div className="relative -mr-4 flex h-[100px] items-center justify-end sm:-mr-6 sm:h-[130px] lg:hidden">
             <div
               className="absolute inset-y-0 right-0 -z-10 w-[85%] rounded-l-[2.5rem]"
               aria-hidden="true"
@@ -499,7 +521,7 @@ function HeroIntro() {
               alt="A gloved hand holding a blood sample tube, representing the starting point of the OncoTrace-AI liquid biopsy pipeline"
               draggable={false}
               loading="eager"
-              className="relative z-10 h-auto w-[48%] max-w-[190px] object-contain sm:max-w-[220px]"
+              className="relative z-10 h-auto w-[42%] max-w-[160px] object-contain sm:max-w-[185px]"
               style={{ filter: 'drop-shadow(0 24px 32px rgba(15, 23, 42, 0.16))' }}
             />
           </div>
@@ -509,9 +531,9 @@ function HeroIntro() {
       {/* ── Desktop only: image anchored to the TRUE viewport right edge.
            A direct child of the full-width <section>, so `right-0` is the real
            screen edge rather than the centered max-w-[1400px] container's edge.
-           Column shrunk one more step (was 36vw/520px) to track the smaller
+           Column shrunk yet another step (was 31vw/460px) to track the smaller
            text beside it. ── */}
-      <div className="pointer-events-none absolute right-0 top-[9%] hidden w-[31vw] max-w-[460px] items-start justify-end lg:flex">
+      <div className="pointer-events-none absolute right-0 top-[10%] hidden w-[26vw] max-w-[400px] items-start justify-end lg:flex">
         <div
           // Was h-[110%], taller than its own parent -- close enough to the
           // section's bottom edge for the ellipse's fade (previously reaching
@@ -589,12 +611,12 @@ export default function HeroSection() {
         // (which just relocates the mismatch to wherever it doesn't line up).
         style={{ background: '#f8fafc' }}
       >
-        <div className="max-w-[1600px] mx-auto px-3 sm:px-4 lg:px-6 py-12 sm:py-14 lg:py-18">
+        <div className="max-w-[1600px] mx-auto px-3 sm:px-4 lg:px-6 py-9 sm:py-11 lg:py-14">
 
           {/* Section Header — "The Pipeline" eyebrow removed per request; the
               heading alone carries the section label now. */}
           <div
-            className="text-center mb-7 sm:mb-9 lg:mb-11"
+            className="text-center mb-6 sm:mb-7 lg:mb-9"
             style={{
               opacity:   workflowInView ? 1 : 0,
               transform: workflowInView ? 'translateY(0)' : 'translateY(20px)',
