@@ -19,7 +19,7 @@ export default function SampleReportSection() {
       aria-label="Sample Report"
       style={{ background: "#f8fafc" }}
     >
-      <div className="max-w-[1150px] mx-auto px-3 sm:px-4 lg:px-6 py-14 sm:py-18 lg:py-24">
+      <div className="max-w-[1150px] mx-auto px-3 sm:px-4 lg:px-6 pt-10 sm:pt-12 lg:pt-16 pb-14 sm:pb-18 lg:pb-24">
         <div className="text-center mb-10 sm:mb-14">
           <p className="mb-3 text-xs font-semibold uppercase tracking-[0.25em] text-blue-600 sm:text-sm">
             See It In Action

@@ -582,7 +582,10 @@ export default function HeroSection() {
         // sections read as one continuous surface with no visible seam.
         background: '#f8fafc',
         fontFamily: 'Inter, system-ui, sans-serif',
-        minHeight: '100vh',
+        // No min-height: this wrapper holds the hero AND the whole workflow
+        // section, so a viewport-height floor only ever padded empty space
+        // after the workflow's last line -- scaling with window height, it
+        // opened a 550px+ gap before SampleReportSection on tall monitors.
         width: '100%',
       }}
     >
@@ -611,7 +614,7 @@ export default function HeroSection() {
         // (which just relocates the mismatch to wherever it doesn't line up).
         style={{ background: '#f8fafc' }}
       >
-        <div className="max-w-[1600px] mx-auto px-3 sm:px-4 lg:px-6 py-9 sm:py-11 lg:py-14">
+        <div className="max-w-[1600px] mx-auto px-3 sm:px-4 lg:px-6 pt-9 sm:pt-11 lg:pt-14 pb-6 sm:pb-8 lg:pb-10">
 
           {/* Section Header — "The Pipeline" eyebrow removed per request; the
               heading alone carries the section label now. */}
