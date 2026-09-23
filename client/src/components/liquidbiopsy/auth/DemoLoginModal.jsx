@@ -12,7 +12,7 @@ const DEFAULT_SUBTITLE =
   "The liquid biopsy analysis engine is invite-only while in preview. "
   + "Enter the credentials from your invitation to continue.";
 
-export default function DemoLoginModal({ onSuccess, subtitle = DEFAULT_SUBTITLE }) {
+export default function DemoLoginModal({ onSuccess, subtitle = DEFAULT_SUBTITLE, onRequestAccess }) {
   const panelRef = useRef(null);
   const passwordRef = useRef(null);
 
@@ -273,6 +273,32 @@ export default function DemoLoginModal({ onSuccess, subtitle = DEFAULT_SUBTITLE 
           >
             You'll be asked to sign in again on every refresh. Nothing is saved to this device.
           </p>
+
+          {onRequestAccess && (
+            <p
+              style={{
+                marginTop: "10px", textAlign: "center",
+                fontSize: "var(--lb-text-xs)", color: "var(--lb-text-muted)", lineHeight: 1.6,
+              }}
+            >
+              If you don't have access —{" "}
+              <button
+                type="button"
+                onClick={onRequestAccess}
+                style={{
+                  background: "none", border: "none", padding: 0, margin: 0,
+                  font: "inherit", fontWeight: 600, color: "var(--lb-brand)",
+                  cursor: "pointer", textDecoration: "underline",
+                  textUnderlineOffset: "3px", textDecorationColor: "transparent",
+                  transition: "text-decoration-color 0.2s ease",
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.textDecorationColor = "currentColor"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.textDecorationColor = "transparent"; }}
+              >
+                Request demo access
+              </button>
+            </p>
+          )}
         </div>
       </div>
     </div>

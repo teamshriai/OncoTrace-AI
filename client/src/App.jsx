@@ -217,7 +217,7 @@ function AppInner() {
         <Route
           path="/demo"
           element={
-            <DemoAuthGate>
+            <DemoAuthGate onRequestAccess={() => handleNavigate('lb')}>
               <LiquidBiopsyDemo onBack={() => handleNavigate('home')} />
             </DemoAuthGate>
           }
@@ -232,14 +232,16 @@ function AppInner() {
           }
         />
 
+        {/* Public booking form, deliberately not behind DemoAuthGate: it exists
+            to capture leads from people who don't have access yet, so gating
+            it behind the same shared credential as the real analysis engine
+            would ask visitors for the very thing they're trying to request. */}
         <Route
           path="/mammo-demo"
           element={
-            <DemoAuthGate subtitle="The mammogram booking demo is invite-only while in preview. Enter the credentials from your invitation to continue.">
-              <div style={{ paddingTop: NAV_H }}>
-                <Mammodemo onBack={() => handleNavigate('home')} />
-              </div>
-            </DemoAuthGate>
+            <div style={{ paddingTop: NAV_H }}>
+              <Mammodemo onBack={() => handleNavigate('home')} />
+            </div>
           }
         />
 
