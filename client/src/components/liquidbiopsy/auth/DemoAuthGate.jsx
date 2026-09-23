@@ -19,7 +19,7 @@ if (isMockMode && typeof console !== "undefined") {
   );
 }
 
-export default function DemoAuthGate({ children }) {
+export default function DemoAuthGate({ children, subtitle }) {
   // The credential is memory-only, so this is false on every fresh page load --
   // a refresh always re-prompts. It is read rather than hardcoded to false so
   // the gate stays correct if it ever remounts mid-session.
@@ -57,7 +57,7 @@ export default function DemoAuthGate({ children }) {
           + "var(--lb-bg-page)",
       }}
     >
-      <DemoLoginModal onSuccess={() => setAuthed(true)} />
+      <DemoLoginModal onSuccess={() => setAuthed(true)} subtitle={subtitle} />
     </div>
   );
 }

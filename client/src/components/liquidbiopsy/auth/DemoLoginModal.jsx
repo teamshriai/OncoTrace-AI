@@ -8,7 +8,11 @@ import { setCredential } from "./credentialStore";
 const TITLE_ID = "lb-auth-title";
 const SUBTITLE_ID = "lb-auth-subtitle";
 
-export default function DemoLoginModal({ onSuccess }) {
+const DEFAULT_SUBTITLE =
+  "The liquid biopsy analysis engine is invite-only while in preview. "
+  + "Enter the credentials from your invitation to continue.";
+
+export default function DemoLoginModal({ onSuccess, subtitle = DEFAULT_SUBTITLE }) {
   const panelRef = useRef(null);
   const passwordRef = useRef(null);
 
@@ -165,8 +169,7 @@ export default function DemoLoginModal({ onSuccess }) {
                 lineHeight: 1.6, margin: "8px 0 0",
               }}
             >
-              The liquid biopsy analysis engine is invite-only while in preview.
-              Enter the credentials from your invitation to continue.
+              {subtitle}
             </p>
           </div>
 
@@ -257,7 +260,7 @@ export default function DemoLoginModal({ onSuccess }) {
                   Verifying…
                 </>
               ) : (
-                "Unlock demo"
+                "Sign in"
               )}
             </button>
           </form>

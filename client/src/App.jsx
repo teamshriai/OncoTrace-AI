@@ -235,9 +235,11 @@ function AppInner() {
         <Route
           path="/mammo-demo"
           element={
-            <div style={{ paddingTop: NAV_H }}>
-              <Mammodemo onBack={() => handleNavigate('home')} />
-            </div>
+            <DemoAuthGate subtitle="The mammogram booking demo is invite-only while in preview. Enter the credentials from your invitation to continue.">
+              <div style={{ paddingTop: NAV_H }}>
+                <Mammodemo onBack={() => handleNavigate('home')} />
+              </div>
+            </DemoAuthGate>
           }
         />
 
